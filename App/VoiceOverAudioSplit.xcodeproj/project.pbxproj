@@ -20,6 +20,7 @@
 		5081EC69FD1B5F7281A5DCCF /* SetupGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3770D09DFA7F496E78745E46 /* SetupGuideView.swift */; };
 		5EA74E064F5E1B977A27E763 /* AudioSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69090700658BA70CED135F66 /* AudioSystem.swift */; };
 		5ED5EA1F49451E37B69C3741 /* FaceCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F44559B08275B0A938E92D2 /* FaceCheck.swift */; };
+		997555B7B4206628D4863F44 /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E60AE325830BBA9CD22B23 /* LogicTests.swift */; };
 		9AC70A1C5A82A20FC3AFF60C /* Assistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D2A28E9F8F878C5DD8C75F /* Assistant.swift */; };
 		9D8145D7000441EBC7BF52F7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CB68A11755ECA695C614CED /* Assets.xcassets */; };
 		A7F07F23862E167A198DD830 /* Hotkeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D75DB9606C17C21FCC54CC /* Hotkeys.swift */; };
@@ -27,6 +28,16 @@
 		D89170B4CCBFA1F16381320F /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = C852C0F40A20291624C9ADE7 /* Preferences.swift */; };
 		FF6E56D14079FD5F8DB6A17E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E3CC6CC341E487E0870BEC /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		21F765506D40F42B5FA23CD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5591D3019971C823504E5BA6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0418E3F06F7549BA0B79A3D4;
+			remoteInfo = VoiceOverAudioSplit;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0CB68A11755ECA695C614CED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -36,6 +47,7 @@
 		2903F36A41CAE18B15E34E70 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commands.swift; sourceTree = "<group>"; };
 		32DC305F6B600AF15463D660 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		3770D09DFA7F496E78745E46 /* SetupGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupGuideView.swift; sourceTree = "<group>"; };
+		57E60AE325830BBA9CD22B23 /* LogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogicTests.swift; sourceTree = "<group>"; };
 		69090700658BA70CED135F66 /* AudioSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSystem.swift; sourceTree = "<group>"; };
 		712B0A64C8C45245EEDA2DCD /* Mixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mixer.swift; sourceTree = "<group>"; };
 		74E3CC6CC341E487E0870BEC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -43,6 +55,7 @@
 		76C2756EF9F338EDC6F94254 /* SpeechTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTools.swift; sourceTree = "<group>"; };
 		82D75DB9606C17C21FCC54CC /* Hotkeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hotkeys.swift; sourceTree = "<group>"; };
 		83622B4B6011C1F14CAF9584 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		905B1780D992BFE37282A51D /* VoiceOverAudioSplitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoiceOverAudioSplitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A51294BFC7A2A2C6B104F15D /* Splitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Splitter.swift; sourceTree = "<group>"; };
 		BB4D4325032A8A5C2F10B256 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		C7214CFBC7E24540688094FC /* VoiceOverAudioSplit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoiceOverAudioSplit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,10 +92,19 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		83F9607ABD6E36AEC4FE8192 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				57E60AE325830BBA9CD22B23 /* LogicTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
 		84DE479E61001765EEBCE47A /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				C7214CFBC7E24540688094FC /* VoiceOverAudioSplit.app */,
+				905B1780D992BFE37282A51D /* VoiceOverAudioSplitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -92,6 +114,7 @@
 			children = (
 				D92B2E55B49B35169C64CCE2 /* Resources */,
 				487341E7DDC78063FDEAEDF9 /* Sources */,
+				83F9607ABD6E36AEC4FE8192 /* Tests */,
 				84DE479E61001765EEBCE47A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -127,6 +150,24 @@
 			productReference = C7214CFBC7E24540688094FC /* VoiceOverAudioSplit.app */;
 			productType = "com.apple.product-type.application";
 		};
+		93AB71D9EC4850E53918AEE9 /* VoiceOverAudioSplitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D117BC1F3AE5E6F5E7C5CD50 /* Build configuration list for PBXNativeTarget "VoiceOverAudioSplitTests" */;
+			buildPhases = (
+				15141506A8387D2F71825114 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2DF4D5E0255CC8C465445506 /* PBXTargetDependency */,
+			);
+			name = VoiceOverAudioSplitTests;
+			packageProductDependencies = (
+			);
+			productName = VoiceOverAudioSplitTests;
+			productReference = 905B1780D992BFE37282A51D /* VoiceOverAudioSplitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -137,6 +178,10 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					0418E3F06F7549BA0B79A3D4 = {
+						DevelopmentTeam = 9G2D7CDZ5D;
+						ProvisioningStyle = Automatic;
+					};
+					93AB71D9EC4850E53918AEE9 = {
 						DevelopmentTeam = 9G2D7CDZ5D;
 						ProvisioningStyle = Automatic;
 					};
@@ -157,6 +202,7 @@
 			projectRoot = "";
 			targets = (
 				0418E3F06F7549BA0B79A3D4 /* VoiceOverAudioSplit */,
+				93AB71D9EC4850E53918AEE9 /* VoiceOverAudioSplitTests */,
 			);
 		};
 /* End PBXProject section */
@@ -173,6 +219,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		15141506A8387D2F71825114 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				997555B7B4206628D4863F44 /* LogicTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2FE5E134CAE7AEE58E7FCEDF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -200,6 +254,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		2DF4D5E0255CC8C465445506 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0418E3F06F7549BA0B79A3D4 /* VoiceOverAudioSplit */;
+			targetProxy = 21F765506D40F42B5FA23CD9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		47539C6C337201FDA5CE9E14 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -214,10 +276,28 @@
 					"@executable_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fullcircleat.VoiceOverAudioSplit;
+				PRODUCT_MODULE_NAME = VoiceOverAudioSplit;
 				PRODUCT_NAME = "VoiceOver Audio Split";
 				SDKROOT = macosx;
 			};
 			name = Release;
+		};
+		5524F93F7EFE55B3E67FF441 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fullcircleat.VoiceOverAudioSplitTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceOver Audio Split.app/Contents/MacOS/VoiceOver Audio Split";
+			};
+			name = Debug;
 		};
 		9DCFE644BA28CD294CFD10C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -286,6 +366,23 @@
 			};
 			name = Debug;
 		};
+		CCAD6AE98B59FC71AB792745 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fullcircleat.VoiceOverAudioSplitTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceOver Audio Split.app/Contents/MacOS/VoiceOver Audio Split";
+			};
+			name = Release;
+		};
 		F3C1A9918C5AA7B57FC3D972 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -299,6 +396,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fullcircleat.VoiceOverAudioSplit;
+				PRODUCT_MODULE_NAME = VoiceOverAudioSplit;
 				PRODUCT_NAME = "VoiceOver Audio Split";
 				SDKROOT = macosx;
 			};
@@ -367,6 +465,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D117BC1F3AE5E6F5E7C5CD50 /* Build configuration list for PBXNativeTarget "VoiceOverAudioSplitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5524F93F7EFE55B3E67FF441 /* Debug */,
+				CCAD6AE98B59FC71AB792745 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		F42F76A8BFFCC356EC94D2D8 /* Build configuration list for PBXProject "VoiceOverAudioSplit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -108,6 +108,11 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/Announcer.swift` sends announcements to VoiceOver.
 - `App/project.yml` defines the Xcode project. After you add or rename files, run `xcodegen` in `App/`. The generated `VoiceOverAudioSplit.xcodeproj` opens normally in Xcode.
 - `App/Tools/make_icon.swift` redraws the app icon.
+- `App/Tests/` has unit tests for the logic that needs no hardware or permissions: the Text Analyzer, volume balance, ear routing for each layout, app rules, quiet and silence modes, speech on a second device, command keys, presets, and AppleScript quoting. Run them with Product > Test in Xcode, or:
+  ```bash
+  xcodebuild -project App/VoiceOverAudioSplit.xcodeproj -scheme VoiceOverAudioSplit -destination 'platform=macOS' test
+  ```
+- **CI** (GitHub Actions, `.github/workflows/ci.yml`) runs on every push and pull request. It checks that the Xcode project matches `project.yml`, builds the app in Debug and Release, runs the unit tests, and builds the script-version installer package. Test results and the installer are attached to each run.
 - Development builds have a self-test that tries device switching, the microphone mute and app matching inside the sandbox, then puts everything back:
   ```bash
   open -a "App/build/dd/Build/Products/Debug/VoiceOver Audio Split.app" --args --self-test

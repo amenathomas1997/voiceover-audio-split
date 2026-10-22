@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   app:
-    name: Build the app
+    name: Build and test the app
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +42,21 @@ jobs:
           xcodebuild -project App/VoiceOverAudioSplit.xcodeproj -scheme VoiceOverAudioSplit
           -configuration Release -destination 'platform=macOS' -derivedDataPath build/rel
           CODE_SIGNING_ALLOWED=NO build
+
+      # Unit tests run inside the app, so it is signed ad hoc (no certificates needed).
+      - name: Run unit tests
+        run: >
+          xcodebuild -project App/VoiceOverAudioSplit.xcodeproj -scheme VoiceOverAudioSplit
+          -destination 'platform=macOS' -derivedDataPath build/test -resultBundlePath build/TestResults.xcresult
+          CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= test
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/TestResults.xcresult
+          if-no-files-found: ignore
 
   installer:
     name: Build the script version installer

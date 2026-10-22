@@ -1,0 +1,161 @@
+// LogicTests.swift — checks the parts of the app that need no hardware,
+// permissions or VoiceOver, so they can run in CI.
+
+import XCTest
+@testable import VoiceOverAudioSplit
+
+final class TextAnalyzerTests: XCTestCase {
+    func testCleanTextHasNoProblems() {
+        let result = TextAnalyzer.analyze("This is clean text.\nIt has two lines.")
+        XCTAssertTrue(result.hasPrefix("No formatting problems found"), result)
+    }
+
+    func testFindsEachKindOfProblem() {
+        let result = TextAnalyzer.analyze("This  is is a test (with a problem .\nSecond line ")
+        XCTAssertTrue(result.hasPrefix("5 problems"), result)
+        XCTAssertTrue(result.contains("1 double space, first on line 1"), result)
+        XCTAssertTrue(result.contains("space before punctuation"), result)
+        XCTAssertTrue(result.contains("1 repeated word"), result)
+        XCTAssertTrue(result.contains("line ending in a space, first on line 2"), result)
+        XCTAssertTrue(result.contains("unmatched parentheses: 1 opening, 0 closing"), result)
+    }
+
+    func testOddStraightQuotes() {
+        XCTAssertTrue(TextAnalyzer.analyze("She said \"hello.").contains("odd number of straight quotes"))
+    }
+}
+
+final class MixerTests: XCTestCase {
+    override func tearDown() {
+        Mixer.sources = []
+        Mixer.speechDeviceChannel = nil
+        Mixer.state = Mixer.State()
+    }
+
+    func testBalanceOnlyTurnsTheQuieterSideDown() {
+        let even = Mixer.gains(balance: 0)
+        XCTAssertEqual(even.speech, 1)
+        XCTAssertEqual(even.others, 1)
+
+        let speechLouder = Mixer.gains(balance: 6)
+        XCTAssertEqual(speechLouder.speech, 1)
+        XCTAssertEqual(speechLouder.others, powf(10, -6.0 / 20), accuracy: 0.0001)
+
+        let othersLouder = Mixer.gains(balance: -12)
+        XCTAssertEqual(othersLouder.others, 1)
+        XCTAssertEqual(othersLouder.speech, powf(10, -12.0 / 20), accuracy: 0.0001)
+    }
+
+    func testSpeechLeftOtherSoundsRight() {
+        Mixer.sources = [.speech, .others]
+        Mixer.state = Mixer.State(split: .left)
+        // Speech (mono) only in the left channel.
+        XCTAssertEqual(Mixer.route(source: 0, channel: 0).fromLeft, 0.5)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 1).fromLeft, 0)
+        // Other sounds, mixed to mono, only in the right channel.
+        XCTAssertEqual(Mixer.route(source: 1, channel: 0).fromLeft, 0)
+        XCTAssertEqual(Mixer.route(source: 1, channel: 1).fromLeft, 0.5)
+        XCTAssertEqual(Mixer.route(source: 1, channel: 1).fromRight, 0.5)
+    }
+
+    func testSplitOffPlaysEverythingInBothEarsInStereo() {
+        Mixer.sources = [.speech, .others]
+        Mixer.state = Mixer.State(split: nil)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 0).fromLeft, 0.5)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 1).fromLeft, 0.5)
+        XCTAssertEqual(Mixer.route(source: 1, channel: 0).fromLeft, 1)
+        XCTAssertEqual(Mixer.route(source: 1, channel: 1).fromRight, 1)
+    }
+
+    func testQuietAndSilenceMuteTheRightSources() {
+        Mixer.sources = [.speech, .others]
+        Mixer.state = Mixer.State(split: .right, quietAll: true)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 1).fromLeft, 0.5, "VoiceOver stays audible in quiet mode")
+        XCTAssertEqual(Mixer.route(source: 1, channel: 0).fromLeft, 0, "other sounds are silent in quiet mode")
+
+        Mixer.state = Mixer.State(split: .right, speechMuted: true)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 1).fromLeft, 0, "VoiceOver is silent when silenced")
+        XCTAssertEqual(Mixer.route(source: 1, channel: 0).fromLeft, 0.5, "other sounds keep playing")
+    }
+
+    func testAppRuleVolumeMuteAndEar() {
+        Mixer.sources = [.speech, .others, .app("com.example.music")]
+        var rule = AppRule(name: "Music", bundleID: "com.example.music", volume: -6, ear: .right)
+        Mixer.state = Mixer.State(split: nil, appRules: [rule])
+        XCTAssertEqual(Mixer.route(source: 2, channel: 0).fromLeft, 0)
+        XCTAssertEqual(Mixer.route(source: 2, channel: 1).fromLeft, 0.5 * powf(10, -6.0 / 20), accuracy: 0.0001)
+
+        rule.muted = true
+        Mixer.state = Mixer.State(split: nil, appRules: [rule])
+        XCTAssertEqual(Mixer.route(source: 2, channel: 1).fromLeft, 0)
+    }
+
+    func testSpeechOnItsOwnDevice() {
+        Mixer.sources = [.speech, .others]
+        Mixer.speechDeviceChannel = 2
+        Mixer.state = Mixer.State(split: .left)
+        // Speech goes to both channels of the second device only.
+        XCTAssertEqual(Mixer.route(source: 0, channel: 0).fromLeft, 0)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 2).fromLeft, 0.5)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 3).fromLeft, 0.5)
+        // Other sounds stay on the main device, in stereo.
+        XCTAssertEqual(Mixer.route(source: 1, channel: 0).fromLeft, 1)
+        XCTAssertEqual(Mixer.route(source: 1, channel: 1).fromRight, 1)
+    }
+}
+
+final class CommandKeyTests: XCTestCase {
+    override func tearDown() {
+        KeyMap.update(custom: [:])
+    }
+
+    func testEveryCommandHasItsOwnDefaultKey() {
+        let keys = Command.allCases.map(\.defaultKey)
+        XCTAssertEqual(Set(keys).count, keys.count, "two commands share a default key")
+    }
+
+    func testDefaultKeysAreAssignableAndAvoidReservedKeys() {
+        for command in Command.allCases {
+            XCTAssertNotNil(Key.named(command.defaultKey), "\(command) has a key Settings can't show")
+            XCTAssertNil(Key.presetDigits[command.defaultKey], "\(command) uses a preset digit")
+            XCTAssertNotEqual(command.defaultKey, Key.slash, "\(command) uses the layer help key")
+        }
+    }
+
+    func testCustomKeyReplacesDefault() {
+        KeyMap.update(custom: [Command.systemStatus.rawValue: 40]) // K
+        XCTAssertEqual(KeyMap.commandForKey[40], .systemStatus)
+        XCTAssertNil(KeyMap.commandForKey[Command.systemStatus.defaultKey])
+        XCTAssertEqual(KeyMap.key(for: .systemStatus)?.name, "K")
+    }
+
+    func testLayerHelpListsEveryCommand() {
+        let spoken = KeyMap.spokenList
+        for command in Command.allCases {
+            XCTAssertTrue(spoken.contains(command.title), "layer help is missing \(command)")
+        }
+    }
+}
+
+final class SettingsModelTests: XCTestCase {
+    func testPresetsSurviveSaving() throws {
+        let data = try JSONEncoder().encode(Preset.defaults)
+        let decoded = try JSONDecoder().decode([Preset].self, from: data)
+        XCTAssertEqual(decoded, Preset.defaults)
+        XCTAssertEqual(decoded.map(\.name), ["Meeting", "Music", "Focus"])
+    }
+
+    func testAppRuleIsDefaultOnlyWhenNothingChanged() {
+        var rule = AppRule(name: "App", bundleID: "com.example.app")
+        XCTAssertTrue(rule.isDefault)
+        rule.volume = -3
+        XCTAssertFalse(rule.isDefault)
+        rule.volume = 0
+        rule.ear = .left
+        XCTAssertFalse(rule.isDefault)
+    }
+
+    func testAppleScriptQuotingEscapesQuotesAndBackslashes() {
+        XCTAssertEqual(VoiceOverText.quoted(#"Say "hi" \ bye"#), #""Say \"hi\" \\ bye""#)
+    }
+}

@@ -194,6 +194,11 @@ enum Mixer {
         routedSources = min(sources.count, maxSources)
     }
 
+    /// The current route from one source to one output channel (for tests).
+    static func route(source: Int, channel: Int) -> Route {
+        routes[source * maxChannels + channel]
+    }
+
     /// Positive balance makes speech louder than other sounds, negative the reverse.
     /// The quieter side is attenuated and the louder side stays at full volume, so nothing clips.
     static func gains(balance: Int) -> (speech: Float, others: Float) {

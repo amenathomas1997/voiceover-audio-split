@@ -28,6 +28,12 @@ targets:
         PRODUCT_MODULE_NAME: VoiceOverAudioSplit
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         COMBINE_HIDPI_IMAGES: YES
+      configs:
+        # Development builds get their own app ID, so macOS never confuses them with
+        # the installed app: permissions such as screen recording belong to one ID,
+        # and a test build with the same ID made screen capture check the wrong copy.
+        Debug:
+          PRODUCT_BUNDLE_IDENTIFIER: com.fullcircleat.VoiceOverAudioSplit.debug
     scheme:
       testTargets:
         - VoiceOverAudioSplitTests

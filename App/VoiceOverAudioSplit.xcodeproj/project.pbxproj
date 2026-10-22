@@ -395,7 +395,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.fullcircleat.VoiceOverAudioSplit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fullcircleat.VoiceOverAudioSplit.debug;
 				PRODUCT_MODULE_NAME = VoiceOverAudioSplit;
 				PRODUCT_NAME = "VoiceOver Audio Split";
 				SDKROOT = macosx;

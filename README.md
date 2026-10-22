@@ -1,8 +1,23 @@
 # VoiceOver Audio Split
 
 [![CI](https://github.com/amenathomas1997/voiceover-audio-split/actions/workflows/ci.yml/badge.svg)](https://github.com/amenathomas1997/voiceover-audio-split/actions/workflows/ci.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
-JAWS-style audio splitting for VoiceOver on the Mac. VoiceOver speech plays in one ear and all other sound (music, video, calls, system sounds) plays in the other ear.
+**JAWS-style audio splitting, and much more, for VoiceOver on the Mac.** VoiceOver's speech plays in one ear and everything else plays in the other. The app also brings over favorite features from JAWS, NVDA and SuperNova. Everything works from the keyboard.
+
+- **Audio split:** speech in one ear and other sounds in the other, with layouts, a volume balance, call handling and speech on a separate device.
+- **Sound control:** quiet everything but VoiceOver, set the volume of individual apps, switch output devices, mute the microphone, and use presets that switch automatically for each app.
+- **Hearing and clarity:** a speech clarity boost, leveling for loud media, a volume limit, one-ear mode and ear balance.
+- **Speech tools:** speech on demand, speech history, captions, say clipboard, and system status.
+- **Reading and low vision:** a large-print Doc Reader, camera text reading (Scan and Read), and a focus frame.
+- **Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.
+- **Optional AI:** image descriptions and an assistant, using Claude with your own API key.
+
+**Get it:** the public beta is on TestFlight. The link will be here when the beta is approved. It needs macOS 14.2 or later, and headphones are recommended.
+
+**Privacy:** nothing is collected or recorded. See the [privacy policy](PRIVACY.md).
+
+**Help and feedback:** [open an issue](https://github.com/amenathomas1997/voiceover-audio-split/issues/new/choose), or see [CONTRIBUTING.md](CONTRIBUTING.md) to help build it. Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## The app (Xcode project, TestFlight)
 
@@ -224,3 +239,9 @@ Toggle Start at Login turns automatic startup on or off. When it is on, the spli
   ```bash
   ~/Applications/"VO Audio Split.app"/Contents/MacOS/VOAudioSplit --list
   ```
+
+## License
+
+Copyright (C) 2026 Full Circle AT LLC.
+
+VoiceOver Audio Split is free software under the [GNU General Public License version 3](LICENSE) or later. It includes an [additional permission](NOTICE) that allows distribution through the App Store and TestFlight.

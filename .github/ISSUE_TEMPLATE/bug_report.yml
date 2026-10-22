@@ -1,0 +1,45 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for reporting this. Plain sentences are perfect; no special format is needed.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you pressed or did, and what you heard or saw.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to make it happen again
+      description: For example, "1. Turn the split on with Right Option and Left Arrow. 2. Open Zoom. 3. ..."
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: In Settings, under About, for example "1.0 (202610221631)".
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      description: In the Apple menu, under About This Mac.
+  - type: input
+    id: audio
+    attributes:
+      label: Headphones or speakers in use
+      description: For example, AirPods Pro, the MacBook speakers, or a USB headset.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Other apps that were open, VoiceOver settings, or anything else that might help.

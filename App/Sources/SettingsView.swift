@@ -255,9 +255,24 @@ struct SettingsView: View {
                 Text("Only the item under the VoiceOver cursor is sent, and only when you ask for a description.")
                     .font(.caption).foregroundStyle(.secondary)
             }
+
+            Section("About") {
+                Text("VoiceOver Audio Split \(Self.version)")
+                Text("Copyright 2026 Full Circle AT LLC. Free software under the GNU General Public License version 3.")
+                    .font(.caption).foregroundStyle(.secondary)
+                Link("Privacy policy", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split/blob/main/PRIVACY.md")!)
+                Link("Source code on GitHub", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split")!)
+                Link("Report a problem or suggest an idea", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split/issues/new/choose")!)
+            }
         }
         .formStyle(.grouped)
         .frame(width: 560, height: 720)
+    }
+
+    /// "1.0 (202610221631)": the version and build, as shown in App Store Connect.
+    static var version: String {
+        let info = Bundle.main.infoDictionary ?? [:]
+        return "\(info["CFBundleShortVersionString"] as? String ?? "?") (\(info["CFBundleVersion"] as? String ?? "?"))"
     }
 
     /// The command's key; choosing a key another command uses swaps their keys.

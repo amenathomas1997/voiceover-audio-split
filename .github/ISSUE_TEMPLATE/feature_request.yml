@@ -1,0 +1,15 @@
+name: Feature idea
+description: Suggest something new or a better way to do something
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like the app to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: How would it help you?
+      description: For example, a task that is hard today, or a feature you know from JAWS, NVDA or another tool.

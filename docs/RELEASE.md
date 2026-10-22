@@ -1,0 +1,67 @@
+# Releasing VoiceOver Audio Split
+
+Text to paste into App Store Connect, and the steps for a public TestFlight beta and the App Store.
+
+## 1. Before each upload
+
+1. In `App/project.yml`, set a higher `CURRENT_PROJECT_VERSION`. The date and time works well, for example `202610221631`. For a new public version, also raise `MARKETING_VERSION`, for example to `1.1`. Then run `xcodegen` in `App/`.
+2. Make sure CI passes on the commit.
+3. In Xcode, choose Product > Archive, then Distribute App, then App Store Connect. Or run `App/release.sh upload`.
+4. Add a section for the version to `CHANGELOG.md`.
+
+## 2. App Store Connect: app information
+
+- **Name:** VoiceOver Audio Split
+- **Subtitle (up to 30 characters):** Audio control for VoiceOver
+- **Category:** Utilities. Secondary category: Productivity.
+- **Privacy policy URL:** https://github.com/amenathomas1997/voiceover-audio-split/blob/main/PRIVACY.md
+- **Support URL:** https://github.com/amenathomas1997/voiceover-audio-split/issues
+- **Contact email:** amena.thomas@fullcircleat.com
+- **Copyright:** 2026 Full Circle AT LLC
+
+## 3. App privacy ("nutrition label")
+
+Answer **Data Not Collected**. The app has no accounts, analytics or tracking, and the developer receives no data. Optional features send requests directly from the user's Mac to third-party services, using the user's own API key for Anthropic. Those aren't collected by the developer. See PRIVACY.md.
+
+## 4. TestFlight: beta app description
+
+> VoiceOver Audio Split puts VoiceOver's speech in one ear and every other sound in the other, like the audio split in JAWS. It also lets you control your Mac's sound from the keyboard: quiet everything but VoiceOver, set the volume of individual apps, switch output devices, and mute the microphone. It adds hearing and clarity options, speech on demand and speech history, large-print reading and captions, camera text reading, and an audio hub for radio, podcasts, audiobooks and news. Everything works from the keyboard with Right Option and a key, and a setup guide walks you through each permission.
+
+## 5. TestFlight: what to test
+
+> Please try the split with headphones: Right Option + Left Arrow or Right Arrow. Then try Right Option + Space to hear what's on, and Right Option + M for the full menu. We'd especially like to hear how it works with your headphones, during Zoom, Teams or FaceTime calls, and with your own VoiceOver settings. Send feedback from the TestFlight app, or open an issue on GitHub.
+
+## 6. Beta App Review and App Review: notes
+
+Paste this into **Review Notes**. Reviewers often ask about these permissions:
+
+> VoiceOver Audio Split is an accessibility tool for blind and low-vision people who use the VoiceOver screen reader. It runs as a menu bar app. Open its menu with Right Option + M; a setup guide opens on first launch.
+>
+> Why each permission is needed:
+> - Accessibility: global keyboard shortcuts with the right Option key, so users can control the app from anywhere without a mouse. Only the app's own shortcut keys are acted on; all other keystrokes pass through untouched and are never stored.
+> - System audio recording (Core Audio process taps): VoiceOver's speech and other apps' sound are captured separately and played back immediately into different ears. Nothing is recorded or stored.
+> - Apple Events to VoiceOver (com.apple.security.temporary-exception.apple-events for com.apple.VoiceOver): VoiceOver ignores accessibility announcements from background apps, so the app asks VoiceOver to speak its status messages ("Speech left, other sounds right") in the user's own VoiceOver voice. It also reads VoiceOver's last phrase and cursor position for speech history, captions and the focus frame. These are VoiceOver's own documented AppleScript commands. No other app is controlled.
+> - Screen recording: only when the user asks to describe the image under the VoiceOver cursor.
+> - Camera: on-device text reading (Scan and Read) and a framing check before video calls. Pictures are never saved or sent.
+> - Network: optional lookups (Wikipedia, weather), the audio hub (radio, podcasts, LibriVox, news), and optional image descriptions with the user's own Anthropic API key.
+> - User-selected files (read-only): opening documents in the large-print Doc Reader.
+>
+> To test without VoiceOver: open the menu with Right Option + M, choose Speech Left, and play any audio. With VoiceOver on (Command + F5), VoiceOver's voice moves to the left ear and the other audio moves to the right ear.
+
+## 7. Export compliance
+
+The app's Info.plist sets `ITSAppUsesNonExemptEncryption` to `NO`. It uses only Apple's standard HTTPS, so no export documentation is needed.
+
+## 8. Public TestFlight link
+
+1. In App Store Connect, go to TestFlight > External Testing, and add a group, such as "Public beta".
+2. Add the build, and fill in the beta description, what to test, and the review notes above.
+3. Submit it for Beta App Review. This usually takes about a day.
+4. After it's approved, turn on **Public Link** for the group, and use that link in the announcement and on the website.
+
+## 9. App Store release
+
+When the beta is stable, go to App Store Connect > the app > the version, then:
+1. Add screenshots. For a menu bar app, use screenshots of the Settings, Doc Reader and Audio Hub windows.
+2. Add the description and the review notes above.
+3. Choose the build, and submit for review.

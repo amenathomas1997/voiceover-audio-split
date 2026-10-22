@@ -106,7 +106,7 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/SettingsView.swift` and `App/Sources/SetupGuideView.swift` are the two windows.
 - `App/Sources/Hotkeys.swift` handles Right Option + arrow keys.
 - `App/Sources/Announcer.swift` sends announcements to VoiceOver.
-- `App/project.yml` defines the Xcode project. After you add or rename files, run `xcodegen` in `App/`. The generated `VoiceOverAudioSplit.xcodeproj` opens normally in Xcode.
+- `App/project.yml` defines the Xcode project. After you add or rename files, run `xcodegen` in `App/` (version 2.45.4, the version CI uses). The generated `VoiceOverAudioSplit.xcodeproj` opens normally in Xcode.
 - `App/Tools/make_icon.swift` redraws the app icon.
 - `App/Tests/` has unit tests for the logic that needs no hardware or permissions: the Text Analyzer, volume balance, ear routing for each layout, app rules, quiet and silence modes, speech on a second device, command keys, presets, and AppleScript quoting. Run them with Product > Test in Xcode, or:
   ```bash

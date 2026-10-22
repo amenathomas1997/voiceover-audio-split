@@ -17,12 +17,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Pinned to the version the committed project was generated with: other
+      # versions write the files slightly differently, which would fail the check.
       - name: Install XcodeGen
-        run: brew install xcodegen
+        env:
+          XCODEGEN_VERSION: "2.45.4"
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/$XCODEGEN_VERSION/xcodegen.zip"
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/xcodegen/bin" >> "$GITHUB_PATH"
 
       - name: Check the Xcode project matches project.yml
         working-directory: App
         run: |
+          xcodegen --version
           xcodegen --quiet
           git diff --exit-code -- VoiceOverAudioSplit.xcodeproj || {
             echo "::error::VoiceOverAudioSplit.xcodeproj is out of date. Run 'xcodegen' in App/ and commit the result."

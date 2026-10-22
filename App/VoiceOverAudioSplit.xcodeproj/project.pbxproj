@@ -1,0 +1,363 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A1FD19BF9780FD08F310972 /* Mixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712B0A64C8C45245EEDA2DCD /* Mixer.swift */; };
+		225B61063558E7E948734724 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4D4325032A8A5C2F10B256 /* Controller.swift */; };
+		269348370431DB47D1C43D57 /* Announcer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143EEC48CDDA1B2D057D775C /* Announcer.swift */; };
+		2CEE7D82566DA7C7A6364698 /* Splitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51294BFC7A2A2C6B104F15D /* Splitter.swift */; };
+		3CC805809ABFF018748764F3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 760BD6D213BAE3CF4CB72D2B /* SettingsView.swift */; };
+		3F688EF3FAC6ABADD6E68D6E /* Tones.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53E734B886BBD455AE3C73C /* Tones.swift */; };
+		5081EC69FD1B5F7281A5DCCF /* SetupGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3770D09DFA7F496E78745E46 /* SetupGuideView.swift */; };
+		5EA74E064F5E1B977A27E763 /* AudioSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69090700658BA70CED135F66 /* AudioSystem.swift */; };
+		9D8145D7000441EBC7BF52F7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CB68A11755ECA695C614CED /* Assets.xcassets */; };
+		A7F07F23862E167A198DD830 /* Hotkeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D75DB9606C17C21FCC54CC /* Hotkeys.swift */; };
+		D89170B4CCBFA1F16381320F /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = C852C0F40A20291624C9ADE7 /* Preferences.swift */; };
+		FF6E56D14079FD5F8DB6A17E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E3CC6CC341E487E0870BEC /* AppDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0CB68A11755ECA695C614CED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		143EEC48CDDA1B2D057D775C /* Announcer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Announcer.swift; sourceTree = "<group>"; };
+		3770D09DFA7F496E78745E46 /* SetupGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupGuideView.swift; sourceTree = "<group>"; };
+		69090700658BA70CED135F66 /* AudioSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSystem.swift; sourceTree = "<group>"; };
+		712B0A64C8C45245EEDA2DCD /* Mixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mixer.swift; sourceTree = "<group>"; };
+		74E3CC6CC341E487E0870BEC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		760BD6D213BAE3CF4CB72D2B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		82D75DB9606C17C21FCC54CC /* Hotkeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hotkeys.swift; sourceTree = "<group>"; };
+		83622B4B6011C1F14CAF9584 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A51294BFC7A2A2C6B104F15D /* Splitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Splitter.swift; sourceTree = "<group>"; };
+		BB4D4325032A8A5C2F10B256 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
+		C7214CFBC7E24540688094FC /* VoiceOverAudioSplit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoiceOverAudioSplit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C852C0F40A20291624C9ADE7 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		CC87B6B853059399CDAD0BFE /* VoiceOverAudioSplit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VoiceOverAudioSplit.entitlements; sourceTree = "<group>"; };
+		E53E734B886BBD455AE3C73C /* Tones.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tones.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		487341E7DDC78063FDEAEDF9 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				143EEC48CDDA1B2D057D775C /* Announcer.swift */,
+				74E3CC6CC341E487E0870BEC /* AppDelegate.swift */,
+				69090700658BA70CED135F66 /* AudioSystem.swift */,
+				BB4D4325032A8A5C2F10B256 /* Controller.swift */,
+				82D75DB9606C17C21FCC54CC /* Hotkeys.swift */,
+				712B0A64C8C45245EEDA2DCD /* Mixer.swift */,
+				C852C0F40A20291624C9ADE7 /* Preferences.swift */,
+				760BD6D213BAE3CF4CB72D2B /* SettingsView.swift */,
+				3770D09DFA7F496E78745E46 /* SetupGuideView.swift */,
+				A51294BFC7A2A2C6B104F15D /* Splitter.swift */,
+				E53E734B886BBD455AE3C73C /* Tones.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		84DE479E61001765EEBCE47A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C7214CFBC7E24540688094FC /* VoiceOverAudioSplit.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ACE8A80BE1AD7BD2E39D2306 = {
+			isa = PBXGroup;
+			children = (
+				D92B2E55B49B35169C64CCE2 /* Resources */,
+				487341E7DDC78063FDEAEDF9 /* Sources */,
+				84DE479E61001765EEBCE47A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D92B2E55B49B35169C64CCE2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0CB68A11755ECA695C614CED /* Assets.xcassets */,
+				83622B4B6011C1F14CAF9584 /* Info.plist */,
+				CC87B6B853059399CDAD0BFE /* VoiceOverAudioSplit.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0418E3F06F7549BA0B79A3D4 /* VoiceOverAudioSplit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FDFB0617B44168E619E8FBCB /* Build configuration list for PBXNativeTarget "VoiceOverAudioSplit" */;
+			buildPhases = (
+				2FE5E134CAE7AEE58E7FCEDF /* Sources */,
+				338AA343D1ABF0085080D765 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VoiceOverAudioSplit;
+			packageProductDependencies = (
+			);
+			productName = VoiceOverAudioSplit;
+			productReference = C7214CFBC7E24540688094FC /* VoiceOverAudioSplit.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5591D3019971C823504E5BA6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					0418E3F06F7549BA0B79A3D4 = {
+						DevelopmentTeam = 9G2D7CDZ5D;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = F42F76A8BFFCC356EC94D2D8 /* Build configuration list for PBXProject "VoiceOverAudioSplit" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = ACE8A80BE1AD7BD2E39D2306;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 84DE479E61001765EEBCE47A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0418E3F06F7549BA0B79A3D4 /* VoiceOverAudioSplit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		338AA343D1ABF0085080D765 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D8145D7000441EBC7BF52F7 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2FE5E134CAE7AEE58E7FCEDF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				269348370431DB47D1C43D57 /* Announcer.swift in Sources */,
+				FF6E56D14079FD5F8DB6A17E /* AppDelegate.swift in Sources */,
+				5EA74E064F5E1B977A27E763 /* AudioSystem.swift in Sources */,
+				225B61063558E7E948734724 /* Controller.swift in Sources */,
+				A7F07F23862E167A198DD830 /* Hotkeys.swift in Sources */,
+				0A1FD19BF9780FD08F310972 /* Mixer.swift in Sources */,
+				D89170B4CCBFA1F16381320F /* Preferences.swift in Sources */,
+				3CC805809ABFF018748764F3 /* SettingsView.swift in Sources */,
+				5081EC69FD1B5F7281A5DCCF /* SetupGuideView.swift in Sources */,
+				2CEE7D82566DA7C7A6364698 /* Splitter.swift in Sources */,
+				3F688EF3FAC6ABADD6E68D6E /* Tones.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		47539C6C337201FDA5CE9E14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/VoiceOverAudioSplit.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fullcircleat.VoiceOverAudioSplit;
+				PRODUCT_NAME = "VoiceOver Audio Split";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9DCFE644BA28CD294CFD10C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F3C1A9918C5AA7B57FC3D972 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/VoiceOverAudioSplit.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fullcircleat.VoiceOverAudioSplit;
+				PRODUCT_NAME = "VoiceOver Audio Split";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F6AD34C68EDC788D001925AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F42F76A8BFFCC356EC94D2D8 /* Build configuration list for PBXProject "VoiceOverAudioSplit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9DCFE644BA28CD294CFD10C6 /* Debug */,
+				F6AD34C68EDC788D001925AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FDFB0617B44168E619E8FBCB /* Build configuration list for PBXNativeTarget "VoiceOverAudioSplit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3C1A9918C5AA7B57FC3D972 /* Debug */,
+				47539C6C337201FDA5CE9E14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5591D3019971C823504E5BA6 /* Project object */;
+}

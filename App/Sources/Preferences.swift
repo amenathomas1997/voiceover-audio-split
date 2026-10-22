@@ -1,0 +1,248 @@
+// Preferences.swift — every user setting, saved in UserDefaults. The settings
+// window binds to these directly; each change is pushed to the Controller.
+
+import Combine
+import Foundation
+
+/// Where speech and other sounds go when both play on the same device.
+enum Layout: String, Codable, CaseIterable, Identifiable {
+    /// Speech in one ear, other sounds in the other (like JAWS).
+    case opposite
+    /// Speech in both ears, other sounds in one ear.
+    case speechBoth
+    /// Other sounds in both ears, speech in one ear.
+    case othersBoth
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .opposite: "Speech in one ear, other sounds in the other"
+        case .speechBoth: "Speech in both ears, other sounds in one ear"
+        case .othersBoth: "Other sounds in both ears, speech in one ear"
+        }
+    }
+}
+
+/// How audio from call apps (Zoom, Teams, FaceTime…) is handled.
+enum CallMode: String, Codable, CaseIterable, Identifiable {
+    /// Treated like any other sound.
+    case split
+    /// Left alone: plays normally in both ears.
+    case bothEars
+    /// Goes to the speech ear along with VoiceOver.
+    case withSpeech
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .split: "Split like other sounds"
+        case .bothEars: "Keep in both ears"
+        case .withSpeech: "Put with VoiceOver speech"
+        }
+    }
+}
+
+/// The right-hand modifier key that triggers the shortcuts.
+enum ShortcutModifier: String, CaseIterable, Identifiable {
+    case option, command, control, shift
+
+    var id: String { rawValue }
+    var title: String { "Right \(rawValue.capitalized)" }
+}
+
+/// An app whose audio counts as a call. Matched by bundle ID prefix, because
+/// call apps often play audio from helper processes (us.zoom.caphost…).
+struct CallApp: Codable, Hashable, Identifiable {
+    var name: String
+    var bundleID: String
+    var id: String { bundleID }
+
+    static let defaults: [CallApp] = [
+        CallApp(name: "Zoom", bundleID: "us.zoom"),
+        CallApp(name: "Microsoft Teams", bundleID: "com.microsoft.teams"),
+        CallApp(name: "FaceTime", bundleID: "com.apple.FaceTime"),
+        CallApp(name: "FaceTime and phone calls", bundleID: "com.apple.avconferenced"),
+        CallApp(name: "Slack", bundleID: "com.tinyspeck.slackmacgap"),
+        CallApp(name: "Discord", bundleID: "com.hnc.Discord"),
+        CallApp(name: "Webex", bundleID: "Cisco-Systems.Spark"),
+        CallApp(name: "Skype", bundleID: "com.skype"),
+    ]
+}
+
+/// Which ear an app plays in.
+enum EarChoice: String, Codable, CaseIterable, Identifiable {
+    /// Goes wherever other sounds go (follows the split).
+    case follow, left, right, both
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .follow: "Same as other sounds"
+        case .left: "Left ear"
+        case .right: "Right ear"
+        case .both: "Both ears"
+        }
+    }
+}
+
+/// Play everything in one ear, for people who hear in only one ear.
+enum OneEar: String, Codable, CaseIterable, Identifiable {
+    case off, left, right
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .off: "Off"
+        case .left: "Everything in the left ear"
+        case .right: "Everything in the right ear"
+        }
+    }
+}
+
+/// Volume, mute and ear for one app. Matched by bundle ID prefix, like call apps.
+struct AppRule: Codable, Hashable, Identifiable {
+    var name: String
+    var bundleID: String
+    /// Decibels relative to normal: negative is quieter.
+    var volume: Int = 0
+    var muted = false
+    var ear: EarChoice = .follow
+
+    var id: String { bundleID }
+    /// A rule with nothing changed can be dropped.
+    var isDefault: Bool { volume == 0 && !muted && ear == .follow }
+}
+
+/// A saved combination of settings, applied with the shortcut key + a number.
+struct Preset: Codable, Hashable, Identifiable {
+    var id = UUID()
+    var name: String
+    /// "off", "left" or "right".
+    var split: String
+    var balance: Int
+    var layout: Layout
+    var stereoOthers: Bool
+    var ducking: Bool
+    var duckingAmount: Int
+    var callMode: CallMode
+    var clarity: Bool
+    var leveler: Bool
+    var volumeLimit: Bool
+    var volumeLimitLevel: Int
+    var oneEar: OneEar
+    var earBalance: Int
+
+    static let defaults: [Preset] = [
+        Preset(name: "Meeting", split: "left", balance: 6, layout: .opposite, stereoOthers: false, ducking: false,
+               duckingAmount: 10, callMode: .bothEars, clarity: true, leveler: true, volumeLimit: false,
+               volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
+        Preset(name: "Music", split: "off", balance: 0, layout: .opposite, stereoOthers: true, ducking: true,
+               duckingAmount: 9, callMode: .split, clarity: false, leveler: false, volumeLimit: false,
+               volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
+        Preset(name: "Focus", split: "left", balance: 9, layout: .opposite, stereoOthers: false, ducking: true,
+               duckingAmount: 15, callMode: .split, clarity: true, leveler: true, volumeLimit: false,
+               volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
+    ]
+}
+
+final class Preferences: ObservableObject {
+    static let shared = Preferences()
+    private let store = UserDefaults.standard
+
+    /// Called after any change, so the Controller can apply it.
+    var onChange: (() -> Void)?
+
+    @Published var layout: Layout { didSet { save(layout.rawValue, "layout") } }
+    /// Keep other sounds in stereo instead of mixing them to mono.
+    @Published var stereoOthers: Bool { didSet { save(stereoOthers, "stereoOthers") } }
+    /// Lower other sounds while VoiceOver is speaking.
+    @Published var ducking: Bool { didSet { save(ducking, "ducking") } }
+    /// How much to lower other sounds while VoiceOver speaks, in decibels.
+    @Published var duckingAmount: Int { didSet { save(duckingAmount, "duckingAmount") } }
+    /// Output device UID for speech, or "" to use the same device as other sounds.
+    @Published var speechDeviceUID: String { didSet { save(speechDeviceUID, "speechDeviceUID") } }
+    @Published var callMode: CallMode { didSet { save(callMode.rawValue, "callMode") } }
+    @Published var callApps: [CallApp] { didSet { save(try? JSONEncoder().encode(callApps), "callApps") } }
+    @Published var playTones: Bool { didSet { save(playTones, "playTones") } }
+    @Published var modifier: ShortcutModifier { didSet { save(modifier.rawValue, "modifier") } }
+    /// Decibels per Up / Down press.
+    @Published var balanceStep: Int { didSet { save(balanceStep, "balanceStep") } }
+    /// Largest balance either way, in decibels.
+    @Published var balanceLimit: Int { didSet { save(balanceLimit, "balanceLimit") } }
+    @Published var finishedSetup: Bool { didSet { save(finishedSetup, "finishedSetup") } }
+
+    /// Make VoiceOver speech easier to understand over other sounds.
+    @Published var clarity: Bool { didSet { save(clarity, "clarity") } }
+    /// Even out sudden loud moments in other sounds.
+    @Published var leveler: Bool { didSet { save(leveler, "leveler") } }
+    /// Keep the overall output below a set level.
+    @Published var volumeLimit: Bool { didSet { save(volumeLimit, "volumeLimit") } }
+    /// The limit, in decibels below full scale (for example -6).
+    @Published var volumeLimitLevel: Int { didSet { save(volumeLimitLevel, "volumeLimitLevel") } }
+    @Published var oneEar: OneEar { didSet { save(oneEar.rawValue, "oneEar") } }
+    /// Decibels: positive makes the right ear louder, negative the left.
+    @Published var earBalance: Int { didSet { save(earBalance, "earBalance") } }
+    @Published var appRules: [AppRule] { didSet { save(try? JSONEncoder().encode(appRules), "appRules") } }
+    @Published var presets: [Preset] { didSet { save(try? JSONEncoder().encode(presets), "presets") } }
+
+    private init() {
+        store.register(defaults: [
+            "layout": Layout.opposite.rawValue, "stereoOthers": false, "ducking": false, "duckingAmount": 10,
+            "speechDeviceUID": "", "callMode": CallMode.split.rawValue, "playTones": true,
+            "modifier": ShortcutModifier.option.rawValue, "balanceStep": 3, "balanceLimit": 18,
+            "finishedSetup": false, "clarity": false, "leveler": false, "volumeLimit": false,
+            "volumeLimitLevel": -6, "oneEar": OneEar.off.rawValue, "earBalance": 0,
+        ])
+        layout = Layout(rawValue: store.string(forKey: "layout") ?? "") ?? .opposite
+        stereoOthers = store.bool(forKey: "stereoOthers")
+        ducking = store.bool(forKey: "ducking")
+        duckingAmount = store.integer(forKey: "duckingAmount")
+        speechDeviceUID = store.string(forKey: "speechDeviceUID") ?? ""
+        callMode = CallMode(rawValue: store.string(forKey: "callMode") ?? "") ?? .split
+        callApps = store.data(forKey: "callApps").flatMap { try? JSONDecoder().decode([CallApp].self, from: $0) }
+            ?? CallApp.defaults
+        playTones = store.bool(forKey: "playTones")
+        modifier = ShortcutModifier(rawValue: store.string(forKey: "modifier") ?? "") ?? .option
+        balanceStep = store.integer(forKey: "balanceStep")
+        balanceLimit = store.integer(forKey: "balanceLimit")
+        finishedSetup = store.bool(forKey: "finishedSetup")
+        clarity = store.bool(forKey: "clarity")
+        leveler = store.bool(forKey: "leveler")
+        volumeLimit = store.bool(forKey: "volumeLimit")
+        volumeLimitLevel = store.integer(forKey: "volumeLimitLevel")
+        oneEar = OneEar(rawValue: store.string(forKey: "oneEar") ?? "") ?? .off
+        earBalance = store.integer(forKey: "earBalance")
+        appRules = store.data(forKey: "appRules").flatMap { try? JSONDecoder().decode([AppRule].self, from: $0) } ?? []
+        presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
+            ?? Preset.defaults
+    }
+
+    func rule(for bundleID: String) -> AppRule? {
+        appRules.first { $0.bundleID == bundleID }
+    }
+
+    /// Adds, changes or (when back to normal) removes an app's rule.
+    func setRule(_ rule: AppRule) {
+        var rules = appRules.filter { $0.bundleID != rule.bundleID }
+        if !rule.isDefault { rules.append(rule) }
+        appRules = rules.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    private var changePending = false
+
+    /// Saves a setting. Several changes in a row (applying a preset) are
+    /// reported to the Controller once.
+    private func save(_ value: Any?, _ key: String) {
+        store.set(value, forKey: key)
+        guard !changePending else { return }
+        changePending = true
+        DispatchQueue.main.async {
+            self.changePending = false
+            self.onChange?()
+        }
+    }
+}

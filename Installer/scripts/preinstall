@@ -1,0 +1,11 @@
+#!/bin/zsh
+# Runs before files are copied: stop any running copy so it can be replaced.
+# The package installs into the user's home folder, so this runs as that user.
+HOME_DIR="$2"
+launchctl bootout gui/$(id -u) "$HOME_DIR/Library/LaunchAgents/local.voaudiosplit.keys.plist" 2>/dev/null
+pkill -x VOAudioSplit 2>/dev/null
+pkill -x VOAudioSplitKeys 2>/dev/null
+# Remove copies from older versions that lived directly in ~/Applications.
+rm -rf "$HOME_DIR/Applications/VO Audio Split.app" "$HOME_DIR/Applications/VO Audio Split Keys.app"
+rm -rf "$HOME_DIR/Applications/VoiceOver Audio Split"
+exit 0

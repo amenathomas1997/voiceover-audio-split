@@ -1,0 +1,37 @@
+#!/bin/zsh
+# Runs after files are copied: start the keyboard shortcuts and keep them
+# running at every login, then open the settings page the user needs.
+HOME_DIR="$2"
+APP_DIR="$HOME_DIR/Applications/VoiceOver Audio Split"
+AGENT="$HOME_DIR/Library/LaunchAgents/local.voaudiosplit.keys.plist"
+
+mkdir -p "$HOME_DIR/Library/LaunchAgents" "$HOME_DIR/Library/Logs"
+cat > "$AGENT" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>local.voaudiosplit.keys</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>$APP_DIR/VO Audio Split Keys.app/Contents/MacOS/VOAudioSplitKeys</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>$HOME_DIR/Library/Logs/VOAudioSplitKeys.log</string>
+</dict>
+</plist>
+PLIST
+launchctl bootstrap gui/$(id -u) "$AGENT" 2>/dev/null
+
+# Register the apps so the scripts can find them by bundle ID straight away.
+LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+"$LSREGISTER" -f "$APP_DIR/VO Audio Split.app" "$APP_DIR/VO Audio Split Keys.app" 2>/dev/null
+
+# Open the Accessibility page so the user can allow the keyboard shortcuts.
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+exit 0

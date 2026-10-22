@@ -14,6 +14,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var settingsWindow: NSWindow?
     private var setupWindow: NSWindow?
     private var historyWindow: NSWindow?
+    private var assistantWindow: NSWindow?
+    private var researchWindow: NSWindow?
 
     static func main() {
         let app = NSApplication.shared
@@ -53,6 +55,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
             log("Self-test: speech history phrases = \(SpeechHistory.shared.phrases.count)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            log("Self-test: system status parts = \(SystemStatus.summary().components(separatedBy: ". ").count)")
+        }
+        log("Self-test: text analyzer = \(TextAnalyzer.analyze("This  is is a test (with a problem .\nSecond line "))")
+        log("Self-test: command keys = \(KeyMap.commandForKey.count) of \(Command.allCases.count)")
+        Task {
+            for (query, source) in [("accessibility", ResearchSource.definition), ("VoiceOver", .wikipedia), ("Chicago", .weather)] {
+                let answer = await Research.lookUp(query, in: source)
+                log("Self-test: \(source.title) = \(answer.prefix(70))")
+            }
         }
         let original = defaultOutputDevice()
         let picked = AudioSystem.nextOutputDevice()
@@ -105,6 +118,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         settingsWindow = show(settingsWindow, title: "VoiceOver Audio Split Settings", view: SettingsView())
     }
 
+    /// Opens the assistant. To describe an image, the picture is taken first and
+    /// the model opens the window afterwards, so VoiceOver's cursor stays on the image.
+    func showAssistant(describingImage: Bool) {
+        let model = AssistantModel.shared
+        model.showWindow = { [weak self] in
+            guard let self else { return }
+            self.assistantWindow = self.show(self.assistantWindow, title: "Assistant", view: AssistantView())
+        }
+        if describingImage { model.describeImage() } else { model.showWindow?() }
+    }
+
+    func showResearch() {
+        researchWindow = show(researchWindow, title: "Research It", view: ResearchView())
+    }
+
     func showHistory() {
         historyWindow = show(historyWindow, title: "Speech History", view: HistoryView())
     }
@@ -134,8 +162,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     // MARK: - Menu (rebuilt each time it opens so checkmarks are current)
 
-    private static func arrow(_ key: Int) -> String { String(Character(UnicodeScalar(key)!)) }
-
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
         let side = controller.activeSide
@@ -144,10 +170,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let status = NSMenuItem(title: controller.describeSplit(), action: nil, keyEquivalent: "")
         status.isEnabled = false
         menu.addItem(status)
-        add(to: menu, "Speech Left", key: Self.arrow(NSLeftArrowFunctionKey), checked: side == .left) { $0.setSide(.left) }
-        add(to: menu, "Speech Right", key: Self.arrow(NSRightArrowFunctionKey), checked: side == .right) { $0.setSide(.right) }
+        add(to: menu, "Speech Left", command: .speechLeft, checked: side == .left) { $0.setSide(.left) }
+        add(to: menu, "Speech Right", command: .speechRight, checked: side == .right) { $0.setSide(.right) }
         add(to: menu, "Audio Split Off", checked: side == nil) { $0.setSide(nil) }
-        add(to: menu, "What's On", key: " ") { $0.announceStatus() }
+        add(to: menu, "What's On", command: .status) { $0.announceStatus() }
         let layoutMenu = submenu(in: menu, "Layout")
         for layout in Layout.allCases {
             add(to: layoutMenu, layout.title, checked: preferences.layout == layout) { [preferences] controller in
@@ -161,14 +187,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let balance = NSMenuItem(title: Controller.describe(balance: controller.balance), action: nil, keyEquivalent: "")
         balance.isEnabled = false
         menu.addItem(balance)
-        add(to: menu, "Speech Louder", key: Self.arrow(NSUpArrowFunctionKey)) { [preferences] in
+        add(to: menu, "Speech Louder", command: .speechLouder) { [preferences] in
             $0.changeBalance(by: preferences.balanceStep)
         }
-        add(to: menu, "Other Sounds Louder", key: Self.arrow(NSDownArrowFunctionKey)) { [preferences] in
+        add(to: menu, "Other Sounds Louder", command: .othersLouder) { [preferences] in
             $0.changeBalance(by: -preferences.balanceStep)
         }
         add(to: menu, "Reset Volume Balance") { $0.resetBalance() }
-        add(to: menu, "Quiet Everything But VoiceOver", key: "q", checked: controller.quietAll) { $0.toggleQuiet() }
+        add(to: menu, "Quiet Everything But VoiceOver", command: .quiet, checked: controller.quietAll) { $0.toggleQuiet() }
         add(to: menu, "Lower Other Sounds While VoiceOver Speaks", checked: preferences.ducking) { [preferences] _ in
             preferences.ducking.toggle()
             Announcer.say(preferences.ducking ? "Other sounds lower while VoiceOver speaks" : "Other sounds stay at the same volume")
@@ -177,29 +203,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         // Apps
         let appName = controller.frontAppName ?? "Front App"
-        add(to: menu, "\(appName) Louder", key: "=") { $0.changeFrontAppVolume(by: 3) }
-        add(to: menu, "\(appName) Quieter", key: "-") { $0.changeFrontAppVolume(by: -3) }
-        add(to: menu, "Mute \(appName)", key: "0", checked: controller.frontAppMuted) { $0.toggleFrontAppMute() }
-        add(to: menu, "What's Playing", key: "w") { $0.announcePlaying() }
+        add(to: menu, "\(appName) Louder", command: .appLouder) { $0.changeFrontAppVolume(by: 3) }
+        add(to: menu, "\(appName) Quieter", command: .appQuieter) { $0.changeFrontAppVolume(by: -3) }
+        add(to: menu, "Mute \(appName)", command: .appMute, checked: controller.frontAppMuted) { $0.toggleFrontAppMute() }
+        add(to: menu, "What's Playing", command: .playing) { $0.announcePlaying() }
         menu.addItem(.separator())
 
         // Speech on demand and VoiceOver tools
-        add(to: menu, "Silence VoiceOver", key: "s", checked: controller.speechSilenced) { $0.toggleSilence() }
-        add(to: menu, "Read Item Under VoiceOver Cursor", key: "r") { $0.readItem() }
-        add(to: menu, "Speech History…", key: "h") { [weak self] _ in self?.showHistory() }
-        add(to: menu, "Say Clipboard", key: "c") { $0.sayClipboard() }
-        add(to: menu, "Check Camera Framing", key: "f") { $0.checkCamera() }
+        add(to: menu, "Silence VoiceOver", command: .silence, checked: controller.speechSilenced) { $0.toggleSilence() }
+        add(to: menu, "Read Item Under VoiceOver Cursor", command: .readItem) { $0.readItem() }
+        add(to: menu, "Speech History…", command: .history) { [weak self] _ in self?.showHistory() }
+        add(to: menu, "Say Clipboard", command: .clipboard) { $0.sayClipboard() }
+        add(to: menu, "Check Camera Framing", command: .camera) { $0.checkCamera() }
+        menu.addItem(.separator())
+
+        // Help and research
+        add(to: menu, "Describe Image Under VoiceOver Cursor", command: .describeImage) { $0.run(.describeImage) }
+        add(to: menu, "Ask the Assistant…", command: .assistant) { $0.run(.assistant) }
+        add(to: menu, "Analyze Clipboard Text", command: .analyzeText) { $0.analyzeClipboard() }
+        add(to: menu, "Research It…", command: .research) { $0.run(.research) }
+        add(to: menu, "System Status", command: .systemStatus) { $0.announceSystemStatus() }
         menu.addItem(.separator())
 
         // Devices
-        add(to: menu, "Next Output Device", key: "d") { $0.nextOutputDevice() }
-        add(to: menu, "Mute Microphone", key: "x", checked: AudioSystem.isMicMuted) { $0.toggleMicrophone() }
+        add(to: menu, "Next Output Device", command: .device) { $0.nextOutputDevice() }
+        add(to: menu, "Mute Microphone", command: .microphone, checked: AudioSystem.isMicMuted) { $0.toggleMicrophone() }
         menu.addItem(.separator())
 
         // Presets, hearing and clarity
         let presetsMenu = submenu(in: menu, "Presets")
         for (index, preset) in preferences.presets.enumerated() {
-            add(to: presetsMenu, preset.name, key: index < 9 ? "\(index + 1)" : nil) { $0.applyPreset(preset) }
+            add(to: presetsMenu, preset.name, equivalent: index < 9 ? "\(index + 1)" : nil) { $0.applyPreset(preset) }
         }
         if !preferences.presets.isEmpty { presetsMenu.addItem(.separator()) }
         add(to: presetsMenu, "Save or Edit Presets in Settings…") { [weak self] _ in self?.showSettings() }
@@ -248,12 +282,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
-    /// Adds an item; `key` shows the shortcut (chosen modifier + key) beside it.
-    private func add(to menu: NSMenu, _ title: String, key: String? = nil, checked: Bool = false,
-                     action: @escaping (Controller) -> Void) {
+    /// Adds an item; a command shows its current shortcut (chosen modifier + key) beside it.
+    private func add(to menu: NSMenu, _ title: String, command: Command? = nil, equivalent: String? = nil,
+                     checked: Bool = false, action: @escaping (Controller) -> Void) {
         let item = ClosureMenuItem(title: title) { [controller] in action(controller) }
         item.state = checked ? .on : .off
-        if let key {
+        if let key = equivalent ?? command.flatMap({ KeyMap.key(for: $0)?.equivalent }) {
             item.keyEquivalent = key
             item.keyEquivalentModifierMask = switch preferences.modifier {
             case .option: .option

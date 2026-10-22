@@ -10,6 +10,9 @@ struct SettingsView: View {
     @State private var appToAdd = ""
     @State private var ruleAppToAdd = ""
     @State private var newPresetName = ""
+    @State private var presetAppToAdd = ""
+    @State private var apiKey = ""
+    @State private var hasAPIKey = APIKey.current != nil
 
     var body: some View {
         Form {
@@ -122,6 +125,38 @@ struct SettingsView: View {
                 Button("Restore default presets") { preferences.presets = Preset.defaults }
             }
 
+            Section("Automatic presets") {
+                Text("Switch to a preset whenever an app comes to the front, for example Meeting for Zoom.")
+                    .font(.caption).foregroundStyle(.secondary)
+                ForEach(preferences.appPresets.keys.sorted(), id: \.self) { bundleID in
+                    HStack {
+                        Picker(appName(bundleID), selection: appPresetBinding(bundleID)) {
+                            ForEach(preferences.presets) { Text($0.name).tag($0.id.uuidString) }
+                        }
+                        Button("Remove \(appName(bundleID))") { preferences.appPresets[bundleID] = nil }
+                    }
+                }
+                HStack {
+                    Picker("Add an app", selection: $presetAppToAdd) {
+                        Text("Choose an open app").tag("")
+                        ForEach(openApps.filter { preferences.appPresets[$0.bundleID] == nil }, id: \.bundleID) {
+                            Text($0.name).tag($0.bundleID)
+                        }
+                    }
+                    Button("Add") {
+                        if let first = preferences.presets.first, !presetAppToAdd.isEmpty {
+                            preferences.appPresets[presetAppToAdd] = first.id.uuidString
+                            presetAppToAdd = ""
+                        }
+                    }
+                    .disabled(presetAppToAdd.isEmpty || preferences.presets.isEmpty)
+                }
+                Picker("All other apps", selection: $preferences.otherAppsPreset) {
+                    Text("Keep current settings").tag("")
+                    ForEach(preferences.presets) { Text($0.name).tag($0.id.uuidString) }
+                }
+            }
+
             Section("Calls") {
                 Picker("Call audio", selection: $preferences.callMode) {
                     ForEach(CallMode.allCases) { Text($0.title).tag($0) }
@@ -155,16 +190,77 @@ struct SettingsView: View {
                 Picker("Shortcut key", selection: $preferences.modifier) {
                     ForEach(ShortcutModifier.allCases) { Text($0.title).tag($0) }
                 }
-Text("Hold it with: arrow keys for the split and volume, Space to hear what is on, M for the menu, Q to quiet everything but VoiceOver, W to hear what is playing, equals, minus and zero for the app in front, D for the next output device, X to mute the microphone, 1 to 9 for presets, S to silence VoiceOver, R to read the item under the VoiceOver cursor, H for speech history, C to hear the clipboard, F to check camera framing, and L for the layer: after L, press any of these keys on its own. The key of the same kind on the left keeps working normally.")
+                Text("Hold it with a command's key below, or press the layer key first and then the command's key on its own. Digits 1 to 9 switch presets. The key of the same kind on the left keeps working normally.")
                     .font(.caption).foregroundStyle(.secondary)
                 Toggle("Play a short tone with each change", isOn: $preferences.playTones)
                 Toggle("Keep speech history", isOn: $preferences.speechHistory)
                 Text("Keeps a list of what VoiceOver says, in memory only, to review and copy from the Speech History window.")
                     .font(.caption).foregroundStyle(.secondary)
             }
+
+            Section("Command keys") {
+                ForEach(Command.allCases) { command in
+                    Picker(command.title, selection: keyBinding(command)) {
+                        ForEach(Key.assignable) { Text($0.name).tag($0.code) }
+                    }
+                }
+                Button("Restore default keys") { preferences.customKeys = [:] }
+                Text("Choosing a key another command uses swaps the two commands' keys.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
+            Section("Assistant and image descriptions") {
+                Text(hasAPIKey ? "An Anthropic API key is saved in your Keychain." :
+                        "The assistant and image descriptions use Claude. Paste an API key from console.anthropic.com. Requests are billed to that account.")
+                SecureField(hasAPIKey ? "Replace API key" : "API key", text: $apiKey)
+                HStack {
+                    Button("Save key") {
+                        APIKey.save(apiKey.trimmingCharacters(in: .whitespacesAndNewlines))
+                        apiKey = ""
+                        hasAPIKey = APIKey.current != nil
+                        Announcer.say("Key saved")
+                    }
+                    .disabled(apiKey.isEmpty)
+                    Button("Remove key") {
+                        APIKey.save("")
+                        hasAPIKey = false
+                        Announcer.say("Key removed")
+                    }
+                    .disabled(!hasAPIKey)
+                }
+                Toggle("Allow sending pictures of the screen for image descriptions", isOn: $preferences.allowImageUpload)
+                Text("Only the item under the VoiceOver cursor is sent, and only when you ask for a description.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
         }
         .formStyle(.grouped)
         .frame(width: 560, height: 720)
+    }
+
+    /// The command's key; choosing a key another command uses swaps their keys.
+    private func keyBinding(_ command: Command) -> Binding<Int64> {
+        Binding(
+            get: { KeyMap.key(for: command)?.code ?? command.defaultKey },
+            set: { newKey in
+                var keys = preferences.customKeys
+                let oldKey = KeyMap.key(for: command)?.code ?? command.defaultKey
+                if let other = KeyMap.commandForKey[newKey], other != command { keys[other.rawValue] = oldKey }
+                keys[command.rawValue] = newKey
+                // Keep only real changes, so restoring a default key leaves nothing saved.
+                preferences.customKeys = keys.filter { id, key in Command(rawValue: id)?.defaultKey != key }
+                KeyMap.update(custom: preferences.customKeys)
+            })
+    }
+
+    private func appPresetBinding(_ bundleID: String) -> Binding<String> {
+        Binding(get: { preferences.appPresets[bundleID] ?? "" },
+                set: { preferences.appPresets[bundleID] = $0 })
+    }
+
+    private func appName(_ bundleID: String) -> String {
+        NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID)
+            .map { FileManager.default.displayName(atPath: $0.path).replacingOccurrences(of: ".app", with: "") }
+            ?? bundleID
     }
 
     private var earBalanceTitle: String {

@@ -29,6 +29,13 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + C | Says what's on the clipboard: text, file names, or "An image" |
 | Right Option + F | Checks camera framing before a video call: whether your face is centered, at a good distance, and well lit |
 | Right Option + L | Layer: press the next key on its own to run its command. Slash lists the layer keys; Escape cancels. |
+| Right Option + I | Describes the image under the VoiceOver cursor using Claude, with follow-up questions in the Assistant window (like JAWS Picture Smart AI) |
+| Right Option + A | Opens the Assistant to ask about using the Mac and VoiceOver (like FS Companion) |
+| Right Option + T | Analyzes the text on the clipboard for formatting problems (like JAWS Text Analyzer) |
+| Right Option + G | Opens Research It: dictionary definitions, Wikipedia summaries, and weather |
+| Right Option + B | System status: time, battery, network, output device and volume, microphone |
+
+Every key can be changed in Settings, under Command keys (like JAWS Keyboard Manager). Choosing a key another command uses swaps the two commands' keys. Digits 1 to 9 always switch presets, and slash always lists the layer keys.
 
 You can change Right Option to Right Command, Right Control or Right Shift in Settings. The key of the same kind on the left keeps working normally. Each change plays a short tone, from the side it describes, and then VoiceOver announces it.
 
@@ -69,6 +76,10 @@ You can change Right Option to Right Command, Right Control or Right Shift in Se
 2. System audio recording, for the split. The guide has a button that turns the split on to trigger the request.
 3. VoiceOver's "Allow VoiceOver to be controlled with AppleScript" setting, with a button that tests announcements.
 
+**Automatic presets:** in Settings, under Automatic presets, choose a preset for any app, such as Meeting for Zoom. The app switches to it whenever that app comes to the front. You can also choose a preset for all other apps.
+
+**Assistant and image descriptions** use Claude (`claude-opus-5-5`) through the Anthropic API. Add an API key from console.anthropic.com in Settings. It's stored in your Keychain, and requests are billed to that account. Image descriptions send a picture of only the item under the VoiceOver cursor, only when you ask, and only after you allow it once. The picture is taken before the window opens, so VoiceOver's cursor stays on the image. Taking the picture needs screen recording permission. Requests use Anthropic's server-side fallback, so a safety decline is retried on another model instead of failing. **Research It** uses the Mac's built-in dictionary (offline), Wikipedia, and Open-Meteo for weather (free, no account). **Text Analyzer** and **system status** work entirely on the Mac.
+
 **Features inspired by JAWS:** silencing VoiceOver with Read Item on request works like JAWS speech on demand. While VoiceOver is silenced, the app's own announcements use the system voice. Speech history works like the JAWS speech history: it reads VoiceOver's last phrase a few times a second, keeps up to 300 phrases in memory, and never saves them to disk. The camera check works like JAWS Face in View. Pictures are analyzed on the Mac with Apple's Vision framework and never saved or sent anywhere. Speech history and Read Item need "Allow VoiceOver to be controlled with AppleScript".
 
 **AirPods automatic switching:** when AirPods are in your ears and an app such as Zoom is using audio, macOS can take the sound back to the AirPods a second or two after you switch away. For 20 seconds after you press D, the app puts your choice back, up to eight times. If macOS keeps taking it back, VoiceOver explains how to stop it. In System Settings, open your AirPods and set "Connect to This Mac" to "When Last Connected to This Mac".
@@ -88,6 +99,8 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/Mixer.swift` routes each captured sound to each ear or device, and processes it in real time: ducking, speech clarity, leveling, the one-ear mix, ear balance and the volume limit.
 - `App/Sources/AudioSystem.swift` handles output device switching, the microphone mute and "what's playing".
 - `App/Sources/SpeechTools.swift` has speech history, Read Item and Say Clipboard. It also sends every AppleScript request to VoiceOver through one queue, because NSAppleScript isn't safe to use from several threads at once.
+- `App/Sources/Commands.swift` lists every command, its default key, and the keys it can move to. `App/Sources/Hotkeys.swift` turns key presses into commands.
+- `App/Sources/Assistant.swift` has the Claude client, the API key in the Keychain, the screen capture, and the Assistant window. `App/Sources/Research.swift` is Research It. `App/Sources/SystemStatus.swift` has system status and the Text Analyzer.
 - `App/Sources/FaceCheck.swift` is the camera framing check, and `App/Sources/HistoryView.swift` is the Speech History window.
 - `App/Sources/Tones.swift` plays the confirmation tones.
 - `App/Sources/SettingsView.swift` and `App/Sources/SetupGuideView.swift` are the two windows.

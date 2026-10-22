@@ -188,6 +188,14 @@ final class Preferences: ObservableObject {
     @Published var earBalance: Int { didSet { save(earBalance, "earBalance") } }
     @Published var appRules: [AppRule] { didSet { save(try? JSONEncoder().encode(appRules), "appRules") } }
     @Published var presets: [Preset] { didSet { save(try? JSONEncoder().encode(presets), "presets") } }
+    /// Keys changed from their defaults in Settings, by command ID.
+    @Published var customKeys: [String: Int64] { didSet { save(customKeys, "customKeys") } }
+    /// Preset to switch to when an app comes to the front, by bundle ID (preset IDs as strings).
+    @Published var appPresets: [String: String] { didSet { save(appPresets, "appPresets") } }
+    /// Preset for apps without their own, or "" for none.
+    @Published var otherAppsPreset: String { didSet { save(otherAppsPreset, "otherAppsPreset") } }
+    /// Allowed sending pictures of the screen to Anthropic for descriptions.
+    @Published var allowImageUpload: Bool { didSet { save(allowImageUpload, "allowImageUpload") } }
     /// Keep a list of what VoiceOver says, to review with the history window.
     @Published var speechHistory: Bool { didSet { save(speechHistory, "speechHistory") } }
 
@@ -220,6 +228,11 @@ final class Preferences: ObservableObject {
         earBalance = store.integer(forKey: "earBalance")
         appRules = store.data(forKey: "appRules").flatMap { try? JSONDecoder().decode([AppRule].self, from: $0) } ?? []
         speechHistory = store.bool(forKey: "speechHistory")
+        customKeys = (store.dictionary(forKey: "customKeys") as? [String: Int64])
+            ?? (store.dictionary(forKey: "customKeys") as? [String: Int])?.mapValues(Int64.init) ?? [:]
+        appPresets = store.dictionary(forKey: "appPresets") as? [String: String] ?? [:]
+        otherAppsPreset = store.string(forKey: "otherAppsPreset") ?? ""
+        allowImageUpload = store.bool(forKey: "allowImageUpload")
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
             ?? Preset.defaults
     }

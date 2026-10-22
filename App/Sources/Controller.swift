@@ -57,6 +57,7 @@ final class Controller {
         preferences.onChange = { [weak self] in self?.update() }
         watchFrontApp()
         AudioSystem.start()
+        SystemStatus.start()
         update()
     }
 
@@ -95,6 +96,7 @@ final class Controller {
         Mixer.earGainLeft = ear > 0 ? powf(10, -ear / 20) : 1
         Mixer.earGainRight = ear < 0 ? powf(10, ear / 20) : 1
         Hotkeys.modifier = preferences.modifier
+        KeyMap.update(custom: preferences.customKeys)
         Announcer.useSystemVoice = speechSilenced
         SpeechHistory.shared.update(enabled: preferences.speechHistory)
 
@@ -215,6 +217,41 @@ final class Controller {
         Announcer.say(quietAll ? "Everything but VoiceOver is quiet" : "Other sounds back")
     }
 
+    // MARK: - Commands
+
+    /// Runs a keyboard command (from a shortcut, the layer, or the menu).
+    func run(_ command: Command) {
+        let app = NSApp.delegate as? AppDelegate
+        switch command {
+        case .speechLeft: toggle(.left)
+        case .speechRight: toggle(.right)
+        case .speechLouder: changeBalance(by: preferences.balanceStep)
+        case .othersLouder: changeBalance(by: -preferences.balanceStep)
+        case .status: announceStatus()
+        case .menu: app?.popUpMenu()
+        case .quiet: toggleQuiet()
+        case .playing: announcePlaying()
+        case .appLouder: changeFrontAppVolume(by: 3)
+        case .appQuieter: changeFrontAppVolume(by: -3)
+        case .appMute: toggleFrontAppMute()
+        case .device: nextOutputDevice()
+        case .microphone: toggleMicrophone()
+        case .silence: toggleSilence()
+        case .readItem: readItem()
+        case .history: app?.showHistory()
+        case .clipboard: sayClipboard()
+        case .camera: checkCamera()
+        case .layer:
+            Tones.play(.status)
+            Announcer.say("Layer")
+        case .describeImage: app?.showAssistant(describingImage: true)
+        case .assistant: app?.showAssistant(describingImage: false)
+        case .analyzeText: analyzeClipboard()
+        case .research: app?.showResearch()
+        case .systemStatus: announceSystemStatus()
+        }
+    }
+
     // MARK: - Speech on demand
 
     /// Silences VoiceOver's voice, or brings it back. VoiceOver keeps working;
@@ -244,6 +281,19 @@ final class Controller {
         Announcer.say(Clipboard.describe())
     }
 
+    func announceSystemStatus() {
+        Tones.play(.status)
+        Announcer.say(SystemStatus.summary())
+    }
+
+    func analyzeClipboard() {
+        guard let text = NSPasteboard.general.string(forType: .string), !text.isEmpty else {
+            return Announcer.say("Copy some text first, then analyze it")
+        }
+        Tones.play(.status)
+        Announcer.say(TextAnalyzer.analyze(text))
+    }
+
     func checkCamera() {
         Tones.play(.status)
         Announcer.say("Checking the camera")
@@ -263,11 +313,31 @@ final class Controller {
             forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main
         ) { [weak self] note in
             let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
-            if !isMe(app) { self?.frontApp = app }
+            if !isMe(app) {
+                self?.frontApp = app
+                self?.applyAutomaticPreset(for: app)
+            }
         }
     }
 
     var frontAppName: String? { frontApp?.localizedName }
+
+    /// The preset last switched on automatically, so switching between apps that
+    /// share a preset doesn't announce it again.
+    private var automaticPresetID: String?
+
+    /// Switches to the preset chosen for this app in Settings, or the one for all
+    /// other apps. Apps with neither leave the current settings alone.
+    private func applyAutomaticPreset(for app: NSRunningApplication?) {
+        guard let bundleID = app?.bundleIdentifier else { return }
+        let presetID = preferences.appPresets[bundleID]
+            ?? (preferences.otherAppsPreset.isEmpty ? nil : preferences.otherAppsPreset)
+        guard let presetID, presetID != automaticPresetID,
+              let preset = preferences.presets.first(where: { $0.id.uuidString == presetID }) else { return }
+        automaticPresetID = presetID
+        log("Automatic preset \(preset.name) for \(bundleID).")
+        applyPreset(preset)
+    }
 
     var frontAppMuted: Bool {
         frontApp?.bundleIdentifier.flatMap { preferences.rule(for: $0) }?.muted ?? false

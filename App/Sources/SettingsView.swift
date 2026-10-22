@@ -155,9 +155,12 @@ struct SettingsView: View {
                 Picker("Shortcut key", selection: $preferences.modifier) {
                     ForEach(ShortcutModifier.allCases) { Text($0.title).tag($0) }
                 }
-Text("Hold it with: arrow keys for the split and volume, Space to hear what is on, M for the menu, Q to quiet everything but VoiceOver, W to hear what is playing, equals, minus and zero for the app in front, D for the next output device, X to mute the microphone, and 1 to 9 for presets. The key of the same kind on the left keeps working normally.")
+Text("Hold it with: arrow keys for the split and volume, Space to hear what is on, M for the menu, Q to quiet everything but VoiceOver, W to hear what is playing, equals, minus and zero for the app in front, D for the next output device, X to mute the microphone, 1 to 9 for presets, S to silence VoiceOver, R to read the item under the VoiceOver cursor, H for speech history, C to hear the clipboard, F to check camera framing, and L for the layer: after L, press any of these keys on its own. The key of the same kind on the left keeps working normally.")
                     .font(.caption).foregroundStyle(.secondary)
                 Toggle("Play a short tone with each change", isOn: $preferences.playTones)
+                Toggle("Keep speech history", isOn: $preferences.speechHistory)
+                Text("Keeps a list of what VoiceOver says, in memory only, to review and copy from the Speech History window.")
+                    .font(.caption).foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

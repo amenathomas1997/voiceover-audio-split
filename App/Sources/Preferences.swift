@@ -188,6 +188,8 @@ final class Preferences: ObservableObject {
     @Published var earBalance: Int { didSet { save(earBalance, "earBalance") } }
     @Published var appRules: [AppRule] { didSet { save(try? JSONEncoder().encode(appRules), "appRules") } }
     @Published var presets: [Preset] { didSet { save(try? JSONEncoder().encode(presets), "presets") } }
+    /// Keep a list of what VoiceOver says, to review with the history window.
+    @Published var speechHistory: Bool { didSet { save(speechHistory, "speechHistory") } }
 
     private init() {
         store.register(defaults: [
@@ -195,7 +197,7 @@ final class Preferences: ObservableObject {
             "speechDeviceUID": "", "callMode": CallMode.split.rawValue, "playTones": true,
             "modifier": ShortcutModifier.option.rawValue, "balanceStep": 3, "balanceLimit": 18,
             "finishedSetup": false, "clarity": false, "leveler": false, "volumeLimit": false,
-            "volumeLimitLevel": -6, "oneEar": OneEar.off.rawValue, "earBalance": 0,
+            "volumeLimitLevel": -6, "oneEar": OneEar.off.rawValue, "earBalance": 0, "speechHistory": true,
         ])
         layout = Layout(rawValue: store.string(forKey: "layout") ?? "") ?? .opposite
         stereoOthers = store.bool(forKey: "stereoOthers")
@@ -217,6 +219,7 @@ final class Preferences: ObservableObject {
         oneEar = OneEar(rawValue: store.string(forKey: "oneEar") ?? "") ?? .off
         earBalance = store.integer(forKey: "earBalance")
         appRules = store.data(forKey: "appRules").flatMap { try? JSONDecoder().decode([AppRule].self, from: $0) } ?? []
+        speechHistory = store.bool(forKey: "speechHistory")
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
             ?? Preset.defaults
     }

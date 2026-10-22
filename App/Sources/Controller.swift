@@ -43,6 +43,9 @@ final class Controller {
     /// Everything except VoiceOver silenced. Not saved: a restart brings sound back.
     private(set) var quietAll = false
 
+    /// VoiceOver's voice silenced (speech on demand). Not saved, for the same reason.
+    private(set) var speechSilenced = false
+
     var startsAtLogin: Bool { SMAppService.mainApp.status == .enabled }
 
     private func clamp(_ value: Int) -> Int {
@@ -61,7 +64,7 @@ final class Controller {
 
     /// Whether any feature needs captured audio right now.
     private var engineNeeded: Bool {
-        activeSide != nil || quietAll || preferences.clarity || preferences.leveler || preferences.volumeLimit
+        activeSide != nil || quietAll || speechSilenced || preferences.clarity || preferences.leveler || preferences.volumeLimit
             || preferences.oneEar != .off || preferences.earBalance != 0 || !preferences.appRules.isEmpty
             || (preferences.ducking && activeSide != nil)
     }
@@ -79,7 +82,8 @@ final class Controller {
         Mixer.state = Mixer.State(split: activeSide, layout: preferences.layout,
                                   stereoOthers: preferences.stereoOthers,
                                   speechGain: gains.speech, othersGain: gains.others,
-                                  quietAll: quietAll, appRules: preferences.appRules)
+                                  quietAll: quietAll, speechMuted: speechSilenced,
+                                  appRules: preferences.appRules)
         Mixer.duckingEnabled = preferences.ducking && activeSide != nil
         Mixer.duckGain = powf(10, -Float(preferences.duckingAmount) / 20)
         Mixer.clarityEnabled = preferences.clarity
@@ -91,6 +95,8 @@ final class Controller {
         Mixer.earGainLeft = ear > 0 ? powf(10, -ear / 20) : 1
         Mixer.earGainRight = ear < 0 ? powf(10, ear / 20) : 1
         Hotkeys.modifier = preferences.modifier
+        Announcer.useSystemVoice = speechSilenced
+        SpeechHistory.shared.update(enabled: preferences.speechHistory)
 
         if !engineNeeded {
             if splitter != nil { log("Audio capture off.") }
@@ -166,6 +172,7 @@ final class Controller {
             if preferences.ducking { parts.append("Other sounds lower while VoiceOver speaks") }
         }
         if quietAll { parts.append("Everything but VoiceOver is quiet") }
+        if speechSilenced { parts.append("VoiceOver is silenced") }
         if preferences.oneEar != .off { parts.append(preferences.oneEar.title) }
         if preferences.clarity { parts.append("Speech clarity on") }
         if preferences.leveler { parts.append("Loud media evened out") }
@@ -206,6 +213,41 @@ final class Controller {
         update()
         Tones.play(quietAll ? .quiet : .unquiet)
         Announcer.say(quietAll ? "Everything but VoiceOver is quiet" : "Other sounds back")
+    }
+
+    // MARK: - Speech on demand
+
+    /// Silences VoiceOver's voice, or brings it back. VoiceOver keeps working;
+    /// use Read Item to hear the item under the VoiceOver cursor while silenced.
+    func toggleSilence() {
+        speechSilenced.toggle()
+        update()
+        Tones.play(speechSilenced ? .quiet : .unquiet)
+        Announcer.say(speechSilenced ? "VoiceOver silenced. Read item speaks on request." : "VoiceOver speaking")
+    }
+
+    /// Speaks the item under the VoiceOver cursor.
+    func readItem() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let text = VoiceOverText.itemUnderCursor()
+            DispatchQueue.main.async {
+                guard let text, !text.isEmpty else {
+                    return Announcer.say("Nothing to read. Check that VoiceOver allows AppleScript control.")
+                }
+                Announcer.say(text)
+            }
+        }
+    }
+
+    func sayClipboard() {
+        Tones.play(.status)
+        Announcer.say(Clipboard.describe())
+    }
+
+    func checkCamera() {
+        Tones.play(.status)
+        Announcer.say("Checking the camera")
+        FaceCheck.shared.run { message in Announcer.say(message) }
     }
 
     // MARK: - Front app

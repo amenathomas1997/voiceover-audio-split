@@ -30,6 +30,8 @@
 	<false/>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>VoiceOver Audio Split asks VoiceOver to announce changes, such as which ear speech is in, using your VoiceOver voice.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>VoiceOver Audio Split checks whether your face is centered and well lit before a video call. Pictures are only analyzed on this Mac and never saved.</string>
 	<key>NSAudioCaptureUsageDescription</key>
 	<string>VoiceOver Audio Split moves VoiceOver speech to one ear and all other sounds to the other ear. Nothing is recorded or saved.</string>
 </dict>

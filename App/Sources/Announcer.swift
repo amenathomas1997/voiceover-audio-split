@@ -11,10 +11,12 @@ import AVFoundation
 enum Announcer {
     private static let synthesizer = AVSpeechSynthesizer()
     private static let queue = DispatchQueue(label: "VoiceOverAudioSplit.announcer")
+    /// While VoiceOver is silenced its voice can't be heard, so use the system voice.
+    nonisolated(unsafe) static var useSystemVoice = false
 
     static func say(_ text: String) {
         queue.async {
-            if NSWorkspace.shared.isVoiceOverEnabled && sendToVoiceOver(text) { return }
+            if !useSystemVoice && NSWorkspace.shared.isVoiceOverEnabled && sendToVoiceOver(text) { return }
             DispatchQueue.main.async {
                 synthesizer.stopSpeaking(at: .immediate)
                 synthesizer.speak(AVSpeechUtterance(string: text))
@@ -31,11 +33,6 @@ enum Announcer {
     }
 
     private static func sendToVoiceOver(_ text: String) -> Bool {
-        let escaped = text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
-        var error: NSDictionary?
-        NSAppleScript(source: "tell application id \"com.apple.VoiceOver\" to output \"\(escaped)\"")?
-            .executeAndReturnError(&error)
-        if let error { log("VoiceOver announcement failed: \(error)") }
-        return error == nil
+        VoiceOverText.run("output " + VoiceOverText.quoted(text)) != nil
     }
 }

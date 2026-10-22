@@ -58,7 +58,7 @@ enum AudioSystem {
             guard current != choice.device, outputDevices().contains(where: { $0.id == choice.device }),
                   outputDevices().contains(where: { $0.id == current }) else { return }
             let taker = outputDevices().first { $0.id == current }?.name ?? "Another device"
-            if choice.restores < 3 {
+            if choice.restores < 8 {
                 held?.restores += 1
                 log("Output taken back by \(taker); restoring the chosen device.")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { setDefaultOutput(choice.device) }

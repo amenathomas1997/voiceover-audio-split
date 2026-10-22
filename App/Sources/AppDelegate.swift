@@ -13,6 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let preferences = Preferences.shared
     private var settingsWindow: NSWindow?
     private var setupWindow: NSWindow?
+    private var historyWindow: NSWindow?
 
     static func main() {
         let app = NSApplication.shared
@@ -45,6 +46,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func selfTest() {
         log("Self-test: playing = \(AudioSystem.appsPlaying())")
         log("Self-test: output devices = \(outputDevices().map(\.name))")
+        // Lengths and counts only: never log what was copied or spoken.
+        log("Self-test: clipboard description length = \(Clipboard.describe().count)")
+        DispatchQueue.global().async {
+            log("Self-test: item under VoiceOver cursor length = \(VoiceOverText.itemUnderCursor()?.count ?? -1)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+            log("Self-test: speech history phrases = \(SpeechHistory.shared.phrases.count)")
+        }
         let original = defaultOutputDevice()
         let picked = AudioSystem.nextOutputDevice()
         log("Self-test: next output = \(picked ?? "failed")")
@@ -94,6 +103,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func showSettings() {
         settingsWindow = show(settingsWindow, title: "VoiceOver Audio Split Settings", view: SettingsView())
+    }
+
+    func showHistory() {
+        historyWindow = show(historyWindow, title: "Speech History", view: HistoryView())
     }
 
     private func showSetupGuide() {
@@ -168,6 +181,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: menu, "\(appName) Quieter", key: "-") { $0.changeFrontAppVolume(by: -3) }
         add(to: menu, "Mute \(appName)", key: "0", checked: controller.frontAppMuted) { $0.toggleFrontAppMute() }
         add(to: menu, "What's Playing", key: "w") { $0.announcePlaying() }
+        menu.addItem(.separator())
+
+        // Speech on demand and VoiceOver tools
+        add(to: menu, "Silence VoiceOver", key: "s", checked: controller.speechSilenced) { $0.toggleSilence() }
+        add(to: menu, "Read Item Under VoiceOver Cursor", key: "r") { $0.readItem() }
+        add(to: menu, "Speech History…", key: "h") { [weak self] _ in self?.showHistory() }
+        add(to: menu, "Say Clipboard", key: "c") { $0.sayClipboard() }
+        add(to: menu, "Check Camera Framing", key: "f") { $0.checkCamera() }
         menu.addItem(.separator())
 
         // Devices

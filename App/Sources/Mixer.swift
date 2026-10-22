@@ -34,6 +34,8 @@ enum Mixer {
         var othersGain: Float = 1
         /// Silence everything except VoiceOver.
         var quietAll = false
+        /// Silence VoiceOver's voice (speech on demand).
+        var speechMuted = false
         var appRules: [AppRule] = []
     }
 
@@ -154,7 +156,7 @@ enum Mixer {
             switch source {
             case .speech:
                 speechFlags[index] = true
-                gain = s.speechGain
+                gain = s.speechMuted ? 0 : s.speechGain
                 if separateSpeech, let base = speechDeviceChannel {
                     placement = place(.both, stereo: false, base: base)
                 } else if s.split == nil || s.layout == .speechBoth {

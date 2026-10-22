@@ -23,6 +23,12 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + D | Switches to the next output device and says its name. Virtual devices such as ZoomAudioDevice are skipped. |
 | Right Option + X | Mutes or unmutes every microphone at once |
 | Right Option + 1 to 9 | Switches to a preset |
+| Right Option + S | Silences VoiceOver's voice while VoiceOver keeps working (speech on demand). Press again to bring it back. |
+| Right Option + R | Speaks the item under the VoiceOver cursor, even while VoiceOver is silenced |
+| Right Option + H | Opens Speech History: what VoiceOver said recently, newest first, to review and copy |
+| Right Option + C | Says what's on the clipboard: text, file names, or "An image" |
+| Right Option + F | Checks camera framing before a video call: whether your face is centered, at a good distance, and well lit |
+| Right Option + L | Layer: press the next key on its own to run its command. Slash lists the layer keys; Escape cancels. |
 
 You can change Right Option to Right Command, Right Control or Right Shift in Settings. The key of the same kind on the left keeps working normally. Each change plays a short tone, from the side it describes, and then VoiceOver announces it.
 
@@ -63,7 +69,9 @@ You can change Right Option to Right Command, Right Control or Right Shift in Se
 2. System audio recording, for the split. The guide has a button that turns the split on to trigger the request.
 3. VoiceOver's "Allow VoiceOver to be controlled with AppleScript" setting, with a button that tests announcements.
 
-**AirPods automatic switching:** when AirPods are in your ears and an app such as Zoom is using audio, macOS can take the sound back to the AirPods a second or two after you switch away. For 20 seconds after you press D, the app puts your choice back, up to three times. If macOS keeps taking it back, VoiceOver explains how to stop it. In System Settings, open your AirPods and set "Connect to This Mac" to "When Last Connected to This Mac".
+**Features inspired by JAWS:** silencing VoiceOver with Read Item on request works like JAWS speech on demand. While VoiceOver is silenced, the app's own announcements use the system voice. Speech history works like the JAWS speech history: it reads VoiceOver's last phrase a few times a second, keeps up to 300 phrases in memory, and never saves them to disk. The camera check works like JAWS Face in View. Pictures are analyzed on the Mac with Apple's Vision framework and never saved or sent anywhere. Speech history and Read Item need "Allow VoiceOver to be controlled with AppleScript".
+
+**AirPods automatic switching:** when AirPods are in your ears and an app such as Zoom is using audio, macOS can take the sound back to the AirPods a second or two after you switch away. For 20 seconds after you press D, the app puts your choice back, up to eight times. If macOS keeps taking it back, VoiceOver explains how to stop it. In System Settings, open your AirPods and set "Connect to This Mac" to "When Last Connected to This Mac".
 
 **Microphone mute covers every microphone,** because automatic switching can change the active one at any moment. A microphone that connects or becomes active while you're muted is muted straight away. Muting also lasts through a restart of the app.
 
@@ -79,6 +87,8 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/Splitter.swift` captures the audio, using Core Audio process taps.
 - `App/Sources/Mixer.swift` routes each captured sound to each ear or device, and processes it in real time: ducking, speech clarity, leveling, the one-ear mix, ear balance and the volume limit.
 - `App/Sources/AudioSystem.swift` handles output device switching, the microphone mute and "what's playing".
+- `App/Sources/SpeechTools.swift` has speech history, Read Item and Say Clipboard. It also sends every AppleScript request to VoiceOver through one queue, because NSAppleScript isn't safe to use from several threads at once.
+- `App/Sources/FaceCheck.swift` is the camera framing check, and `App/Sources/HistoryView.swift` is the Speech History window.
 - `App/Sources/Tones.swift` plays the confirmation tones.
 - `App/Sources/SettingsView.swift` and `App/Sources/SetupGuideView.swift` are the two windows.
 - `App/Sources/Hotkeys.swift` handles Right Option + arrow keys.

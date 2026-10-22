@@ -61,6 +61,9 @@ struct SetupGuideView: View {
                 Text("Q: quiet everything but VoiceOver. W: hear which apps are playing.")
                 Text("Equals and minus: the app in front louder or quieter. Zero: mute it.")
                 Text("D: next output device. X: mute the microphone. 1 to 9: presets.")
+                Text("S: silence VoiceOver. R: read the item under the VoiceOver cursor. H: speech history.")
+                Text("C: hear the clipboard. F: check camera framing for video calls.")
+                Text("L: layer. After it, press any of these keys on its own. Slash lists them; Escape cancels.")
                 Text("The same menu is also in the menu bar as a headphones icon, if there is room for it. Opening the app again from Spotlight or Finder opens Settings.")
             }
 

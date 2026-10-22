@@ -59,6 +59,8 @@ final class Controller {
         AudioSystem.start()
         SystemStatus.start()
         update()
+        if preferences.captionsOn { Captions.show() }
+        if preferences.focusFrameOn { FocusFrame.show() }
     }
 
     // MARK: - Engine
@@ -98,6 +100,7 @@ final class Controller {
         Hotkeys.modifier = preferences.modifier
         KeyMap.update(custom: preferences.customKeys)
         Announcer.useSystemVoice = speechSilenced
+        AudioHub.shared.applyMix(othersGain: activeSide == nil ? 1 : gains.others, quiet: quietAll)
         SpeechHistory.shared.update(enabled: preferences.speechHistory)
 
         if !engineNeeded {
@@ -249,6 +252,12 @@ final class Controller {
         case .analyzeText: analyzeClipboard()
         case .research: app?.showResearch()
         case .systemStatus: announceSystemStatus()
+        case .docReader: app?.showDocReader()
+        case .scanAndRead: app?.showScan()
+        case .captions: toggleCaptions()
+        case .focusFrame: toggleFocusFrame()
+        case .audioHub: app?.showAudioHub()
+        case .hubPlayPause: AudioHub.shared.togglePlay()
         }
     }
 
@@ -279,6 +288,18 @@ final class Controller {
     func sayClipboard() {
         Tones.play(.status)
         Announcer.say(Clipboard.describe())
+    }
+
+    func toggleCaptions() {
+        if Captions.isShowing { Captions.hide() } else { Captions.show() }
+        preferences.captionsOn = Captions.isShowing
+        Announcer.say(Captions.isShowing ? "Captions on" : "Captions off")
+    }
+
+    func toggleFocusFrame() {
+        if FocusFrame.isShowing { FocusFrame.hide() } else { FocusFrame.show() }
+        preferences.focusFrameOn = FocusFrame.isShowing
+        Announcer.say(FocusFrame.isShowing ? "Focus frame on" : "Focus frame off")
     }
 
     func announceSystemStatus() {

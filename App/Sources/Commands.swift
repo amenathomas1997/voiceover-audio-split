@@ -10,6 +10,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case quiet, playing, appLouder, appQuieter, appMute, device, microphone
     case silence, readItem, history, clipboard, camera, layer
     case describeImage, assistant, analyzeText, research, systemStatus
+    case docReader, scanAndRead, captions, focusFrame, audioHub, hubPlayPause
 
     var id: String { rawValue }
 
@@ -39,6 +40,12 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .analyzeText: "Analyze clipboard text"
         case .research: "Research It"
         case .systemStatus: "System status"
+        case .docReader: "Doc Reader"
+        case .scanAndRead: "Scan and Read"
+        case .captions: "Large-print captions"
+        case .focusFrame: "Focus frame"
+        case .audioHub: "Audio hub"
+        case .hubPlayPause: "Audio hub play or pause"
         }
     }
 
@@ -68,6 +75,12 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .analyzeText: 17
         case .research: 5
         case .systemStatus: 11
+        case .docReader: 31
+        case .scanAndRead: 45
+        case .captions: 32
+        case .focusFrame: 16
+        case .audioHub: 35
+        case .hubPlayPause: 38
         }
     }
 }

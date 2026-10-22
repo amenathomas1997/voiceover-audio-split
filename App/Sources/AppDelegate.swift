@@ -16,6 +16,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var historyWindow: NSWindow?
     private var assistantWindow: NSWindow?
     private var researchWindow: NSWindow?
+    private var docReaderWindow: NSWindow?
+    private var scanWindow: NSWindow?
+    private var audioHubWindow: NSWindow?
 
     static func main() {
         let app = NSApplication.shared
@@ -28,6 +31,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Under unit tests the app only hosts the test bundle: no menu, audio or shortcuts.
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
+        #if DEBUG
+        if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        #endif
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "headphones", accessibilityDescription: "VoiceOver Audio Split")
@@ -45,6 +51,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     #if DEBUG
+    /// Development builds only: checks text recognition and the online services
+    /// without starting shortcuts, audio capture or VoiceOver scripting (so no
+    /// permission prompts), logs the results, and quits.
+    /// Run with: open -a <app> --args --check-online
+    private func checkOnline() {
+        Task { @MainActor in
+            let image = NSImage(size: NSSize(width: 900, height: 200), flipped: false) { rect in
+                NSColor.white.setFill()
+                rect.fill()
+                ("Scan and Read works on this Mac" as NSString).draw(
+                    at: NSPoint(x: 40, y: 80), withAttributes: [.font: NSFont.systemFont(ofSize: 48)])
+                return true
+            }
+            let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
+            log("Check: OCR = \(TextRecognition.text(in: cgImage))")
+            let hub = AudioHub.shared
+            for (query, source) in [("jazz", HubSource.radio), ("accessibility", .podcasts), ("pride", .audiobooks), ("", .news)] {
+                let found = (try? await hub.find(query, in: source)) ?? []
+                log("Check: \(source.title) = \(found.count) results, first: \(found.first?.title ?? "none")")
+                if source == .audiobooks, case .feed(let url)? = found.first?.kind,
+                   let data = try? await URLSession.shared.data(from: url).0 {
+                    log("Check: first audiobook chapters = \(RSSFeed.parse(data).filter { $0.audio != nil }.count)")
+                }
+            }
+            NSApp.terminate(nil)
+        }
+    }
+
     /// Development builds only: tries the Mac-wide controls inside the sandbox
     /// and puts everything back. Run with: open -a <app> --args --self-test
     private func selfTest() {
@@ -129,6 +163,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self.assistantWindow = self.show(self.assistantWindow, title: "Assistant", view: AssistantView())
         }
         if describingImage { model.describeImage() } else { model.showWindow?() }
+    }
+
+    func showDocReader() {
+        docReaderWindow = show(docReaderWindow, title: "Doc Reader", view: DocReaderView())
+        docReaderWindow?.styleMask.insert(.resizable)
+    }
+
+    func showScan() {
+        scanWindow = show(scanWindow, title: "Scan and Read", view: ScanView())
+    }
+
+    func showAudioHub() {
+        audioHubWindow = show(audioHubWindow, title: "Audio Hub", view: AudioHubView())
     }
 
     func showResearch() {
@@ -225,6 +272,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: menu, "Analyze Clipboard Text", command: .analyzeText) { $0.analyzeClipboard() }
         add(to: menu, "Research It…", command: .research) { $0.run(.research) }
         add(to: menu, "System Status", command: .systemStatus) { $0.announceSystemStatus() }
+        menu.addItem(.separator())
+
+        // Reading, low vision and listening
+        add(to: menu, "Doc Reader…", command: .docReader) { $0.run(.docReader) }
+        add(to: menu, "Scan and Read…", command: .scanAndRead) { $0.run(.scanAndRead) }
+        add(to: menu, "Large-Print Captions", command: .captions, checked: Captions.isShowing) { $0.toggleCaptions() }
+        add(to: menu, "Focus Frame", command: .focusFrame, checked: FocusFrame.isShowing) { $0.toggleFocusFrame() }
+        add(to: menu, "Audio Hub…", command: .audioHub) { $0.run(.audioHub) }
+        if let title = AudioHub.shared.nowPlaying {
+            add(to: menu, AudioHub.shared.playing ? "Pause \(title)" : "Play \(title)", command: .hubPlayPause) {
+                _ in AudioHub.shared.togglePlay()
+            }
+        }
         menu.addItem(.separator())
 
         // Devices

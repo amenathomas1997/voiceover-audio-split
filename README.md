@@ -34,6 +34,12 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + T | Analyzes the text on the clipboard for formatting problems (like JAWS Text Analyzer) |
 | Right Option + G | Opens Research It: dictionary definitions, Wikipedia summaries, and weather |
 | Right Option + B | System status: time, battery, network, output device and volume, microphone |
+| Right Option + O | Doc Reader: large-print reading window that reads aloud and highlights each word (like SuperNova Doc Reader) |
+| Right Option + N | Scan and Read: hold a page up to the camera and hear its text, with spoken guidance; also reads image files and PDFs |
+| Right Option + U | Large-print captions of what VoiceOver says, in a floating strip |
+| Right Option + Y | Focus frame: a thick, colored frame that follows the VoiceOver cursor |
+| Right Option + P | Audio hub: internet radio, podcasts, LibriVox audiobooks, news headlines (like SuperNova Connect) |
+| Right Option + J | Play or pause the audio hub |
 
 Every key can be changed in Settings, under Command keys (like JAWS Keyboard Manager). Choosing a key another command uses swaps the two commands' keys. Digits 1 to 9 always switch presets, and slash always lists the layer keys.
 
@@ -80,6 +86,13 @@ You can change Right Option to Right Command, Right Control or Right Shift in Se
 
 **Assistant and image descriptions** use Claude (`claude-opus-5-5`) through the Anthropic API. Add an API key from console.anthropic.com in Settings. It's stored in your Keychain, and requests are billed to that account. Image descriptions send a picture of only the item under the VoiceOver cursor, only when you ask, and only after you allow it once. The picture is taken before the window opens, so VoiceOver's cursor stays on the image. Taking the picture needs screen recording permission. Requests use Anthropic's server-side fallback, so a safety decline is retried on another model instead of failing. **Research It** uses the Mac's built-in dictionary (offline), Wikipedia, and Open-Meteo for weather (free, no account). **Text Analyzer** and **system status** work entirely on the Mac.
 
+**Reading and low vision (inspired by SuperNova):**
+- **Doc Reader** shows text in large print in your choice of colors: yellow on black, white on black, black on white, or black on yellow. It reads the text aloud and highlights each word as it's spoken. Command + Return reads or pauses. Command + Left and Right Arrow move by sentence, and Command + Up and Down Arrow move by paragraph. It opens text, Word, RTF, HTML and PDF files, or reads the clipboard.
+- **Scan and Read** watches the camera and gives spoken guidance, such as "Text is cut off. Move the page to your left" or "hold the page closer". It reads the text once the page is steady. It also reads image files and PDFs, including scanned pages. All text recognition runs on the Mac with Apple's Vision framework.
+- **Captions** and the **focus frame** float above every window and let clicks through. They're left out of screen pictures, so they never appear in image descriptions. Both settings are kept after a restart. Settings > Low vision has the colors, caption size, and frame color and thickness, plus an option to flash the frame when it moves.
+
+**Audio hub:** one window for internet radio (the free Radio Browser directory), podcasts (Apple's podcast directory, then each show's episodes), free audiobooks (LibriVox, chapter by chapter, found by title or author) and news headlines (RSS feeds you can add to; BBC and NPR are included). It needs no accounts. The app can't capture its own sound, because that would feed back into itself, so hub audio isn't moved by the split. It does go silent in quiet mode and follows the balance between speech and other sounds.
+
 **Features inspired by JAWS:** silencing VoiceOver with Read Item on request works like JAWS speech on demand. While VoiceOver is silenced, the app's own announcements use the system voice. Speech history works like the JAWS speech history: it reads VoiceOver's last phrase a few times a second, keeps up to 300 phrases in memory, and never saves them to disk. The camera check works like JAWS Face in View. Pictures are analyzed on the Mac with Apple's Vision framework and never saved or sent anywhere. Speech history and Read Item need "Allow VoiceOver to be controlled with AppleScript".
 
 **AirPods automatic switching:** when AirPods are in your ears and an app such as Zoom is using audio, macOS can take the sound back to the AirPods a second or two after you switch away. For 20 seconds after you press D, the app puts your choice back, up to eight times. If macOS keeps taking it back, VoiceOver explains how to stop it. In System Settings, open your AirPods and set "Connect to This Mac" to "When Last Connected to This Mac".
@@ -101,6 +114,11 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/SpeechTools.swift` has speech history, Read Item and Say Clipboard. It also sends every AppleScript request to VoiceOver through one queue, because NSAppleScript isn't safe to use from several threads at once.
 - `App/Sources/Commands.swift` lists every command, its default key, and the keys it can move to. `App/Sources/Hotkeys.swift` turns key presses into commands.
 - `App/Sources/Assistant.swift` has the Claude client, the API key in the Keychain, the screen capture, and the Assistant window. `App/Sources/Research.swift` is Research It. `App/Sources/SystemStatus.swift` has system status and the Text Analyzer.
+- `App/Sources/DocReader.swift`, `App/Sources/ScanReader.swift`, `App/Sources/LowVision.swift` (captions and the focus frame) and `App/Sources/AudioHub.swift` are the reading, low-vision and audio hub features.
+- Development builds can check text recognition and the online services without any permission prompts:
+  ```bash
+  open -a "App/build/dd/Build/Products/Debug/VoiceOver Audio Split.app" --args --check-online
+  ```
 - `App/Sources/FaceCheck.swift` is the camera framing check, and `App/Sources/HistoryView.swift` is the Speech History window.
 - `App/Sources/Tones.swift` plays the confirmation tones.
 - `App/Sources/SettingsView.swift` and `App/Sources/SetupGuideView.swift` are the two windows.
@@ -108,7 +126,7 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/Announcer.swift` sends announcements to VoiceOver.
 - `App/project.yml` defines the Xcode project. After you add or rename files, run `xcodegen` in `App/` (version 2.45.4, the version CI uses). The generated `VoiceOverAudioSplit.xcodeproj` opens normally in Xcode.
 - `App/Tools/make_icon.swift` redraws the app icon.
-- `App/Tests/` has unit tests for the logic that needs no hardware or permissions: the Text Analyzer, volume balance, ear routing for each layout, app rules, quiet and silence modes, speech on a second device, command keys, presets, and AppleScript quoting. Run them with Product > Test in Xcode, or:
+- `App/Tests/` has unit tests for the logic that needs no hardware or permissions: the Text Analyzer, volume balance, ear routing for each layout, app rules, quiet and silence modes, speech on a second device, command keys, presets, AppleScript quoting, Doc Reader sentence and paragraph steps, Scan and Read guidance, and RSS feed reading. Run them with Product > Test in Xcode, or:
   ```bash
   xcodebuild -project App/VoiceOverAudioSplit.xcodeproj -scheme VoiceOverAudioSplit -destination 'platform=macOS' test
   ```

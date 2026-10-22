@@ -149,6 +149,30 @@ struct Preset: Codable, Hashable, Identifiable {
     ]
 }
 
+/// High-contrast color pairs for large-print text (Doc Reader, captions).
+enum ReadingTheme: String, Codable, CaseIterable, Identifiable {
+    case blackOnWhite, whiteOnBlack, yellowOnBlack, blackOnYellow
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .blackOnWhite: "Black on white"
+        case .whiteOnBlack: "White on black"
+        case .yellowOnBlack: "Yellow on black"
+        case .blackOnYellow: "Black on yellow"
+        }
+    }
+}
+
+/// Colors for the focus frame.
+enum FrameColor: String, Codable, CaseIterable, Identifiable {
+    case yellow, red, magenta, cyan, green, orange
+
+    var id: String { rawValue }
+    var title: String { rawValue.capitalized }
+}
+
 final class Preferences: ObservableObject {
     static let shared = Preferences()
     private let store = UserDefaults.standard
@@ -196,6 +220,19 @@ final class Preferences: ObservableObject {
     @Published var otherAppsPreset: String { didSet { save(otherAppsPreset, "otherAppsPreset") } }
     /// Allowed sending pictures of the screen to Anthropic for descriptions.
     @Published var allowImageUpload: Bool { didSet { save(allowImageUpload, "allowImageUpload") } }
+    @Published var readingTheme: ReadingTheme { didSet { save(readingTheme.rawValue, "readingTheme") } }
+    @Published var readerFontSize: Int { didSet { save(readerFontSize, "readerFontSize") } }
+    @Published var readerLineSpacing: Int { didSet { save(readerLineSpacing, "readerLineSpacing") } }
+    /// Words per minute for the Doc Reader, as a fraction of the system range (0 to 1).
+    @Published var readerRate: Double { didSet { save(readerRate, "readerRate") } }
+    @Published var captionsOn: Bool { didSet { save(captionsOn, "captionsOn") } }
+    @Published var captionSize: Int { didSet { save(captionSize, "captionSize") } }
+    @Published var focusFrameOn: Bool { didSet { save(focusFrameOn, "focusFrameOn") } }
+    @Published var focusFrameColor: FrameColor { didSet { save(focusFrameColor.rawValue, "focusFrameColor") } }
+    @Published var focusFrameThickness: Int { didSet { save(focusFrameThickness, "focusFrameThickness") } }
+    @Published var focusFrameFlash: Bool { didSet { save(focusFrameFlash, "focusFrameFlash") } }
+    /// News feeds for the audio hub (RSS addresses).
+    @Published var newsFeeds: [String] { didSet { save(newsFeeds, "newsFeeds") } }
     /// Keep a list of what VoiceOver says, to review with the history window.
     @Published var speechHistory: Bool { didSet { save(speechHistory, "speechHistory") } }
 
@@ -206,6 +243,10 @@ final class Preferences: ObservableObject {
             "modifier": ShortcutModifier.option.rawValue, "balanceStep": 3, "balanceLimit": 18,
             "finishedSetup": false, "clarity": false, "leveler": false, "volumeLimit": false,
             "volumeLimitLevel": -6, "oneEar": OneEar.off.rawValue, "earBalance": 0, "speechHistory": true,
+            "readingTheme": ReadingTheme.yellowOnBlack.rawValue, "readerFontSize": 32, "readerLineSpacing": 10,
+            "readerRate": 0.5, "captionsOn": false, "captionSize": 40, "focusFrameOn": false,
+            "focusFrameColor": FrameColor.yellow.rawValue, "focusFrameThickness": 8, "focusFrameFlash": true,
+            "newsFeeds": ["https://feeds.bbci.co.uk/news/rss.xml", "https://feeds.npr.org/1001/rss.xml"],
         ])
         layout = Layout(rawValue: store.string(forKey: "layout") ?? "") ?? .opposite
         stereoOthers = store.bool(forKey: "stereoOthers")
@@ -233,6 +274,17 @@ final class Preferences: ObservableObject {
         appPresets = store.dictionary(forKey: "appPresets") as? [String: String] ?? [:]
         otherAppsPreset = store.string(forKey: "otherAppsPreset") ?? ""
         allowImageUpload = store.bool(forKey: "allowImageUpload")
+        readingTheme = ReadingTheme(rawValue: store.string(forKey: "readingTheme") ?? "") ?? .yellowOnBlack
+        readerFontSize = store.integer(forKey: "readerFontSize")
+        readerLineSpacing = store.integer(forKey: "readerLineSpacing")
+        readerRate = store.double(forKey: "readerRate")
+        captionsOn = store.bool(forKey: "captionsOn")
+        captionSize = store.integer(forKey: "captionSize")
+        focusFrameOn = store.bool(forKey: "focusFrameOn")
+        focusFrameColor = FrameColor(rawValue: store.string(forKey: "focusFrameColor") ?? "") ?? .yellow
+        focusFrameThickness = store.integer(forKey: "focusFrameThickness")
+        focusFrameFlash = store.bool(forKey: "focusFrameFlash")
+        newsFeeds = store.stringArray(forKey: "newsFeeds") ?? []
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
             ?? Preset.defaults
     }

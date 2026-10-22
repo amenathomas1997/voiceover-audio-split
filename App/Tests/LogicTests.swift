@@ -159,3 +159,43 @@ final class SettingsModelTests: XCTestCase {
         XCTAssertEqual(VoiceOverText.quoted(#"Say "hi" \ bye"#), #""Say \"hi\" \\ bye""#)
     }
 }
+
+final class ReadingTests: XCTestCase {
+    func testDocReaderStepsBySentenceAndParagraph() {
+        let text = "First sentence. Second sentence.\nNew paragraph here. And more."
+        let layout = TextLayout(text)
+        XCTAssertEqual(layout.paragraphs.count, 2)
+        XCTAssertEqual(layout.sentences.count, 4)
+        let second = TextLayout.step(layout.sentences, from: 0, by: 1)
+        XCTAssertEqual(second.map { (text as NSString).substring(from: $0) }?.hasPrefix("Second"), true)
+        let nextParagraph = TextLayout.step(layout.paragraphs, from: 0, by: 1)
+        XCTAssertEqual(nextParagraph.map { (text as NSString).substring(from: $0) }?.hasPrefix("New paragraph"), true)
+        XCTAssertNil(TextLayout.step(layout.paragraphs, from: 0, by: -1), "nothing before the first paragraph")
+    }
+
+    func testScanGuidance() {
+        XCTAssertNotNil(TextRecognition.guidance(for: []))
+        XCTAssertNil(TextRecognition.guidance(for: [CGRect(x: 0.1, y: 0.1, width: 0.8, height: 0.8)]), "well placed")
+        let cutLeft = TextRecognition.guidance(for: [CGRect(x: 0, y: 0.2, width: 0.6, height: 0.6)])
+        XCTAssertEqual(cutLeft?.contains("to your left"), true, "image left edge means move the page left")
+        let small = TextRecognition.guidance(for: [CGRect(x: 0.4, y: 0.4, width: 0.2, height: 0.2)])
+        XCTAssertEqual(small?.contains("closer"), true)
+    }
+
+    func testRSSFeedReadsTitlesSummariesAndAudio() {
+        let xml = """
+        <rss><channel><title>Show</title>
+        <item><title>Episode 1</title><description><![CDATA[<p>Hello &amp; welcome</p>]]></description>
+        <enclosure url="https://example.com/1.mp3" type="audio/mpeg"/></item>
+        <item><title>Headline</title><description>Plain summary</description></item>
+        </channel></rss>
+        """
+        let items = RSSFeed.parse(Data(xml.utf8))
+        XCTAssertEqual(items.count, 2)
+        XCTAssertEqual(items[0].title, "Episode 1")
+        XCTAssertEqual(items[0].summary, "Hello & welcome")
+        XCTAssertEqual(items[0].audio, URL(string: "https://example.com/1.mp3"))
+        XCTAssertNil(items[1].audio)
+        XCTAssertEqual(items[1].summary, "Plain summary")
+    }
+}

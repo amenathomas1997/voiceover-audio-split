@@ -66,6 +66,7 @@ struct SetupGuideView: View {
                 Text("L: layer. After it, press any of these keys on its own. Slash lists them; Escape cancels.")
                 Text("I: describe the image under the VoiceOver cursor. A: ask the assistant. These need an Anthropic API key in Settings.")
                 Text("T: analyze clipboard text. G: Research It. B: system status.")
+                Text("O: Doc Reader. N: Scan and Read. U: large-print captions. Y: focus frame. P: audio hub. J: play or pause the audio hub.")
                 Text("Every key can be changed in Settings, under Command keys.")
                 Text("The same menu is also in the menu bar as a headphones icon, if there is room for it. Opening the app again from Spotlight or Finder opens Settings.")
             }

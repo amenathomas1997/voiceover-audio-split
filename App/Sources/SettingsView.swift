@@ -198,6 +198,29 @@ struct SettingsView: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
 
+            Section("Low vision") {
+                Picker("Colors for large print", selection: $preferences.readingTheme) {
+                    ForEach(ReadingTheme.allCases) { Text($0.title).tag($0) }
+                }
+                Stepper("Caption text size: \(preferences.captionSize)", value: $preferences.captionSize, in: 20...96, step: 4)
+                Toggle("Show large-print captions of what VoiceOver says", isOn: Binding(
+                    get: { preferences.captionsOn },
+                    set: { on in if on != Captions.isShowing { Controller.shared.toggleCaptions() } }))
+                Toggle("Show a focus frame around the VoiceOver cursor", isOn: Binding(
+                    get: { preferences.focusFrameOn },
+                    set: { on in if on != FocusFrame.isShowing { Controller.shared.toggleFocusFrame() } }))
+                Picker("Focus frame color", selection: $preferences.focusFrameColor) {
+                    ForEach(FrameColor.allCases) { Text($0.title).tag($0) }
+                }
+                Stepper("Focus frame thickness: \(preferences.focusFrameThickness)",
+                        value: $preferences.focusFrameThickness, in: 2...24, step: 2)
+                Toggle("Flash the focus frame when it moves", isOn: $preferences.focusFrameFlash)
+                Stepper("Doc Reader text size: \(preferences.readerFontSize)", value: $preferences.readerFontSize,
+                        in: 14...96, step: 4)
+            }
+            .onChange(of: preferences.focusFrameColor) { FocusFrame.refresh() }
+            .onChange(of: preferences.focusFrameThickness) { FocusFrame.refresh() }
+
             Section("Command keys") {
                 ForEach(Command.allCases) { command in
                     Picker(command.title, selection: keyBinding(command)) {

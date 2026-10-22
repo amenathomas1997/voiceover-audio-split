@@ -33,7 +33,9 @@ jobs:
         run: |
           xcodegen --version
           xcodegen --quiet
-          git diff --exit-code -- VoiceOverAudioSplit.xcodeproj || {
+          # Only the project file: Xcode rewrites the shared scheme in its own format
+          # when it builds locally, and CI uses the freshly generated scheme anyway.
+          git diff --exit-code -- VoiceOverAudioSplit.xcodeproj/project.pbxproj || {
             echo "::error::VoiceOverAudioSplit.xcodeproj is out of date. Run 'xcodegen' in App/ and commit the result."
             exit 1
           }

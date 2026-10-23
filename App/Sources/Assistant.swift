@@ -144,6 +144,37 @@ enum ScreenPicture {
         return png
     }
 
+    /// A PNG of the front window of the app in front (leaving out this app's own windows).
+    static func frontWindow() async throws -> Data {
+        let content: SCShareableContent
+        do {
+            content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
+        } catch {
+            throw Failure(message: "Allow screen recording for VoiceOver Audio Split in System Settings, "
+                          + "Privacy and Security, Screen and System Audio Recording. Then try again.")
+        }
+        let front = await MainActor.run { NSWorkspace.shared.frontmostApplication?.processIdentifier }
+        let me = ProcessInfo.processInfo.processIdentifier
+        let candidates = content.windows.filter { window in
+            window.windowLayer == 0 && window.frame.width > 100 && window.frame.height > 100
+                && window.owningApplication?.processID != me
+        }
+        // On-screen windows are listed front to back; prefer the front app's frontmost window.
+        guard let window = candidates.first(where: { $0.owningApplication?.processID == front }) ?? candidates.first else {
+            throw Failure(message: "No window to read.")
+        }
+        let configuration = SCStreamConfiguration()
+        let scale = CGFloat(NSScreen.main?.backingScaleFactor ?? 2)
+        configuration.width = Int(window.frame.width * scale)
+        configuration.height = Int(window.frame.height * scale)
+        let image = try await SCScreenshotManager.captureImage(
+            contentFilter: SCContentFilter(desktopIndependentWindow: window), configuration: configuration)
+        guard let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
+            throw Failure(message: "Couldn't capture the window.")
+        }
+        return png
+    }
+
     private static func voiceOverCursorBounds() -> CGRect? {
         guard let text = VoiceOverText.run(
             "set b to bounds of vo cursor\nreturn (item 1 of b as text) & \",\" & (item 2 of b as text) & \",\" "
@@ -179,8 +210,16 @@ final class AssistantModel: ObservableObject {
         messages = []
     }
 
-    /// Starts a new conversation about the item under the VoiceOver cursor.
-    func describeImage() {
+    enum ImageTarget {
+        /// The item under the VoiceOver cursor; the window opens with the answer.
+        case voiceOverCursor
+        /// The front window, for a video: the answer is spoken without opening a
+        /// window, so the video keeps the focus. Follow-ups work in the Assistant window.
+        case video
+    }
+
+    /// Starts a new conversation about a picture of the screen.
+    func describeImage(_ target: ImageTarget = .voiceOverCursor) {
         guard Preferences.shared.allowImageUpload else {
             waitingForImageConsent = true
             showWindow?()
@@ -192,22 +231,34 @@ final class AssistantModel: ObservableObject {
         newConversation()
         busy = true
         Announcer.say("Describing")
+        let opensWindow = target == .voiceOverCursor
         Task { @MainActor in
             do {
-                let png = try await ScreenPicture.underVoiceOverCursor()
-                showWindow?()
+                let png: Data
+                let request: String
+                switch target {
+                case .voiceOverCursor:
+                    png = try await ScreenPicture.underVoiceOverCursor()
+                    request = "Describe this. It is what my VoiceOver cursor is on."
+                    turns.append(AssistantTurn(fromUser: true, text: "Describe the item under the VoiceOver cursor."))
+                case .video:
+                    png = try await ScreenPicture.frontWindow()
+                    request = "This is a frame from a video I'm watching. In two or three sentences, describe what is "
+                        + "happening right now, and read any text on screen. Don't describe the video player's controls."
+                    turns.append(AssistantTurn(fromUser: true, text: "What's happening in the video?"))
+                }
+                if opensWindow { showWindow?() }
                 let content: [[String: Any]] = [
                     ["type": "image", "source": ["type": "base64", "media_type": "image/png",
                                                  "data": png.base64EncodedString()]],
-                    ["type": "text", "text": "Describe this. It is what my VoiceOver cursor is on."],
+                    ["type": "text", "text": request],
                 ]
-                turns.append(AssistantTurn(fromUser: true, text: "Describe the item under the VoiceOver cursor."))
                 await send(content)
             } catch let failure as ScreenPicture.Failure {
-                showWindow?()
+                if opensWindow { showWindow?() }
                 finish(failure.message)
             } catch {
-                showWindow?()
+                if opensWindow { showWindow?() }
                 finish("Couldn't capture the screen.")
             }
         }

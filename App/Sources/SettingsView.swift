@@ -158,6 +158,20 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Spoken events and clock") {
+                Toggle("Say when a download finishes", isOn: $preferences.announceDownloads)
+                Toggle("Say when headphones or speakers connect or disconnect", isOn: $preferences.announceDevices)
+                Toggle("Say when the network connection drops or comes back", isOn: $preferences.announceNetwork)
+                Toggle("Say when the battery is low, and when charging starts or stops", isOn: $preferences.announceBattery)
+                Toggle("Say when the screen locks", isOn: $preferences.announceLock)
+                Picker("Talking clock", selection: $preferences.clockInterval) {
+                    Text("Off").tag(0)
+                    Text("Every hour").tag(60)
+                    Text("Every half hour").tag(30)
+                    Text("Every quarter hour").tag(15)
+                }
+            }
+
             Section("Presets for websites") {
                 Text("Switch to a preset on a website in Safari or Chrome, for example a quieter preset on youtube.com. The first time, your Mac asks to let VoiceOver Audio Split see which site is open.")
                     .font(.caption).foregroundStyle(.secondary)

@@ -197,6 +197,8 @@ struct ScanView: View {
                             NSPasteboard.general.setString(reader.text, forType: .string)
                             Announcer.say("Copied")
                         }
+                        Button("Save as Text…") { TextExport.save(reader.text, as: .text) }
+                        Button("Save as Word…") { TextExport.save(reader.text, as: .word) }
                         Button("Open in Doc Reader") {
                             DocReaderModel.shared.load(reader.text)
                             (NSApp.delegate as? AppDelegate)?.showDocReader()

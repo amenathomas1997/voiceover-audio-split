@@ -58,6 +58,7 @@ final class Controller {
         watchFrontApp()
         AudioSystem.start()
         SystemStatus.start()
+        SystemEvents.start()
         update()
         if preferences.captionsOn { Captions.show() }
         if preferences.focusFrameOn { FocusFrame.show() }
@@ -103,6 +104,7 @@ final class Controller {
         AudioHub.shared.applyMix(othersGain: activeSide == nil ? 1 : gains.others, quiet: quietAll)
         SpeechHistory.shared.update(enabled: preferences.speechHistory)
         KeepAudioAwake.update(enabled: preferences.keepAudioAwake)
+        SystemEvents.updateClock()
         updateSiteWatching()
 
         if !engineNeeded {
@@ -266,6 +268,12 @@ final class Controller {
             if CompareModel.shared.original == nil { app?.showCompare() }
         case .voiceOverCommands: app?.showVoiceOverCommands()
         case .reportBug: app?.showBugReport()
+        case .readWindow: ScreenText.readFrontWindow()
+        case .describeVideo: AssistantModel.shared.describeImage(.video)
+        case .openDownload: SystemEvents.openLatestDownload()
+        case .micCheck: MicCheck.run()
+        case .colorIdentifier: ColorIdentifier.identify()
+        case .lightDetector: LightDetector.toggle()
         }
     }
 

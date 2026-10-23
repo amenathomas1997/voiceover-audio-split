@@ -235,6 +235,13 @@ final class Preferences: ObservableObject {
     @Published var keepAudioAwake: Bool { didSet { save(keepAudioAwake, "keepAudioAwake") } }
     /// Preset to switch to on a website, by host name such as "youtube.com" (preset IDs as strings).
     @Published var sitePresets: [String: String] { didSet { save(sitePresets, "sitePresets") } }
+    @Published var announceDownloads: Bool { didSet { save(announceDownloads, "announceDownloads") } }
+    @Published var announceDevices: Bool { didSet { save(announceDevices, "announceDevices") } }
+    @Published var announceNetwork: Bool { didSet { save(announceNetwork, "announceNetwork") } }
+    @Published var announceBattery: Bool { didSet { save(announceBattery, "announceBattery") } }
+    @Published var announceLock: Bool { didSet { save(announceLock, "announceLock") } }
+    /// Talking clock: minutes between announcements (0 off, 15, 30 or 60).
+    @Published var clockInterval: Int { didSet { save(clockInterval, "clockInterval") } }
     /// News feeds for the audio hub (RSS addresses).
     @Published var newsFeeds: [String] { didSet { save(newsFeeds, "newsFeeds") } }
     /// Keep a list of what VoiceOver says, to review with the history window.
@@ -251,7 +258,8 @@ final class Preferences: ObservableObject {
             "readerRate": 0.5, "captionsOn": false, "captionSize": 40, "focusFrameOn": false,
             "focusFrameColor": FrameColor.yellow.rawValue, "focusFrameThickness": 8, "focusFrameFlash": true,
             "newsFeeds": ["https://feeds.bbci.co.uk/news/rss.xml", "https://feeds.npr.org/1001/rss.xml"],
-            "keepAudioAwake": false,
+            "keepAudioAwake": false, "announceDownloads": true, "announceDevices": true,
+            "announceNetwork": true, "announceBattery": true, "announceLock": false, "clockInterval": 0,
         ])
         layout = Layout(rawValue: store.string(forKey: "layout") ?? "") ?? .opposite
         stereoOthers = store.bool(forKey: "stereoOthers")
@@ -291,6 +299,12 @@ final class Preferences: ObservableObject {
         focusFrameFlash = store.bool(forKey: "focusFrameFlash")
         newsFeeds = store.stringArray(forKey: "newsFeeds") ?? []
         keepAudioAwake = store.bool(forKey: "keepAudioAwake")
+        announceDownloads = store.bool(forKey: "announceDownloads")
+        announceDevices = store.bool(forKey: "announceDevices")
+        announceNetwork = store.bool(forKey: "announceNetwork")
+        announceBattery = store.bool(forKey: "announceBattery")
+        announceLock = store.bool(forKey: "announceLock")
+        clockInterval = store.integer(forKey: "clockInterval")
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
             ?? Preset.defaults

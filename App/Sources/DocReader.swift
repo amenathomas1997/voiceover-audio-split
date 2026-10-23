@@ -232,6 +232,12 @@ struct DocReaderView: View {
                 .keyboardShortcut("v", modifiers: [.command, .shift])
             Button("Open File…") { choosingFile = true }
                 .keyboardShortcut("o", modifiers: .command)
+            Menu("Save") {
+                Button("Save as Text…") { TextExport.save(model.text, as: .text, name: "Document") }
+                Button("Save as Word…") { TextExport.save(model.text, as: .word, name: "Document") }
+            }
+            .frame(width: 80)
+            .disabled(model.text.isEmpty)
             Menu("Display") {
                 Picker("Colors", selection: $preferences.readingTheme) {
                     ForEach(ReadingTheme.allCases) { Text($0.title).tag($0) }
@@ -260,5 +266,35 @@ struct DocReaderView: View {
             attributed[start..<end].backgroundColor = preferences.readingTheme.highlightBackground
         }
         return attributed
+    }
+}
+
+/// Saves text as a plain text or Word file, wherever the user chooses.
+enum TextExport {
+    enum Format { case text, word }
+
+    @MainActor
+    static func save(_ text: String, as format: Format, name: String = "Scanned text") {
+        guard !text.isEmpty else { return Announcer.say("There's no text to save") }
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = name + (format == .word ? ".docx" : ".txt")
+        panel.allowedContentTypes = [format == .word ? (UTType(filenameExtension: "docx") ?? .data) : .plainText]
+        panel.canCreateDirectories = true
+        NSApp.activate()
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do {
+            switch format {
+            case .text:
+                try text.write(to: url, atomically: true, encoding: .utf8)
+            case .word:
+                let document = NSAttributedString(string: text, attributes: [.font: NSFont.systemFont(ofSize: 14)])
+                let data = try document.data(from: NSRange(location: 0, length: document.length),
+                                             documentAttributes: [.documentType: NSAttributedString.DocumentType.officeOpenXML])
+                try data.write(to: url)
+            }
+            Announcer.say("Saved \(url.lastPathComponent)")
+        } catch {
+            Announcer.say("Couldn't save the file")
+        }
     }
 }

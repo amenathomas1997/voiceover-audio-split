@@ -9,6 +9,12 @@
 - **Presets for websites** in Safari and Chrome.
 - **Find a VoiceOver command** (Right Option + V), and **report a bug to Apple** (Right Option + Comma).
 - Keys you choose are no longer replaced when a new command uses the same default key.
+- **Spoken events:** downloads finished, devices connected and disconnected, network lost and back, low battery and charging, and screen locked. Also a **talking clock**.
+- **Read the front window's text** (Right Option + Z), for shared screens and apps without accessibility.
+- **Describe what's happening in a video** (Right Option + Left Bracket).
+- **Microphone check** (Right Option + Semicolon) and **open the latest download** (Right Option + Period).
+- **Color identifier** (Right Option + Right Bracket) and **light detector** (Right Option + Backslash).
+- Save scanned or Doc Reader text as a text or Word file.
 
 ## 1.0 (beta), October 2026
 

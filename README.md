@@ -15,6 +15,8 @@
 - **Presets for websites** (in Settings) switch to a preset on a site in Safari or Chrome, which VoiceOver's own activities don't do. While a browser is in front and website presets exist, the app checks the current address every two seconds. The first time, macOS asks to let the app see which site is open.
 - **Keys you choose always win.** If a later version adds a command whose default key you already use, the new command waits for you to give it a key.
 
+**Spoken events and clock** (Settings): the app says when a download finishes, when headphones or speakers connect or disconnect, when the network drops or comes back, when the battery is low or charging starts or stops, and, optionally, when the screen locks. A talking clock chimes and says the time every hour, half hour or quarter hour. Scan and Read and the Doc Reader can save text as a text or Word file.
+
 **Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.
 - **Optional AI:** image descriptions and an assistant, using Claude with your own API key.
 
@@ -64,6 +66,12 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + E | Compare text: press once with the original copied, then again with the new version copied, to hear every change. Useful after Writing Tools proofreading, which VoiceOver can't review. |
 | Right Option + V | Finds a VoiceOver command: type "heading" or "rotor" and hear the keys |
 | Right Option + Comma | Reports a bug to Apple: adds your Mac's details to your description, for Feedback Assistant or accessibility@apple.com |
+| Right Option + Z | Reads the text in the front window, such as slides shared in a Zoom or Teams meeting or an app VoiceOver can't read, with on-device text recognition |
+| Right Option + Left Bracket | Describes what's happening in a video right now, using the optional AI, without leaving the video |
+| Right Option + Semicolon | Microphone check: say a sentence, then hear whether you sound clear, too quiet, too loud or noisy |
+| Right Option + Period | Opens the latest download |
+| Right Option + Right Bracket | Identifies the color of something held up to the camera |
+| Right Option + Backslash | Light detector: a tone that rises with the light the camera sees |
 
 Every key can be changed in Settings, under Command keys (like JAWS Keyboard Manager). Choosing a key another command uses swaps the two commands' keys. Digits 1 to 9 always switch presets, and slash always lists the layer keys.
 
@@ -138,6 +146,7 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/SpeechTools.swift` has speech history, Read Item and Say Clipboard. It also sends every AppleScript request to VoiceOver through one queue, because NSAppleScript isn't safe to use from several threads at once.
 - `App/Sources/Commands.swift` lists every command, its default key, and the keys it can move to. `App/Sources/Hotkeys.swift` turns key presses into commands.
 - `App/Sources/Assistant.swift` has the Claude client, the API key in the Keychain, the screen capture, and the Assistant window. `App/Sources/Research.swift` is Research It. `App/Sources/SystemStatus.swift` has system status and the Text Analyzer.
+- `App/Sources/Events.swift` (spoken events and the talking clock), `App/Sources/MicCheck.swift`, `App/Sources/ScreenText.swift` (reading the front window) and `App/Sources/CameraTools.swift` (color identifier and light detector).
 - `App/Sources/Rescue.swift` (keep audio awake and restarting VoiceOver), `App/Sources/TextTools.swift` (compare text and the Text Checker) and `App/Sources/Helpers.swift` (the VoiceOver command finder and bug reports).
 - `App/Sources/DocReader.swift`, `App/Sources/ScanReader.swift`, `App/Sources/LowVision.swift` (captions and the focus frame) and `App/Sources/AudioHub.swift` are the reading, low-vision and audio hub features.
 - Development builds can check text recognition and the online services without any permission prompts:

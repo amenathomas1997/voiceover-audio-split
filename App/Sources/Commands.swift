@@ -12,6 +12,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case describeImage, assistant, analyzeText, research, systemStatus
     case docReader, scanAndRead, captions, focusFrame, audioHub, hubPlayPause
     case rescueVoiceOver, compareText, voiceOverCommands, reportBug
+    case readWindow, describeVideo, openDownload, micCheck, colorIdentifier, lightDetector
 
     var id: String { rawValue }
 
@@ -51,6 +52,12 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .compareText: "Compare text"
         case .voiceOverCommands: "Find a VoiceOver command"
         case .reportBug: "Report a bug to Apple"
+        case .readWindow: "Read the text in the front window"
+        case .describeVideo: "Describe what's happening in a video"
+        case .openDownload: "Open the latest download"
+        case .micCheck: "Microphone check"
+        case .colorIdentifier: "Identify a color with the camera"
+        case .lightDetector: "Light detector"
         }
     }
 
@@ -90,6 +97,12 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .compareText: 14
         case .voiceOverCommands: 9
         case .reportBug: 43
+        case .readWindow: 6
+        case .describeVideo: 33
+        case .openDownload: 47
+        case .micCheck: 41
+        case .colorIdentifier: 30
+        case .lightDetector: 42
         }
     }
 }

@@ -70,6 +70,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
             log("Check: OCR = \(TextRecognition.text(in: cgImage))")
+            log("Check: Downloads folder readable = \(SystemEvents.latestDownload() != nil)")
             let hub = AudioHub.shared
             for (query, source) in [("jazz", HubSource.radio), ("accessibility", .podcasts), ("pride", .audiobooks), ("", .news)] {
                 let found = (try? await hub.find(query, in: source)) ?? []
@@ -304,6 +305,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         add(to: menu, "Find a VoiceOver Command…", command: .voiceOverCommands) { $0.run(.voiceOverCommands) }
         add(to: menu, "Report a Bug to Apple…", command: .reportBug) { $0.run(.reportBug) }
+        menu.addItem(.separator())
+
+        // Screen, meetings and everyday tools
+        add(to: menu, "Read Text in Front Window", command: .readWindow) { $0.run(.readWindow) }
+        add(to: menu, "Open Last Window Text in Doc Reader") { _ in ScreenText.openInDocReader() }
+        add(to: menu, "Describe What's Happening in Video", command: .describeVideo) { $0.run(.describeVideo) }
+        add(to: menu, "Microphone Check", command: .micCheck) { $0.run(.micCheck) }
+        add(to: menu, "Open Latest Download", command: .openDownload) { $0.run(.openDownload) }
+        add(to: menu, "Identify a Color", command: .colorIdentifier) { $0.run(.colorIdentifier) }
+        add(to: menu, "Light Detector", command: .lightDetector, checked: LightDetector.isRunning) { $0.run(.lightDetector) }
         menu.addItem(.separator())
 
         // Reading, low vision and listening

@@ -30,6 +30,8 @@
 	<false/>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>VoiceOver Audio Split asks VoiceOver to announce changes in your VoiceOver voice, and, if you set presets for websites, asks Safari or Chrome which website is open.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>VoiceOver Audio Split's microphone check listens for a few seconds to tell you whether you sound clear. Nothing is recorded or saved.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>VoiceOver Audio Split checks whether your face is centered and well lit before a video call. Pictures are only analyzed on this Mac and never saved.</string>
 	<key>NSAudioCaptureUsageDescription</key>

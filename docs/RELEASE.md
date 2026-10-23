@@ -41,10 +41,13 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 > - Accessibility: global keyboard shortcuts with the right Option key, so users can control the app from anywhere without a mouse. Only the app's own shortcut keys are acted on; all other keystrokes pass through untouched and are never stored.
 > - System audio recording (Core Audio process taps): VoiceOver's speech and other apps' sound are captured separately and played back immediately into different ears. Nothing is recorded or stored.
 > - Apple Events to VoiceOver (com.apple.security.temporary-exception.apple-events for com.apple.VoiceOver): VoiceOver ignores accessibility announcements from background apps, so the app asks VoiceOver to speak its status messages ("Speech left, other sounds right") in the user's own VoiceOver voice. It also reads VoiceOver's last phrase and cursor position for speech history, captions and the focus frame. These are VoiceOver's own documented AppleScript commands. No other app is controlled.
-> - Screen recording: only when the user asks to describe the image under the VoiceOver cursor.
+> - Screen recording: only when the user asks to describe the image under the VoiceOver cursor, read the text in the front window (on-device text recognition, for shared screens in meetings and apps without accessibility), or describe a video frame.
+> - Apple Events to Safari and Chrome (temporary exception): only if the user sets presets for websites; the app asks the browser for the current tab's address to switch the user's audio preset. Addresses are not stored or sent.
+> - Microphone: a five-second microphone check before calls that reports the voice and background noise levels. Nothing is recorded.
+> - Downloads folder (read-only): announcing when a download finishes and opening the latest download.
 > - Camera: on-device text reading (Scan and Read) and a framing check before video calls. Pictures are never saved or sent.
 > - Network: optional lookups (Wikipedia, weather), the audio hub (radio, podcasts, LibriVox, news), and optional image descriptions with the user's own Anthropic API key.
-> - User-selected files (read-only): opening documents in the large-print Doc Reader.
+> - User-selected files (read and write): opening documents in the large-print Doc Reader, and saving recognized text as a text or Word file where the user chooses.
 >
 > To test without VoiceOver: open the menu with Right Option + M, choose Speech Left, and play any audio. With VoiceOver on (Command + F5), VoiceOver's voice moves to the left ear and the other audio moves to the right ear.
 

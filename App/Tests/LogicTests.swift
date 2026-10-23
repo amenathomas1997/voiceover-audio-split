@@ -240,3 +240,57 @@ final class PainPointTests: XCTestCase {
         XCTAssertTrue(VoiceOverCommands.search("zzzz").isEmpty)
     }
 }
+
+final class EverydayToolTests: XCTestCase {
+    func testColorNames() {
+        XCTAssertEqual(ColorNames.name(red: 0.05, green: 0.05, blue: 0.05), "black")
+        XCTAssertEqual(ColorNames.name(red: 0.95, green: 0.95, blue: 0.95), "white")
+        XCTAssertEqual(ColorNames.name(red: 0.5, green: 0.5, blue: 0.52), "gray")
+        XCTAssertEqual(ColorNames.name(red: 0.9, green: 0.1, blue: 0.1), "red")
+        XCTAssertEqual(ColorNames.name(red: 0.1, green: 0.15, blue: 0.4), "navy blue")
+        XCTAssertEqual(ColorNames.name(red: 0.2, green: 0.4, blue: 0.9), "blue")
+        XCTAssertEqual(ColorNames.name(red: 0.45, green: 0.28, blue: 0.1), "brown")
+        XCTAssertEqual(ColorNames.name(red: 0.1, green: 0.6, blue: 0.2), "green")
+        XCTAssertEqual(ColorNames.name(red: 0.95, green: 0.7, blue: 0.75), "light pink")
+        XCTAssertEqual(ColorNames.name(red: 0.9, green: 0.2, blue: 0.6), "pink")
+    }
+
+    func testMicrophoneAdvice() {
+        XCTAssertEqual(MicCheck.advice(for: .init(speechLevel: -20, noiseLevel: -65, clipped: false)),
+                       "You sound clear, with little background noise.")
+        XCTAssertTrue(MicCheck.advice(for: .init(speechLevel: -45, noiseLevel: -70, clipped: false)).contains("too quiet"))
+        XCTAssertTrue(MicCheck.advice(for: .init(speechLevel: -15, noiseLevel: -70, clipped: true)).contains("too loud"))
+        XCTAssertTrue(MicCheck.advice(for: .init(speechLevel: -25, noiseLevel: -35, clipped: false)).contains("background noise"))
+        XCTAssertTrue(MicCheck.advice(for: .init(speechLevel: -70, noiseLevel: -75, clipped: false)).contains("couldn't hear"))
+        let measured = MicCheck.measure(levels: [-60, -58, -59, -20, -18, -22, -19, -61, -21, -20], peak: 0.5)
+        XCTAssertGreaterThan(measured.speechLevel, -23)
+        XCTAssertLessThan(measured.noiseLevel, -55)
+    }
+
+    func testTalkingClockLandsOnTheBoundary() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let start = calendar.date(from: DateComponents(year: 2026, month: 10, day: 22, hour: 10, minute: 17))!
+        func minuteHour(_ date: Date?) -> [Int] {
+            let parts = calendar.dateComponents([.hour, .minute], from: date!)
+            return [parts.hour!, parts.minute!]
+        }
+        XCTAssertEqual(minuteHour(SystemEvents.nextClockTime(after: start, every: 15, calendar: calendar)), [10, 30])
+        XCTAssertEqual(minuteHour(SystemEvents.nextClockTime(after: start, every: 30, calendar: calendar)), [10, 30])
+        XCTAssertEqual(minuteHour(SystemEvents.nextClockTime(after: start, every: 60, calendar: calendar)), [11, 0])
+    }
+
+    func testPartialDownloadsAreIgnored() {
+        XCTAssertTrue(SystemEvents.isPartial("report.pdf.download"))
+        XCTAssertTrue(SystemEvents.isPartial("movie.mp4.crdownload"))
+        XCTAssertTrue(SystemEvents.isPartial("file.zip.part"))
+        XCTAssertTrue(SystemEvents.isPartial(".DS_Store"))
+        XCTAssertFalse(SystemEvents.isPartial("report.pdf"))
+    }
+
+    func testLightDetectorPitchRisesWithLight() {
+        XCTAssertEqual(LightDetector.tone(forBrightness: 0), 220, accuracy: 0.01)
+        XCTAssertEqual(LightDetector.tone(forBrightness: 1), 1760, accuracy: 0.01)
+        XCTAssertLessThan(LightDetector.tone(forBrightness: 0.3), LightDetector.tone(forBrightness: 0.6))
+    }
+}

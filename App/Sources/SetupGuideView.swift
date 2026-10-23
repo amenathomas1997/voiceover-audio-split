@@ -17,6 +17,7 @@ struct SetupGuideView: View {
         Form {
             Section {
                 Text(String(localized: "VoiceOver Audio Split puts VoiceOver speech in one ear and other sounds in the other. A few permissions are needed first."))
+                Text(String(localized: "New to VoiceOver? VoiceOver Lessons, in the app's menu under Learning, teaches it from the beginning."))
             }
 
             Section(String(localized: "Step 1: Allow the keyboard shortcuts")) {

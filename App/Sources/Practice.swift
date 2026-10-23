@@ -69,6 +69,7 @@ final class PracticeModel: ObservableObject {
         session += 1
         let thisSession = session
         TypingTrainer.shared.stop()
+        LessonRunner.shared.stop()
         Hotkeys.keyObserver = { [weak self] keyCode, flags, _ in self?.handle(keyCode, flags) ?? false }
         let mode = learnMode ? String(localized: "Learn mode: I'll say the keys too.") : String(localized: "Quiz mode.")
         Announcer.say(String(localized: "VoiceOver practice. \(mode) Press Escape to stop."))

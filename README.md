@@ -12,7 +12,7 @@
 - **Reading and low vision:** a large-print Doc Reader, camera text reading (Scan and Read), captions and a focus frame.
 - **Everyday tools:** barcode, QR code, medicine label and money readers, a color identifier and light detector, a document accessibility check, braille files, and camera and microphone alerts.
 - **Working with apps:** custom labels for unlabeled controls, place markers on web pages, and Do It for Me.
-- **Learning:** a tutorial, input help, VoiceOver practice and a talking typing trainer.
+- **Learning:** VoiceOver Lessons, a ten-lesson course for learning VoiceOver from the beginning; a tutorial for this app's keys; input help; VoiceOver practice; and a talking typing trainer.
 - **Fixes for problems AppleVis users report:**
 - **Keep audio awake** (in Settings or the menu) plays silence, so headphones and Bluetooth devices like AirPods don't sleep between phrases and cut off VoiceOver's first words.
 - **Presets for websites** (in Settings) switch to a preset on a site in Safari or Chrome, which VoiceOver's own activities don't do. While a browser is in front and website presets exist, the app checks the current address every two seconds. The first time, macOS asks to let the app see which site is open.
@@ -39,6 +39,7 @@
 - **Barcode and QR code reader:** reads QR codes (links, Wi-Fi details, phone numbers, text) and copies them, and looks up product barcodes in Open Food Facts.
 - **Medicine label reader:** reads the largest text first, usually the medicine's name, then the rest, and keeps reading new text as you turn the bottle. Everything it read is copied when you stop.
 - **Identify money:** Claude names the banknotes or coins in a camera picture. Needs an API key and image descriptions allowed.
+- **VoiceOver Lessons:** a course for someone new to VoiceOver, in ten lessons: the VO keys and turning VoiceOver on; moving around and pressing things; reading text; menus, the Dock and switching apps; the rotor and item chooser; web pages; Quick Nav; typing and editing text; getting help and staying in control; and a review. Each lesson explains a skill in plain words, then has you press the keys, saying what you pressed if it was wrong. For safe commands, VoiceOver really does them once you're right, in the window's practice area (a paragraph, buttons, a checkbox and a text field) and a practice web page with headings, links, a form and a table. Each lesson ends with a quick check, finished lessons are marked, and Caps Lock works if it's your VO key. Return goes on, R repeats and Escape stops.
 - **VoiceOver practice:** the app names a task, such as "go to the next heading", and you press the VoiceOver keys for it. Learn mode says the keys; quiz mode keeps score. Keys are caught while you practice, so nothing moves.
 - **Typing trainer:** a talking typing tutor, like Talking Typer or TypingClub. Sixteen lessons add a few keys at a time from the home row, then capitals, numbers, punctuation, words and sentences. Each key is named with its finger and row. A right key plays a soft click (or a soft tone, or nothing, as you choose), and a wrong one plays a gentle low sound and says what you pressed and what to type. Each lesson ends with words per minute and accuracy, your best speed is kept, and there's a one-minute speed test. Finger hints are for the US English keyboard, and the practice words are English. Quick Nav can stay on.
 
@@ -121,7 +122,7 @@ You can change Right Option to Right Command, Right Control or Right Shift in Se
 - **Camera:** barcode and QR code reader, medicine label reader, Identify Money, Identify a Color, Light Detector, Check Camera Framing
 - **Assistant and Research:** Describe Image, Describe What's Happening in Video, Ask the Assistant, Do It for Me, Research It
 - **VoiceOver Help:** Restart VoiceOver, Keep Audio Awake, Find a VoiceOver Command, custom labels, place markers, Report a Bug to Apple
-- **Learning:** Tutorial, Input Help, VoiceOver Practice, Typing Trainer
+- **Learning:** VoiceOver Lessons, Tutorial, Input Help, VoiceOver Practice, Typing Trainer
 - **Everyday Tools:** Open Latest Download, Audio Mouse
 - **Your Commands**, once you've added some
 - At the bottom: Start at Login, **Backup and Diagnostics** (export, import, diagnostics report, app performance), Settings, Setup Guide and Quit
@@ -194,7 +195,7 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/SpeechTools.swift` has speech history, Read Item and Say Clipboard. It also sends every AppleScript request to VoiceOver through one queue, because NSAppleScript isn't safe to use from several threads at once.
 - `App/Sources/Commands.swift` lists every command, its default key, and the keys it can move to. `App/Sources/Hotkeys.swift` turns key presses into commands.
 - `App/Sources/Assistant.swift` has the Claude client, the API key in the Keychain, the screen capture, and the Assistant window. `App/Sources/Research.swift` is Research It. `App/Sources/SystemStatus.swift` has system status and the Text Analyzer.
-- `App/Sources/Sensors.swift` (camera and microphone alerts), `App/Sources/AXTools.swift` (reading other apps' controls), `App/Sources/Labels.swift` (custom labels and place markers), `App/Sources/DoItForMe.swift`, `App/Sources/DocumentCheck.swift`, `App/Sources/Braille.swift`, `App/Sources/Readers.swift` (barcode, medicine label and money readers), `App/Sources/Practice.swift` and `App/Sources/TypingTrainer.swift`.
+- `App/Sources/Sensors.swift` (camera and microphone alerts), `App/Sources/AXTools.swift` (reading other apps' controls), `App/Sources/Labels.swift` (custom labels and place markers), `App/Sources/DoItForMe.swift`, `App/Sources/DocumentCheck.swift`, `App/Sources/Braille.swift`, `App/Sources/Readers.swift` (barcode, medicine label and money readers), `App/Sources/Lessons.swift` (VoiceOver Lessons), `App/Sources/Practice.swift` and `App/Sources/TypingTrainer.swift`.
 - `App/Sources/Palette.swift` (command palette, input help, tutorial), `App/Sources/Extend.swift` (your commands, settings export and import), `App/Sources/Extras.swift` (beeps, clipboard announcements, audio mouse, translation) and `App/Sources/Diagnostics.swift`.
 - `App/Sources/Events.swift` (spoken events and the talking clock), `App/Sources/MicCheck.swift`, `App/Sources/ScreenText.swift` (reading the front window) and `App/Sources/CameraTools.swift` (color identifier and light detector).
 - `App/Sources/Rescue.swift` (keep audio awake and restarting VoiceOver), `App/Sources/TextTools.swift` (compare text and the Text Checker) and `App/Sources/Helpers.swift` (the VoiceOver command finder and bug reports).

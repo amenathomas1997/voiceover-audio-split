@@ -16,7 +16,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case commandPalette, inputHelp, tutorial, translate, audioMouse, beepMode
     case exportSettings, importSettings, diagnostics, performance
     case sensorStatus, customLabel, placeMarker, nextPlaceMarker, doItForMe
-    case documentCheck, brailleExport, codeReader, labelReader, moneyReader, practice, typingTrainer
+    case documentCheck, brailleExport, codeReader, labelReader, moneyReader, practice, typingTrainer, voiceOverLessons
 
     var id: String { rawValue }
 
@@ -84,6 +84,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .moneyReader: String(localized: "Identify money")
         case .practice: String(localized: "VoiceOver practice")
         case .typingTrainer: String(localized: "Typing trainer")
+        case .voiceOverLessons: String(localized: "VoiceOver lessons: learn VoiceOver from the beginning")
         }
     }
 
@@ -136,7 +137,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .translate: 39
         case .tutorial, .audioMouse, .beepMode, .exportSettings, .importSettings, .diagnostics, .performance,
              .sensorStatus, .customLabel, .placeMarker, .nextPlaceMarker, .doItForMe, .documentCheck,
-             .brailleExport, .codeReader, .labelReader, .moneyReader, .practice, .typingTrainer: nil
+             .brailleExport, .codeReader, .labelReader, .moneyReader, .practice, .typingTrainer, .voiceOverLessons: nil
         }
     }
 }

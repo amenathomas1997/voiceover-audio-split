@@ -5,6 +5,7 @@
 import AppKit
 import CoreAudio
 import SwiftUI
+import WebKit
 
 @main
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
@@ -32,6 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var brailleWindow: NSWindow?
     private var practiceWindow: NSWindow?
     private var typingWindow: NSWindow?
+    private var lessonsWindow: NSWindow?
 
     static func main() {
         let app = NSApplication.shared
@@ -82,6 +84,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             log("Check: Downloads folder readable = \(SystemEvents.latestDownload() != nil)")
             log("Check: scripts folder = \(UserCommands.scriptsFolder?.lastPathComponent ?? "unavailable")")
             log("Check: \(Performance.summary())")
+            let web = WKWebView(frame: NSRect(x: 0, y: 0, width: 600, height: 400))
+            web.loadHTMLString(PracticeWebPage.html, baseURL: nil)
+            for _ in 0..<40 where web.isLoading { try? await Task.sleep(for: .milliseconds(100)) }
+            try? await Task.sleep(for: .milliseconds(300))
+            let headings = (try? await web.evaluateJavaScript("document.querySelectorAll('h1,h2').length")) as? Int
+            log("Check: practice web page headings = \(headings ?? -1)")
             log("Check: permissions = \(Permission.allCases.map { "\($0.rawValue) \($0.status())" }.joined(separator: ", "))")
             log("Check: camera in use = \(SensorWatch.cameraInUse()), microphone apps = \(SensorWatch.appsUsingMicrophone().count)")
             if let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/3017620422003.json?fields=product_name,brands,quantity"),
@@ -256,6 +264,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let isNew = practiceWindow == nil
         practiceWindow = show(practiceWindow, title: String(localized: "VoiceOver Practice"), view: PracticeView())
         if isNew, let practiceWindow { whenClosed(practiceWindow) { PracticeModel.shared.stop() } }
+    }
+
+    func showLessons() {
+        let isNew = lessonsWindow == nil
+        lessonsWindow = show(lessonsWindow, title: String(localized: "VoiceOver Lessons"), view: LessonsView())
+        LessonRunner.shared.window = lessonsWindow
+        if isNew, let lessonsWindow { whenClosed(lessonsWindow) { LessonRunner.shared.stop() } }
     }
 
     func showTypingTrainer() {
@@ -465,6 +480,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         // Learning
         let learning = submenu(in: menu, String(localized: "Learning"))
+        add(to: learning, String(localized: "VoiceOver Lessons…"), command: .voiceOverLessons) { $0.run(.voiceOverLessons) }
         add(to: learning, String(localized: "Tutorial…"), command: .tutorial) { $0.run(.tutorial) }
         add(to: learning, String(localized: "Input Help"), command: .inputHelp, checked: InputHelp.isOn) { $0.run(.inputHelp) }
         add(to: learning, String(localized: "VoiceOver Practice…"), command: .practice) { $0.run(.practice) }

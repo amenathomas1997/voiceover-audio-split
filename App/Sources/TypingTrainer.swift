@@ -171,6 +171,7 @@ final class TypingTrainer: ObservableObject {
 
     private func begin(_ lesson: TypingLesson, items: [String], intro: String) {
         PracticeModel.shared.stop()
+        LessonRunner.shared.stop()
         self.lesson = lesson
         self.items = items
         itemCount = speedTest ? 0 : items.count

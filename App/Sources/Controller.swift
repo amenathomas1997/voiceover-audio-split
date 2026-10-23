@@ -317,6 +317,7 @@ final class Controller {
         case .moneyReader: MoneyReader.identify()
         case .practice: app?.showPractice()
         case .typingTrainer: app?.showTypingTrainer()
+        case .voiceOverLessons: app?.showLessons()
         }
     }
 

@@ -688,3 +688,43 @@ final class AuditFixTests: XCTestCase {
         XCTAssertLessThan(upload.count, 5_000_000)
     }
 }
+
+final class LessonTests: XCTestCase {
+    func testVOKeysWithControlOptionOrCapsLock() {
+        let heading = KeyCombo(code: 4, command: true)
+        XCTAssertTrue(heading.matches(keyCode: 4, flags: [.maskControl, .maskAlternate, .maskCommand]))
+        XCTAssertTrue(heading.matches(keyCode: 4, flags: [.maskAlphaShift, .maskCommand]), "Caps Lock as the VO key")
+        XCTAssertFalse(heading.matches(keyCode: 4, flags: [.maskControl, .maskAlternate]))
+        XCTAssertFalse(heading.matches(keyCode: 4, flags: [.maskCommand]))
+        let word = KeyCombo(code: 123, vo: false, option: true)
+        XCTAssertTrue(word.matches(keyCode: 123, flags: [.maskAlternate]))
+        XCTAssertFalse(word.matches(keyCode: 123, flags: [.maskControl, .maskAlternate]), "VO Left Arrow isn't Option Left Arrow")
+    }
+
+    func testWrongKeysAreDescribed() {
+        XCTAssertEqual(KeyCombo.describe(keyCode: 4, flags: [.maskControl, .maskAlternate, .maskCommand, .maskShift]), "VO Command Shift H")
+        XCTAssertEqual(KeyCombo.describe(keyCode: 123, flags: [.maskAlternate]), "Option Left Arrow")
+        XCTAssertEqual(KeyCombo.describe(keyCode: 118, flags: [.maskControl, .maskAlternate]), "VO F4")
+    }
+
+    func testEveryLessonIsComplete() {
+        XCTAssertEqual(Lesson.course.count, 10)
+        XCTAssertEqual(Set(Lesson.course.map(\.id)).count, 10)
+        for lesson in Lesson.all {
+            XCTAssertFalse(lesson.practice.isEmpty, lesson.id)
+            guard case .explain = lesson.steps.first?.kind else { return XCTFail("\(lesson.id) starts with an explanation") }
+            // A quick check can't have two tasks with the same keys.
+            let combos = lesson.practice.compactMap { step -> KeyCombo? in
+                if case .practice(_, _, let combo, _, _) = step.kind { return combo }
+                return nil
+            }
+            XCTAssertEqual(Set(combos).count, combos.count, lesson.id)
+        }
+    }
+
+    func testPracticePageIsWellFormed() {
+        let html = PracticeWebPage.html
+        XCTAssertEqual(html.components(separatedBy: "<h2").count - 1, 5)
+        XCTAssertTrue(html.contains("<table>") && html.contains("<form") && html.contains("<a href"))
+    }
+}

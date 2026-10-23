@@ -11,6 +11,7 @@
 		0A1FD19BF9780FD08F310972 /* Mixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712B0A64C8C45245EEDA2DCD /* Mixer.swift */; };
 		0CCCA5E6742794CEF6F95139 /* Research.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5F49B50C694A5495B0BA9B /* Research.swift */; };
 		0DAE93CC98FA67FC0A7FF15E /* DocReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB007CCAFB2688150D054DC2 /* DocReader.swift */; };
+		14D9E7F3586F3DD93CC656D0 /* Lessons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B65139BFCC75912B4B05F59 /* Lessons.swift */; };
 		225B61063558E7E948734724 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4D4325032A8A5C2F10B256 /* Controller.swift */; };
 		2512DB4E3ABD3D5821517BC3 /* Readers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165F1A73BF2EF3A425305B99 /* Readers.swift */; };
 		269348370431DB47D1C43D57 /* Announcer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143EEC48CDDA1B2D057D775C /* Announcer.swift */; };
@@ -68,6 +69,7 @@
 
 /* Begin PBXFileReference section */
 		045EBC71E6D4C5157A4512CF /* Sensors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sensors.swift; sourceTree = "<group>"; };
+		0B65139BFCC75912B4B05F59 /* Lessons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lessons.swift; sourceTree = "<group>"; };
 		0CB68A11755ECA695C614CED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		12C566C892F028DB4224A4B4 /* LowVision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowVision.swift; sourceTree = "<group>"; };
 		143EEC48CDDA1B2D057D775C /* Announcer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Announcer.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				32DC305F6B600AF15463D660 /* HistoryView.swift */,
 				82D75DB9606C17C21FCC54CC /* Hotkeys.swift */,
 				5180FC427B94C760EDAAA4FD /* Labels.swift */,
+				0B65139BFCC75912B4B05F59 /* Lessons.swift */,
 				12C566C892F028DB4224A4B4 /* LowVision.swift */,
 				D77A939022365857F90AE2E9 /* MicCheck.swift */,
 				712B0A64C8C45245EEDA2DCD /* Mixer.swift */,
@@ -339,6 +342,7 @@
 				4E0166972FF319DA20CDCEE6 /* HistoryView.swift in Sources */,
 				A7F07F23862E167A198DD830 /* Hotkeys.swift in Sources */,
 				2F59BA0C5C49BBECB7F17971 /* Labels.swift in Sources */,
+				14D9E7F3586F3DD93CC656D0 /* Lessons.swift in Sources */,
 				E23ABF60C137767A1BD60600 /* LowVision.swift in Sources */,
 				5E3B041382BD7E1721821B0C /* MicCheck.swift in Sources */,
 				0A1FD19BF9780FD08F310972 /* Mixer.swift in Sources */,
@@ -445,7 +449,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610232300;
+				CURRENT_PROJECT_VERSION = 202610240100;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -550,7 +554,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610232300;
+				CURRENT_PROJECT_VERSION = 202610240100;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_NS_ASSERTIONS = NO;

@@ -49,6 +49,7 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] Read a QR code (for example a Wi-Fi code) and a food barcode. Read a medicine bottle while turning it.
 - [ ] Identify a banknote (needs an API key).
 - [ ] VoiceOver practice in learn and quiz mode: right and wrong keys are recognized, and Escape stops.
+- [ ] VoiceOver Lessons: do lesson 2 and lesson 6. Explanations are clear, wrong keys are named, right keys really work in the practice area and on the practice web page, and the lesson is marked done afterwards. If you use Caps Lock as the VO key, try it with that.
 - [ ] Typing trainer: do the first lesson with Quick Nav on. Each key is named with its finger, wrong keys are corrected, and the result gives words per minute. Try the speed test.
 
 ## Languages (Spanish, French and German speakers)

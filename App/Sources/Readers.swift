@@ -82,10 +82,10 @@ enum CodeReader {
             return String(localized: "Link to \(SitePresets.normalize(host)). Copied to the clipboard.")
         }
         if payload.lowercased().hasPrefix("mailto:") {
-            return String(localized: "Email address \(payload.dropFirst(7)). Copied to the clipboard.")
+            return String(localized: "Email address \(String(payload.dropFirst(7))). Copied to the clipboard.")
         }
         if payload.lowercased().hasPrefix("tel:") {
-            return String(localized: "Phone number \(payload.dropFirst(4)). Copied to the clipboard.")
+            return String(localized: "Phone number \(String(payload.dropFirst(4))). Copied to the clipboard.")
         }
         return String(localized: "Code says: \(payload). Copied to the clipboard.")
     }

@@ -14,7 +14,11 @@ VoiceOver Audio Split does not collect, store or share any personal information.
 - **Downloads folder.** If download announcements are on, the app notices new files in your Downloads folder and says their names. It never opens or reads them unless you ask it to open the latest download.
 - **Screen.** Reading the front window and describing a video take a picture of that window. Window text is recognized on your Mac. Video descriptions send the picture to Anthropic, the same as image descriptions.
 - **Websites.** If you set presets for websites, the app asks Safari or Chrome for the address of the current tab every two seconds while the browser is in front, and compares it with your list on your Mac. Addresses are never stored or sent anywhere.
-- **Clipboard.** Say Clipboard, the Text Analyzer and Doc Reader read the clipboard only when you use them.
+- **Clipboard.** Say Clipboard, the Text Analyzer, Doc Reader and Translate read the clipboard only when you use them. If you turn on "Say what you copy", the app checks whether the clipboard changed twice a second and speaks the start of what was copied. It's never stored or sent.
+- **Translation.** Translate uses Apple's on-device translation. Text isn't sent anywhere, though macOS may download a language the first time.
+- **Your commands.** Scripts and Shortcuts you add run only when you press their key or choose them. They can do whatever they were written to do, so only add scripts you trust.
+- **Diagnostics reports.** A diagnostics report contains the app's recent log, version and settings (never your API key or files). It's saved only where you choose, and never sent automatically.
+- **Mouse.** The audio mouse follows the pointer's position only while it's on, to play its tone.
 - **Keyboard.** The app watches for its own shortcuts (the right-hand Option key with a command key). Other keystrokes are passed on untouched and never stored.
 - **Settings.** Your settings, presets and app volumes are stored on your Mac. If you add an Anthropic API key, it is stored in your Mac's Keychain.
 

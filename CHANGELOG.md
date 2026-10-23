@@ -15,6 +15,12 @@
 - **Microphone check** (Right Option + Semicolon) and **open the latest download** (Right Option + Period).
 - **Color identifier** (Right Option + Right Bracket) and **light detector** (Right Option + Backslash).
 - Save scanned or Doc Reader text as a text or Word file.
+- **Command palette** (Right Option + Return), **input help** (Right Option + Grave Accent) and a spoken **tutorial**.
+- **Your commands:** AppleScripts and Shortcuts on keys. **Export and import settings.**
+- **Beeps** while VoiceOver is silenced, **say what you copy**, the **audio mouse**, and **on-device translation** (Right Option + Apostrophe, macOS 15).
+- Camera tools prefer a nearby **iPhone** (Continuity Camera).
+- **Diagnostics report**, **app performance**, and a testing checklist for VoiceOver testers.
+- Any command can be set to "No key"; some new commands have no key by default.
 
 ## 1.0 (beta), October 2026
 

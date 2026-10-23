@@ -7,6 +7,21 @@
 
 import AVFoundation
 
+/// Which camera to use: an iPhone through Continuity Camera when one is nearby
+/// (much better for reading mail and labels), unless turned off in Settings.
+enum CameraChoice {
+    static func preferred() -> AVCaptureDevice? {
+        let devices = AVCaptureDevice.DiscoverySession(
+            deviceTypes: [.continuityCamera, .builtInWideAngleCamera, .external],
+            mediaType: .video, position: .unspecified).devices
+        if Preferences.shared.preferIPhoneCamera,
+           let phone = devices.first(where: { $0.deviceType == .continuityCamera }) {
+            return phone
+        }
+        return devices.first { $0.deviceType != .continuityCamera } ?? devices.first
+    }
+}
+
 /// Delivers camera frames to a handler until stopped.
 final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private let queue = DispatchQueue(label: "VoiceOverAudioSplit.camera-feed")
@@ -31,7 +46,7 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         default:
             return failed("Camera access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Camera.")
         }
-        guard let camera = AVCaptureDevice.default(for: .video),
+        guard let camera = CameraChoice.preferred(),
               let input = try? AVCaptureDeviceInput(device: camera) else { return failed("No camera found") }
         let session = AVCaptureSession()
         session.sessionPreset = .medium

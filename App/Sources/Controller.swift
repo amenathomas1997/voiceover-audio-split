@@ -99,12 +99,14 @@ final class Controller {
         Mixer.earGainLeft = ear > 0 ? powf(10, -ear / 20) : 1
         Mixer.earGainRight = ear < 0 ? powf(10, ear / 20) : 1
         Hotkeys.modifier = preferences.modifier
-        KeyMap.update(custom: preferences.customKeys)
+        KeyMap.update(custom: preferences.customKeys, userCommands: preferences.userCommands)
         Announcer.useSystemVoice = speechSilenced
         AudioHub.shared.applyMix(othersGain: activeSide == nil ? 1 : gains.others, quiet: quietAll)
         SpeechHistory.shared.update(enabled: preferences.speechHistory)
         KeepAudioAwake.update(enabled: preferences.keepAudioAwake)
         SystemEvents.updateClock()
+        BeepMode.update(active: speechSilenced && preferences.beepsWhenSilenced)
+        ClipboardWatcher.update(enabled: preferences.announceClipboard)
         updateSiteWatching()
 
         if !engineNeeded {
@@ -229,6 +231,7 @@ final class Controller {
     /// Runs a keyboard command (from a shortcut, the layer, or the menu).
     func run(_ command: Command) {
         let app = NSApp.delegate as? AppDelegate
+        defer { NotificationCenter.default.post(name: .commandRan, object: command) }
         switch command {
         case .speechLeft: toggle(.left)
         case .speechRight: toggle(.right)
@@ -274,6 +277,21 @@ final class Controller {
         case .micCheck: MicCheck.run()
         case .colorIdentifier: ColorIdentifier.identify()
         case .lightDetector: LightDetector.toggle()
+        case .commandPalette: app?.showPalette()
+        case .inputHelp: InputHelp.toggle()
+        case .tutorial: app?.showTutorial()
+        case .translate:
+            TranslateModel.shared.loadClipboard()
+            app?.showTranslate()
+            TranslateModel.shared.translate()
+        case .audioMouse: AudioMouse.toggle()
+        case .beepMode:
+            preferences.beepsWhenSilenced.toggle()
+            Announcer.say(preferences.beepsWhenSilenced ? "Beeps on while VoiceOver is silenced" : "Beeps off")
+        case .exportSettings: MainActor.assumeIsolated { SettingsTransfer.export() }
+        case .importSettings: MainActor.assumeIsolated { SettingsTransfer.importFromFile() }
+        case .diagnostics: MainActor.assumeIsolated { Diagnostics.save() }
+        case .performance: Performance.announce()
         }
     }
 

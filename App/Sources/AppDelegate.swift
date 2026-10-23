@@ -23,6 +23,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var textCheckerWindow: NSWindow?
     private var commandsWindow: NSWindow?
     private var bugReportWindow: NSWindow?
+    private var paletteWindow: NSWindow?
+    private var tutorialWindow: NSWindow?
+    private var translateWindow: NSWindow?
 
     static func main() {
         let app = NSApplication.shared
@@ -71,6 +74,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
             log("Check: OCR = \(TextRecognition.text(in: cgImage))")
             log("Check: Downloads folder readable = \(SystemEvents.latestDownload() != nil)")
+            log("Check: scripts folder = \(UserCommands.scriptsFolder?.lastPathComponent ?? "unavailable")")
+            log("Check: \(Performance.summary())")
+            let report = Diagnostics.report()
+            log("Check: diagnostics report \(report.count) characters, log included = \(report.contains("Check: OCR"))")
             let hub = AudioHub.shared
             for (query, source) in [("jazz", HubSource.radio), ("accessibility", .podcasts), ("pride", .audiobooks), ("", .news)] {
                 let found = (try? await hub.find(query, in: source)) ?? []
@@ -181,6 +188,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func showAudioHub() {
         audioHubWindow = show(audioHubWindow, title: "Audio Hub", view: AudioHubView())
+    }
+
+    func showPalette() {
+        paletteWindow = show(paletteWindow, title: "Command Palette", view: CommandPaletteView { [weak self] in
+            self?.paletteWindow?.close()
+            // Give the keyboard back to the app that was in front.
+            NSApp.hide(nil)
+        })
+    }
+
+    func showTutorial() {
+        tutorialWindow = show(tutorialWindow, title: "Tutorial", view: TutorialView())
+    }
+
+    func showTranslate() {
+        translateWindow = show(translateWindow, title: "Translate", view: TranslateView())
     }
 
     func showCompare() {
@@ -307,6 +330,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: menu, "Report a Bug to Apple…", command: .reportBug) { $0.run(.reportBug) }
         menu.addItem(.separator())
 
+        // Finding and learning commands
+        add(to: menu, "Command Palette…", command: .commandPalette) { $0.run(.commandPalette) }
+        add(to: menu, "Input Help", command: .inputHelp, checked: InputHelp.isOn) { $0.run(.inputHelp) }
+        add(to: menu, "Tutorial…", command: .tutorial) { $0.run(.tutorial) }
+        add(to: menu, "Translate…", command: .translate) { $0.run(.translate) }
+        add(to: menu, "Audio Mouse", command: .audioMouse, checked: AudioMouse.isOn) { $0.run(.audioMouse) }
+        add(to: menu, "Beeps While VoiceOver Is Silenced", command: .beepMode, checked: preferences.beepsWhenSilenced) {
+            $0.run(.beepMode)
+        }
+        if !preferences.userCommands.isEmpty {
+            let yours = submenu(in: menu, "Your Commands")
+            for command in preferences.userCommands {
+                add(to: yours, command.name, equivalent: command.key.flatMap(Key.named)?.equivalent) { _ in
+                    UserCommands.run(command.id)
+                }
+            }
+        }
+        menu.addItem(.separator())
+
         // Screen, meetings and everyday tools
         add(to: menu, "Read Text in Front Window", command: .readWindow) { $0.run(.readWindow) }
         add(to: menu, "Open Last Window Text in Doc Reader") { _ in ScreenText.openInDocReader() }
@@ -364,6 +406,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
             }
         }
+        let backup = submenu(in: menu, "Backup and Diagnostics")
+        add(to: backup, "Export Settings…", command: .exportSettings) { $0.run(.exportSettings) }
+        add(to: backup, "Import Settings…", command: .importSettings) { $0.run(.importSettings) }
+        add(to: backup, "Save a Diagnostics Report…", command: .diagnostics) { $0.run(.diagnostics) }
+        add(to: backup, "App Performance", command: .performance) { $0.run(.performance) }
         add(to: menu, "Settings…") { [weak self] _ in self?.showSettings() }
         add(to: menu, "Setup Guide…") { [weak self] _ in self?.showSetupGuide() }
         menu.addItem(.separator())

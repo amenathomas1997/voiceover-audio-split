@@ -69,6 +69,9 @@ enum Mixer {
     nonisolated(unsafe) static var oneEar = -1
     nonisolated(unsafe) static var earGainLeft: Float = 1
     nonisolated(unsafe) static var earGainRight: Float = 1
+    /// Set by the audio thread when VoiceOver's speech is heard (even while silenced);
+    /// cleared by whoever reads it. Used for beeps mode.
+    nonisolated(unsafe) static var speechActivity = false
 
     // Inputs for render, filled by the Splitter's IO block.
     nonisolated(unsafe) static let sourceData = allocate(UnsafePointer<Float>?.none, maxSources)
@@ -243,7 +246,12 @@ enum Mixer {
         }
 
         // Ducking: lower other sounds while speech plays, hold briefly after it stops.
-        if peak > 0.002 { holdFrames = Int(renderRate * 0.4) } else { holdFrames = max(0, holdFrames - frames) }
+        if peak > 0.002 {
+            holdFrames = Int(renderRate * 0.4)
+            speechActivity = true
+        } else {
+            holdFrames = max(0, holdFrames - frames)
+        }
         let duckTarget: Float = duckingEnabled && holdFrames > 0 ? duckGain : 1
         let duckStart = currentDuck
         currentDuck = smooth(currentDuck, toward: duckTarget, frames: frames,

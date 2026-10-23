@@ -17,6 +17,16 @@
 
 **Spoken events and clock** (Settings): the app says when a download finishes, when headphones or speakers connect or disconnect, when the network drops or comes back, when the battery is low or charging starts or stops, and, optionally, when the screen locks. A talking clock chimes and says the time every hour, half hour or quarter hour. Scan and Read and the Doc Reader can save text as a text or Word file.
 
+**Find, learn and extend:**
+- The **command palette** finds every command, preset and user command by typing. Commands without a key, such as Tutorial, Audio Mouse, Export Settings or App Performance, live there and in the menu, and you can give any of them a key in Settings > Command keys, or choose "No key".
+- **Input help** and a spoken **tutorial** (in the menu) teach the keys by practice.
+- **Your commands** (Settings): put AppleScripts in the app's scripts folder (Settings > Open Scripts Folder; `~/Library/Application Scripts/com.fullcircleat.VoiceOverAudioSplit`), or name any Shortcut from the Shortcuts app, and give them keys. A script that returns text has it spoken.
+- **Export and import settings** (Settings > Backup and diagnostics, or the menu) moves keys, presets, app and website rules and everything else to another Mac in one `.voasettings` file. Consent settings, such as allowing image uploads, stay on each Mac.
+
+**More tools:** **beeps** while VoiceOver is silenced; **say what you copy**; the **audio mouse**, a tone that follows the pointer, higher at the top of the screen, and left and right in your ears; on-device **translation** of the clipboard or the item under the VoiceOver cursor; and the camera tools prefer a nearby **iPhone** through Continuity Camera.
+
+**Diagnostics and performance:** "Save a Diagnostics Report" writes the app's recent log, version and settings (never the API key) to a file you choose, for bug reports. "App Performance" says how much processor time and memory the app uses. The [testing checklist](docs/TESTING.md) is for VoiceOver users testing each release.
+
 **Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.
 - **Optional AI:** image descriptions and an assistant, using Claude with your own API key.
 
@@ -72,6 +82,9 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + Period | Opens the latest download |
 | Right Option + Right Bracket | Identifies the color of something held up to the camera |
 | Right Option + Backslash | Light detector: a tone that rises with the light the camera sees |
+| Right Option + Return | Command palette: type a few letters of any command, preset or your own command, then press Return |
+| Right Option + Grave Accent | Input help: shortcuts say what they do instead of doing it. Press again to stop. |
+| Right Option + Apostrophe | Translates the clipboard on your Mac (macOS 15 or later) |
 
 Every key can be changed in Settings, under Command keys (like JAWS Keyboard Manager). Choosing a key another command uses swaps the two commands' keys. Digits 1 to 9 always switch presets, and slash always lists the layer keys.
 
@@ -146,6 +159,7 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/SpeechTools.swift` has speech history, Read Item and Say Clipboard. It also sends every AppleScript request to VoiceOver through one queue, because NSAppleScript isn't safe to use from several threads at once.
 - `App/Sources/Commands.swift` lists every command, its default key, and the keys it can move to. `App/Sources/Hotkeys.swift` turns key presses into commands.
 - `App/Sources/Assistant.swift` has the Claude client, the API key in the Keychain, the screen capture, and the Assistant window. `App/Sources/Research.swift` is Research It. `App/Sources/SystemStatus.swift` has system status and the Text Analyzer.
+- `App/Sources/Palette.swift` (command palette, input help, tutorial), `App/Sources/Extend.swift` (your commands, settings export and import), `App/Sources/Extras.swift` (beeps, clipboard announcements, audio mouse, translation) and `App/Sources/Diagnostics.swift`.
 - `App/Sources/Events.swift` (spoken events and the talking clock), `App/Sources/MicCheck.swift`, `App/Sources/ScreenText.swift` (reading the front window) and `App/Sources/CameraTools.swift` (color identifier and light detector).
 - `App/Sources/Rescue.swift` (keep audio awake and restarting VoiceOver), `App/Sources/TextTools.swift` (compare text and the Text Checker) and `App/Sources/Helpers.swift` (the VoiceOver command finder and bug reports).
 - `App/Sources/DocReader.swift`, `App/Sources/ScanReader.swift`, `App/Sources/LowVision.swift` (captions and the focus frame) and `App/Sources/AudioHub.swift` are the reading, low-vision and audio hub features.

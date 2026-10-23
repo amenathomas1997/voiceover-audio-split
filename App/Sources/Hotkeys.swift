@@ -13,11 +13,13 @@ enum Hotkeys {
     private enum Action: Equatable {
         case command(Command)
         case preset(Int)
+        case user(UUID)
         case layerHelp
     }
 
     private static func action(for keyCode: Int64) -> Action? {
         if let command = KeyMap.commandForKey[keyCode] { return .command(command) }
+        if let user = KeyMap.userCommandForKey[keyCode] { return .user(user) }
         return Key.presetDigits[keyCode].map(Action.preset)
     }
 
@@ -128,9 +130,24 @@ enum Hotkeys {
     }
 
     private static func perform(_ action: Action) {
+        // In input help, every key except input help itself says what it does instead.
+        if InputHelp.isOn && action != .command(.inputHelp) {
+            switch action {
+            case .command(let command): InputHelp.describe(command.title, key: KeyMap.key(for: command)?.name)
+            case .preset(let number):
+                let presets = Preferences.shared.presets
+                InputHelp.describe(number <= presets.count ? "Preset \(presets[number - 1].name)" : "Preset \(number), not set up",
+                                   key: "\(number)")
+            case .user(let id):
+                InputHelp.describe(Preferences.shared.userCommands.first { $0.id == id }?.name ?? "Your command", key: nil)
+            case .layerHelp: InputHelp.describe("Lists the layer keys", key: "Slash")
+            }
+            return
+        }
         switch action {
         case .command(let command): Controller.shared.run(command)
         case .preset(let number): Controller.shared.applyPreset(number: number)
+        case .user(let id): UserCommands.run(id)
         case .layerHelp: Announcer.say(KeyMap.spokenList)
         }
     }

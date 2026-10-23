@@ -7,7 +7,7 @@ import AVFoundation
 
 enum Tone {
     case speechLeft, speechRight, speechBoth, off, louder, quieter, status
-    case quiet, unquiet, micMuted, micOn, device, preset
+    case quiet, unquiet, micMuted, micOn, device, preset, beep
 }
 
 enum Tones {
@@ -55,6 +55,7 @@ enum Tones {
         case .micOn: [(294, 0), (392, 0)]
         case .device: [(523, 0), (659, 0), (784, 0)]
         case .preset: [(587, 0), (587, 0)]
+        case .beep: [(1320, 0)]
         }
     }
 

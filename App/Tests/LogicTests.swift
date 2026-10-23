@@ -110,22 +110,23 @@ final class CommandKeyTests: XCTestCase {
     }
 
     func testEveryCommandHasItsOwnDefaultKey() {
-        let keys = Command.allCases.map(\.defaultKey)
+        let keys = Command.allCases.compactMap(\.defaultKey)
         XCTAssertEqual(Set(keys).count, keys.count, "two commands share a default key")
     }
 
     func testDefaultKeysAreAssignableAndAvoidReservedKeys() {
         for command in Command.allCases {
-            XCTAssertNotNil(Key.named(command.defaultKey), "\(command) has a key Settings can't show")
-            XCTAssertNil(Key.presetDigits[command.defaultKey], "\(command) uses a preset digit")
-            XCTAssertNotEqual(command.defaultKey, Key.slash, "\(command) uses the layer help key")
+            guard let key = command.defaultKey else { continue }
+            XCTAssertNotNil(Key.named(key), "\(command) has a key Settings can't show")
+            XCTAssertNil(Key.presetDigits[key], "\(command) uses a preset digit")
+            XCTAssertNotEqual(key, Key.slash, "\(command) uses the layer help key")
         }
     }
 
     func testCustomKeyReplacesDefault() {
         KeyMap.update(custom: [Command.systemStatus.rawValue: 40]) // K
         XCTAssertEqual(KeyMap.commandForKey[40], .systemStatus)
-        XCTAssertNil(KeyMap.commandForKey[Command.systemStatus.defaultKey])
+        XCTAssertNil(KeyMap.commandForKey[Command.systemStatus.defaultKey!])
         XCTAssertEqual(KeyMap.key(for: .systemStatus)?.name, "K")
         // K is also the default for restarting VoiceOver: the chosen key wins.
         XCTAssertNil(KeyMap.key(for: .rescueVoiceOver))
@@ -133,7 +134,8 @@ final class CommandKeyTests: XCTestCase {
 
     func testLayerHelpListsEveryCommand() {
         let spoken = KeyMap.spokenList
-        for command in Command.allCases {
+        // Every command with a key is listed; commands without a key can't be reached from the layer.
+        for command in Command.allCases where KeyMap.key(for: command) != nil {
             XCTAssertTrue(spoken.contains(command.title), "layer help is missing \(command)")
         }
     }
@@ -292,5 +294,62 @@ final class EverydayToolTests: XCTestCase {
         XCTAssertEqual(LightDetector.tone(forBrightness: 0), 220, accuracy: 0.01)
         XCTAssertEqual(LightDetector.tone(forBrightness: 1), 1760, accuracy: 0.01)
         XCTAssertLessThan(LightDetector.tone(forBrightness: 0.3), LightDetector.tone(forBrightness: 0.6))
+    }
+}
+
+final class PowerToolTests: XCTestCase {
+    override func tearDown() {
+        KeyMap.update(custom: [:])
+    }
+
+    func testPaletteFindsCommandsPresetsAndKeys() {
+        XCTAssertTrue(PaletteEntry.search("system status").contains { $0.action == .command(.systemStatus) })
+        XCTAssertTrue(PaletteEntry.search("preset meeting").contains { $0.title == "Preset: Meeting" })
+        XCTAssertFalse(PaletteEntry.search("").contains { $0.action == .command(.commandPalette) },
+                       "the palette doesn't list itself")
+        XCTAssertTrue(PaletteEntry.search("qqqqzzzz").isEmpty)
+    }
+
+    func testCommandsWithoutDefaultKeysAndNoKeyChoice() {
+        XCTAssertNil(KeyMap.key(for: .diagnostics), "no default key")
+        KeyMap.update(custom: [Command.speechLeft.rawValue: Key.none])
+        XCTAssertNil(KeyMap.key(for: .speechLeft), "user chose no key")
+        XCTAssertNil(KeyMap.commandForKey[123])
+    }
+
+    func testUserCommandKeysNeverTakeBuiltInKeys() {
+        let free = UserCommand(name: "Mine", kind: .shortcut, target: "Mine", key: 123) // Left Arrow, used by speech left
+        KeyMap.update(custom: [:], userCommands: [free])
+        XCTAssertNil(KeyMap.userCommandForKey[123])
+        KeyMap.update(custom: [Command.speechLeft.rawValue: Key.none], userCommands: [free])
+        XCTAssertEqual(KeyMap.userCommandForKey[123], free.id, "usable once the built-in command gives the key up")
+    }
+
+    func testSettingsExportAndImportRoundTrip() throws {
+        let defaults = UserDefaults.standard
+        let saved = defaults.object(forKey: "balanceStep")
+        defer { defaults.set(saved, forKey: "balanceStep") }
+        defaults.set(4, forKey: "balanceStep")
+        let data = try SettingsTransfer.exportData()
+        defaults.set(2, forKey: "balanceStep")
+        XCTAssertGreaterThan(try SettingsTransfer.importData(data), 0)
+        XCTAssertEqual(defaults.integer(forKey: "balanceStep"), 4)
+        XCTAssertThrowsError(try SettingsTransfer.importData(Data("not settings".utf8)))
+        XCTAssertFalse(SettingsTransfer.portableKeys.contains("allowImageUpload"), "consent stays on each Mac")
+    }
+
+    func testAudioMouseMapsPositionToPitchAndEar() {
+        XCTAssertEqual(AudioMouse.tone(x: 0, y: 0).frequency, 200, accuracy: 0.01)
+        XCTAssertEqual(AudioMouse.tone(x: 0, y: 1).frequency, 1600, accuracy: 0.01)
+        XCTAssertEqual(AudioMouse.tone(x: 0, y: 0.5).pan, -1)
+        XCTAssertEqual(AudioMouse.tone(x: 1, y: 0.5).pan, 1)
+        XCTAssertEqual(AudioMouse.tone(x: 0.5, y: 0.5).pan, 0, accuracy: 0.0001)
+    }
+
+    func testTutorialStepsUseRealCommands() {
+        XCTAssertFalse(Tutorial.lessons.isEmpty)
+        for lesson in Tutorial.lessons {
+            XCTAssertNotNil(KeyMap.key(for: lesson.command), "\(lesson.command) has a key to practice")
+        }
     }
 }

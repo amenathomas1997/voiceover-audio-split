@@ -31,7 +31,7 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 
     private func start(_ completion: @escaping (String) -> Void) {
-        guard let camera = AVCaptureDevice.default(for: .video),
+        guard let camera = CameraChoice.preferred(),
               let input = try? AVCaptureDeviceInput(device: camera) else {
             return completion("No camera found")
         }

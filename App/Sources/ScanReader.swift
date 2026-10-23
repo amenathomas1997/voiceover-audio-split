@@ -77,7 +77,7 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
     }
 
     private func begin() {
-        guard let camera = AVCaptureDevice.default(for: .video),
+        guard let camera = CameraChoice.preferred(),
               let input = try? AVCaptureDeviceInput(device: camera) else { return report("No camera found") }
         let session = AVCaptureSession()
         session.sessionPreset = .high

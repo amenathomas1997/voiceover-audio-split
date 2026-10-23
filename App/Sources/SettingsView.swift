@@ -235,6 +235,9 @@ struct SettingsView: View {
                 Toggle("Keep audio awake, so the first words VoiceOver says aren't cut off", isOn: $preferences.keepAudioAwake)
                 Text("Plays silence so headphones and Bluetooth devices like AirPods don't go to sleep between phrases.")
                     .font(.caption).foregroundStyle(.secondary)
+                Toggle("Beep each time VoiceOver would speak while it's silenced", isOn: $preferences.beepsWhenSilenced)
+                Toggle("Say what you copy", isOn: $preferences.announceClipboard)
+                Toggle("Use a nearby iPhone as the camera when available", isOn: $preferences.preferIPhoneCamera)
                 Toggle("Keep speech history", isOn: $preferences.speechHistory)
                 Text("Keeps a list of what VoiceOver says, in memory only, to review and copy from the Speech History window.")
                     .font(.caption).foregroundStyle(.secondary)
@@ -263,9 +266,12 @@ struct SettingsView: View {
             .onChange(of: preferences.focusFrameColor) { FocusFrame.refresh() }
             .onChange(of: preferences.focusFrameThickness) { FocusFrame.refresh() }
 
+            UserCommandsSection()
+
             Section("Command keys") {
                 ForEach(Command.allCases) { command in
                     Picker(command.title, selection: keyBinding(command)) {
+                        Text("No key").tag(Key.none)
                         ForEach(Key.assignable) { Text($0.name).tag($0.code) }
                     }
                 }
@@ -298,6 +304,16 @@ struct SettingsView: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
 
+            Section("Backup and diagnostics") {
+                HStack {
+                    Button("Export Settings…") { SettingsTransfer.export() }
+                    Button("Import Settings…") { SettingsTransfer.importFromFile() }
+                }
+                Button("Save a Diagnostics Report…") { Diagnostics.save() }
+                Text("Export saves your keys, presets, app and website rules and other settings in one file, to back up or set up another Mac. Diagnostics reports include the app's recent log for bug reports; never your API key or files.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
             Section("About") {
                 Text("VoiceOver Audio Split \(Self.version)")
                 Text("Copyright 2026 Full Circle AT LLC. Free software under the GNU General Public License version 3.")
@@ -320,15 +336,17 @@ struct SettingsView: View {
     /// The command's key; choosing a key another command uses swaps their keys.
     private func keyBinding(_ command: Command) -> Binding<Int64> {
         Binding(
-            get: { KeyMap.key(for: command)?.code ?? command.defaultKey },
+            get: { KeyMap.key(for: command)?.code ?? Key.none },
             set: { newKey in
                 var keys = preferences.customKeys
-                let oldKey = KeyMap.key(for: command)?.code ?? command.defaultKey
-                if let other = KeyMap.commandForKey[newKey], other != command { keys[other.rawValue] = oldKey }
+                let oldKey = KeyMap.key(for: command)?.code ?? Key.none
+                if newKey != Key.none, let other = KeyMap.commandForKey[newKey], other != command {
+                    keys[other.rawValue] = oldKey
+                }
                 keys[command.rawValue] = newKey
                 // Keep only real changes, so restoring a default key leaves nothing saved.
-                preferences.customKeys = keys.filter { id, key in Command(rawValue: id)?.defaultKey != key }
-                KeyMap.update(custom: preferences.customKeys)
+                preferences.customKeys = keys.filter { id, key in key != (Command(rawValue: id)?.defaultKey ?? Key.none) }
+                KeyMap.update(custom: preferences.customKeys, userCommands: preferences.userCommands)
             })
     }
 

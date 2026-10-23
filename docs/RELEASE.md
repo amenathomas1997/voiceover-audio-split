@@ -47,6 +47,8 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 > - Downloads folder (read-only): announcing when a download finishes and opening the latest download.
 > - Camera: on-device text reading (Scan and Read), a framing check before video calls, a color identifier, and a light detector. Pictures are never saved or sent.
 > - Network: optional lookups (Wikipedia, weather), the audio hub (radio, podcasts, LibriVox, news), and optional image descriptions with the user's own Anthropic API key.
+> - Continuity Camera: the camera tools can use a nearby iPhone (NSCameraUseContinuityCameraDeviceType).
+> - User scripts: the user can add their own AppleScripts to the app's Application Scripts folder (run with NSUserAppleScriptTask) or name a Shortcut (run with the shortcuts:// URL scheme). Nothing runs unless the user adds it.
 > - User-selected files (read and write): opening documents in the large-print Doc Reader, and saving recognized text as a text or Word file where the user chooses.
 >
 > To test without VoiceOver: open the menu with Right Option + M, choose Speech Left, and play any audio. With VoiceOver on (Command + F5), VoiceOver's voice moves to the left ear and the other audio moves to the right ear.

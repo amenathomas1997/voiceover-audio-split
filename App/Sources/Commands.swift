@@ -13,6 +13,8 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case docReader, scanAndRead, captions, focusFrame, audioHub, hubPlayPause
     case rescueVoiceOver, compareText, voiceOverCommands, reportBug
     case readWindow, describeVideo, openDownload, micCheck, colorIdentifier, lightDetector
+    case commandPalette, inputHelp, tutorial, translate, audioMouse, beepMode
+    case exportSettings, importSettings, diagnostics, performance
 
     var id: String { rawValue }
 
@@ -58,10 +60,22 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .micCheck: "Microphone check"
         case .colorIdentifier: "Identify a color with the camera"
         case .lightDetector: "Light detector"
+        case .commandPalette: "Command palette: search and run any command"
+        case .inputHelp: "Input help: hear what keys do without doing it"
+        case .tutorial: "Tutorial"
+        case .translate: "Translate"
+        case .audioMouse: "Audio mouse: hear where the pointer is"
+        case .beepMode: "Beeps while VoiceOver is silenced"
+        case .exportSettings: "Export settings"
+        case .importSettings: "Import settings"
+        case .diagnostics: "Save a diagnostics report"
+        case .performance: "App performance"
         }
     }
 
-    var defaultKey: Int64 {
+    /// The key this command has unless changed in Settings; nil for commands
+    /// with no key by default (they're in the menu and the command palette).
+    var defaultKey: Int64? {
         switch self {
         case .speechLeft: 123
         case .speechRight: 124
@@ -103,6 +117,10 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .micCheck: 41
         case .colorIdentifier: 30
         case .lightDetector: 42
+        case .commandPalette: 36
+        case .inputHelp: 50
+        case .translate: 39
+        case .tutorial, .audioMouse, .beepMode, .exportSettings, .importSettings, .diagnostics, .performance: nil
         }
     }
 }
@@ -117,6 +135,8 @@ struct Key: Identifiable, Hashable {
     static let presetDigits: [Int64: Int] = [18: 1, 19: 2, 20: 3, 21: 4, 23: 5, 22: 6, 26: 7, 28: 8, 25: 9]
     static let slash: Int64 = 44
     static let escape: Int64 = 53
+    /// Stored as a chosen key to mean "no key".
+    static let none: Int64 = -1
 
     /// Keys commands can be assigned to (everything except digits 1 to 9 and slash).
     static let assignable: [Key] = {
@@ -143,6 +163,7 @@ struct Key: Identifiable, Hashable {
             Key(code: 47, name: "Period", equivalent: "."),
             Key(code: 42, name: "Backslash", equivalent: "\\"),
             Key(code: 50, name: "Grave Accent", equivalent: "`"),
+            Key(code: 36, name: "Return", equivalent: "\r"),
         ]
     }()
 
@@ -153,9 +174,16 @@ struct Key: Identifiable, Hashable {
 enum KeyMap {
     /// Read on the event tap thread; rebuilt on main when the setting changes.
     nonisolated(unsafe) private(set) static var commandForKey: [Int64: Command] = build([:])
+    /// Keys of the user's own commands (scripts and shortcuts), on keys no built-in command uses.
+    nonisolated(unsafe) private(set) static var userCommandForKey: [Int64: UUID] = [:]
 
-    static func update(custom: [String: Int64]) {
+    static func update(custom: [String: Int64], userCommands: [UserCommand] = []) {
         commandForKey = build(custom)
+        var users: [Int64: UUID] = [:]
+        for command in userCommands {
+            if let key = command.key, commandForKey[key] == nil { users[key] = command.id }
+        }
+        userCommandForKey = users
     }
 
     /// Keys the user chose always win. A command whose default key is already
@@ -164,10 +192,10 @@ enum KeyMap {
     private static func build(_ custom: [String: Int64]) -> [Int64: Command] {
         var map: [Int64: Command] = [:]
         for command in Command.allCases {
-            if let key = custom[command.rawValue] { map[key] = command }
+            if let key = custom[command.rawValue], key != Key.none { map[key] = command }
         }
-        for command in Command.allCases where custom[command.rawValue] == nil && map[command.defaultKey] == nil {
-            map[command.defaultKey] = command
+        for command in Command.allCases where custom[command.rawValue] == nil {
+            if let key = command.defaultKey, map[key] == nil { map[key] = command }
         }
         return map
     }

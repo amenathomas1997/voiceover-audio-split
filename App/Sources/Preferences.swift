@@ -165,6 +165,18 @@ enum ReadingTheme: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+/// A command the user adds: one of their AppleScripts or a Shortcut from the Shortcuts app.
+struct UserCommand: Codable, Hashable, Identifiable {
+    enum Kind: String, Codable { case appleScript, shortcut }
+
+    var id = UUID()
+    var name: String
+    var kind: Kind
+    /// The script's file name in the app's scripts folder, or the Shortcut's name.
+    var target: String
+    var key: Int64?
+}
+
 /// Colors for the focus frame.
 enum FrameColor: String, Codable, CaseIterable, Identifiable {
     case yellow, red, magenta, cyan, green, orange
@@ -242,6 +254,15 @@ final class Preferences: ObservableObject {
     @Published var announceLock: Bool { didSet { save(announceLock, "announceLock") } }
     /// Talking clock: minutes between announcements (0 off, 15, 30 or 60).
     @Published var clockInterval: Int { didSet { save(clockInterval, "clockInterval") } }
+    @Published var userCommands: [UserCommand] { didSet { save(try? JSONEncoder().encode(userCommands), "userCommands") } }
+    /// While VoiceOver is silenced, beep each time it would have spoken.
+    @Published var beepsWhenSilenced: Bool { didSet { save(beepsWhenSilenced, "beepsWhenSilenced") } }
+    /// Speak what was just copied.
+    @Published var announceClipboard: Bool { didSet { save(announceClipboard, "announceClipboard") } }
+    /// Language code for Translate, such as "es".
+    @Published var translateTarget: String { didSet { save(translateTarget, "translateTarget") } }
+    /// Prefer an iPhone (Continuity Camera) for the camera tools when one is nearby.
+    @Published var preferIPhoneCamera: Bool { didSet { save(preferIPhoneCamera, "preferIPhoneCamera") } }
     /// News feeds for the audio hub (RSS addresses).
     @Published var newsFeeds: [String] { didSet { save(newsFeeds, "newsFeeds") } }
     /// Keep a list of what VoiceOver says, to review with the history window.
@@ -260,6 +281,7 @@ final class Preferences: ObservableObject {
             "newsFeeds": ["https://feeds.bbci.co.uk/news/rss.xml", "https://feeds.npr.org/1001/rss.xml"],
             "keepAudioAwake": false, "announceDownloads": true, "announceDevices": true,
             "announceNetwork": true, "announceBattery": true, "announceLock": false, "clockInterval": 0,
+            "beepsWhenSilenced": true, "announceClipboard": false, "translateTarget": "es", "preferIPhoneCamera": true,
         ])
         layout = Layout(rawValue: store.string(forKey: "layout") ?? "") ?? .opposite
         stereoOthers = store.bool(forKey: "stereoOthers")
@@ -305,6 +327,11 @@ final class Preferences: ObservableObject {
         announceBattery = store.bool(forKey: "announceBattery")
         announceLock = store.bool(forKey: "announceLock")
         clockInterval = store.integer(forKey: "clockInterval")
+        userCommands = store.data(forKey: "userCommands").flatMap { try? JSONDecoder().decode([UserCommand].self, from: $0) } ?? []
+        beepsWhenSilenced = store.bool(forKey: "beepsWhenSilenced")
+        announceClipboard = store.bool(forKey: "announceClipboard")
+        translateTarget = store.string(forKey: "translateTarget") ?? "es"
+        preferIPhoneCamera = store.bool(forKey: "preferIPhoneCamera")
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
             ?? Preset.defaults

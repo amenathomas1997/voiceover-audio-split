@@ -84,13 +84,8 @@ jobs:
           pkgutil --expand "build/VoiceOver Audio Split.pkg" build/expanded
           grep -q 'relocatable="false"' build/expanded/app-component.pkg/PackageInfo
 
-      - name: Build the script version installer
-        run: ./build-script-version.sh
-
       - name: Upload the installer package
         uses: actions/upload-artifact@v4
         with:
           name: VoiceOver-Audio-Split-installer
-          path: |
-            build/VoiceOver Audio Split.pkg
-            build/VoiceOver Audio Split (script version).pkg
+          path: build/VoiceOver Audio Split.pkg

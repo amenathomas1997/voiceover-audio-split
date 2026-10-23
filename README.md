@@ -214,7 +214,7 @@ The app remembers everything between restarts, except quiet mode, which always e
   ```bash
   xcodebuild -project App/VoiceOverAudioSplit.xcodeproj -scheme VoiceOverAudioSplit -destination 'platform=macOS' test
   ```
-- **CI** (GitHub Actions, `.github/workflows/ci.yml`) runs on every push and pull request. It checks that the Xcode project matches `project.yml`, builds the app in Debug and Release, runs the unit tests, and builds the app's installer package (checking that it installs into Applications) and the script-version package. Test results and both packages are attached to each run. Packages built by CI aren't signed with a Developer ID.
+- **CI** (GitHub Actions, `.github/workflows/ci.yml`) runs on every push and pull request. It checks that the Xcode project matches `project.yml`, builds the app in Debug and Release, runs the unit tests, and builds the app's installer package, checking that it installs into Applications. Test results and the package are attached to each run. Packages built by CI aren't signed with a Developer ID.
 - Development builds have a self-test that tries device switching, the microphone mute and app matching inside the sandbox, then puts everything back:
   ```bash
   open -a "App/build/dd/Build/Products/Debug/VoiceOver Audio Split.app" --args --self-test
@@ -250,78 +250,9 @@ Run it without `sudo`. It needs Xcode, and makes `build/VoiceOver Audio Split.pk
 - **For other Macs**, sign it with your Developer ID. In Xcode, go to Settings > Accounts > Manage Certificates and add a **Developer ID Application** and a **Developer ID Installer** certificate; `build.sh` finds them by itself. To notarize as well, save your notary details once with `xcrun notarytool store-credentials VoiceOverAudioSplit`, then run `NOTARY_PROFILE=VoiceOverAudioSplit ./build.sh`. Without this, other Macs block the package.
 - If `build.sh` says the build folder belongs to another account, it was once run with `sudo`. Remove it with `sudo rm -rf build` and run `./build.sh` again.
 
-## Older version: scripts and installer package
+## The older script version
 
-Before the app, this project was a set of AppleScripts plus two small helper apps, built with `./build-script-version.sh` into a standalone installer (`build/VoiceOver Audio Split (script version).pkg`). It has none of the app's newer features, and installing the app removes it. That version is not sandboxed, so it cannot go through TestFlight, but it can be shared directly. The sections below describe it.
-
-## Why it is not only an AppleScript
-
-AppleScript cannot move a sound to one ear, and macOS has no built-in setting for this. So the project has three parts:
-
-- **VO Audio Split.app** is a small background helper with no window or Dock icon. It uses Core Audio "process taps" (macOS 14.2 or later) to capture VoiceOver's speech and all other audio separately. It turns each into mono and plays speech in one ear and everything else in the other. When the helper quits, sound goes back to normal on its own.
-- **VO Audio Split Keys.app** is a second background helper that is always running. It listens for Right Option + arrow keys anywhere on the Mac and runs the matching script.
-- **AppleScripts** turn the split on, off or to the other side, change the volume balance, and VoiceOver tells you the result.
-
-## Install (older version)
-
-```bash
-./build-script-version.sh
-```
-
-This builds `build/VoiceOver Audio Split (script version).pkg`, which anyone can double-click to install. No admin password is needed, because everything goes into the user's own account. Because the package isn't signed with a Developer ID, other Macs block it the first time. The user then goes to System Settings > Privacy & Security and chooses Open Anyway. Run `./build-script-version.sh install` to install it on this Mac.
-
-Older builds installed these pieces directly:
-- `~/Applications/VO Audio Split.app`
-- `~/Applications/VO Audio Split Keys.app`, plus `~/Library/LaunchAgents/local.voaudiosplit.keys.plist`, which starts it at login and restarts it if it stops
-- `~/Library/Scripts/VoiceOver Audio Split/`, which holds:
-  - **Cycle Audio Split** (off, then speech left, then speech right, then off)
-  - **Speech Left**
-  - **Speech Right**
-  - **Audio Split Off**
-  - **Speech Louder** (3 dB per press, up to 30 dB)
-  - **Other Sounds Louder** (3 dB per press, up to 30 dB)
-  - **Reset Volume Balance** (sets speech and other sounds to equal volume)
-  - **Toggle Start at Login**
-
-The scripts are generated from `Scripts/make_scripts.py`. To change them, edit that file and run `./build-script-version.sh` again.
-
-## Keyboard shortcuts
-
-| Keys | What it does |
-| --- | --- |
-| Right Option + Left Arrow | Speech left, other sounds right. Press again to turn the split off. |
-| Right Option + Right Arrow | Speech right, other sounds left. Press again to turn the split off. |
-| Right Option + Up Arrow | Speech 3 dB louder |
-| Right Option + Down Arrow | Other sounds 3 dB louder |
-
-Only the right Option key triggers these. Left Option + arrows still move by word in text. VoiceOver's own Option Key commander (VoiceOver Utility > Commands) must stay off, because it also uses Right Option.
-
-The other scripts (Cycle, Off, Reset Volume Balance, Toggle Start at Login) have no shortcut. You can run them from the script menu, or add more shortcuts in `Sources/Keys/main.swift`.
-
-## Volume balance
-
-Speech Louder and Other Sounds Louder change the volume balance right away, even while the split is running. Only the quieter side is turned down, and the louder side always stays at full volume, so the sound never distorts. Your balance is saved and used the next time the split starts.
-
-## Start at login
-
-Toggle Start at Login turns automatic startup on or off. When it is on, the split starts when you log in, using the last ear you picked (left if you never picked one). macOS may show a "Background item added" notice the first time. The login setting is saved in `~/Library/LaunchAgents/local.voaudiosplit.login.plist`.
-
-## One-time setup
-
-1. **Allow audio capture.** The first time the split starts, macOS asks whether VO Audio Split can record system audio. Choose Allow. If you missed the prompt, go to System Settings > Privacy & Security > Screen & System Audio Recording and turn on VO Audio Split under "System Audio Recording Only".
-2. **Let scripts speak through VoiceOver.** Open VoiceOver Utility (VO-F8), go to General, and check "Allow VoiceOver to be controlled with AppleScript". Without this, the scripts use the system voice for their announcements.
-3. **Allow the shortcuts.** Go to System Settings > Privacy & Security > Accessibility and turn on VO Audio Split Keys. The shortcuts start working within two seconds, with no restart needed. After you run `./build-script-version.sh` again, macOS may treat the rebuilt app as new. If the shortcuts stop working, turn VO Audio Split Keys off and back on in that list.
-
-## Notes
-
-- Use headphones. On speakers the split is hard to hear.
-- Stereo audio such as music becomes mono in its ear. JAWS works the same way.
-- If you plug in headphones or change the output device, the helper moves to the new device automatically. It also notices when VoiceOver restarts.
-- If the shortcuts don't respond, check `~/Library/Logs/VOAudioSplitKeys.log`. It says "Listening" once permission is granted.
-- To see which audio processes the helper treats as speech:
-  ```bash
-  ~/Applications/"VO Audio Split.app"/Contents/MacOS/VOAudioSplit --list
-  ```
+Before the app, this project was a set of AppleScripts and two small helper apps ("VO Audio Split" and "VO Audio Split Keys") installed in `~/Applications/VoiceOver Audio Split`. That version has been retired, and its source is no longer in this repository (it's still in the Git history). The installer package removes it if it's installed, because its Right Option shortcuts clash with the app's. To remove it by hand, open `~/Applications/VoiceOver Audio Split` and run **Uninstall VoiceOver Audio Split**.
 
 ## License
 

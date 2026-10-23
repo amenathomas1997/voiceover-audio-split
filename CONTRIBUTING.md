@@ -79,7 +79,7 @@ Every change must work fully with VoiceOver and the keyboard:
 ## Pull requests
 
 - Keep each pull request to one change, and describe what it does and how you tested it.
-- CI must pass. It checks that the Xcode project matches `project.yml`, builds Debug and Release, runs the unit tests, and builds both installer packages (the app, and the older script version).
+- CI must pass. It checks that the Xcode project matches `project.yml`, builds Debug and Release, runs the unit tests, and builds the installer package.
 - Add unit tests for any logic that doesn't need hardware or permissions.
 
 ## License of contributions

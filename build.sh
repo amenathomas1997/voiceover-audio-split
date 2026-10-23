@@ -80,7 +80,7 @@ for item in items:
 plistlib.dump(items, open(path, "wb"))' "$BUILD/app-components.plist"
 
 pkgbuild --root "$PAYLOAD" --component-plist "$BUILD/app-components.plist" \
-  --scripts Installer/app/scripts --identifier com.fullcircleat.VoiceOverAudioSplit.pkg \
+  --scripts Installer/scripts --identifier com.fullcircleat.VoiceOverAudioSplit.pkg \
   --version "$VERSION" --install-location / "$BUILD/app-component.pkg" >/dev/null
 
 cat > "$BUILD/app-distribution.xml" <<EOF
@@ -100,7 +100,7 @@ cat > "$BUILD/app-distribution.xml" <<EOF
 </installer-gui-script>
 EOF
 
-productbuild_args=(--distribution "$BUILD/app-distribution.xml" --resources Installer/app/resources --package-path "$BUILD")
+productbuild_args=(--distribution "$BUILD/app-distribution.xml" --resources Installer/resources --package-path "$BUILD")
 if [[ -n "$INSTALLER_ID" ]]; then
   echo "Signing the installer with $INSTALLER_ID"
   productbuild_args+=(--sign "$INSTALLER_ID")

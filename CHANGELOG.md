@@ -33,7 +33,7 @@
 
 - **Permissions in Settings:** see what the app is allowed to do, and open the right page of System Settings for each permission.
 - **An easier menu:** the split stays at the top, and everything else is grouped in submenus: Sound and Devices, Presets, Speech, Reading and Text, Camera, Assistant and Research, VoiceOver Help, Learning and Everyday Tools.
-- **Installer package for the app:** `./build.sh` now builds an installer that puts the app in the Applications folder and removes the older script version, whose shortcuts clashed. The older script version's builder is now `./build-script-version.sh`.
+- **Installer package for the app:** `./build.sh` now builds an installer that puts the app in the Applications folder and removes the older script version, whose shortcuts clashed. The older script version is retired and its source removed.
 
 ## 1.0 (beta), October 2026
 

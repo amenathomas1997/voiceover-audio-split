@@ -8,6 +8,8 @@ import AVFoundation
 enum Tone {
     case speechLeft, speechRight, speechBoth, off, louder, quieter, status
     case quiet, unquiet, micMuted, micOn, device, preset, beep
+    /// The typing trainer: a key typed right, or wrong.
+    case correct, wrong
 }
 
 enum Tones {
@@ -56,6 +58,8 @@ enum Tones {
         case .device: [(523, 0), (659, 0), (784, 0)]
         case .preset: [(587, 0), (587, 0)]
         case .beep: [(1320, 0)]
+        case .correct: [(1175, 0)]
+        case .wrong: [(196, 0), (185, 0)]
         }
     }
 

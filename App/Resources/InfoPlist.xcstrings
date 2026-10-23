@@ -84,8 +84,8 @@
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "VoiceOver Audio Split prüft vor einem Videoanruf, ob dein Gesicht mittig und gut beleuchtet ist. Bilder werden nur auf diesem Mac analysiert und nie gespeichert."
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split verwendet die Kamera, um Texte, Etiketten und Codes zu lesen, die du davor hältst, Farben und Licht zu erkennen und vor einem Videoanruf deinen Bildausschnitt zu prüfen. Bilder werden auf diesem Mac analysiert und nie gespeichert; nur die Geld-Erkennung sendet ein Bild, und nur wenn du darum bittest."
           }
         },
         "en" : {
@@ -96,14 +96,14 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "VoiceOver Audio Split comprueba si tu cara está centrada y bien iluminada antes de una videollamada. Las imágenes solo se analizan en este Mac y nunca se guardan."
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split usa la cámara para leer textos, etiquetas y códigos que acerques, identificar colores y luz, y revisar tu encuadre antes de una videollamada. Las imágenes se analizan en este Mac y nunca se guardan; solo el identificador de dinero envía una imagen, y solo cuando lo pides."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "VoiceOver Audio Split vérifie que votre visage est centré et bien éclairé avant un appel vidéo. Les images sont analysées uniquement sur ce Mac et ne sont jamais conservées."
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split utilise la caméra pour lire les textes, étiquettes et codes que vous lui présentez, identifier les couleurs et la lumière, et vérifier votre cadrage avant un appel vidéo. Les images sont analysées sur ce Mac et jamais conservées ; seul l’identificateur de billets envoie une image, et uniquement à votre demande."
           }
         }
       }

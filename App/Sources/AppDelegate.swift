@@ -26,6 +26,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var paletteWindow: NSWindow?
     private var tutorialWindow: NSWindow?
     private var translateWindow: NSWindow?
+    private var labelWindow: NSWindow?
+    private var doItWindow: NSWindow?
+    private var documentCheckWindow: NSWindow?
+    private var brailleWindow: NSWindow?
+    private var practiceWindow: NSWindow?
+    private var typingWindow: NSWindow?
 
     static func main() {
         let app = NSApplication.shared
@@ -76,6 +82,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             log("Check: Downloads folder readable = \(SystemEvents.latestDownload() != nil)")
             log("Check: scripts folder = \(UserCommands.scriptsFolder?.lastPathComponent ?? "unavailable")")
             log("Check: \(Performance.summary())")
+            log("Check: camera in use = \(SensorWatch.cameraInUse()), microphone apps = \(SensorWatch.appsUsingMicrophone().count)")
+            if let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/3017620422003.json?fields=product_name,brands,quantity"),
+               let data = try? await URLSession.shared.data(from: url).0,
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                log("Check: product lookup = \(CodeReader.productDescription(json["product"] as? [String: Any]) ?? "not found")")
+            }
             let report = Diagnostics.report()
             log("Check: diagnostics report \(report.count) characters, log included = \(report.contains("Check: OCR"))")
             let hub = AudioHub.shared
@@ -206,6 +218,49 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         translateWindow = show(translateWindow, title: String(localized: "Translate"), view: TranslateView())
     }
 
+    /// Notes the control under the VoiceOver cursor before the window takes focus.
+    func showLabelEditor() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let captured = CustomLabels.capture()
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                let editor = LabelEditor.shared
+                editor.pending = captured?.signature
+                editor.spoken = captured?.spoken ?? ""
+                editor.text = ""
+                self.labelWindow = self.show(self.labelWindow, title: String(localized: "Custom Labels"),
+                                             view: LabelEditorView { [weak self] in
+                                                 self?.labelWindow?.close()
+                                                 NSApp.hide(nil)
+                                             })
+            }
+        }
+    }
+
+    func showDoItForMe() {
+        // Act on the app that was in front, not this one.
+        if let front = NSWorkspace.shared.frontmostApplication, front.bundleIdentifier != Bundle.main.bundleIdentifier {
+            DoItModel.shared.target = front
+        }
+        doItWindow = show(doItWindow, title: String(localized: "Do It for Me"), view: DoItForMeView())
+    }
+
+    func showDocumentCheck() {
+        documentCheckWindow = show(documentCheckWindow, title: String(localized: "Document Accessibility Check"), view: DocumentCheckView())
+    }
+
+    func showBraille() {
+        brailleWindow = show(brailleWindow, title: String(localized: "Save as Braille"), view: BrailleView())
+    }
+
+    func showPractice() {
+        practiceWindow = show(practiceWindow, title: String(localized: "VoiceOver Practice"), view: PracticeView())
+    }
+
+    func showTypingTrainer() {
+        typingWindow = show(typingWindow, title: String(localized: "Typing Trainer"), view: TypingTrainerView())
+    }
+
     func showCompare() {
         compareWindow = show(compareWindow, title: String(localized: "Compare Text"), view: CompareView())
     }
@@ -328,12 +383,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         add(to: menu, String(localized: "Find a VoiceOver Command…"), command: .voiceOverCommands) { $0.run(.voiceOverCommands) }
         add(to: menu, String(localized: "Report a Bug to Apple…"), command: .reportBug) { $0.run(.reportBug) }
+        add(to: menu, String(localized: "Label Item Under VoiceOver Cursor…"), command: .customLabel) { $0.run(.customLabel) }
+        add(to: menu, String(localized: "Add a Place Marker"), command: .placeMarker) { $0.run(.placeMarker) }
+        add(to: menu, String(localized: "Next Place Marker"), command: .nextPlaceMarker) { $0.run(.nextPlaceMarker) }
+        add(to: menu, String(localized: "Do It for Me…"), command: .doItForMe) { $0.run(.doItForMe) }
         menu.addItem(.separator())
 
         // Finding and learning commands
         add(to: menu, String(localized: "Command Palette…"), command: .commandPalette) { $0.run(.commandPalette) }
         add(to: menu, String(localized: "Input Help"), command: .inputHelp, checked: InputHelp.isOn) { $0.run(.inputHelp) }
         add(to: menu, String(localized: "Tutorial…"), command: .tutorial) { $0.run(.tutorial) }
+        add(to: menu, String(localized: "VoiceOver Practice…"), command: .practice) { $0.run(.practice) }
+        add(to: menu, String(localized: "Typing Trainer…"), command: .typingTrainer) { $0.run(.typingTrainer) }
         add(to: menu, String(localized: "Translate…"), command: .translate) { $0.run(.translate) }
         add(to: menu, String(localized: "Audio Mouse"), command: .audioMouse, checked: AudioMouse.isOn) { $0.run(.audioMouse) }
         add(to: menu, String(localized: "Beeps While VoiceOver Is Silenced"), command: .beepMode, checked: preferences.beepsWhenSilenced) {
@@ -357,11 +418,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: menu, String(localized: "Open Latest Download"), command: .openDownload) { $0.run(.openDownload) }
         add(to: menu, String(localized: "Identify a Color"), command: .colorIdentifier) { $0.run(.colorIdentifier) }
         add(to: menu, String(localized: "Light Detector"), command: .lightDetector, checked: LightDetector.isRunning) { $0.run(.lightDetector) }
+        add(to: menu, String(localized: "Read a Barcode or QR Code"), command: .codeReader, checked: CodeReader.isRunning) { $0.run(.codeReader) }
+        add(to: menu, String(localized: "Read a Medicine Label"), command: .labelReader, checked: LabelReader.isRunning) { $0.run(.labelReader) }
+        add(to: menu, String(localized: "Identify Money"), command: .moneyReader) { $0.run(.moneyReader) }
+        add(to: menu, String(localized: "Camera and Microphone in Use"), command: .sensorStatus) { $0.run(.sensorStatus) }
         menu.addItem(.separator())
 
         // Reading, low vision and listening
         add(to: menu, String(localized: "Doc Reader…"), command: .docReader) { $0.run(.docReader) }
         add(to: menu, String(localized: "Scan and Read…"), command: .scanAndRead) { $0.run(.scanAndRead) }
+        add(to: menu, String(localized: "Check a Document's Accessibility…"), command: .documentCheck) { $0.run(.documentCheck) }
+        add(to: menu, String(localized: "Save as Braille…"), command: .brailleExport) { $0.run(.brailleExport) }
         add(to: menu, String(localized: "Large-Print Captions"), command: .captions, checked: Captions.isShowing) { $0.toggleCaptions() }
         add(to: menu, String(localized: "Focus Frame"), command: .focusFrame, checked: FocusFrame.isShowing) { $0.toggleFocusFrame() }
         add(to: menu, String(localized: "Audio Hub…"), command: .audioHub) { $0.run(.audioHub) }

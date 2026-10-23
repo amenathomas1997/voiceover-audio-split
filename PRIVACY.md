@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**VoiceOver Audio Split** · Full Circle AT LLC · Last updated October 22, 2026
+**VoiceOver Audio Split** · Full Circle AT LLC · Last updated October 23, 2026
 
 VoiceOver Audio Split does not collect, store or share any personal information. It has no accounts, no analytics, no advertising and no tracking. This policy explains what the app does with the things it can access, and which features connect to the internet.
 
@@ -8,7 +8,9 @@ VoiceOver Audio Split does not collect, store or share any personal information.
 
 - **Sound.** To split, lower or adjust sound, the app captures your Mac's audio and plays it back immediately. Nothing is recorded or saved.
 - **VoiceOver's speech text.** Speech history and captions read what VoiceOver has just said. This text is kept in memory only, never written to disk, and cleared when the app quits.
-- **Camera.** The camera framing check, Scan and Read, the color identifier and the light detector analyze camera pictures on your Mac with Apple's Vision framework. Pictures are not saved or sent anywhere.
+- **Camera.** The camera framing check, Scan and Read, the color identifier, the light detector, the barcode and QR code reader and the medicine label reader analyze camera pictures on your Mac with Apple's Vision framework. Pictures are not saved or sent anywhere. The money identifier is the exception: it sends one camera picture to Anthropic (see below).
+- **Camera and microphone alerts.** If these are on, the app checks once a second whether another app is using the camera, and which apps are using the microphone, to say when that changes. It only reads whether they are in use; it never sees or hears what they capture, and nothing is stored.
+- **Other apps' controls.** Custom labels, place markers and Do It for Me read the names, roles and positions of controls in other apps through the macOS accessibility interface, the same way VoiceOver does. Labels and place markers save only what is needed to find that control again (its app, role, name or identifier, and position) in your settings on your Mac.
 - **Files you open or save.** Doc Reader and Scan and Read read only the files you choose, and save text only where you choose.
 - **Microphone.** The microphone check listens for about five seconds and measures how loud your voice and the background are. The sound is never recorded or saved.
 - **Downloads folder.** If download announcements are on, the app notices new files in your Downloads folder and says their names. It never opens or reads them unless you ask it to open the latest download.
@@ -29,6 +31,9 @@ These connect only when you use them, and send only what is needed:
 | Feature | Sent to | What is sent |
 | --- | --- | --- |
 | Describe image, describe a video, Ask the assistant (optional, off until you add your own API key) | Anthropic | A picture of the item under the VoiceOver cursor, or of the front window for a video, only when you ask and only after you allow it once; your questions and the conversation. Sent with your own API key and covered by [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy). |
+| Do It for Me (optional, needs your own API key) | Anthropic | Your request, and the names and roles of the controls in the front window of the app you chose, only when you ask |
+| Identify money (optional, needs your own API key and image descriptions allowed) | Anthropic | One camera picture, only when you ask |
+| Barcode reader: product lookup | Open Food Facts | The barcode number of the product you scan |
 | Research It: Wikipedia | Wikipedia (Wikimedia Foundation) | The topic you look up |
 | Research It: weather | Open-Meteo | The city you look up |
 | Audio hub: radio | Radio Browser | Your search words; then the station you choose streams to you |
@@ -42,13 +47,13 @@ Like any internet request, these services can see your IP address. Dictionary de
 
 | Permission | Used for |
 | --- | --- |
-| Accessibility | The keyboard shortcuts |
+| Accessibility | The keyboard shortcuts, custom labels, place markers and Do It for Me |
 | System audio recording | Splitting and adjusting sound |
 | Screen recording | Describe image (the item under the VoiceOver cursor), reading the front window's text, and describing a video |
 | Microphone | The microphone check |
 | Downloads folder (read only) | Saying when a download finishes, and opening the latest download |
-| Camera | Camera framing check, Scan and Read, color identifier, light detector |
-| Automation (VoiceOver) | Speaking announcements in your VoiceOver voice, speech history, captions, Read Item, the focus frame, and restarting VoiceOver |
+| Camera | Camera framing check, Scan and Read, color identifier, light detector, barcode and QR code reader, medicine label reader, money identifier |
+| Automation (VoiceOver) | Speaking announcements in your VoiceOver voice, speech history, captions, Read Item, the focus frame, restarting VoiceOver, and moving the VoiceOver cursor for place markers and Do It for Me |
 | Automation (Safari, Chrome) | Presets for websites, only if you set any |
 | Files you choose | Opening files in Doc Reader and Scan and Read, and saving text |
 

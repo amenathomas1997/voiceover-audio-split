@@ -21,6 +21,14 @@
 - Camera tools prefer a nearby **iPhone** (Continuity Camera).
 - **Diagnostics report**, **app performance**, and a testing checklist for VoiceOver testers.
 - Any command can be set to "No key"; some new commands have no key by default.
+- **Camera and microphone alerts:** hear when another app turns the camera on or off, or starts or stops using the microphone, and which app it is.
+- **Sound for each app:** a position anywhere between your ears, and bass and treble.
+- **Custom labels** for unlabeled controls, and **place markers** to jump back to a spot on a web page.
+- **Do it for me:** ask for a control by name and the VoiceOver cursor goes there; pressing always asks first.
+- **Document accessibility check** for Word documents and PDFs, and **save as braille** (.brf, uncontracted UEB).
+- **Barcode and QR code reader**, **medicine label reader** and **money identifier**.
+- **VoiceOver practice:** learn and quiz modes for VoiceOver's keys.
+- **Typing trainer:** talking lessons from the home row up, finger hints, words per minute and accuracy, best scores, and a one-minute speed test.
 - **In Spanish, French and German:** the app follows your Mac's language. Translations are new; corrections from native speakers are welcome.
 
 ## 1.0 (beta), October 2026

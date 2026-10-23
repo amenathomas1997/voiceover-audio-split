@@ -33,13 +33,15 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var isRunning: Bool { session != nil }
 
     /// Calls `handler` on a background queue with each frame, after the camera has settled.
-    func start(_ handler: @escaping (CVPixelBuffer) -> Void, failed: @escaping (String) -> Void) {
+    /// Reading small print needs more detail than the default size gives: pass `.high`.
+    func start(preset: AVCaptureSession.Preset = .medium, _ handler: @escaping (CVPixelBuffer) -> Void,
+               failed: @escaping (String) -> Void) {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized: break
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
-                    granted ? self.start(handler, failed: failed) : failed(String(localized: "Camera access was not allowed"))
+                    granted ? self.start(preset: preset, handler, failed: failed) : failed(String(localized: "Camera access was not allowed"))
                 }
             }
             return
@@ -49,7 +51,7 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         guard let camera = CameraChoice.preferred(),
               let input = try? AVCaptureDeviceInput(device: camera) else { return failed(String(localized: "No camera found")) }
         let session = AVCaptureSession()
-        session.sessionPreset = .medium
+        session.sessionPreset = session.canSetSessionPreset(preset) ? preset : .medium
         let output = AVCaptureVideoDataOutput()
         output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
         output.alwaysDiscardsLateVideoFrames = true

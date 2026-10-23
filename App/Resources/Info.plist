@@ -35,7 +35,7 @@
 	<key>NSCameraUseContinuityCameraDeviceType</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>VoiceOver Audio Split checks whether your face is centered and well lit before a video call. Pictures are only analyzed on this Mac and never saved.</string>
+	<string>VoiceOver Audio Split uses the camera to read text, labels and codes you hold up, identify colors and light, and check your framing before a video call. Pictures are analyzed on this Mac and never saved; only the money identifier sends a picture, and only when you ask.</string>
 	<key>NSAudioCaptureUsageDescription</key>
 	<string>VoiceOver Audio Split moves VoiceOver speech to one ear and all other sounds to the other ear. Nothing is recorded or saved.</string>
 </dict>

@@ -42,6 +42,9 @@ enum Hotkeys {
     nonisolated(unsafe) private static var swallowedKeys = Set<Int64>()
     /// Read on the event tap thread; written on main when the setting changes.
     nonisolated(unsafe) static var modifier = ShortcutModifier.option
+    /// While set (VoiceOver practice, the typing trainer), sees every key press first,
+    /// with the character it types; returning true takes the key.
+    nonisolated(unsafe) static var keyObserver: ((Int64, CGEventFlags, String) -> Bool)?
 
     static var isTrusted: Bool { AXIsProcessTrusted() }
 
@@ -94,6 +97,12 @@ enum Hotkeys {
             return swallowedKeys.remove(keyCode) != nil ? nil : Unmanaged.passUnretained(event)
         }
         guard type == .keyDown else { return Unmanaged.passUnretained(event) }
+
+        if let observer = keyObserver, event.getIntegerValueField(.keyboardEventAutorepeat) == 0,
+           observer(keyCode, event.flags, NSEvent(cgEvent: event)?.characters ?? "") {
+            swallowedKeys.insert(keyCode)
+            return nil
+        }
 
         // Layer: take the next key press, whatever modifiers are held.
         if let until = layerUntil {

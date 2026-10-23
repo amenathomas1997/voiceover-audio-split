@@ -34,6 +34,20 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] Right Option + O, Doc Reader: words are highlighted as they're read. Save as Word works.
 - [ ] The captions (U) and the focus frame (Y) appear and follow VoiceOver.
 
+## Assistive tools
+
+- [ ] Start a FaceTime or Zoom call: "Camera on" and the app using the microphone are announced, and again when it ends.
+- [ ] Settings > Apps: give Music "A position you choose" and move it; then change its bass and treble.
+- [ ] Label an unlabeled button: the label is spoken when VoiceOver lands on it again, also after restarting the app.
+- [ ] Add a place marker on a web page, move away, then choose Next Place Marker: VoiceOver goes back there.
+- [ ] Do It for Me: "find the search field" moves VoiceOver there. "Press" asks before pressing.
+- [ ] Check a Word document with a picture and no headings, and a scanned PDF: the problems are listed with fixes.
+- [ ] Save some text as braille and open the .brf file on a notetaker or braille display.
+- [ ] Read a QR code (for example a Wi-Fi code) and a food barcode. Read a medicine bottle while turning it.
+- [ ] Identify a banknote (needs an API key).
+- [ ] VoiceOver practice in learn and quiz mode: right and wrong keys are recognized, and Escape stops.
+- [ ] Typing trainer: do the first lesson with Quick Nav on. Each key is named with its finger, wrong keys are corrected, and the result gives words per minute. Try the speed test.
+
 ## Languages (Spanish, French and German speakers)
 
 - [ ] With your Mac in Spanish, French or German, the menu, Settings and announcements are in your language.

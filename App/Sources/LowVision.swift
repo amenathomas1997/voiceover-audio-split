@@ -86,7 +86,7 @@ enum FocusFrame {
         let timer = DispatchSource.makeTimerSource(queue: DispatchQueue(label: "VoiceOverAudioSplit.focus-frame"))
         timer.schedule(deadline: .now(), repeating: .milliseconds(150))
         timer.setEventHandler {
-            let bounds = voiceOverCursor()
+            let bounds = NSWorkspace.shared.isVoiceOverEnabled ? VoiceOverText.cursorBounds() : nil
             DispatchQueue.main.async { move(to: bounds) }
         }
         timer.resume()
@@ -134,16 +134,6 @@ enum FocusFrame {
         let frame = NSRect(x: bounds.minX - margin, y: screenHeight - bounds.maxY - margin,
                            width: bounds.width + margin * 2, height: bounds.height + margin * 2)
         panel?.setFrame(frame, display: true)
-    }
-
-    private static func voiceOverCursor() -> CGRect? {
-        guard NSWorkspace.shared.isVoiceOverEnabled,
-              let text = VoiceOverText.run(
-                "set b to bounds of vo cursor\nreturn (item 1 of b as text) & \",\" & (item 2 of b as text) & \",\" "
-                + "& (item 3 of b as text) & \",\" & (item 4 of b as text)", logErrors: false) else { return nil }
-        let values = text.split(separator: ",").compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
-        guard values.count == 4 else { return nil }
-        return CGRect(x: values[0], y: values[1], width: values[2] - values[0], height: values[3] - values[1])
     }
 
     private final class FrameView: NSView {

@@ -56,7 +56,7 @@ enum Claude {
 
     /// Sends the conversation and returns the assistant's full content blocks
     /// (to append to the conversation unchanged) and its spoken text.
-    static func send(_ messages: [[String: Any]]) async throws -> (content: [Any], text: String) {
+    static func send(_ messages: [[String: Any]], system: String = Claude.system) async throws -> (content: [Any], text: String) {
         guard let key = APIKey.current, !key.isEmpty else {
             throw Failure(message: String(localized: "Add your Anthropic API key in Settings first."))
         }
@@ -73,7 +73,7 @@ enum Claude {
         let language = Locale(identifier: "en").localizedString(forLanguageCode: code) ?? "English"
         let body: [String: Any] = [
             "model": model, "max_tokens": 16000,
-            "system": system + "\n\nReply in \(language) unless the user writes in another language.",
+            "system": system + "\n\nWrite any text for the user in \(language) unless the user writes in another language.",
             "messages": messages,
             "output_config": ["effort": "medium"], "fallbacks": "default",
         ]
@@ -124,7 +124,7 @@ enum ScreenPicture {
         } catch {
             throw Failure(message: String(localized: "Allow screen recording for VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording. Then try again."))
         }
-        let cursor = await Task.detached { voiceOverCursorBounds() }.value
+        let cursor = await Task.detached { VoiceOverText.cursorBounds() }.value
         // VoiceOver reports top-left based screen coordinates, like ScreenCaptureKit.
         let display = content.displays.first { cursor.map($0.frame.intersects) ?? false }
             ?? content.displays.first { $0.displayID == CGMainDisplayID() } ?? content.displays.first
@@ -176,15 +176,6 @@ enum ScreenPicture {
             throw Failure(message: String(localized: "Couldn't capture the window."))
         }
         return png
-    }
-
-    private static func voiceOverCursorBounds() -> CGRect? {
-        guard let text = VoiceOverText.run(
-            "set b to bounds of vo cursor\nreturn (item 1 of b as text) & \",\" & (item 2 of b as text) & \",\" "
-            + "& (item 3 of b as text) & \",\" & (item 4 of b as text)", logErrors: false) else { return nil }
-        let values = text.split(separator: ",").compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
-        guard values.count == 4 else { return nil }
-        return CGRect(x: values[0], y: values[1], width: values[2] - values[0], height: values[3] - values[1])
     }
 }
 

@@ -105,6 +105,8 @@ final class Controller {
         SpeechHistory.shared.update(enabled: preferences.speechHistory)
         KeepAudioAwake.update(enabled: preferences.keepAudioAwake)
         SystemEvents.updateClock()
+        SensorWatch.update()
+        CustomLabels.update(preferences.customLabels)
         BeepMode.update(active: speechSilenced && preferences.beepsWhenSilenced)
         ClipboardWatcher.update(enabled: preferences.announceClipboard)
         updateSiteWatching()
@@ -294,6 +296,18 @@ final class Controller {
         case .importSettings: MainActor.assumeIsolated { SettingsTransfer.importFromFile() }
         case .diagnostics: MainActor.assumeIsolated { Diagnostics.save() }
         case .performance: Performance.announce()
+        case .sensorStatus: SensorWatch.queueSummary()
+        case .customLabel: app?.showLabelEditor()
+        case .placeMarker: PlaceMarkers.add()
+        case .nextPlaceMarker: PlaceMarkers.next()
+        case .doItForMe: app?.showDoItForMe()
+        case .documentCheck: app?.showDocumentCheck()
+        case .brailleExport: app?.showBraille()
+        case .codeReader: CodeReader.toggle()
+        case .labelReader: LabelReader.toggle()
+        case .moneyReader: MoneyReader.identify()
+        case .practice: app?.showPractice()
+        case .typingTrainer: app?.showTypingTrainer()
         }
     }
 
@@ -464,6 +478,22 @@ final class Controller {
     static func describe(appVolume: Int) -> String {
         if appVolume == 0 { return String(localized: "normal volume") }
         return appVolume > 0 ? String(localized: "\(appVolume) decibels louder") : String(localized: "\(-appVolume) decibels quieter")
+    }
+
+    /// -100 to 100, as words: "middle", "left 50", "fully right".
+    static func describe(position: Int) -> String {
+        switch position {
+        case 0: String(localized: "middle")
+        case ...(-100): String(localized: "fully left")
+        case 100...: String(localized: "fully right")
+        case ..<0: String(localized: "left \(-position)")
+        default: String(localized: "right \(position)")
+        }
+    }
+
+    static func describe(tone: Int) -> String {
+        if tone == 0 { return String(localized: "normal") }
+        return tone > 0 ? String(localized: "plus \(tone) decibels") : String(localized: "minus \(-tone) decibels")
     }
 
     // MARK: - What's playing

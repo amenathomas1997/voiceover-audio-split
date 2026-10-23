@@ -68,7 +68,7 @@ struct SettingsView: View {
             }
 
             Section(String(localized: "Apps")) {
-                Text(String(localized: "Give an app its own volume, mute or ear. You can also hold the shortcut key and press equals, minus or zero to change the app in front."))
+                Text(String(localized: "Give an app its own volume, ear or place between your ears, and bass and treble. You can also hold the shortcut key and press equals, minus or zero to change the app in front."))
                     .font(.caption).foregroundStyle(.secondary)
                 ForEach(preferences.appRules) { rule in
                     VStack(alignment: .leading) {
@@ -79,6 +79,14 @@ struct SettingsView: View {
                         Picker(String(localized: "\(rule.name) plays in"), selection: ruleBinding(rule, \.ear)) {
                             ForEach(EarChoice.allCases) { Text($0.title).tag($0) }
                         }
+                        if rule.ear == .position {
+                            Stepper(String(localized: "\(rule.name) position: \(Controller.describe(position: rule.position))"),
+                                    value: ruleBinding(rule, \.position), in: -100...100, step: 25)
+                        }
+                        Stepper(String(localized: "\(rule.name) bass: \(Controller.describe(tone: rule.bass))"),
+                                value: ruleBinding(rule, \.bass), in: -12...12, step: 3)
+                        Stepper(String(localized: "\(rule.name) treble: \(Controller.describe(tone: rule.treble))"),
+                                value: ruleBinding(rule, \.treble), in: -12...12, step: 3)
                         Button(String(localized: "Reset \(rule.name)")) {
                             preferences.appRules.removeAll { $0.bundleID == rule.bundleID }
                         }
@@ -164,6 +172,8 @@ struct SettingsView: View {
                 Toggle(String(localized: "Say when the network connection drops or comes back"), isOn: $preferences.announceNetwork)
                 Toggle(String(localized: "Say when the battery is low, and when charging starts or stops"), isOn: $preferences.announceBattery)
                 Toggle(String(localized: "Say when the screen locks"), isOn: $preferences.announceLock)
+                Toggle(String(localized: "Say when another app turns the camera on or off"), isOn: $preferences.announceCamera)
+                Toggle(String(localized: "Say when an app starts or stops using the microphone"), isOn: $preferences.announceMicrophone)
                 Picker(String(localized: "Talking clock"), selection: $preferences.clockInterval) {
                     Text(String(localized: "Off")).tag(0)
                     Text(String(localized: "Every hour")).tag(60)
@@ -267,6 +277,8 @@ struct SettingsView: View {
             .onChange(of: preferences.focusFrameThickness) { FocusFrame.refresh() }
 
             UserCommandsSection()
+
+            PlaceMarkersSection()
 
             Section(String(localized: "Command keys")) {
                 ForEach(Command.allCases) { command in

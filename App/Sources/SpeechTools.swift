@@ -94,6 +94,15 @@ enum VoiceOverText {
     static func itemUnderCursor() -> String? {
         run("return text under cursor of vo cursor")
     }
+
+    /// Where the VoiceOver cursor is, in top-left based screen coordinates.
+    static func cursorBounds() -> CGRect? {
+        guard let text = run("set b to bounds of vo cursor\nreturn (item 1 of b as text) & \",\" & (item 2 of b as text) & \",\" "
+                             + "& (item 3 of b as text) & \",\" & (item 4 of b as text)", logErrors: false) else { return nil }
+        let values = text.split(separator: ",").compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
+        guard values.count == 4 else { return nil }
+        return CGRect(x: values[0], y: values[1], width: values[2] - values[0], height: values[3] - values[1])
+    }
 }
 
 enum Clipboard {
@@ -110,8 +119,8 @@ enum Clipboard {
             let list = ListFormatter.localizedString(byJoining: names)
             return files.count == 1 ? String(localized: "1 file: \(list)") : String(localized: "\(files.count) files: \(list)")
         }
-        if board.data(forType: .tiff) != nil || board.data(forType: .png) != nil { return "An image" }
-        return "The clipboard is empty"
+        if board.data(forType: .tiff) != nil || board.data(forType: .png) != nil { return String(localized: "An image") }
+        return String(localized: "The clipboard is empty")
     }
 }
 

@@ -75,6 +75,8 @@ struct CallApp: Codable, Hashable, Identifiable {
 enum EarChoice: String, Codable, CaseIterable, Identifiable {
     /// Goes wherever other sounds go (follows the split).
     case follow, left, right, both
+    /// Anywhere from left to right, set with the app's position.
+    case position
 
     var id: String { rawValue }
 
@@ -84,6 +86,7 @@ enum EarChoice: String, Codable, CaseIterable, Identifiable {
         case .left: String(localized: "Left ear")
         case .right: String(localized: "Right ear")
         case .both: String(localized: "Both ears")
+        case .position: String(localized: "A position you choose")
         }
     }
 }
@@ -111,10 +114,36 @@ struct AppRule: Codable, Hashable, Identifiable {
     var volume: Int = 0
     var muted = false
     var ear: EarChoice = .follow
+    /// With `ear` set to position: -100 is fully left, 0 the middle, 100 fully right.
+    var position = 0
+    /// Bass and treble, in decibels.
+    var bass = 0
+    var treble = 0
 
     var id: String { bundleID }
     /// A rule with nothing changed can be dropped.
-    var isDefault: Bool { volume == 0 && !muted && ear == .follow }
+    var isDefault: Bool { volume == 0 && !muted && ear == .follow && bass == 0 && treble == 0 }
+
+    init(name: String, bundleID: String, volume: Int = 0, muted: Bool = false, ear: EarChoice = .follow) {
+        self.name = name
+        self.bundleID = bundleID
+        self.volume = volume
+        self.muted = muted
+        self.ear = ear
+    }
+
+    /// Rules saved by earlier versions have no position or tone.
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        name = try values.decode(String.self, forKey: .name)
+        bundleID = try values.decode(String.self, forKey: .bundleID)
+        volume = try values.decodeIfPresent(Int.self, forKey: .volume) ?? 0
+        muted = try values.decodeIfPresent(Bool.self, forKey: .muted) ?? false
+        ear = try values.decodeIfPresent(EarChoice.self, forKey: .ear) ?? .follow
+        position = try values.decodeIfPresent(Int.self, forKey: .position) ?? 0
+        bass = try values.decodeIfPresent(Int.self, forKey: .bass) ?? 0
+        treble = try values.decodeIfPresent(Int.self, forKey: .treble) ?? 0
+    }
 }
 
 /// A saved combination of settings, applied with the shortcut key + a number.
@@ -267,6 +296,13 @@ final class Preferences: ObservableObject {
     @Published var newsFeeds: [String] { didSet { save(newsFeeds, "newsFeeds") } }
     /// Keep a list of what VoiceOver says, to review with the history window.
     @Published var speechHistory: Bool { didSet { save(speechHistory, "speechHistory") } }
+    /// Say when another app turns the camera or microphone on or off.
+    @Published var announceCamera: Bool { didSet { save(announceCamera, "announceCamera") } }
+    @Published var announceMicrophone: Bool { didSet { save(announceMicrophone, "announceMicrophone") } }
+    @Published var customLabels: [CustomLabel] { didSet { save(try? JSONEncoder().encode(customLabels), "customLabels") } }
+    @Published var placeMarkers: [PlaceMarker] { didSet { save(try? JSONEncoder().encode(placeMarkers), "placeMarkers") } }
+    /// The typing trainer's best words per minute, by lesson.
+    @Published var typingBest: [String: Int] { didSet { save(typingBest, "typingBest") } }
 
     private init() {
         store.register(defaults: [
@@ -282,6 +318,7 @@ final class Preferences: ObservableObject {
             "keepAudioAwake": false, "announceDownloads": true, "announceDevices": true,
             "announceNetwork": true, "announceBattery": true, "announceLock": false, "clockInterval": 0,
             "beepsWhenSilenced": true, "announceClipboard": false, "translateTarget": "es", "preferIPhoneCamera": true,
+            "announceCamera": true, "announceMicrophone": true,
         ])
         layout = Layout(rawValue: store.string(forKey: "layout") ?? "") ?? .opposite
         stereoOthers = store.bool(forKey: "stereoOthers")
@@ -332,6 +369,11 @@ final class Preferences: ObservableObject {
         announceClipboard = store.bool(forKey: "announceClipboard")
         translateTarget = store.string(forKey: "translateTarget") ?? "es"
         preferIPhoneCamera = store.bool(forKey: "preferIPhoneCamera")
+        announceCamera = store.bool(forKey: "announceCamera")
+        announceMicrophone = store.bool(forKey: "announceMicrophone")
+        customLabels = store.data(forKey: "customLabels").flatMap { try? JSONDecoder().decode([CustomLabel].self, from: $0) } ?? []
+        typingBest = store.dictionary(forKey: "typingBest") as? [String: Int] ?? [:]
+        placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
             ?? Preset.defaults

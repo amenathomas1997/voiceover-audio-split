@@ -15,6 +15,8 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case readWindow, describeVideo, openDownload, micCheck, colorIdentifier, lightDetector
     case commandPalette, inputHelp, tutorial, translate, audioMouse, beepMode
     case exportSettings, importSettings, diagnostics, performance
+    case sensorStatus, customLabel, placeMarker, nextPlaceMarker, doItForMe
+    case documentCheck, brailleExport, codeReader, labelReader, moneyReader, practice, typingTrainer
 
     var id: String { rawValue }
 
@@ -70,6 +72,18 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .importSettings: String(localized: "Import settings")
         case .diagnostics: String(localized: "Save a diagnostics report")
         case .performance: String(localized: "App performance")
+        case .sensorStatus: String(localized: "What's using the camera and microphone")
+        case .customLabel: String(localized: "Label the item under the VoiceOver cursor")
+        case .placeMarker: String(localized: "Add a place marker on this web page")
+        case .nextPlaceMarker: String(localized: "Go to the next place marker")
+        case .doItForMe: String(localized: "Do it for me: ask the assistant to find or press something")
+        case .documentCheck: String(localized: "Check a document's accessibility")
+        case .brailleExport: String(localized: "Save text as braille")
+        case .codeReader: String(localized: "Read a barcode or QR code")
+        case .labelReader: String(localized: "Read a medicine label")
+        case .moneyReader: String(localized: "Identify money")
+        case .practice: String(localized: "VoiceOver practice")
+        case .typingTrainer: String(localized: "Typing trainer")
         }
     }
 
@@ -120,7 +134,9 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .commandPalette: 36
         case .inputHelp: 50
         case .translate: 39
-        case .tutorial, .audioMouse, .beepMode, .exportSettings, .importSettings, .diagnostics, .performance: nil
+        case .tutorial, .audioMouse, .beepMode, .exportSettings, .importSettings, .diagnostics, .performance,
+             .sensorStatus, .customLabel, .placeMarker, .nextPlaceMarker, .doItForMe, .documentCheck,
+             .brailleExport, .codeReader, .labelReader, .moneyReader, .practice, .typingTrainer: nil
         }
     }
 }

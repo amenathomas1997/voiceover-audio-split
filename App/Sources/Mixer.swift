@@ -4,7 +4,7 @@
 //   speech  VoiceOver (and call apps set to go with speech), mono
 //   others  everything not captured by another source, stereo
 //   calls   call apps kept in both ears, stereo
-//   app     one app with its own volume / mute / ear, stereo
+//   app     one app with its own volume / mute / ear or position / bass and treble, stereo
 //
 // For each source and output channel there is a Route: how much of the
 // source's left and right go to that channel. The main thread recomputes the
@@ -88,6 +88,10 @@ enum Mixer {
     nonisolated(unsafe) private static var renderRate: Double = 48000
     nonisolated(unsafe) private static let channelBase = allocate(UnsafeMutablePointer<Float>?.none, maxChannels)
     nonisolated(unsafe) private static let channelStride = allocate(1, maxChannels)
+    /// Bass and treble for each source: low shelf left and right, then high shelf left and right.
+    nonisolated(unsafe) private static let toneFilters = (0..<maxSources * 4).map { _ in Biquad() }
+    nonisolated(unsafe) private static let toneEnabled = allocate(false, maxSources)
+    nonisolated(unsafe) private static let toneScratch = allocate(Float(0), maxFrames * 2)
 
     private static func allocate<T>(_ value: T, _ count: Int) -> UnsafeMutablePointer<T> {
         let pointer = UnsafeMutablePointer<T>.allocate(capacity: count)
@@ -151,6 +155,7 @@ enum Mixer {
 
         var table = [Route](repeating: Route(), count: maxSources * maxChannels)
         var speechFlags = [Bool](repeating: false, count: maxSources)
+        var toneFlags = [Bool](repeating: false, count: maxSources)
         let othersGain = s.quietAll ? 0 : s.othersGain
 
         for (index, source) in sources.prefix(maxSources).enumerated() {
@@ -180,8 +185,16 @@ enum Mixer {
                 case .left: placement = place(.left, stereo: false)
                 case .right: placement = place(.right, stereo: false)
                 case .both: placement = place(.both, stereo: true)
+                case .position: placement = pan(rule.position)
                 }
                 gain = rule.muted ? 0 : othersGain * powf(10, Float(rule.volume) / 20)
+                if rule.bass != 0 || rule.treble != 0 {
+                    toneFlags[index] = true
+                    for side in 0..<2 {
+                        toneFilters[index * 4 + side].setLowShelf(frequency: 250, gainDB: Double(rule.bass), sampleRate: sampleRate)
+                        toneFilters[index * 4 + 2 + side].setHighShelf(frequency: 4000, gainDB: Double(rule.treble), sampleRate: sampleRate)
+                    }
+                }
             }
             for (channel, route) in placement where channel < maxChannels {
                 table[index * maxChannels + channel] = Route(fromLeft: route.fromLeft * gain,
@@ -190,11 +203,19 @@ enum Mixer {
         }
 
         for i in 0..<table.count { routes[i] = table[i] }
-        for i in 0..<maxSources { isSpeech[i] = speechFlags[i] }
+        for i in 0..<maxSources { isSpeech[i] = speechFlags[i]; toneEnabled[i] = toneFlags[i] }
         pairs[0] = 0
         pairs[1] = speechDeviceChannel ?? 0
         pairCount = speechDeviceChannel == nil ? 1 : 2
         routedSources = min(sources.count, maxSources)
+    }
+
+    /// A mono mix placed between the ears with equal loudness at every position:
+    /// -100 is fully left, 100 fully right. Fully left matches the left-ear choice.
+    static func pan(_ position: Int) -> [Int: Route] {
+        let angle = Float(max(-100, min(100, position)) + 100) / 200 * .pi / 2
+        let left = cosf(angle), right = sinf(angle)
+        return [0: Route(fromLeft: 0.5 * left, fromRight: 0.5 * left), 1: Route(fromLeft: 0.5 * right, fromRight: 0.5 * right)]
     }
 
     /// The current route from one source to one output channel (for tests).
@@ -281,9 +302,19 @@ enum Mixer {
 
         // Mix.
         for s in 0..<sources {
-            guard let data = sourceData[s] else { continue }
-            let stride = sourceChannels[s]
+            guard var data = sourceData[s] else { continue }
+            var stride = sourceChannels[s]
             let speech = isSpeech[s]
+            if toneEnabled[s] {
+                // Bass and treble, into a stereo copy.
+                for f in 0..<frames {
+                    let left = data[f * stride], right = stride > 1 ? data[f * stride + 1] : left
+                    toneScratch[f * 2] = toneFilters[s * 4 + 2].process(toneFilters[s * 4].process(left))
+                    toneScratch[f * 2 + 1] = toneFilters[s * 4 + 3].process(toneFilters[s * 4 + 1].process(right))
+                }
+                data = UnsafePointer(toneScratch)
+                stride = 2
+            }
             for channel in 0..<totalChannels {
                 let route = routes[s * maxChannels + channel]
                 guard route.fromLeft != 0 || route.fromRight != 0, let out = channelBase[channel] else { continue }
@@ -357,6 +388,29 @@ final class Biquad {
         let a0 = 1 + alpha / a
         set(b0: (1 + alpha * a) / a0, b1: -2 * cos(w) / a0, b2: (1 - alpha * a) / a0,
             a1: -2 * cos(w) / a0, a2: (1 - alpha / a) / a0)
+    }
+
+    func setLowShelf(frequency: Double, gainDB: Double, sampleRate: Double) {
+        let (a, cosw, beta) = shelf(frequency, gainDB, sampleRate)
+        let a0 = (a + 1) + (a - 1) * cosw + beta
+        set(b0: a * ((a + 1) - (a - 1) * cosw + beta) / a0, b1: 2 * a * ((a - 1) - (a + 1) * cosw) / a0,
+            b2: a * ((a + 1) - (a - 1) * cosw - beta) / a0,
+            a1: -2 * ((a - 1) + (a + 1) * cosw) / a0, a2: ((a + 1) + (a - 1) * cosw - beta) / a0)
+    }
+
+    func setHighShelf(frequency: Double, gainDB: Double, sampleRate: Double) {
+        let (a, cosw, beta) = shelf(frequency, gainDB, sampleRate)
+        let a0 = (a + 1) - (a - 1) * cosw + beta
+        set(b0: a * ((a + 1) + (a - 1) * cosw + beta) / a0, b1: -2 * a * ((a - 1) + (a + 1) * cosw) / a0,
+            b2: a * ((a + 1) + (a - 1) * cosw - beta) / a0,
+            a1: 2 * ((a - 1) - (a + 1) * cosw) / a0, a2: ((a + 1) - (a - 1) * cosw - beta) / a0)
+    }
+
+    /// Shared terms of the shelf filters, with a slope of 1.
+    private func shelf(_ frequency: Double, _ gainDB: Double, _ sampleRate: Double) -> (Double, Double, Double) {
+        let a = pow(10, gainDB / 40)
+        let w = 2 * Double.pi * frequency / sampleRate
+        return (a, cos(w), 2 * sqrt(a) * sin(w) / 2 * sqrt(2))
     }
 
     private func set(b0: Double, b1: Double, b2: Double, a1: Double, a2: Double) {

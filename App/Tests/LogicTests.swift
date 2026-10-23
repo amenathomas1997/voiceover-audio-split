@@ -391,3 +391,198 @@ final class LocalizationTests: XCTestCase {
         XCTAssertNotEqual(spanish.localizedString(forKey: "Speech louder", value: nil, table: nil), "Speech louder")
     }
 }
+
+final class AppSoundTests: XCTestCase {
+    func testPanKeepsLoudnessEven() {
+        for position in stride(from: -100, through: 100, by: 25) {
+            let routes = Mixer.pan(position)
+            let left = routes[0]!.fromLeft * 2, right = routes[1]!.fromLeft * 2
+            XCTAssertEqual(left * left + right * right, 1, accuracy: 0.001, "position \(position)")
+        }
+        XCTAssertEqual(Mixer.pan(-100)[1]!.fromLeft, 0, accuracy: 0.001)
+        XCTAssertEqual(Mixer.pan(100)[0]!.fromLeft, 0, accuracy: 0.001)
+    }
+
+    func testOldAppRulesStillLoad() throws {
+        let old = #"[{"name":"Music","bundleID":"com.apple.Music","volume":-6,"muted":false,"ear":"right"}]"#
+        let rules = try JSONDecoder().decode([AppRule].self, from: Data(old.utf8))
+        XCTAssertEqual(rules.first?.ear, .right)
+        XCTAssertEqual(rules.first?.volume, -6)
+        XCTAssertEqual(rules.first?.bass, 0)
+    }
+
+    func testToneMakesRuleNotDefault() {
+        var rule = AppRule(name: "App", bundleID: "com.example.app")
+        XCTAssertTrue(rule.isDefault)
+        rule.treble = 3
+        XCTAssertFalse(rule.isDefault)
+    }
+
+    func testShelfFilterBoostsLowSound() {
+        let filter = Biquad()
+        filter.setLowShelf(frequency: 250, gainDB: 12, sampleRate: 48000)
+        var peak: Float = 0
+        for i in 0..<48000 {
+            let y = filter.process(sinf(2 * .pi * 50 * Float(i) / 48000))
+            if i > 24000 { peak = max(peak, abs(y)) }
+        }
+        XCTAssertEqual(20 * log10f(peak), 12, accuracy: 1)
+    }
+}
+
+final class BrailleAndDocumentTests: XCTestCase {
+    func testUncontractedBraille() {
+        XCTAssertEqual(Braille.translate("Hello, world."), ",hello1 world4")
+        XCTAssertEqual(Braille.translate("NASA 2026"), ",,nasa #bjbf")
+        XCTAssertEqual(Braille.translate("3.5 or 2a"), "#c4e or #b;a")
+        XCTAssertEqual(Braille.translate("\"Yes\" (no)"), "8,yes0 \"<no\">")
+    }
+
+    func testBrfPages() {
+        let text = Array(repeating: "word", count: 400).joined(separator: " ")
+        let pages = Braille.brf(text, width: 40, height: 25).components(separatedBy: "\u{0C}")
+        XCTAssertGreaterThan(pages.count, 1)
+        for page in pages {
+            let lines = page.components(separatedBy: "\r\n").filter { !$0.isEmpty }
+            XCTAssertLessThanOrEqual(lines.count, 25)
+            XCTAssertTrue(lines.allSatisfy { $0.count <= 40 })
+        }
+        XCTAssertTrue(pages[1].hasPrefix(String(repeating: " ", count: 38) + "#b"))
+    }
+
+    func testUnicodeBraille() {
+        XCTAssertEqual(Braille.unicode("abc"), "\u{2801}\u{2803}\u{2809}")
+        XCTAssertEqual(Braille.unicode("#"), "\u{283C}")
+    }
+
+    func testWordChecks() {
+        let document = """
+        <w:document><w:body>
+        <w:p><w:pPr><w:pStyle w:val="Heading2"/></w:pPr><w:r><w:t>Intro</w:t></w:r></w:p>
+        <w:p/><w:p/><w:p/>
+        <w:p><w:r><w:drawing><wp:docPr id="1" name="Picture 1"/></w:drawing></w:r></w:p>
+        <w:tbl><w:tr><w:tc><w:p><w:r><w:t>A</w:t></w:r></w:p></w:tc></w:tr></w:tbl>
+        <w:p><w:hyperlink r:id="x"><w:r><w:t>click here</w:t></w:r></w:hyperlink></w:p>
+        </w:body></w:document>
+        """
+        let findings = DocumentCheck.checkWord(["word/document.xml": Data(document.utf8)]).map(\.problem)
+        XCTAssertTrue(findings.contains("The document has no title."))
+        XCTAssertTrue(findings.contains("The first heading is level 2, not level 1."))
+        XCTAssertTrue(findings.contains("1 picture has no description."))
+        XCTAssertTrue(findings.contains("1 table has no header row."))
+        XCTAssertTrue(findings.contains("Blank lines are used for spacing in 1 places."))
+        XCTAssertTrue(findings.contains("1 link has unclear text."))
+    }
+
+    func testZipReader() throws {
+        // A zip holding "a.txt" with "hi", stored without compression.
+        let bytes: [UInt8] = [
+            0x50, 0x4b, 0x03, 0x04, 0x0a, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xac, 0x2a, 0x93, 0xd8, 2, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 0,
+            0x61, 0x2e, 0x74, 0x78, 0x74, 0x68, 0x69,
+            0x50, 0x4b, 0x01, 0x02, 0x14, 0, 0x0a, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xac, 0x2a, 0x93, 0xd8, 2, 0, 0, 0, 2, 0, 0, 0,
+            5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x61, 0x2e, 0x74, 0x78, 0x74,
+            0x50, 0x4b, 0x05, 0x06, 0, 0, 0, 0, 1, 0, 1, 0, 0x33, 0, 0, 0, 0x25, 0, 0, 0, 0, 0,
+        ]
+        let files = try XCTUnwrap(Zip.entries(Data(bytes)))
+        XCTAssertEqual(files["a.txt"].map { String(decoding: $0, as: UTF8.self) }, "hi")
+    }
+}
+
+final class AssistiveToolTests: XCTestCase {
+    func testQRCodeDescriptions() {
+        XCTAssertEqual(CodeReader.describe("https://www.example.com/menu?table=4"), "Link to example.com. Copied to the clipboard.")
+        XCTAssertEqual(CodeReader.describe("WIFI:S:Cafe Guest;T:WPA;P:secret;;"), "Wi-Fi network Cafe Guest. The details are copied to the clipboard.")
+        XCTAssertEqual(CodeReader.describe("tel:+15551234567"), "Phone number +15551234567. Copied to the clipboard.")
+        XCTAssertEqual(CodeReader.describe("Table 12"), "Code says: Table 12. Copied to the clipboard.")
+    }
+
+    func testProductDescription() {
+        XCTAssertEqual(CodeReader.productDescription(["product_name": "Rolled oats", "brands": "Quaker, PepsiCo", "quantity": "500 g"]),
+                       "Rolled oats by Quaker, 500 g")
+        XCTAssertNil(CodeReader.productDescription(["product_name": ""]))
+        XCTAssertNil(CodeReader.productDescription(nil))
+    }
+
+    func testLabelReadsLargestTextFirst() {
+        let lines: [(String, CGRect)] = [
+            ("Take 1 tablet daily", CGRect(x: 0, y: 0.5, width: 0.5, height: 0.04)),
+            ("IBUPROFEN 200 mg", CGRect(x: 0, y: 0.3, width: 0.8, height: 0.12)),
+            ("Rx 4471", CGRect(x: 0, y: 0.8, width: 0.3, height: 0.03)),
+        ]
+        XCTAssertEqual(LabelReader.ordered(lines), ["IBUPROFEN 200 mg", "Rx 4471", "Take 1 tablet daily"])
+    }
+
+    func testDrillKeys() {
+        let heading = Drill.all.first { $0.keyCode == 4 && $0.command }!
+        XCTAssertTrue(heading.matches(keyCode: 4, flags: [.maskControl, .maskAlternate, .maskCommand]))
+        XCTAssertFalse(heading.matches(keyCode: 4, flags: [.maskControl, .maskAlternate]))
+        XCTAssertFalse(heading.matches(keyCode: 4, flags: [.maskAlternate, .maskCommand]))
+        // No two drills use the same keys.
+        let keys = Drill.all.map { "\($0.keyCode)-\($0.shift)-\($0.command)" }
+        XCTAssertEqual(Set(keys).count, keys.count)
+    }
+
+    func testElementSignatureMatching() {
+        let saved = ElementSignature(bundleID: "com.example", role: "AXButton", windowTitle: "Inbox", frame: CGRect(x: 100, y: 40, width: 24, height: 24))
+        XCTAssertTrue(saved.matches(ElementSignature(bundleID: "com.example", role: "AXButton", windowTitle: "Inbox",
+                                                     frame: CGRect(x: 103, y: 41, width: 24, height: 24))))
+        XCTAssertFalse(saved.matches(ElementSignature(bundleID: "com.example", role: "AXButton", windowTitle: "Inbox",
+                                                      frame: CGRect(x: 140, y: 40, width: 24, height: 24))))
+        let named = ElementSignature(bundleID: "com.example", role: "AXButton", identifier: "send")
+        XCTAssertTrue(named.matches(ElementSignature(bundleID: "com.example", role: "AXButton", identifier: "send", frame: CGRect(x: 500, y: 9, width: 1, height: 1))))
+        XCTAssertFalse(named.matches(ElementSignature(bundleID: "com.other", role: "AXButton", identifier: "send")))
+    }
+
+    func testPlaceMarkerPages() {
+        XCTAssertEqual(PlaceMarkers.page(for: "https://www.example.com/news/today?id=4#top"), "example.com/news/today")
+        XCTAssertEqual(PlaceMarkers.page(for: "https://example.com/"), "example.com")
+    }
+
+    func testDoItChoiceParsing() {
+        let choice = DoItModel.Choice("Here you go: {\"element\": 3, \"action\": \"press\", \"say\": \"Pressing Play.\"}")
+        XCTAssertEqual(choice?.element, 3)
+        XCTAssertEqual(choice?.action, "press")
+        XCTAssertEqual(DoItModel.Choice("{\"element\": null, \"action\": \"delete\", \"say\": \"x\"}")?.action, "none")
+        XCTAssertNil(DoItModel.Choice("no json here"))
+    }
+
+    func testPositionWords() {
+        XCTAssertEqual(Controller.describe(position: 0), "middle")
+        XCTAssertEqual(Controller.describe(position: -50), "left 50")
+        XCTAssertEqual(Controller.describe(position: 100), "fully right")
+    }
+}
+
+final class ProductNameTests: XCTestCase {
+    func testBrandAndWeightMark() {
+        XCTAssertEqual(CodeReader.productDescription(["product_name": "Nutella", "brands": "Nutella,Ferrero", "quantity": "400 g e"]), "Nutella, 400 g")
+    }
+}
+
+final class TypingTrainerTests: XCTestCase {
+    func testLessonsOnlyUseTaughtKeys() {
+        for lesson in TypingLesson.all where lesson.kind == .keys {
+            let allowed = lesson.allowed
+            for item in lesson.items() {
+                XCTAssertTrue(item.allSatisfy(allowed.contains), "\(lesson.id): \(item)")
+            }
+            XCTAssertEqual(lesson.items().count, 20, lesson.id)
+        }
+    }
+
+    func testHints() {
+        XCTAssertEqual(KeyHints.hint("f"), "Left index finger, home row. It has a bump.")
+        XCTAssertEqual(KeyHints.hint(";"), "Right pinky, home row.")
+        XCTAssertEqual(KeyHints.hint("Q"), "Left pinky, top row. Hold Shift with your right pinky.")
+        XCTAssertEqual(KeyHints.hint("6"), "Right index finger, number row.")
+        XCTAssertEqual(KeyHints.hint(" "), "Either thumb.")
+        XCTAssertEqual(KeyHints.phonetic("m"), "mike")
+    }
+
+    func testPrompts() {
+        let trainer = TypingTrainer()
+        XCTAssertEqual(trainer.prompt(for: "sad"), "sad: s, a, d")
+        XCTAssertEqual(trainer.prompt(for: "f"), "f, foxtrot. Left index finger, home row. It has a bump.")
+        XCTAssertEqual(trainer.prompt(for: "f"), "f, foxtrot")
+    }
+}

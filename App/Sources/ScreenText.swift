@@ -11,7 +11,7 @@ enum ScreenText {
 
     static func readFrontWindow() {
         Tones.play(.status)
-        Announcer.say("Reading the window")
+        Announcer.say(String(localized: "Reading the window"))
         Task {
             do {
                 let png = try await ScreenPicture.frontWindow()
@@ -20,18 +20,18 @@ enum ScreenText {
                 }.value
                 await MainActor.run {
                     lastText = text
-                    Announcer.say(text.isEmpty ? "No text found in the window" : text)
+                    Announcer.say(text.isEmpty ? String(localized: "No text found in the window") : text)
                 }
             } catch let failure as ScreenPicture.Failure {
                 await MainActor.run { Announcer.say(failure.message) }
             } catch {
-                await MainActor.run { Announcer.say("Couldn't read the window") }
+                await MainActor.run { Announcer.say(String(localized: "Couldn't read the window")) }
             }
         }
     }
 
     static func openInDocReader() {
-        guard !lastText.isEmpty else { return Announcer.say("Read a window first") }
+        guard !lastText.isEmpty else { return Announcer.say(String(localized: "Read a window first")) }
         DocReaderModel.shared.load(lastText)
         (NSApp.delegate as? AppDelegate)?.showDocReader()
     }

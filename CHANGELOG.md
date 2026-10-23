@@ -21,6 +21,7 @@
 - Camera tools prefer a nearby **iPhone** (Continuity Camera).
 - **Diagnostics report**, **app performance**, and a testing checklist for VoiceOver testers.
 - Any command can be set to "No key"; some new commands have no key by default.
+- **In Spanish, French and German:** the app follows your Mac's language. Translations are new; corrections from native speakers are welcome.
 
 ## 1.0 (beta), October 2026
 

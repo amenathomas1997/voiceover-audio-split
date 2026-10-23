@@ -20,56 +20,56 @@ enum Command: String, CaseIterable, Identifiable, Codable {
 
     var title: String {
         switch self {
-        case .speechLeft: "Speech left (again: split off)"
-        case .speechRight: "Speech right (again: split off)"
-        case .speechLouder: "Speech louder"
-        case .othersLouder: "Other sounds louder"
-        case .status: "What's on"
-        case .menu: "Open the menu"
-        case .quiet: "Quiet everything but VoiceOver"
-        case .playing: "What's playing"
-        case .appLouder: "Front app louder"
-        case .appQuieter: "Front app quieter"
-        case .appMute: "Mute front app"
-        case .device: "Next output device"
-        case .microphone: "Mute microphone"
-        case .silence: "Silence VoiceOver"
-        case .readItem: "Read item under VoiceOver cursor"
-        case .history: "Speech history"
-        case .clipboard: "Say clipboard"
-        case .camera: "Check camera framing"
-        case .layer: "Layer key"
-        case .describeImage: "Describe image under VoiceOver cursor"
-        case .assistant: "Ask the assistant"
-        case .analyzeText: "Check clipboard text"
-        case .research: "Research It"
-        case .systemStatus: "System status"
-        case .docReader: "Doc Reader"
-        case .scanAndRead: "Scan and Read"
-        case .captions: "Large-print captions"
-        case .focusFrame: "Focus frame"
-        case .audioHub: "Audio hub"
-        case .hubPlayPause: "Audio hub play or pause"
-        case .rescueVoiceOver: "Restart VoiceOver"
-        case .compareText: "Compare text"
-        case .voiceOverCommands: "Find a VoiceOver command"
-        case .reportBug: "Report a bug to Apple"
-        case .readWindow: "Read the text in the front window"
-        case .describeVideo: "Describe what's happening in a video"
-        case .openDownload: "Open the latest download"
-        case .micCheck: "Microphone check"
-        case .colorIdentifier: "Identify a color with the camera"
-        case .lightDetector: "Light detector"
-        case .commandPalette: "Command palette: search and run any command"
-        case .inputHelp: "Input help: hear what keys do without doing it"
-        case .tutorial: "Tutorial"
-        case .translate: "Translate"
-        case .audioMouse: "Audio mouse: hear where the pointer is"
-        case .beepMode: "Beeps while VoiceOver is silenced"
-        case .exportSettings: "Export settings"
-        case .importSettings: "Import settings"
-        case .diagnostics: "Save a diagnostics report"
-        case .performance: "App performance"
+        case .speechLeft: String(localized: "Speech left (again: split off)")
+        case .speechRight: String(localized: "Speech right (again: split off)")
+        case .speechLouder: String(localized: "Speech louder")
+        case .othersLouder: String(localized: "Other sounds louder")
+        case .status: String(localized: "What's on")
+        case .menu: String(localized: "Open the menu")
+        case .quiet: String(localized: "Quiet everything but VoiceOver")
+        case .playing: String(localized: "What's playing")
+        case .appLouder: String(localized: "Front app louder")
+        case .appQuieter: String(localized: "Front app quieter")
+        case .appMute: String(localized: "Mute front app")
+        case .device: String(localized: "Next output device")
+        case .microphone: String(localized: "Mute microphone")
+        case .silence: String(localized: "Silence VoiceOver")
+        case .readItem: String(localized: "Read item under VoiceOver cursor")
+        case .history: String(localized: "Speech history")
+        case .clipboard: String(localized: "Say clipboard")
+        case .camera: String(localized: "Check camera framing")
+        case .layer: String(localized: "Layer key")
+        case .describeImage: String(localized: "Describe image under VoiceOver cursor")
+        case .assistant: String(localized: "Ask the assistant")
+        case .analyzeText: String(localized: "Check clipboard text")
+        case .research: String(localized: "Research It")
+        case .systemStatus: String(localized: "System status")
+        case .docReader: String(localized: "Doc Reader")
+        case .scanAndRead: String(localized: "Scan and Read")
+        case .captions: String(localized: "Large-print captions")
+        case .focusFrame: String(localized: "Focus frame")
+        case .audioHub: String(localized: "Audio hub")
+        case .hubPlayPause: String(localized: "Audio hub play or pause")
+        case .rescueVoiceOver: String(localized: "Restart VoiceOver")
+        case .compareText: String(localized: "Compare text")
+        case .voiceOverCommands: String(localized: "Find a VoiceOver command")
+        case .reportBug: String(localized: "Report a bug to Apple")
+        case .readWindow: String(localized: "Read the text in the front window")
+        case .describeVideo: String(localized: "Describe what's happening in a video")
+        case .openDownload: String(localized: "Open the latest download")
+        case .micCheck: String(localized: "Microphone check")
+        case .colorIdentifier: String(localized: "Identify a color with the camera")
+        case .lightDetector: String(localized: "Light detector")
+        case .commandPalette: String(localized: "Command palette: search and run any command")
+        case .inputHelp: String(localized: "Input help: hear what keys do without doing it")
+        case .tutorial: String(localized: "Tutorial")
+        case .translate: String(localized: "Translate")
+        case .audioMouse: String(localized: "Audio mouse: hear where the pointer is")
+        case .beepMode: String(localized: "Beeps while VoiceOver is silenced")
+        case .exportSettings: String(localized: "Export settings")
+        case .importSettings: String(localized: "Import settings")
+        case .diagnostics: String(localized: "Save a diagnostics report")
+        case .performance: String(localized: "App performance")
         }
     }
 
@@ -148,22 +148,22 @@ struct Key: Identifiable, Hashable {
         func arrow(_ key: Int) -> String { String(Character(UnicodeScalar(key)!)) }
         return letters.map { Key(code: $0.0, name: $0.1.uppercased(), equivalent: $0.1) } + [
             Key(code: 29, name: "0", equivalent: "0"),
-            Key(code: 123, name: "Left Arrow", equivalent: arrow(NSLeftArrowFunctionKey)),
-            Key(code: 124, name: "Right Arrow", equivalent: arrow(NSRightArrowFunctionKey)),
-            Key(code: 126, name: "Up Arrow", equivalent: arrow(NSUpArrowFunctionKey)),
-            Key(code: 125, name: "Down Arrow", equivalent: arrow(NSDownArrowFunctionKey)),
-            Key(code: 49, name: "Space", equivalent: " "),
-            Key(code: 24, name: "Equals", equivalent: "="),
-            Key(code: 27, name: "Minus", equivalent: "-"),
-            Key(code: 33, name: "Left Bracket", equivalent: "["),
-            Key(code: 30, name: "Right Bracket", equivalent: "]"),
-            Key(code: 41, name: "Semicolon", equivalent: ";"),
-            Key(code: 39, name: "Apostrophe", equivalent: "'"),
-            Key(code: 43, name: "Comma", equivalent: ","),
-            Key(code: 47, name: "Period", equivalent: "."),
-            Key(code: 42, name: "Backslash", equivalent: "\\"),
-            Key(code: 50, name: "Grave Accent", equivalent: "`"),
-            Key(code: 36, name: "Return", equivalent: "\r"),
+            Key(code: 123, name: String(localized: "Left Arrow"), equivalent: arrow(NSLeftArrowFunctionKey)),
+            Key(code: 124, name: String(localized: "Right Arrow"), equivalent: arrow(NSRightArrowFunctionKey)),
+            Key(code: 126, name: String(localized: "Up Arrow"), equivalent: arrow(NSUpArrowFunctionKey)),
+            Key(code: 125, name: String(localized: "Down Arrow"), equivalent: arrow(NSDownArrowFunctionKey)),
+            Key(code: 49, name: String(localized: "Space"), equivalent: " "),
+            Key(code: 24, name: String(localized: "Equals"), equivalent: "="),
+            Key(code: 27, name: String(localized: "Minus"), equivalent: "-"),
+            Key(code: 33, name: String(localized: "Left Bracket"), equivalent: "["),
+            Key(code: 30, name: String(localized: "Right Bracket"), equivalent: "]"),
+            Key(code: 41, name: String(localized: "Semicolon"), equivalent: ";"),
+            Key(code: 39, name: String(localized: "Apostrophe"), equivalent: "'"),
+            Key(code: 43, name: String(localized: "Comma"), equivalent: ","),
+            Key(code: 47, name: String(localized: "Period"), equivalent: "."),
+            Key(code: 42, name: String(localized: "Backslash"), equivalent: "\\"),
+            Key(code: 50, name: String(localized: "Grave Accent"), equivalent: "`"),
+            Key(code: 36, name: String(localized: "Return"), equivalent: "\r"),
         ]
     }()
 
@@ -208,6 +208,6 @@ enum KeyMap {
     static var spokenList: String {
         Command.allCases.compactMap { command in
             key(for: command).map { "\($0.name): \(command.title)" }
-        }.joined(separator: ". ") + ". 1 to 9: presets. Escape cancels."
+        }.joined(separator: ". ") + ". " + String(localized: "1 to 9: presets. Escape cancels.")
     }
 }

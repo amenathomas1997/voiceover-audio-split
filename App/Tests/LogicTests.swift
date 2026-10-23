@@ -353,3 +353,41 @@ final class PowerToolTests: XCTestCase {
         }
     }
 }
+
+/// The Spanish, French and German translations are in the app, and every
+/// translation keeps the same placeholders as the English phrase.
+final class LocalizationTests: XCTestCase {
+    private let languages = ["es", "fr", "de"]
+
+    private func table(_ language: String) -> [String: String] {
+        guard let path = Bundle.main.path(forResource: "Localizable", ofType: "strings",
+                                          inDirectory: nil, forLocalization: language) else { return [:] }
+        return NSDictionary(contentsOfFile: path) as? [String: String] ?? [:]
+    }
+
+    private func placeholders(_ text: String) -> [String] {
+        let pattern = try! NSRegularExpression(pattern: "%(?:\\d+\\$)?(@|lld|ld|d|f|\\.\\d+f)")
+        return pattern.matches(in: text, range: NSRange(text.startIndex..., in: text))
+            .map { (text as NSString).substring(with: $0.range(at: 1)) }.sorted()
+    }
+
+    func testTranslationsAreBundled() {
+        for language in languages {
+            XCTAssertGreaterThan(table(language).count, 800, language)
+        }
+    }
+
+    func testPlaceholdersMatch() {
+        for language in languages {
+            for (key, value) in table(language) {
+                XCTAssertEqual(placeholders(key), placeholders(value), "\(language): \(key)")
+            }
+        }
+    }
+
+    func testSpanishIsUsed() throws {
+        let path = try XCTUnwrap(Bundle.main.path(forResource: "es", ofType: "lproj"))
+        let spanish = try XCTUnwrap(Bundle(path: path))
+        XCTAssertNotEqual(spanish.localizedString(forKey: "Speech louder", value: nil, table: nil), "Speech louder")
+    }
+}

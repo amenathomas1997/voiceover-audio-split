@@ -19,21 +19,21 @@ enum MicCheck {
 
     static func run() {
         guard !running else { return }
-        if AudioSystem.isMicMuted { return Announcer.say("Your microphone is muted. Unmute it first, then check again.") }
+        if AudioSystem.isMicMuted { return Announcer.say(String(localized: "Your microphone is muted. Unmute it first, then check again.")) }
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
         case .authorized: start()
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .audio) { granted in
-                DispatchQueue.main.async { granted ? start() : Announcer.say("Microphone access was not allowed") }
+                DispatchQueue.main.async { granted ? start() : Announcer.say(String(localized: "Microphone access was not allowed")) }
             }
         default:
-            Announcer.say("Microphone access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Microphone.")
+            Announcer.say(String(localized: "Microphone access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Microphone."))
         }
     }
 
     private static func start() {
         running = true
-        Announcer.say("Microphone check. After the tone, say a sentence in your normal voice.")
+        Announcer.say(String(localized: "Microphone check. After the tone, say a sentence in your normal voice."))
         // Give the announcement time to finish before listening.
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) { listen() }
     }
@@ -43,7 +43,7 @@ enum MicCheck {
         let format = input.outputFormat(forBus: 0)
         guard format.sampleRate > 0 else {
             running = false
-            return Announcer.say("No microphone found")
+            return Announcer.say(String(localized: "No microphone found"))
         }
         var levels: [Float] = []
         var peak: Float = 0
@@ -67,7 +67,7 @@ enum MicCheck {
         } catch {
             input.removeTap(onBus: 0)
             running = false
-            return Announcer.say("The microphone couldn't start")
+            return Announcer.say(String(localized: "The microphone couldn't start"))
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             input.removeTap(onBus: 0)
@@ -79,7 +79,7 @@ enum MicCheck {
             lock.unlock()
             let result = measure(levels: measured, peak: maximum)
             log("Mic check: speech \(result.speechLevel) dB, noise \(result.noiseLevel) dB, clipped \(result.clipped).")
-            Announcer.say(advice(for: result) + " Using \(AudioSystem.inputDeviceName).")
+            Announcer.say(advice(for: result) + " " + String(localized: "Using \(AudioSystem.inputDeviceName)."))
         }
     }
 
@@ -92,16 +92,16 @@ enum MicCheck {
     }
 
     static func advice(for result: Result) -> String {
-        if result.speechLevel < -55 { return "I couldn't hear you. Check that the right microphone is selected and not muted." }
+        if result.speechLevel < -55 { return String(localized: "I couldn't hear you. Check that the right microphone is selected and not muted.") }
         var notes: [String] = []
         if result.clipped || result.speechLevel > -8 {
-            notes.append("You're too loud and may sound distorted. Move back a little or lower the input volume.")
+            notes.append(String(localized: "You're too loud and may sound distorted. Move back a little or lower the input volume."))
         } else if result.speechLevel < -38 {
-            notes.append("You're too quiet. Move closer to the microphone or raise the input volume.")
+            notes.append(String(localized: "You're too quiet. Move closer to the microphone or raise the input volume."))
         }
         if result.noiseLevel > -45 || result.speechLevel - result.noiseLevel < 15 {
-            notes.append("There's a lot of background noise.")
+            notes.append(String(localized: "There's a lot of background noise."))
         }
-        return notes.isEmpty ? "You sound clear, with little background noise." : notes.joined(separator: " ")
+        return notes.isEmpty ? String(localized: "You sound clear, with little background noise.") : notes.joined(separator: " ")
     }
 }

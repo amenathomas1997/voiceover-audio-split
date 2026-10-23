@@ -22,25 +22,25 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
-                    granted ? self.start(completion) : completion("Camera access was not allowed")
+                    granted ? self.start(completion) : completion(String(localized: "Camera access was not allowed"))
                 }
             }
         default:
-            completion("Camera access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Camera.")
+            completion(String(localized: "Camera access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Camera."))
         }
     }
 
     private func start(_ completion: @escaping (String) -> Void) {
         guard let camera = CameraChoice.preferred(),
               let input = try? AVCaptureDeviceInput(device: camera) else {
-            return completion("No camera found")
+            return completion(String(localized: "No camera found"))
         }
         let session = AVCaptureSession()
         session.sessionPreset = .medium
         let output = AVCaptureVideoDataOutput()
         output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
         output.setSampleBufferDelegate(self, queue: queue)
-        guard session.canAddInput(input), session.canAddOutput(output) else { return completion("The camera is busy") }
+        guard session.canAddInput(input), session.canAddOutput(output) else { return completion(String(localized: "The camera is busy")) }
         session.addInput(input)
         session.addOutput(output)
         self.session = session
@@ -67,25 +67,25 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         try? VNImageRequestHandler(cvPixelBuffer: pixels, options: [:]).perform([request])
         let faces = request.results ?? []
         let brightness = averageBrightness(pixels)
-        let light = brightness < 0.25 ? "It's dark; add light in front of you." : brightness > 0.85 ? "It's very bright." : ""
+        let light = brightness < 0.25 ? String(localized: "It's dark; add light in front of you.") : brightness > 0.85 ? String(localized: "It's very bright.") : ""
 
         guard let face = faces.max(by: { $0.boundingBox.width < $1.boundingBox.width }) else {
-            return "No face found. " + (light.isEmpty ? "Make sure you are in front of the camera." : light)
+            return light.isEmpty ? String(localized: "No face found. Make sure you are in front of the camera.") : String(localized: "No face found. \(light)")
         }
         var advice: [String] = []
         let box = face.boundingBox // Normalised, origin at the bottom left of the camera image.
         // The camera image is not mirrored: a face on the image's left means you sit
         // to your right, so you should move to your left.
-        if box.midX < 0.38 { advice.append("move a little to your left") }
-        if box.midX > 0.62 { advice.append("move a little to your right") }
-        if box.midY > 0.68 { advice.append("move down a little, or tilt the screen back") }
-        if box.midY < 0.35 { advice.append("move up a little, or tilt the screen forward") }
-        if box.width < 0.15 { advice.append("move closer") }
-        if box.width > 0.5 { advice.append("move back a little") }
+        if box.midX < 0.38 { advice.append(String(localized: "move a little to your left")) }
+        if box.midX > 0.62 { advice.append(String(localized: "move a little to your right")) }
+        if box.midY > 0.68 { advice.append(String(localized: "move down a little, or tilt the screen back")) }
+        if box.midY < 0.35 { advice.append(String(localized: "move up a little, or tilt the screen forward")) }
+        if box.width < 0.15 { advice.append(String(localized: "move closer")) }
+        if box.width > 0.5 { advice.append(String(localized: "move back a little")) }
 
-        var parts = [advice.isEmpty ? "Your face is centered and well framed." : "Face found. Please " + ListFormatter.localizedString(byJoining: advice) + "."]
-        if faces.count > 1 { parts.append("\(faces.count) faces are in view.") }
-        parts.append(light.isEmpty ? "Lighting is good." : light)
+        var parts = [advice.isEmpty ? String(localized: "Your face is centered and well framed.") : String(localized: "Face found. Please \(ListFormatter.localizedString(byJoining: advice)).")]
+        if faces.count > 1 { parts.append(String(localized: "\(faces.count) faces are in view.")) }
+        parts.append(light.isEmpty ? String(localized: "Lighting is good.") : light)
         return parts.joined(separator: " ")
     }
 

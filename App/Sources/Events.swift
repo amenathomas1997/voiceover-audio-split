@@ -39,7 +39,7 @@ enum SystemEvents {
         DistributedNotificationCenter.default().addObserver(
             forName: Notification.Name("com.apple.screenIsLocked"), object: nil, queue: .main
         ) { _ in
-            if Preferences.shared.announceLock { Announcer.say("Screen locked") }
+            if Preferences.shared.announceLock { Announcer.say(String(localized: "Screen locked")) }
         }
         updateClock()
     }
@@ -73,7 +73,7 @@ enum SystemEvents {
                 knownDownloads = current
                 guard Preferences.shared.announceDownloads, !new.isEmpty else { return }
                 Tones.play(.status)
-                Announcer.say(new.count == 1 ? "Download finished: \(new.first!)" : "\(new.count) downloads finished")
+                Announcer.say(new.count == 1 ? String(localized: "Download finished: \(new.first!)") : String(localized: "\(new.count) downloads finished"))
             }
         }
         watcher.setCancelHandler { close(descriptor) }
@@ -96,8 +96,8 @@ enum SystemEvents {
     }
 
     static func openLatestDownload() {
-        guard let file = latestDownload() else { return Announcer.say("No downloads found") }
-        Announcer.say("Opening \(file.lastPathComponent)")
+        guard let file = latestDownload() else { return Announcer.say(String(localized: "No downloads found")) }
+        Announcer.say(String(localized: "Opening \(file.lastPathComponent)"))
         NSWorkspace.shared.open(file)
     }
 
@@ -113,8 +113,8 @@ enum SystemEvents {
                 let added = current.subtracting(knownDevices), removed = knownDevices.subtracting(current)
                 knownDevices = current
                 guard Preferences.shared.announceDevices else { return }
-                for name in added { Announcer.say("\(name) connected") }
-                for name in removed { Announcer.say("\(name) disconnected") }
+                for name in added { Announcer.say(String(localized: "\(name) connected")) }
+                for name in removed { Announcer.say(String(localized: "\(name) disconnected")) }
             }
         }
     }
@@ -127,7 +127,7 @@ enum SystemEvents {
             DispatchQueue.main.async {
                 defer { networkOnline = online }
                 guard let previous = networkOnline, previous != online, Preferences.shared.announceNetwork else { return }
-                Announcer.say(online ? "Network connection back" : "Network connection lost")
+                Announcer.say(online ? String(localized: "Network connection back") : String(localized: "Network connection lost"))
             }
         }
         networkMonitor.start(queue: DispatchQueue(label: "VoiceOverAudioSplit.events-network"))
@@ -162,10 +162,10 @@ enum SystemEvents {
         batteryState = now
         guard Preferences.shared.announceBattery, let before else { return }
         if now.charging != before.charging {
-            Announcer.say(now.charging ? "Charging, \(now.percent) percent" : "Not charging, \(now.percent) percent")
+            Announcer.say(now.charging ? String(localized: "Charging, \(now.percent) percent") : String(localized: "Not charging, \(now.percent) percent"))
         } else if !now.charging, let level = lowLevels.first(where: { before.percent > $0 && now.percent <= $0 }) {
             Tones.play(.quieter)
-            Announcer.say("Battery low: \(level) percent")
+            Announcer.say(String(localized: "Battery low: \(level) percent"))
         }
     }
 

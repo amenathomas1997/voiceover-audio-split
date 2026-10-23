@@ -65,8 +65,7 @@ enum AudioSystem {
             } else {
                 held = nil
                 log("Output keeps being taken back by \(taker); giving up.")
-                Announcer.say("\(taker) keeps taking the sound back. To stop this, open \(taker) in System Settings "
-                              + "and set Connect to This Mac to When Last Connected to This Mac.")
+                Announcer.say(String(localized: "\(taker) keeps taking the sound back. To stop this, open \(taker) in System Settings and set Connect to This Mac to When Last Connected to This Mac."))
             }
         }
     }

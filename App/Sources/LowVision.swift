@@ -54,7 +54,7 @@ private struct CaptionView: View {
     var body: some View {
         VStack {
             Spacer(minLength: 0)
-            Text(history.phrases.first?.text ?? "Captions are on")
+            Text(history.phrases.first?.text ?? String(localized: "Captions are on"))
                 .font(.system(size: CGFloat(preferences.captionSize), weight: .semibold))
                 .foregroundStyle(preferences.readingTheme.foreground)
                 .lineLimit(3)

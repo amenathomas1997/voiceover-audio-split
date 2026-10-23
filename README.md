@@ -25,6 +25,8 @@
 
 **More tools:** **beeps** while VoiceOver is silenced; **say what you copy**; the **audio mouse**, a tone that follows the pointer, higher at the top of the screen, and left and right in your ears; on-device **translation** of the clipboard or the item under the VoiceOver cursor; and the camera tools prefer a nearby **iPhone** through Continuity Camera.
 
+**Languages:** English, Spanish, French and German. The app uses your Mac's language (System Settings, General, Language and Region). The translations are new, so please report anything that reads oddly. To add a language, open `App/Resources/Localizable.xcstrings` in Xcode.
+
 **Diagnostics and performance:** "Save a Diagnostics Report" writes the app's recent log, version and settings (never the API key) to a file you choose, for bug reports. "App Performance" says how much processor time and memory the app uses. The [testing checklist](docs/TESTING.md) is for VoiceOver users testing each release.
 
 **Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.

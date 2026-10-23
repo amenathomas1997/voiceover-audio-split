@@ -49,7 +49,8 @@ enum ClipboardWatcher {
                 guard count != lastCount else { return }
                 lastCount = count
                 let description = Clipboard.describe()
-                Announcer.say("Copied: " + (description.count > 120 ? String(description.prefix(120)) + "…" : description))
+                let shown = description.count > 120 ? String(description.prefix(120)) + "…" : description
+                Announcer.say(String(localized: "Copied: \(shown)"))
             }
         } else if !enabled {
             timer?.invalidate()
@@ -98,7 +99,7 @@ enum AudioMouse {
         let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 2)!
         engine.attach(source)
         engine.connect(source, to: engine.mainMixerNode, format: format)
-        do { try engine.start() } catch { return Announcer.say("Audio mouse couldn't start") }
+        do { try engine.start() } catch { return Announcer.say(String(localized: "Audio mouse couldn't start")) }
         let handler: (NSEvent) -> Void = { _ in moved() }
         if let global = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged], handler: handler) {
             monitors.append(global)
@@ -109,7 +110,7 @@ enum AudioMouse {
         }) {
             monitors.append(local)
         }
-        Announcer.say("Audio mouse on. Higher means nearer the top of the screen; left and right follow your ears.")
+        Announcer.say(String(localized: "Audio mouse on. Higher means nearer the top of the screen; left and right follow your ears."))
     }
 
     private static func stop() {
@@ -117,7 +118,7 @@ enum AudioMouse {
         monitors.removeAll()
         engine.stop()
         for node in engine.attachedNodes where node is AVAudioSourceNode { engine.detach(node) }
-        Announcer.say("Audio mouse off")
+        Announcer.say(String(localized: "Audio mouse off"))
     }
 
     private static func moved() {
@@ -147,11 +148,11 @@ enum AudioMouse {
 enum TranslateLanguages {
     /// Languages offered as targets, by code.
     static let all: [(code: String, name: String)] = [
-        ("en", "English"), ("es", "Spanish"), ("fr", "French"), ("de", "German"), ("it", "Italian"),
-        ("pt", "Portuguese"), ("nl", "Dutch"), ("pl", "Polish"), ("ru", "Russian"), ("uk", "Ukrainian"),
-        ("tr", "Turkish"), ("ar", "Arabic"), ("hi", "Hindi"), ("zh-Hans", "Chinese, Simplified"),
-        ("zh-Hant", "Chinese, Traditional"), ("ja", "Japanese"), ("ko", "Korean"), ("th", "Thai"),
-        ("vi", "Vietnamese"), ("id", "Indonesian"),
+        ("en", String(localized: "English")), ("es", String(localized: "Spanish")), ("fr", String(localized: "French")), ("de", String(localized: "German")), ("it", String(localized: "Italian")),
+        ("pt", String(localized: "Portuguese")), ("nl", String(localized: "Dutch")), ("pl", String(localized: "Polish")), ("ru", String(localized: "Russian")), ("uk", String(localized: "Ukrainian")),
+        ("tr", String(localized: "Turkish")), ("ar", String(localized: "Arabic")), ("hi", String(localized: "Hindi")), ("zh-Hans", String(localized: "Chinese, Simplified")),
+        ("zh-Hant", String(localized: "Chinese, Traditional")), ("ja", String(localized: "Japanese")), ("ko", String(localized: "Korean")), ("th", String(localized: "Thai")),
+        ("vi", String(localized: "Vietnamese")), ("id", String(localized: "Indonesian")),
     ]
 }
 
@@ -165,7 +166,7 @@ final class TranslateModel: ObservableObject {
 
     func loadClipboard() {
         source = NSPasteboard.general.string(forType: .string) ?? ""
-        if source.isEmpty { Announcer.say("The clipboard has no text") }
+        if source.isEmpty { Announcer.say(String(localized: "The clipboard has no text")) }
     }
 
     func loadVoiceOverItem() {
@@ -173,7 +174,7 @@ final class TranslateModel: ObservableObject {
             let text = VoiceOverText.itemUnderCursor() ?? ""
             DispatchQueue.main.async {
                 self.source = text
-                if text.isEmpty { Announcer.say("Nothing under the VoiceOver cursor to translate") } else { self.translate() }
+                if text.isEmpty { Announcer.say(String(localized: "Nothing under the VoiceOver cursor to translate")) } else { self.translate() }
             }
         }
     }
@@ -189,7 +190,7 @@ struct TranslateView: View {
         if #available(macOS 15, *) {
             TranslateContent()
         } else {
-            Text("Translation needs macOS 15 or later.")
+            Text(String(localized: "Translation needs macOS 15 or later."))
                 .padding()
                 .frame(width: 400, height: 120)
         }
@@ -204,30 +205,30 @@ private struct TranslateContent: View {
 
     var body: some View {
         Form {
-            Picker("Translate into", selection: $preferences.translateTarget) {
+            Picker(String(localized: "Translate into"), selection: $preferences.translateTarget) {
                 ForEach(TranslateLanguages.all, id: \.code) { Text($0.name).tag($0.code) }
             }
-            Section("Text to translate") {
-                TextField("Text", text: $model.source, axis: .vertical)
+            Section(String(localized: "Text to translate")) {
+                TextField(String(localized: "Text"), text: $model.source, axis: .vertical)
                 HStack {
-                    Button("Use Clipboard") { model.loadClipboard() }
-                    Button("Use Item Under VoiceOver Cursor") { model.loadVoiceOverItem() }
-                    Button("Translate") { model.translate() }
+                    Button(String(localized: "Use Clipboard")) { model.loadClipboard() }
+                    Button(String(localized: "Use Item Under VoiceOver Cursor")) { model.loadVoiceOverItem() }
+                    Button(String(localized: "Translate")) { model.translate() }
                         .keyboardShortcut(.defaultAction)
                         .disabled(model.source.isEmpty)
                 }
             }
             if !model.result.isEmpty {
-                Section("Translation") {
+                Section(String(localized: "Translation")) {
                     Text(model.result).textSelection(.enabled)
-                    Button("Copy Translation") {
+                    Button(String(localized: "Copy Translation")) {
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(model.result, forType: .string)
-                        Announcer.say("Copied")
+                        Announcer.say(String(localized: "Copied"))
                     }
                 }
             }
-            Text("Translation runs on your Mac. The first time you use a language, your Mac may ask to download it.")
+            Text(String(localized: "Translation runs on your Mac. The first time you use a language, your Mac may ask to download it."))
                 .font(.caption).foregroundStyle(.secondary)
         }
         .formStyle(.grouped)
@@ -247,7 +248,7 @@ private struct TranslateContent: View {
                     Announcer.say(response.targetText)
                 }
             } catch {
-                await MainActor.run { Announcer.say("Couldn't translate that. The language may need to be downloaded first.") }
+                await MainActor.run { Announcer.say(String(localized: "Couldn't translate that. The language may need to be downloaded first.")) }
             }
         }
     }

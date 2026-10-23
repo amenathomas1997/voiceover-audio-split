@@ -1,0 +1,94 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSAppleEventsUsageDescription": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split lässt VoiceOver Änderungen mit deiner VoiceOver-Stimme ansagen und fragt Safari oder Chrome, welche Website geöffnet ist, wenn du Voreinstellungen für Websites festlegst."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split pide a VoiceOver que anuncie los cambios con tu voz de VoiceOver y, si configuras preajustes para sitios web, pregunta a Safari o Chrome qué sitio web está abierto."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split demande à VoiceOver d’annoncer les changements avec votre voix VoiceOver et, si vous définissez des préréglages pour des sites web, demande à Safari ou Chrome quel site est ouvert."
+          }
+        }
+      }
+    },
+    "NSAudioCaptureUsageDescription": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split leitet die VoiceOver-Sprache auf ein Ohr und alle anderen Töne auf das andere. Nichts wird aufgenommen oder gespeichert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split lleva la voz de VoiceOver a un oído y todos los demás sonidos al otro. No se graba ni se guarda nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split envoie la voix de VoiceOver dans une oreille et tous les autres sons dans l’autre. Rien n’est enregistré ni conservé."
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split prüft vor einem Videoanruf, ob dein Gesicht mittig und gut beleuchtet ist. Bilder werden nur auf diesem Mac analysiert und nie gespeichert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split comprueba si tu cara está centrada y bien iluminada antes de una videollamada. Las imágenes solo se analizan en este Mac y nunca se guardan."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VoiceOver Audio Split vérifie que votre visage est centré et bien éclairé avant un appel vidéo. Les images sont analysées uniquement sur ce Mac et ne sont jamais conservées."
+          }
+        }
+      }
+    },
+    "NSMicrophoneUsageDescription": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Mikrofontest von VoiceOver Audio Split hört einige Sekunden zu, um dir zu sagen, ob du klar zu hören bist. Nichts wird aufgenommen oder gespeichert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La prueba de micrófono de VoiceOver Audio Split escucha unos segundos para decirte si se te oye con claridad. No se graba ni se guarda nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le test du micro de VoiceOver Audio Split écoute quelques secondes pour vous dire si l’on vous entend clairement. Rien n’est enregistré ni conservé."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

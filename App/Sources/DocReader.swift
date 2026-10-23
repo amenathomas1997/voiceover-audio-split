@@ -89,10 +89,10 @@ final class DocReaderModel: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
 
     func loadClipboard() {
         guard let string = NSPasteboard.general.string(forType: .string), !string.isEmpty else {
-            return Announcer.say("The clipboard has no text")
+            return Announcer.say(String(localized: "The clipboard has no text"))
         }
         load(string)
-        Announcer.say("Clipboard loaded. \(layout.paragraphs.count) paragraphs.")
+        Announcer.say(String(localized: "Clipboard loaded. \(layout.paragraphs.count) paragraphs."))
     }
 
     /// Reads a text, Word, RTF, HTML or PDF file chosen by the user.
@@ -106,10 +106,10 @@ final class DocReaderModel: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
             loaded = try? NSAttributedString(url: url, options: [:], documentAttributes: nil).string
         }
         guard let loaded, !loaded.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return Announcer.say("No text found in \(url.lastPathComponent). For scanned pages, use Scan and Read.")
+            return Announcer.say(String(localized: "No text found in \(url.lastPathComponent). For scanned pages, use Scan and Read."))
         }
         load(loaded)
-        Announcer.say("\(url.deletingPathExtension().lastPathComponent) loaded. \(layout.paragraphs.count) paragraphs.")
+        Announcer.say(String(localized: "\(url.deletingPathExtension().lastPathComponent) loaded. \(layout.paragraphs.count) paragraphs."))
     }
 
     // MARK: Speaking
@@ -151,7 +151,7 @@ final class DocReaderModel: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     func step(paragraphs delta: Int) { jump(TextLayout.step(layout.paragraphs, from: position, by: delta)) }
 
     private func jump(_ offset: Int?) {
-        guard let offset else { return Announcer.say("No more") }
+        guard let offset else { return Announcer.say(String(localized: "No more")) }
         position = offset
         if speaking && !paused { play(from: offset) } else { highlight = NSRange(location: offset, length: 0) }
     }
@@ -185,7 +185,7 @@ struct DocReaderView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: CGFloat(preferences.readerLineSpacing) * 2) {
                         if model.text.isEmpty {
-                            Text("Paste text from the clipboard or open a file to start reading.")
+                            Text(String(localized: "Paste text from the clipboard or open a file to start reading."))
                                 .font(.system(size: CGFloat(preferences.readerFontSize)))
                         }
                         ForEach(Array(model.layout.paragraphs.enumerated()), id: \.offset) { index, range in
@@ -217,36 +217,36 @@ struct DocReaderView: View {
 
     private var controls: some View {
         HStack {
-            Button(model.speaking && !model.paused ? "Pause" : "Read") { model.togglePlay() }
+            Button(model.speaking && !model.paused ? String(localized: "Pause") : String(localized: "Read")) { model.togglePlay() }
                 .keyboardShortcut(.return, modifiers: .command)
-            Button("Previous Sentence") { model.step(sentences: -1) }
+            Button(String(localized: "Previous Sentence")) { model.step(sentences: -1) }
                 .keyboardShortcut(.leftArrow, modifiers: .command)
-            Button("Next Sentence") { model.step(sentences: 1) }
+            Button(String(localized: "Next Sentence")) { model.step(sentences: 1) }
                 .keyboardShortcut(.rightArrow, modifiers: .command)
-            Button("Previous Paragraph") { model.step(paragraphs: -1) }
+            Button(String(localized: "Previous Paragraph")) { model.step(paragraphs: -1) }
                 .keyboardShortcut(.upArrow, modifiers: .command)
-            Button("Next Paragraph") { model.step(paragraphs: 1) }
+            Button(String(localized: "Next Paragraph")) { model.step(paragraphs: 1) }
                 .keyboardShortcut(.downArrow, modifiers: .command)
             Spacer()
-            Button("Paste Clipboard") { model.loadClipboard() }
+            Button(String(localized: "Paste Clipboard")) { model.loadClipboard() }
                 .keyboardShortcut("v", modifiers: [.command, .shift])
-            Button("Open File…") { choosingFile = true }
+            Button(String(localized: "Open File…")) { choosingFile = true }
                 .keyboardShortcut("o", modifiers: .command)
-            Menu("Save") {
-                Button("Save as Text…") { TextExport.save(model.text, as: .text, name: "Document") }
-                Button("Save as Word…") { TextExport.save(model.text, as: .word, name: "Document") }
+            Menu(String(localized: "Save")) {
+                Button(String(localized: "Save as Text…")) { TextExport.save(model.text, as: .text, name: String(localized: "Document")) }
+                Button(String(localized: "Save as Word…")) { TextExport.save(model.text, as: .word, name: String(localized: "Document")) }
             }
             .frame(width: 80)
             .disabled(model.text.isEmpty)
-            Menu("Display") {
-                Picker("Colors", selection: $preferences.readingTheme) {
+            Menu(String(localized: "Display")) {
+                Picker(String(localized: "Colors"), selection: $preferences.readingTheme) {
                     ForEach(ReadingTheme.allCases) { Text($0.title).tag($0) }
                 }
-                Stepper("Text size: \(preferences.readerFontSize)", value: $preferences.readerFontSize, in: 14...96, step: 4)
-                Stepper("Line spacing: \(preferences.readerLineSpacing)", value: $preferences.readerLineSpacing, in: 0...40, step: 2)
+                Stepper(String(localized: "Text size: \(preferences.readerFontSize)"), value: $preferences.readerFontSize, in: 14...96, step: 4)
+                Stepper(String(localized: "Line spacing: \(preferences.readerLineSpacing)"), value: $preferences.readerLineSpacing, in: 0...40, step: 2)
             }
             .frame(width: 100)
-            Slider(value: $preferences.readerRate, in: 0.1...0.9) { Text("Reading speed") }
+            Slider(value: $preferences.readerRate, in: 0.1...0.9) { Text(String(localized: "Reading speed")) }
                 .frame(width: 160)
         }
     }
@@ -274,8 +274,8 @@ enum TextExport {
     enum Format { case text, word }
 
     @MainActor
-    static func save(_ text: String, as format: Format, name: String = "Scanned text") {
-        guard !text.isEmpty else { return Announcer.say("There's no text to save") }
+    static func save(_ text: String, as format: Format, name: String = String(localized: "Scanned text")) {
+        guard !text.isEmpty else { return Announcer.say(String(localized: "There's no text to save")) }
         let panel = NSSavePanel()
         panel.nameFieldStringValue = name + (format == .word ? ".docx" : ".txt")
         panel.allowedContentTypes = [format == .word ? (UTType(filenameExtension: "docx") ?? .data) : .plainText]
@@ -292,9 +292,9 @@ enum TextExport {
                                              documentAttributes: [.documentType: NSAttributedString.DocumentType.officeOpenXML])
                 try data.write(to: url)
             }
-            Announcer.say("Saved \(url.lastPathComponent)")
+            Announcer.say(String(localized: "Saved \(url.lastPathComponent)"))
         } catch {
-            Announcer.say("Couldn't save the file")
+            Announcer.say(String(localized: "Couldn't save the file"))
         }
     }
 }

@@ -102,12 +102,13 @@ enum Clipboard {
         let board = NSPasteboard.general
         if let text = board.string(forType: .string)?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty {
             let limit = 1000
-            return text.count > limit ? String(text.prefix(limit)) + ". And more" : text
+            return text.count > limit ? String(text.prefix(limit)) + ". " + String(localized: "And more") : text
         }
         if let files = board.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL],
            !files.isEmpty {
             let names = files.prefix(5).map(\.lastPathComponent)
-            return "\(files.count) \(files.count == 1 ? "file" : "files"): " + ListFormatter.localizedString(byJoining: names)
+            let list = ListFormatter.localizedString(byJoining: names)
+            return files.count == 1 ? String(localized: "1 file: \(list)") : String(localized: "\(files.count) files: \(list)")
         }
         if board.data(forType: .tiff) != nil || board.data(forType: .png) != nil { return "An image" }
         return "The clipboard is empty"

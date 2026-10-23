@@ -153,20 +153,22 @@ final class Controller {
 
     /// "Speech left, other sounds right", "Audio split off", and so on.
     func describeSplit() -> String {
-        guard let side = activeSide else { return "Audio split off" }
-        if let device = speechDeviceName { return "Speech on \(device), other sounds on the other device" }
-        let ear = side.rawValue
-        let otherEar = side == .left ? "right" : "left"
-        switch preferences.layout {
-        case .opposite: return "Speech \(ear), other sounds \(otherEar)"
-        case .speechBoth: return "Speech in both ears, other sounds \(otherEar)"
-        case .othersBoth: return "Speech \(ear), other sounds in both ears"
+        guard let side = activeSide else { return String(localized: "Audio split off") }
+        if let device = speechDeviceName { return String(localized: "Speech on \(device), other sounds on the other device") }
+        // Whole sentences for each case, so each language can word them naturally.
+        switch (preferences.layout, side) {
+        case (.opposite, .left): return String(localized: "Speech left, other sounds right")
+        case (.opposite, .right): return String(localized: "Speech right, other sounds left")
+        case (.speechBoth, .left): return String(localized: "Speech in both ears, other sounds right")
+        case (.speechBoth, .right): return String(localized: "Speech in both ears, other sounds left")
+        case (.othersBoth, .left): return String(localized: "Speech left, other sounds in both ears")
+        case (.othersBoth, .right): return String(localized: "Speech right, other sounds in both ears")
         }
     }
 
     static func describe(balance: Int) -> String {
-        if balance == 0 { return "Speech and other sounds equal volume" }
-        return balance > 0 ? "Speech \(balance) decibels louder" : "Other sounds \(-balance) decibels louder"
+        if balance == 0 { return String(localized: "Speech and other sounds equal volume") }
+        return balance > 0 ? String(localized: "Speech \(balance) decibels louder") : String(localized: "Other sounds \(-balance) decibels louder")
     }
 
     private func tone(for side: Side?) -> Tone {
@@ -180,15 +182,15 @@ final class Controller {
         var parts = [describeSplit()]
         if activeSide != nil {
             parts.append(Self.describe(balance: balance))
-            if preferences.ducking { parts.append("Other sounds lower while VoiceOver speaks") }
+            if preferences.ducking { parts.append(String(localized: "Other sounds lower while VoiceOver speaks")) }
         }
-        if quietAll { parts.append("Everything but VoiceOver is quiet") }
-        if speechSilenced { parts.append("VoiceOver is silenced") }
+        if quietAll { parts.append(String(localized: "Everything but VoiceOver is quiet")) }
+        if speechSilenced { parts.append(String(localized: "VoiceOver is silenced")) }
         if preferences.oneEar != .off { parts.append(preferences.oneEar.title) }
-        if preferences.clarity { parts.append("Speech clarity on") }
-        if preferences.leveler { parts.append("Loud media evened out") }
-        if preferences.volumeLimit { parts.append("Volume limit on") }
-        if AudioSystem.isMicMuted { parts.append("Microphone muted") }
+        if preferences.clarity { parts.append(String(localized: "Speech clarity on")) }
+        if preferences.leveler { parts.append(String(localized: "Loud media evened out")) }
+        if preferences.volumeLimit { parts.append(String(localized: "Volume limit on")) }
+        if AudioSystem.isMicMuted { parts.append(String(localized: "Microphone muted")) }
         Tones.play(.status)
         Announcer.say(parts.joined(separator: ". "))
     }
@@ -223,7 +225,7 @@ final class Controller {
         quietAll.toggle()
         update()
         Tones.play(quietAll ? .quiet : .unquiet)
-        Announcer.say(quietAll ? "Everything but VoiceOver is quiet" : "Other sounds back")
+        Announcer.say(quietAll ? String(localized: "Everything but VoiceOver is quiet") : String(localized: "Other sounds back"))
     }
 
     // MARK: - Commands
@@ -253,7 +255,7 @@ final class Controller {
         case .camera: checkCamera()
         case .layer:
             Tones.play(.status)
-            Announcer.say("Layer")
+            Announcer.say(String(localized: "Layer"))
         case .describeImage: app?.showAssistant(describingImage: true)
         case .assistant: app?.showAssistant(describingImage: false)
         case .analyzeText: analyzeClipboard()
@@ -287,7 +289,7 @@ final class Controller {
         case .audioMouse: AudioMouse.toggle()
         case .beepMode:
             preferences.beepsWhenSilenced.toggle()
-            Announcer.say(preferences.beepsWhenSilenced ? "Beeps on while VoiceOver is silenced" : "Beeps off")
+            Announcer.say(preferences.beepsWhenSilenced ? String(localized: "Beeps on while VoiceOver is silenced") : String(localized: "Beeps off"))
         case .exportSettings: MainActor.assumeIsolated { SettingsTransfer.export() }
         case .importSettings: MainActor.assumeIsolated { SettingsTransfer.importFromFile() }
         case .diagnostics: MainActor.assumeIsolated { Diagnostics.save() }
@@ -303,7 +305,7 @@ final class Controller {
         speechSilenced.toggle()
         update()
         Tones.play(speechSilenced ? .quiet : .unquiet)
-        Announcer.say(speechSilenced ? "VoiceOver silenced. Read item speaks on request." : "VoiceOver speaking")
+        Announcer.say(speechSilenced ? String(localized: "VoiceOver silenced. Read item speaks on request.") : String(localized: "VoiceOver speaking"))
     }
 
     /// Speaks the item under the VoiceOver cursor.
@@ -312,7 +314,7 @@ final class Controller {
             let text = VoiceOverText.itemUnderCursor()
             DispatchQueue.main.async {
                 guard let text, !text.isEmpty else {
-                    return Announcer.say("Nothing to read. Check that VoiceOver allows AppleScript control.")
+                    return Announcer.say(String(localized: "Nothing to read. Check that VoiceOver allows AppleScript control."))
                 }
                 Announcer.say(text)
             }
@@ -327,13 +329,13 @@ final class Controller {
     func toggleCaptions() {
         if Captions.isShowing { Captions.hide() } else { Captions.show() }
         preferences.captionsOn = Captions.isShowing
-        Announcer.say(Captions.isShowing ? "Captions on" : "Captions off")
+        Announcer.say(Captions.isShowing ? String(localized: "Captions on") : String(localized: "Captions off"))
     }
 
     func toggleFocusFrame() {
         if FocusFrame.isShowing { FocusFrame.hide() } else { FocusFrame.show() }
         preferences.focusFrameOn = FocusFrame.isShowing
-        Announcer.say(FocusFrame.isShowing ? "Focus frame on" : "Focus frame off")
+        Announcer.say(FocusFrame.isShowing ? String(localized: "Focus frame on") : String(localized: "Focus frame off"))
     }
 
     func announceSystemStatus() {
@@ -350,7 +352,7 @@ final class Controller {
 
     func checkCamera() {
         Tones.play(.status)
-        Announcer.say("Checking the camera")
+        Announcer.say(String(localized: "Checking the camera"))
         FaceCheck.shared.run { message in Announcer.say(message) }
     }
 
@@ -443,25 +445,25 @@ final class Controller {
     }
 
     func changeFrontAppVolume(by delta: Int) {
-        guard var rule = frontRule() else { return Announcer.say("No app in front") }
+        guard var rule = frontRule() else { return Announcer.say(String(localized: "No app in front")) }
         rule.volume = max(-30, min(6, rule.volume + delta))
         rule.muted = false
         preferences.setRule(rule)
         Tones.play(delta > 0 ? .louder : .quieter)
-        Announcer.say("\(rule.name) " + Self.describe(appVolume: rule.volume))
+        Announcer.say(String(localized: "\(rule.name): \(Self.describe(appVolume: rule.volume))"))
     }
 
     func toggleFrontAppMute() {
-        guard var rule = frontRule() else { return Announcer.say("No app in front") }
+        guard var rule = frontRule() else { return Announcer.say(String(localized: "No app in front")) }
         rule.muted.toggle()
         preferences.setRule(rule)
         Tones.play(rule.muted ? .quiet : .unquiet)
-        Announcer.say("\(rule.name) \(rule.muted ? "muted" : "unmuted")")
+        Announcer.say(rule.muted ? String(localized: "\(rule.name) muted") : String(localized: "\(rule.name) unmuted"))
     }
 
     static func describe(appVolume: Int) -> String {
-        if appVolume == 0 { return "normal volume" }
-        return appVolume > 0 ? "\(appVolume) decibels louder" : "\(-appVolume) decibels quieter"
+        if appVolume == 0 { return String(localized: "normal volume") }
+        return appVolume > 0 ? String(localized: "\(appVolume) decibels louder") : String(localized: "\(-appVolume) decibels quieter")
     }
 
     // MARK: - What's playing
@@ -470,8 +472,8 @@ final class Controller {
         let apps = AudioSystem.appsPlaying()
         Tones.play(.status)
         switch apps.count {
-        case 0: Announcer.say("Nothing else is playing")
-        case 1: Announcer.say("\(apps[0]) is playing")
+        case 0: Announcer.say(String(localized: "Nothing else is playing"))
+        case 1: Announcer.say(String(localized: "\(apps[0]) is playing"))
         default: Announcer.say(ListFormatter.localizedString(byJoining: apps) + " are playing")
         }
     }
@@ -479,10 +481,10 @@ final class Controller {
     // MARK: - Devices and microphone
 
     func nextOutputDevice() {
-        guard let name = AudioSystem.nextOutputDevice() else { return Announcer.say("Could not switch output") }
+        guard let name = AudioSystem.nextOutputDevice() else { return Announcer.say(String(localized: "Could not switch output")) }
         log("Output switched to \(name).")
         Tones.play(.device)
-        Announcer.say("Output: \(name)")
+        Announcer.say(String(localized: "Output: \(name)"))
     }
 
     func toggleMicrophone() {
@@ -491,12 +493,12 @@ final class Controller {
         switch result {
         case .muted:
             Tones.play(.micMuted)
-            Announcer.say("Microphone muted")
+            Announcer.say(String(localized: "Microphone muted"))
         case .unmuted:
             Tones.play(.micOn)
-            Announcer.say("Microphone on, using \(AudioSystem.inputDeviceName)")
+            Announcer.say(String(localized: "Microphone on, using \(AudioSystem.inputDeviceName)"))
         case .unsupported:
-            Announcer.say("This microphone can't be muted from here")
+            Announcer.say(String(localized: "This microphone can't be muted from here"))
         }
         onChange?()
     }
@@ -505,7 +507,7 @@ final class Controller {
 
     func applyPreset(number: Int) {
         guard number >= 1, number <= preferences.presets.count else {
-            return Announcer.say("No preset \(number)")
+            return Announcer.say(String(localized: "No preset \(number)"))
         }
         applyPreset(preferences.presets[number - 1])
     }
@@ -527,7 +529,7 @@ final class Controller {
         if let side = activeSide { lastSide = side }
         update()
         Tones.play(.preset)
-        Announcer.say("\(preset.name). \(describeSplit())")
+        Announcer.say(String(localized: "\(preset.name). \(describeSplit())"))
     }
 
     /// Saves the current settings as a new preset.
@@ -540,7 +542,7 @@ final class Controller {
                             volumeLimitLevel: preferences.volumeLimitLevel, oneEar: preferences.oneEar,
                             earBalance: preferences.earBalance)
         preferences.presets.append(preset)
-        Announcer.say("Saved preset \(name), number \(preferences.presets.count)")
+        Announcer.say(String(localized: "Saved preset \(name), number \(preferences.presets.count)"))
     }
 
     // MARK: - Login
@@ -549,13 +551,13 @@ final class Controller {
         do {
             if startsAtLogin {
                 try SMAppService.mainApp.unregister()
-                Announcer.say("Audio split will not start at login")
+                Announcer.say(String(localized: "Audio split will not start at login"))
             } else {
                 try SMAppService.mainApp.register()
-                Announcer.say("Audio split will start at login")
+                Announcer.say(String(localized: "Audio split will start at login"))
             }
         } catch {
-            Announcer.say("Could not change start at login. Check Login Items in System Settings.")
+            Announcer.say(String(localized: "Could not change start at login. Check Login Items in System Settings."))
         }
         onChange?()
     }

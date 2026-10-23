@@ -39,22 +39,22 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
-                    granted ? self.start(handler, failed: failed) : failed("Camera access was not allowed")
+                    granted ? self.start(handler, failed: failed) : failed(String(localized: "Camera access was not allowed"))
                 }
             }
             return
         default:
-            return failed("Camera access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Camera.")
+            return failed(String(localized: "Camera access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Camera."))
         }
         guard let camera = CameraChoice.preferred(),
-              let input = try? AVCaptureDeviceInput(device: camera) else { return failed("No camera found") }
+              let input = try? AVCaptureDeviceInput(device: camera) else { return failed(String(localized: "No camera found")) }
         let session = AVCaptureSession()
         session.sessionPreset = .medium
         let output = AVCaptureVideoDataOutput()
         output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
         output.alwaysDiscardsLateVideoFrames = true
         output.setSampleBufferDelegate(self, queue: queue)
-        guard session.canAddInput(input), session.canAddOutput(output) else { return failed("The camera is busy") }
+        guard session.canAddInput(input), session.canAddOutput(output) else { return failed(String(localized: "The camera is busy")) }
         session.addInput(input)
         session.addOutput(output)
         self.session = session
@@ -152,6 +152,41 @@ enum ColorNames {
         if brightness > 0.8 && saturation < 0.45 { return "light " + base }
         return base
     }
+
+    /// The English name from `name`, in the user's language.
+    static func spoken(_ english: String) -> String {
+        if english.hasPrefix("dark "), english != "dark gray" {
+            let color = base(String(english.dropFirst(5)))
+            return String(localized: "dark \(color)", comment: "A color, such as dark blue")
+        }
+        if english.hasPrefix("light "), english != "light gray" {
+            let color = base(String(english.dropFirst(6)))
+            return String(localized: "light \(color)", comment: "A color, such as light pink")
+        }
+        return base(english)
+    }
+
+    private static func base(_ english: String) -> String {
+        switch english {
+        case "black": String(localized: "black")
+        case "white": String(localized: "white")
+        case "gray": String(localized: "gray")
+        case "light gray": String(localized: "light gray")
+        case "dark gray": String(localized: "dark gray")
+        case "red": String(localized: "red")
+        case "brown": String(localized: "brown")
+        case "orange": String(localized: "orange")
+        case "olive": String(localized: "olive")
+        case "yellow": String(localized: "yellow")
+        case "green": String(localized: "green")
+        case "teal": String(localized: "teal")
+        case "navy blue": String(localized: "navy blue")
+        case "blue": String(localized: "blue")
+        case "purple": String(localized: "purple")
+        case "pink": String(localized: "pink")
+        default: english
+        }
+    }
 }
 
 enum ColorIdentifier {
@@ -160,7 +195,7 @@ enum ColorIdentifier {
     static func identify() {
         guard !feed.isRunning else { return }
         Tones.play(.status)
-        Announcer.say("Hold the item close to the camera")
+        Announcer.say(String(localized: "Hold the item close to the camera"))
         var samples = 0
         feed.start({ pixels in
             samples += 1
@@ -169,7 +204,7 @@ enum ColorIdentifier {
             let color = CameraFeed.averageColor(pixels)
             DispatchQueue.main.async {
                 feed.stop()
-                Announcer.say(ColorNames.name(red: color.r, green: color.g, blue: color.b))
+                Announcer.say(ColorNames.spoken(ColorNames.name(red: color.r, green: color.g, blue: color.b)))
             }
         }, failed: { Announcer.say($0) })
     }
@@ -205,7 +240,7 @@ enum LightDetector {
         let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1)!
         engine.attach(source)
         engine.connect(source, to: engine.mainMixerNode, format: format)
-        Announcer.say("Light detector on. The tone rises with more light.")
+        Announcer.say(String(localized: "Light detector on. The tone rises with more light."))
         feed.start({ pixels in
             let color = CameraFeed.averageColor(pixels, centerFraction: 0.8)
             frequency = tone(forBrightness: (color.r + color.g + color.b) / 3)
@@ -229,7 +264,7 @@ enum LightDetector {
         feed.stop()
         engine.stop()
         for node in engine.attachedNodes where node is AVAudioSourceNode { engine.detach(node) }
-        if announce { Announcer.say("Light detector off") }
+        if announce { Announcer.say(String(localized: "Light detector off")) }
     }
 
     /// Dark is a low tone (220 Hz), bright a high one (1760 Hz), evenly spaced in pitch.

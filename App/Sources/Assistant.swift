@@ -58,7 +58,7 @@ enum Claude {
     /// (to append to the conversation unchanged) and its spoken text.
     static func send(_ messages: [[String: Any]]) async throws -> (content: [Any], text: String) {
         guard let key = APIKey.current, !key.isEmpty else {
-            throw Failure(message: "Add your Anthropic API key in Settings first.")
+            throw Failure(message: String(localized: "Add your Anthropic API key in Settings first."))
         }
         var request = URLRequest(url: URL(string: "https://api.anthropic.com/v1/messages")!)
         request.httpMethod = "POST"
@@ -68,8 +68,13 @@ enum Claude {
         // On a safety decline, the API retries on a fallback model in the same call.
         request.setValue("server-side-fallback-2026-07-01", forHTTPHeaderField: "anthropic-beta")
         request.setValue("application/json", forHTTPHeaderField: "content-type")
+        // Answer in the language the Mac is set to, unless the user writes in another.
+        let code = Locale.current.language.languageCode?.identifier ?? "en"
+        let language = Locale(identifier: "en").localizedString(forLanguageCode: code) ?? "English"
         let body: [String: Any] = [
-            "model": model, "max_tokens": 16000, "system": system, "messages": messages,
+            "model": model, "max_tokens": 16000,
+            "system": system + "\n\nReply in \(language) unless the user writes in another language.",
+            "messages": messages,
             "output_config": ["effort": "medium"], "fallbacks": "default",
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -79,7 +84,7 @@ enum Claude {
         do {
             (data, response) = try await URLSession.shared.data(for: request)
         } catch {
-            throw Failure(message: "Couldn't reach Anthropic. Check your internet connection.")
+            throw Failure(message: String(localized: "Couldn't reach Anthropic. Check your internet connection."))
         }
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
@@ -87,21 +92,21 @@ enum Claude {
             let detail = ((json["error"] as? [String: Any])?["message"] as? String).map { " \($0)" } ?? ""
             log("Claude request failed with status \(status).")
             switch status {
-            case 401: throw Failure(message: "The API key was not accepted. Check it in Settings.")
-            case 429: throw Failure(message: "Too many requests right now. Try again in a minute.")
-            case 500...: throw Failure(message: "Anthropic's service had a problem. Try again shortly.")
-            default: throw Failure(message: "The request failed.\(detail)")
+            case 401: throw Failure(message: String(localized: "The API key was not accepted. Check it in Settings."))
+            case 429: throw Failure(message: String(localized: "Too many requests right now. Try again in a minute."))
+            case 500...: throw Failure(message: String(localized: "Anthropic's service had a problem. Try again shortly."))
+            default: throw Failure(message: String(localized: "The request failed.\(detail)"))
             }
         }
         if json["stop_reason"] as? String == "refusal" {
-            throw Failure(message: "The request was declined.")
+            throw Failure(message: String(localized: "The request was declined."))
         }
         let content = json["content"] as? [Any] ?? []
         let text = content.compactMap { block -> String? in
             guard let block = block as? [String: Any], block["type"] as? String == "text" else { return nil }
             return block["text"] as? String
         }.joined(separator: "\n\n")
-        return (content, text.isEmpty ? "No answer was returned." : text)
+        return (content, text.isEmpty ? String(localized: "No answer was returned.") : text)
     }
 }
 
@@ -117,14 +122,13 @@ enum ScreenPicture {
         do {
             content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
         } catch {
-            throw Failure(message: "Allow screen recording for VoiceOver Audio Split in System Settings, "
-                          + "Privacy and Security, Screen and System Audio Recording. Then try again.")
+            throw Failure(message: String(localized: "Allow screen recording for VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording. Then try again."))
         }
         let cursor = await Task.detached { voiceOverCursorBounds() }.value
         // VoiceOver reports top-left based screen coordinates, like ScreenCaptureKit.
         let display = content.displays.first { cursor.map($0.frame.intersects) ?? false }
             ?? content.displays.first { $0.displayID == CGMainDisplayID() } ?? content.displays.first
-        guard let display else { throw Failure(message: "No screen found.") }
+        guard let display else { throw Failure(message: String(localized: "No screen found.")) }
 
         let configuration = SCStreamConfiguration()
         var area = CGRect(x: 0, y: 0, width: display.width, height: display.height)
@@ -139,7 +143,7 @@ enum ScreenPicture {
         let filter = SCContentFilter(display: display, excludingWindows: [])
         let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
         guard let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
-            throw Failure(message: "Couldn't capture the screen.")
+            throw Failure(message: String(localized: "Couldn't capture the screen."))
         }
         return png
     }
@@ -150,8 +154,7 @@ enum ScreenPicture {
         do {
             content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
         } catch {
-            throw Failure(message: "Allow screen recording for VoiceOver Audio Split in System Settings, "
-                          + "Privacy and Security, Screen and System Audio Recording. Then try again.")
+            throw Failure(message: String(localized: "Allow screen recording for VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording. Then try again."))
         }
         let front = await MainActor.run { NSWorkspace.shared.frontmostApplication?.processIdentifier }
         let me = ProcessInfo.processInfo.processIdentifier
@@ -161,7 +164,7 @@ enum ScreenPicture {
         }
         // On-screen windows are listed front to back; prefer the front app's frontmost window.
         guard let window = candidates.first(where: { $0.owningApplication?.processID == front }) ?? candidates.first else {
-            throw Failure(message: "No window to read.")
+            throw Failure(message: String(localized: "No window to read."))
         }
         let configuration = SCStreamConfiguration()
         let scale = CGFloat(NSScreen.main?.backingScaleFactor ?? 2)
@@ -170,7 +173,7 @@ enum ScreenPicture {
         let image = try await SCScreenshotManager.captureImage(
             contentFilter: SCContentFilter(desktopIndependentWindow: window), configuration: configuration)
         guard let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
-            throw Failure(message: "Couldn't capture the window.")
+            throw Failure(message: String(localized: "Couldn't capture the window."))
         }
         return png
     }
@@ -223,14 +226,13 @@ final class AssistantModel: ObservableObject {
         guard Preferences.shared.allowImageUpload else {
             waitingForImageConsent = true
             showWindow?()
-            Announcer.say("Describing images sends a picture of your screen to Anthropic. "
-                          + "Choose Allow in the window to continue.")
+            Announcer.say(String(localized: "Describing images sends a picture of your screen to Anthropic. Choose Allow in the window to continue."))
             return
         }
         waitingForImageConsent = false
         newConversation()
         busy = true
-        Announcer.say("Describing")
+        Announcer.say(String(localized: "Describing"))
         let opensWindow = target == .voiceOverCursor
         Task { @MainActor in
             do {
@@ -239,13 +241,12 @@ final class AssistantModel: ObservableObject {
                 switch target {
                 case .voiceOverCursor:
                     png = try await ScreenPicture.underVoiceOverCursor()
-                    request = "Describe this. It is what my VoiceOver cursor is on."
-                    turns.append(AssistantTurn(fromUser: true, text: "Describe the item under the VoiceOver cursor."))
+                    request = String(localized: "Describe this. It is what my VoiceOver cursor is on.")
+                    turns.append(AssistantTurn(fromUser: true, text: String(localized: "Describe the item under the VoiceOver cursor.")))
                 case .video:
                     png = try await ScreenPicture.frontWindow()
-                    request = "This is a frame from a video I'm watching. In two or three sentences, describe what is "
-                        + "happening right now, and read any text on screen. Don't describe the video player's controls."
-                    turns.append(AssistantTurn(fromUser: true, text: "What's happening in the video?"))
+                    request = String(localized: "This is a frame from a video I'm watching. In two or three sentences, describe what is happening right now, and read any text on screen. Don't describe the video player's controls.")
+                    turns.append(AssistantTurn(fromUser: true, text: String(localized: "What's happening in the video?")))
                 }
                 if opensWindow { showWindow?() }
                 let content: [[String: Any]] = [
@@ -259,7 +260,7 @@ final class AssistantModel: ObservableObject {
                 finish(failure.message)
             } catch {
                 if opensWindow { showWindow?() }
-                finish("Couldn't capture the screen.")
+                finish(String(localized: "Couldn't capture the screen."))
             }
         }
     }
@@ -283,7 +284,7 @@ final class AssistantModel: ObservableObject {
         } catch let failure as Claude.Failure {
             finish(failure.message)
         } catch {
-            finish("The request failed.")
+            finish(String(localized: "The request failed."))
         }
     }
 
@@ -304,49 +305,47 @@ struct AssistantView: View {
     var body: some View {
         Form {
             if APIKey.current == nil {
-                Section("Anthropic API key") {
-                    Text("The assistant and image descriptions use Claude. Paste an API key from console.anthropic.com. "
-                         + "It is stored in your Mac's Keychain. Requests are billed to that account.")
-                    SecureField("API key", text: $key)
-                    Button("Save key") {
+                Section(String(localized: "Anthropic API key")) {
+                    Text(String(localized: "The assistant and image descriptions use Claude. Paste an API key from console.anthropic.com. It is stored in your Mac's Keychain. Requests are billed to that account."))
+                    SecureField(String(localized: "API key"), text: $key)
+                    Button(String(localized: "Save key")) {
                         APIKey.save(key.trimmingCharacters(in: .whitespacesAndNewlines))
                         key = ""
-                        Announcer.say("Key saved")
+                        Announcer.say(String(localized: "Key saved"))
                     }
                     .disabled(key.isEmpty)
                 }
             }
             if model.waitingForImageConsent {
-                Section("Allow image descriptions?") {
-                    Text("To describe an image, a picture of the item under your VoiceOver cursor is sent to Anthropic. "
-                         + "Only that picture is sent, and only when you ask. You can turn this off in Settings.")
-                    Button("Allow") {
+                Section(String(localized: "Allow image descriptions?")) {
+                    Text(String(localized: "To describe an image, a picture of the item under your VoiceOver cursor is sent to Anthropic. Only that picture is sent, and only when you ask. You can turn this off in Settings."))
+                    Button(String(localized: "Allow")) {
                         preferences.allowImageUpload = true
                         model.waitingForImageConsent = false
-                        Announcer.say("Allowed. Go back to the image and press the describe shortcut again.")
+                        Announcer.say(String(localized: "Allowed. Go back to the image and press the describe shortcut again."))
                     }
-                    Button("Not Now") { model.waitingForImageConsent = false }
+                    Button(String(localized: "Not Now")) { model.waitingForImageConsent = false }
                 }
             }
-            Section("Conversation") {
+            Section(String(localized: "Conversation")) {
                 if model.turns.isEmpty {
-                    Text("Ask about using your Mac or VoiceOver, or press the describe-image shortcut on a picture.")
+                    Text(String(localized: "Ask about using your Mac or VoiceOver, or press the describe-image shortcut on a picture."))
                 }
                 ForEach(model.turns) { turn in
-                    Text((turn.fromUser ? "You: " : "Claude: ") + turn.text)
+                    Text(turn.fromUser ? String(localized: "You: \(turn.text)") : String(localized: "Claude: \(turn.text)"))
                         .textSelection(.enabled)
                 }
-                if model.busy { Text("Thinking…") }
+                if model.busy { Text(String(localized: "Thinking…")) }
             }
             Section {
-                TextField(model.turns.isEmpty ? "Your question" : "Follow-up question", text: $question, axis: .vertical)
+                TextField(model.turns.isEmpty ? String(localized: "Your question") : String(localized: "Follow-up question"), text: $question, axis: .vertical)
                     .focused($questionFocused)
                     .onSubmit(send)
                 HStack {
-                    Button("Ask", action: send)
+                    Button(String(localized: "Ask"), action: send)
                         .keyboardShortcut(.defaultAction)
                         .disabled(question.isEmpty || model.busy)
-                    Button("New Conversation") { model.newConversation() }
+                    Button(String(localized: "New Conversation")) { model.newConversation() }
                 }
             }
         }

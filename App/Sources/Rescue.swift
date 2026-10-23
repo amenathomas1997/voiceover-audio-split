@@ -61,7 +61,7 @@ enum VoiceOverRescue {
     static func restart() {
         let wasRunning = NSWorkspace.shared.isVoiceOverEnabled
         Announcer.useSystemVoice = true
-        Announcer.say(wasRunning ? "Restarting VoiceOver" : "Starting VoiceOver")
+        Announcer.say(wasRunning ? String(localized: "Restarting VoiceOver") : String(localized: "Starting VoiceOver"))
         log("VoiceOver rescue.")
         Task {
             if wasRunning {
@@ -84,7 +84,7 @@ enum VoiceOverRescue {
             await MainActor.run {
                 Announcer.useSystemVoice = Controller.shared.speechSilenced
                 if !NSWorkspace.shared.isVoiceOverEnabled {
-                    Announcer.say("VoiceOver didn't start. Press Command F5 to turn it on.")
+                    Announcer.say(String(localized: "VoiceOver didn't start. Press Command F5 to turn it on."))
                 }
             }
         }

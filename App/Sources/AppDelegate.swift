@@ -67,7 +67,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let image = NSImage(size: NSSize(width: 900, height: 200), flipped: false) { rect in
                 NSColor.white.setFill()
                 rect.fill()
-                ("Scan and Read works on this Mac" as NSString).draw(
+                (String(localized: "Scan and Read works on this Mac") as NSString).draw(
                     at: NSPoint(x: 40, y: 80), withAttributes: [.font: NSFont.systemFont(ofSize: 48)])
                 return true
             }
@@ -163,7 +163,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     // MARK: - Windows
 
     private func showSettings() {
-        settingsWindow = show(settingsWindow, title: "VoiceOver Audio Split Settings", view: SettingsView())
+        settingsWindow = show(settingsWindow, title: String(localized: "VoiceOver Audio Split Settings"), view: SettingsView())
     }
 
     /// Opens the assistant. To describe an image, the picture is taken first and
@@ -172,26 +172,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let model = AssistantModel.shared
         model.showWindow = { [weak self] in
             guard let self else { return }
-            self.assistantWindow = self.show(self.assistantWindow, title: "Assistant", view: AssistantView())
+            self.assistantWindow = self.show(self.assistantWindow, title: String(localized: "Assistant"), view: AssistantView())
         }
         if describingImage { model.describeImage() } else { model.showWindow?() }
     }
 
     func showDocReader() {
-        docReaderWindow = show(docReaderWindow, title: "Doc Reader", view: DocReaderView())
+        docReaderWindow = show(docReaderWindow, title: String(localized: "Doc Reader"), view: DocReaderView())
         docReaderWindow?.styleMask.insert(.resizable)
     }
 
     func showScan() {
-        scanWindow = show(scanWindow, title: "Scan and Read", view: ScanView())
+        scanWindow = show(scanWindow, title: String(localized: "Scan and Read"), view: ScanView())
     }
 
     func showAudioHub() {
-        audioHubWindow = show(audioHubWindow, title: "Audio Hub", view: AudioHubView())
+        audioHubWindow = show(audioHubWindow, title: String(localized: "Audio Hub"), view: AudioHubView())
     }
 
     func showPalette() {
-        paletteWindow = show(paletteWindow, title: "Command Palette", view: CommandPaletteView { [weak self] in
+        paletteWindow = show(paletteWindow, title: String(localized: "Command Palette"), view: CommandPaletteView { [weak self] in
             self?.paletteWindow?.close()
             // Give the keyboard back to the app that was in front.
             NSApp.hide(nil)
@@ -199,39 +199,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func showTutorial() {
-        tutorialWindow = show(tutorialWindow, title: "Tutorial", view: TutorialView())
+        tutorialWindow = show(tutorialWindow, title: String(localized: "Tutorial"), view: TutorialView())
     }
 
     func showTranslate() {
-        translateWindow = show(translateWindow, title: "Translate", view: TranslateView())
+        translateWindow = show(translateWindow, title: String(localized: "Translate"), view: TranslateView())
     }
 
     func showCompare() {
-        compareWindow = show(compareWindow, title: "Compare Text", view: CompareView())
+        compareWindow = show(compareWindow, title: String(localized: "Compare Text"), view: CompareView())
     }
 
     func showTextChecker() {
-        textCheckerWindow = show(textCheckerWindow, title: "Text Checker", view: TextCheckerView())
+        textCheckerWindow = show(textCheckerWindow, title: String(localized: "Text Checker"), view: TextCheckerView())
     }
 
     func showVoiceOverCommands() {
-        commandsWindow = show(commandsWindow, title: "VoiceOver Commands", view: VoiceOverCommandsView())
+        commandsWindow = show(commandsWindow, title: String(localized: "VoiceOver Commands"), view: VoiceOverCommandsView())
     }
 
     func showBugReport() {
-        bugReportWindow = show(bugReportWindow, title: "Report a Bug to Apple", view: BugReportView())
+        bugReportWindow = show(bugReportWindow, title: String(localized: "Report a Bug to Apple"), view: BugReportView())
     }
 
     func showResearch() {
-        researchWindow = show(researchWindow, title: "Research It", view: ResearchView())
+        researchWindow = show(researchWindow, title: String(localized: "Research It"), view: ResearchView())
     }
 
     func showHistory() {
-        historyWindow = show(historyWindow, title: "Speech History", view: HistoryView())
+        historyWindow = show(historyWindow, title: String(localized: "Speech History"), view: HistoryView())
     }
 
     private func showSetupGuide() {
-        setupWindow = show(setupWindow, title: "Set Up VoiceOver Audio Split", view: SetupGuideView { [weak self] in
+        setupWindow = show(setupWindow, title: String(localized: "Set Up VoiceOver Audio Split"), view: SetupGuideView { [weak self] in
             self?.preferences.finishedSetup = true
             self?.setupWindow?.close()
         })
@@ -263,11 +263,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let status = NSMenuItem(title: controller.describeSplit(), action: nil, keyEquivalent: "")
         status.isEnabled = false
         menu.addItem(status)
-        add(to: menu, "Speech Left", command: .speechLeft, checked: side == .left) { $0.setSide(.left) }
-        add(to: menu, "Speech Right", command: .speechRight, checked: side == .right) { $0.setSide(.right) }
-        add(to: menu, "Audio Split Off", checked: side == nil) { $0.setSide(nil) }
-        add(to: menu, "What's On", command: .status) { $0.announceStatus() }
-        let layoutMenu = submenu(in: menu, "Layout")
+        add(to: menu, String(localized: "Speech Left"), command: .speechLeft, checked: side == .left) { $0.setSide(.left) }
+        add(to: menu, String(localized: "Speech Right"), command: .speechRight, checked: side == .right) { $0.setSide(.right) }
+        add(to: menu, String(localized: "Audio Split Off"), checked: side == nil) { $0.setSide(nil) }
+        add(to: menu, String(localized: "What's On"), command: .status) { $0.announceStatus() }
+        let layoutMenu = submenu(in: menu, String(localized: "Layout"))
         for layout in Layout.allCases {
             add(to: layoutMenu, layout.title, checked: preferences.layout == layout) { [preferences] controller in
                 preferences.layout = layout
@@ -280,67 +280,67 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let balance = NSMenuItem(title: Controller.describe(balance: controller.balance), action: nil, keyEquivalent: "")
         balance.isEnabled = false
         menu.addItem(balance)
-        add(to: menu, "Speech Louder", command: .speechLouder) { [preferences] in
+        add(to: menu, String(localized: "Speech Louder"), command: .speechLouder) { [preferences] in
             $0.changeBalance(by: preferences.balanceStep)
         }
-        add(to: menu, "Other Sounds Louder", command: .othersLouder) { [preferences] in
+        add(to: menu, String(localized: "Other Sounds Louder"), command: .othersLouder) { [preferences] in
             $0.changeBalance(by: -preferences.balanceStep)
         }
-        add(to: menu, "Reset Volume Balance") { $0.resetBalance() }
-        add(to: menu, "Quiet Everything But VoiceOver", command: .quiet, checked: controller.quietAll) { $0.toggleQuiet() }
-        add(to: menu, "Lower Other Sounds While VoiceOver Speaks", checked: preferences.ducking) { [preferences] _ in
+        add(to: menu, String(localized: "Reset Volume Balance")) { $0.resetBalance() }
+        add(to: menu, String(localized: "Quiet Everything But VoiceOver"), command: .quiet, checked: controller.quietAll) { $0.toggleQuiet() }
+        add(to: menu, String(localized: "Lower Other Sounds While VoiceOver Speaks"), checked: preferences.ducking) { [preferences] _ in
             preferences.ducking.toggle()
-            Announcer.say(preferences.ducking ? "Other sounds lower while VoiceOver speaks" : "Other sounds stay at the same volume")
+            Announcer.say(preferences.ducking ? String(localized: "Other sounds lower while VoiceOver speaks") : String(localized: "Other sounds stay at the same volume"))
         }
         menu.addItem(.separator())
 
         // Apps
-        let appName = controller.frontAppName ?? "Front App"
-        add(to: menu, "\(appName) Louder", command: .appLouder) { $0.changeFrontAppVolume(by: 3) }
-        add(to: menu, "\(appName) Quieter", command: .appQuieter) { $0.changeFrontAppVolume(by: -3) }
-        add(to: menu, "Mute \(appName)", command: .appMute, checked: controller.frontAppMuted) { $0.toggleFrontAppMute() }
-        add(to: menu, "What's Playing", command: .playing) { $0.announcePlaying() }
+        let appName = controller.frontAppName ?? String(localized: "Front App")
+        add(to: menu, String(localized: "\(appName) Louder"), command: .appLouder) { $0.changeFrontAppVolume(by: 3) }
+        add(to: menu, String(localized: "\(appName) Quieter"), command: .appQuieter) { $0.changeFrontAppVolume(by: -3) }
+        add(to: menu, String(localized: "Mute \(appName)"), command: .appMute, checked: controller.frontAppMuted) { $0.toggleFrontAppMute() }
+        add(to: menu, String(localized: "What's Playing"), command: .playing) { $0.announcePlaying() }
         menu.addItem(.separator())
 
         // Speech on demand and VoiceOver tools
-        add(to: menu, "Silence VoiceOver", command: .silence, checked: controller.speechSilenced) { $0.toggleSilence() }
-        add(to: menu, "Read Item Under VoiceOver Cursor", command: .readItem) { $0.readItem() }
-        add(to: menu, "Speech History…", command: .history) { [weak self] _ in self?.showHistory() }
-        add(to: menu, "Say Clipboard", command: .clipboard) { $0.sayClipboard() }
-        add(to: menu, "Check Camera Framing", command: .camera) { $0.checkCamera() }
+        add(to: menu, String(localized: "Silence VoiceOver"), command: .silence, checked: controller.speechSilenced) { $0.toggleSilence() }
+        add(to: menu, String(localized: "Read Item Under VoiceOver Cursor"), command: .readItem) { $0.readItem() }
+        add(to: menu, String(localized: "Speech History…"), command: .history) { [weak self] _ in self?.showHistory() }
+        add(to: menu, String(localized: "Say Clipboard"), command: .clipboard) { $0.sayClipboard() }
+        add(to: menu, String(localized: "Check Camera Framing"), command: .camera) { $0.checkCamera() }
         menu.addItem(.separator())
 
         // Help and research
-        add(to: menu, "Describe Image Under VoiceOver Cursor", command: .describeImage) { $0.run(.describeImage) }
-        add(to: menu, "Ask the Assistant…", command: .assistant) { $0.run(.assistant) }
-        add(to: menu, "Check Clipboard Text…", command: .analyzeText) { $0.analyzeClipboard() }
-        add(to: menu, CompareModel.shared.original == nil ? "Compare Text: Save Original" : "Compare Text: Compare With Clipboard",
+        add(to: menu, String(localized: "Describe Image Under VoiceOver Cursor"), command: .describeImage) { $0.run(.describeImage) }
+        add(to: menu, String(localized: "Ask the Assistant…"), command: .assistant) { $0.run(.assistant) }
+        add(to: menu, String(localized: "Check Clipboard Text…"), command: .analyzeText) { $0.analyzeClipboard() }
+        add(to: menu, CompareModel.shared.original == nil ? String(localized: "Compare Text: Save Original") : String(localized: "Compare Text: Compare With Clipboard"),
             command: .compareText) { $0.run(.compareText) }
-        add(to: menu, "Research It…", command: .research) { $0.run(.research) }
-        add(to: menu, "System Status", command: .systemStatus) { $0.announceSystemStatus() }
+        add(to: menu, String(localized: "Research It…"), command: .research) { $0.run(.research) }
+        add(to: menu, String(localized: "System Status"), command: .systemStatus) { $0.announceSystemStatus() }
         menu.addItem(.separator())
 
         // VoiceOver help
-        add(to: menu, "Restart VoiceOver", command: .rescueVoiceOver) { $0.run(.rescueVoiceOver) }
-        add(to: menu, "Keep Audio Awake (Prevents Clipped Words)", checked: preferences.keepAudioAwake) { [preferences] _ in
+        add(to: menu, String(localized: "Restart VoiceOver"), command: .rescueVoiceOver) { $0.run(.rescueVoiceOver) }
+        add(to: menu, String(localized: "Keep Audio Awake (Prevents Clipped Words)"), checked: preferences.keepAudioAwake) { [preferences] _ in
             preferences.keepAudioAwake.toggle()
-            Announcer.say(preferences.keepAudioAwake ? "Keeping audio awake" : "Audio can sleep")
+            Announcer.say(preferences.keepAudioAwake ? String(localized: "Keeping audio awake") : String(localized: "Audio can sleep"))
         }
-        add(to: menu, "Find a VoiceOver Command…", command: .voiceOverCommands) { $0.run(.voiceOverCommands) }
-        add(to: menu, "Report a Bug to Apple…", command: .reportBug) { $0.run(.reportBug) }
+        add(to: menu, String(localized: "Find a VoiceOver Command…"), command: .voiceOverCommands) { $0.run(.voiceOverCommands) }
+        add(to: menu, String(localized: "Report a Bug to Apple…"), command: .reportBug) { $0.run(.reportBug) }
         menu.addItem(.separator())
 
         // Finding and learning commands
-        add(to: menu, "Command Palette…", command: .commandPalette) { $0.run(.commandPalette) }
-        add(to: menu, "Input Help", command: .inputHelp, checked: InputHelp.isOn) { $0.run(.inputHelp) }
-        add(to: menu, "Tutorial…", command: .tutorial) { $0.run(.tutorial) }
-        add(to: menu, "Translate…", command: .translate) { $0.run(.translate) }
-        add(to: menu, "Audio Mouse", command: .audioMouse, checked: AudioMouse.isOn) { $0.run(.audioMouse) }
-        add(to: menu, "Beeps While VoiceOver Is Silenced", command: .beepMode, checked: preferences.beepsWhenSilenced) {
+        add(to: menu, String(localized: "Command Palette…"), command: .commandPalette) { $0.run(.commandPalette) }
+        add(to: menu, String(localized: "Input Help"), command: .inputHelp, checked: InputHelp.isOn) { $0.run(.inputHelp) }
+        add(to: menu, String(localized: "Tutorial…"), command: .tutorial) { $0.run(.tutorial) }
+        add(to: menu, String(localized: "Translate…"), command: .translate) { $0.run(.translate) }
+        add(to: menu, String(localized: "Audio Mouse"), command: .audioMouse, checked: AudioMouse.isOn) { $0.run(.audioMouse) }
+        add(to: menu, String(localized: "Beeps While VoiceOver Is Silenced"), command: .beepMode, checked: preferences.beepsWhenSilenced) {
             $0.run(.beepMode)
         }
         if !preferences.userCommands.isEmpty {
-            let yours = submenu(in: menu, "Your Commands")
+            let yours = submenu(in: menu, String(localized: "Your Commands"))
             for command in preferences.userCommands {
                 add(to: yours, command.name, equivalent: command.key.flatMap(Key.named)?.equivalent) { _ in
                     UserCommands.run(command.id)
@@ -350,71 +350,71 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
 
         // Screen, meetings and everyday tools
-        add(to: menu, "Read Text in Front Window", command: .readWindow) { $0.run(.readWindow) }
-        add(to: menu, "Open Last Window Text in Doc Reader") { _ in ScreenText.openInDocReader() }
-        add(to: menu, "Describe What's Happening in Video", command: .describeVideo) { $0.run(.describeVideo) }
-        add(to: menu, "Microphone Check", command: .micCheck) { $0.run(.micCheck) }
-        add(to: menu, "Open Latest Download", command: .openDownload) { $0.run(.openDownload) }
-        add(to: menu, "Identify a Color", command: .colorIdentifier) { $0.run(.colorIdentifier) }
-        add(to: menu, "Light Detector", command: .lightDetector, checked: LightDetector.isRunning) { $0.run(.lightDetector) }
+        add(to: menu, String(localized: "Read Text in Front Window"), command: .readWindow) { $0.run(.readWindow) }
+        add(to: menu, String(localized: "Open Last Window Text in Doc Reader")) { _ in ScreenText.openInDocReader() }
+        add(to: menu, String(localized: "Describe What's Happening in Video"), command: .describeVideo) { $0.run(.describeVideo) }
+        add(to: menu, String(localized: "Microphone Check"), command: .micCheck) { $0.run(.micCheck) }
+        add(to: menu, String(localized: "Open Latest Download"), command: .openDownload) { $0.run(.openDownload) }
+        add(to: menu, String(localized: "Identify a Color"), command: .colorIdentifier) { $0.run(.colorIdentifier) }
+        add(to: menu, String(localized: "Light Detector"), command: .lightDetector, checked: LightDetector.isRunning) { $0.run(.lightDetector) }
         menu.addItem(.separator())
 
         // Reading, low vision and listening
-        add(to: menu, "Doc Reader…", command: .docReader) { $0.run(.docReader) }
-        add(to: menu, "Scan and Read…", command: .scanAndRead) { $0.run(.scanAndRead) }
-        add(to: menu, "Large-Print Captions", command: .captions, checked: Captions.isShowing) { $0.toggleCaptions() }
-        add(to: menu, "Focus Frame", command: .focusFrame, checked: FocusFrame.isShowing) { $0.toggleFocusFrame() }
-        add(to: menu, "Audio Hub…", command: .audioHub) { $0.run(.audioHub) }
+        add(to: menu, String(localized: "Doc Reader…"), command: .docReader) { $0.run(.docReader) }
+        add(to: menu, String(localized: "Scan and Read…"), command: .scanAndRead) { $0.run(.scanAndRead) }
+        add(to: menu, String(localized: "Large-Print Captions"), command: .captions, checked: Captions.isShowing) { $0.toggleCaptions() }
+        add(to: menu, String(localized: "Focus Frame"), command: .focusFrame, checked: FocusFrame.isShowing) { $0.toggleFocusFrame() }
+        add(to: menu, String(localized: "Audio Hub…"), command: .audioHub) { $0.run(.audioHub) }
         if let title = AudioHub.shared.nowPlaying {
-            add(to: menu, AudioHub.shared.playing ? "Pause \(title)" : "Play \(title)", command: .hubPlayPause) {
+            add(to: menu, AudioHub.shared.playing ? String(localized: "Pause \(title)") : String(localized: "Play \(title)"), command: .hubPlayPause) {
                 _ in AudioHub.shared.togglePlay()
             }
         }
         menu.addItem(.separator())
 
         // Devices
-        add(to: menu, "Next Output Device", command: .device) { $0.nextOutputDevice() }
-        add(to: menu, "Mute Microphone", command: .microphone, checked: AudioSystem.isMicMuted) { $0.toggleMicrophone() }
+        add(to: menu, String(localized: "Next Output Device"), command: .device) { $0.nextOutputDevice() }
+        add(to: menu, String(localized: "Mute Microphone"), command: .microphone, checked: AudioSystem.isMicMuted) { $0.toggleMicrophone() }
         menu.addItem(.separator())
 
         // Presets, hearing and clarity
-        let presetsMenu = submenu(in: menu, "Presets")
+        let presetsMenu = submenu(in: menu, String(localized: "Presets"))
         for (index, preset) in preferences.presets.enumerated() {
             add(to: presetsMenu, preset.name, equivalent: index < 9 ? "\(index + 1)" : nil) { $0.applyPreset(preset) }
         }
         if !preferences.presets.isEmpty { presetsMenu.addItem(.separator()) }
-        add(to: presetsMenu, "Save or Edit Presets in Settings…") { [weak self] _ in self?.showSettings() }
+        add(to: presetsMenu, String(localized: "Save or Edit Presets in Settings…")) { [weak self] _ in self?.showSettings() }
 
-        let hearingMenu = submenu(in: menu, "Hearing and Clarity")
-        toggle(in: hearingMenu, "Speech Clarity Boost", \.clarity, on: "Speech clarity on", off: "Speech clarity off")
-        toggle(in: hearingMenu, "Even Out Loud Media", \.leveler, on: "Loud media evened out", off: "Media leveling off")
-        toggle(in: hearingMenu, "Volume Limit", \.volumeLimit, on: "Volume limit on", off: "Volume limit off")
+        let hearingMenu = submenu(in: menu, String(localized: "Hearing and Clarity"))
+        toggle(in: hearingMenu, String(localized: "Speech Clarity Boost"), \.clarity, on: String(localized: "Speech clarity on"), off: String(localized: "Speech clarity off"))
+        toggle(in: hearingMenu, String(localized: "Even Out Loud Media"), \.leveler, on: String(localized: "Loud media evened out"), off: String(localized: "Media leveling off"))
+        toggle(in: hearingMenu, String(localized: "Volume Limit"), \.volumeLimit, on: String(localized: "Volume limit on"), off: String(localized: "Volume limit off"))
         hearingMenu.addItem(.separator())
         for choice in OneEar.allCases {
-            add(to: hearingMenu, choice == .off ? "Normal Stereo" : choice.title, checked: preferences.oneEar == choice) {
+            add(to: hearingMenu, choice == .off ? String(localized: "Normal Stereo") : choice.title, checked: preferences.oneEar == choice) {
                 [preferences] _ in
                 preferences.oneEar = choice
-                Announcer.say(choice == .off ? "Normal stereo" : choice.title)
+                Announcer.say(choice == .off ? String(localized: "Normal stereo") : choice.title)
             }
         }
         menu.addItem(.separator())
 
         // App
-        add(to: menu, "Start at Login", checked: controller.startsAtLogin) { $0.toggleStartAtLogin() }
+        add(to: menu, String(localized: "Start at Login"), checked: controller.startsAtLogin) { $0.toggleStartAtLogin() }
         if !Hotkeys.isTrusted {
-            add(to: menu, "Allow Keyboard Shortcuts…") { _ in
+            add(to: menu, String(localized: "Allow Keyboard Shortcuts…")) { _ in
                 NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
             }
         }
-        let backup = submenu(in: menu, "Backup and Diagnostics")
-        add(to: backup, "Export Settings…", command: .exportSettings) { $0.run(.exportSettings) }
-        add(to: backup, "Import Settings…", command: .importSettings) { $0.run(.importSettings) }
-        add(to: backup, "Save a Diagnostics Report…", command: .diagnostics) { $0.run(.diagnostics) }
-        add(to: backup, "App Performance", command: .performance) { $0.run(.performance) }
-        add(to: menu, "Settings…") { [weak self] _ in self?.showSettings() }
-        add(to: menu, "Setup Guide…") { [weak self] _ in self?.showSetupGuide() }
+        let backup = submenu(in: menu, String(localized: "Backup and Diagnostics"))
+        add(to: backup, String(localized: "Export Settings…"), command: .exportSettings) { $0.run(.exportSettings) }
+        add(to: backup, String(localized: "Import Settings…"), command: .importSettings) { $0.run(.importSettings) }
+        add(to: backup, String(localized: "Save a Diagnostics Report…"), command: .diagnostics) { $0.run(.diagnostics) }
+        add(to: backup, String(localized: "App Performance"), command: .performance) { $0.run(.performance) }
+        add(to: menu, String(localized: "Settings…")) { [weak self] _ in self?.showSettings() }
+        add(to: menu, String(localized: "Setup Guide…")) { [weak self] _ in self?.showSetupGuide() }
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Quit VoiceOver Audio Split", action: #selector(NSApplication.terminate(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: String(localized: "Quit VoiceOver Audio Split"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: ""))
     }
 
     private func submenu(in menu: NSMenu, _ title: String) -> NSMenu {
@@ -462,7 +462,7 @@ final class ClosureMenuItem: NSMenuItem {
         target = self
     }
 
-    required init(coder: NSCoder) { fatalError("not used") }
+    required init(coder: NSCoder) { fatalError(String(localized: "not used")) }
 
     @objc private func run() { handler() }
 }

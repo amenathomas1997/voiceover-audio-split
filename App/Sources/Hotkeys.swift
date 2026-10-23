@@ -103,7 +103,7 @@ enum Hotkeys {
                 let action: Action? = keyCode == Key.escape ? nil : keyCode == Key.slash ? .layerHelp : action(for: keyCode)
                 log("Layer key: \(keyCode)")
                 DispatchQueue.main.async {
-                    if let action, action != .command(.layer) { perform(action) } else { Announcer.say("Layer cancelled") }
+                    if let action, action != .command(.layer) { perform(action) } else { Announcer.say(String(localized: "Layer cancelled")) }
                 }
                 return nil
             }
@@ -136,11 +136,12 @@ enum Hotkeys {
             case .command(let command): InputHelp.describe(command.title, key: KeyMap.key(for: command)?.name)
             case .preset(let number):
                 let presets = Preferences.shared.presets
-                InputHelp.describe(number <= presets.count ? "Preset \(presets[number - 1].name)" : "Preset \(number), not set up",
+                InputHelp.describe(number <= presets.count ? String(localized: "Preset \(presets[number - 1].name)")
+                                                           : String(localized: "Preset \(number), not set up"),
                                    key: "\(number)")
             case .user(let id):
-                InputHelp.describe(Preferences.shared.userCommands.first { $0.id == id }?.name ?? "Your command", key: nil)
-            case .layerHelp: InputHelp.describe("Lists the layer keys", key: "Slash")
+                InputHelp.describe(Preferences.shared.userCommands.first { $0.id == id }?.name ?? String(localized: "Your command"), key: nil)
+            case .layerHelp: InputHelp.describe(String(localized: "Lists the layer keys"), key: String(localized: "Slash"))
             }
             return
         }

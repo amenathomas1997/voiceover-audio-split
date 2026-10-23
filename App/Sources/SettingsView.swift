@@ -17,81 +17,81 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Section("Where sounds go") {
-                Picker("Layout", selection: $preferences.layout) {
+            Section(String(localized: "Where sounds go")) {
+                Picker(String(localized: "Layout"), selection: $preferences.layout) {
                     ForEach(Layout.allCases) { Text($0.title).tag($0) }
                 }
-                Toggle("Keep other sounds in stereo", isOn: $preferences.stereoOthers)
-                Text("Music keeps its stereo sound but leans toward its ear. Off mixes other sounds to mono, like JAWS.")
+                Toggle(String(localized: "Keep other sounds in stereo"), isOn: $preferences.stereoOthers)
+                Text(String(localized: "Music keeps its stereo sound but leans toward its ear. Off mixes other sounds to mono, like JAWS."))
                     .font(.caption).foregroundStyle(.secondary)
-                Picker("Play speech on", selection: $preferences.speechDeviceUID) {
-                    Text("Same device as other sounds").tag("")
+                Picker(String(localized: "Play speech on"), selection: $preferences.speechDeviceUID) {
+                    Text(String(localized: "Same device as other sounds")).tag("")
                     ForEach(devices) { Text($0.name).tag($0.uid) }
                 }
-                Text("Choose another device, such as AirPods, to hear VoiceOver privately while other sounds play on the current output.")
+                Text(String(localized: "Choose another device, such as AirPods, to hear VoiceOver privately while other sounds play on the current output."))
                     .font(.caption).foregroundStyle(.secondary)
-                Button("Refresh device list") { devices = outputDevices() }
+                Button(String(localized: "Refresh device list")) { devices = outputDevices() }
             }
 
-            Section("Volume") {
-                Stepper("Change per key press: \(preferences.balanceStep) decibels",
+            Section(String(localized: "Volume")) {
+                Stepper(String(localized: "Change per key press: \(preferences.balanceStep) decibels"),
                         value: $preferences.balanceStep, in: 1...6)
-                Stepper("Largest difference: \(preferences.balanceLimit) decibels",
+                Stepper(String(localized: "Largest difference: \(preferences.balanceLimit) decibels"),
                         value: $preferences.balanceLimit, in: 6...30, step: 3)
-                Toggle("Lower other sounds while VoiceOver speaks", isOn: $preferences.ducking)
-                Stepper("Lower by: \(preferences.duckingAmount) decibels",
+                Toggle(String(localized: "Lower other sounds while VoiceOver speaks"), isOn: $preferences.ducking)
+                Stepper(String(localized: "Lower by: \(preferences.duckingAmount) decibels"),
                         value: $preferences.duckingAmount, in: 3...30, step: 3)
                     .disabled(!preferences.ducking)
             }
 
-            Section("Clearer speech and hearing") {
-                Toggle("Speech clarity boost", isOn: $preferences.clarity)
-                Text("Makes VoiceOver easier to understand over loud media, without just making it louder.")
+            Section(String(localized: "Clearer speech and hearing")) {
+                Toggle(String(localized: "Speech clarity boost"), isOn: $preferences.clarity)
+                Text(String(localized: "Makes VoiceOver easier to understand over loud media, without just making it louder."))
                     .font(.caption).foregroundStyle(.secondary)
-                Toggle("Even out loud media", isOn: $preferences.leveler)
-                Text("Turns down sudden loud moments in videos, music and ads.")
+                Toggle(String(localized: "Even out loud media"), isOn: $preferences.leveler)
+                Text(String(localized: "Turns down sudden loud moments in videos, music and ads."))
                     .font(.caption).foregroundStyle(.secondary)
-                Toggle("Volume limit", isOn: $preferences.volumeLimit)
-                Stepper("Limit: \(-preferences.volumeLimitLevel) decibels below full volume",
+                Toggle(String(localized: "Volume limit"), isOn: $preferences.volumeLimit)
+                Stepper(String(localized: "Limit: \(-preferences.volumeLimitLevel) decibels below full volume"),
                         value: $preferences.volumeLimitLevel, in: -24...(-1), step: 1)
                     .disabled(!preferences.volumeLimit)
-                Text("Keeps all sound below this level to protect your hearing. It works on top of the Mac's volume.")
+                Text(String(localized: "Keeps all sound below this level to protect your hearing. It works on top of the Mac's volume."))
                     .font(.caption).foregroundStyle(.secondary)
-                Picker("One ear", selection: $preferences.oneEar) {
+                Picker(String(localized: "One ear"), selection: $preferences.oneEar) {
                     ForEach(OneEar.allCases) { Text($0.title).tag($0) }
                 }
-                Text("For hearing in one ear: VoiceOver and every other sound are combined into that ear.")
+                Text(String(localized: "For hearing in one ear: VoiceOver and every other sound are combined into that ear."))
                     .font(.caption).foregroundStyle(.secondary)
                 Stepper(earBalanceTitle, value: $preferences.earBalance, in: -12...12)
-                Text("Makes one ear louder than the other, for people who hear less on one side.")
+                Text(String(localized: "Makes one ear louder than the other, for people who hear less on one side."))
                     .font(.caption).foregroundStyle(.secondary)
             }
 
-            Section("Apps") {
-                Text("Give an app its own volume, mute or ear. You can also hold the shortcut key and press equals, minus or zero to change the app in front.")
+            Section(String(localized: "Apps")) {
+                Text(String(localized: "Give an app its own volume, mute or ear. You can also hold the shortcut key and press equals, minus or zero to change the app in front."))
                     .font(.caption).foregroundStyle(.secondary)
                 ForEach(preferences.appRules) { rule in
                     VStack(alignment: .leading) {
                         Text(rule.name).font(.headline)
-                        Stepper("\(rule.name) volume: \(Controller.describe(appVolume: rule.volume))",
+                        Stepper(String(localized: "\(rule.name) volume: \(Controller.describe(appVolume: rule.volume))"),
                                 value: ruleBinding(rule, \.volume), in: -30...6, step: 3)
-                        Toggle("Mute \(rule.name)", isOn: ruleBinding(rule, \.muted))
-                        Picker("\(rule.name) plays in", selection: ruleBinding(rule, \.ear)) {
+                        Toggle(String(localized: "Mute \(rule.name)"), isOn: ruleBinding(rule, \.muted))
+                        Picker(String(localized: "\(rule.name) plays in"), selection: ruleBinding(rule, \.ear)) {
                             ForEach(EarChoice.allCases) { Text($0.title).tag($0) }
                         }
-                        Button("Reset \(rule.name)") {
+                        Button(String(localized: "Reset \(rule.name)")) {
                             preferences.appRules.removeAll { $0.bundleID == rule.bundleID }
                         }
                     }
                 }
                 HStack {
-                    Picker("Add an app", selection: $ruleAppToAdd) {
-                        Text("Choose an open app").tag("")
+                    Picker(String(localized: "Add an app"), selection: $ruleAppToAdd) {
+                        Text(String(localized: "Choose an open app")).tag("")
                         ForEach(openApps.filter { app in preferences.rule(for: app.bundleID) == nil }, id: \.bundleID) {
                             Text($0.name).tag($0.bundleID)
                         }
                     }
-                    Button("Add") {
+                    Button(String(localized: "Add")) {
                         if let app = openApps.first(where: { $0.bundleID == ruleAppToAdd }) {
                             // Start at a slightly lower volume so the new rule takes effect.
                             preferences.setRule(AppRule(name: app.name, bundleID: app.bundleID, volume: -3))
@@ -102,49 +102,49 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Presets") {
-                Text("Hold the shortcut key and press a number to switch to a preset.")
+            Section(String(localized: "Presets")) {
+                Text(String(localized: "Hold the shortcut key and press a number to switch to a preset."))
                     .font(.caption).foregroundStyle(.secondary)
                 ForEach(Array(preferences.presets.enumerated()), id: \.element.id) { index, preset in
                     HStack {
                         Text(index < 9 ? "\(index + 1): \(preset.name)" : preset.name)
                         Spacer()
-                        Button("Use \(preset.name)") { Controller.shared.applyPreset(preset) }
-                        Button("Delete \(preset.name)") {
+                        Button(String(localized: "Use \(preset.name)")) { Controller.shared.applyPreset(preset) }
+                        Button(String(localized: "Delete \(preset.name)")) {
                             preferences.presets.removeAll { $0.id == preset.id }
                         }
                     }
                 }
                 HStack {
-                    TextField("New preset name", text: $newPresetName)
-                    Button("Save current settings") {
+                    TextField(String(localized: "New preset name"), text: $newPresetName)
+                    Button(String(localized: "Save current settings")) {
                         Controller.shared.saveCurrentAsPreset(named: newPresetName.trimmingCharacters(in: .whitespaces))
                         newPresetName = ""
                     }
                     .disabled(newPresetName.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
-                Button("Restore default presets") { preferences.presets = Preset.defaults }
+                Button(String(localized: "Restore default presets")) { preferences.presets = Preset.defaults }
             }
 
-            Section("Automatic presets") {
-                Text("Switch to a preset whenever an app comes to the front, for example Meeting for Zoom.")
+            Section(String(localized: "Automatic presets")) {
+                Text(String(localized: "Switch to a preset whenever an app comes to the front, for example Meeting for Zoom."))
                     .font(.caption).foregroundStyle(.secondary)
                 ForEach(preferences.appPresets.keys.sorted(), id: \.self) { bundleID in
                     HStack {
                         Picker(appName(bundleID), selection: appPresetBinding(bundleID)) {
                             ForEach(preferences.presets) { Text($0.name).tag($0.id.uuidString) }
                         }
-                        Button("Remove \(appName(bundleID))") { preferences.appPresets[bundleID] = nil }
+                        Button(String(localized: "Remove \(appName(bundleID))")) { preferences.appPresets[bundleID] = nil }
                     }
                 }
                 HStack {
-                    Picker("Add an app", selection: $presetAppToAdd) {
-                        Text("Choose an open app").tag("")
+                    Picker(String(localized: "Add an app"), selection: $presetAppToAdd) {
+                        Text(String(localized: "Choose an open app")).tag("")
                         ForEach(openApps.filter { preferences.appPresets[$0.bundleID] == nil }, id: \.bundleID) {
                             Text($0.name).tag($0.bundleID)
                         }
                     }
-                    Button("Add") {
+                    Button(String(localized: "Add")) {
                         if let first = preferences.presets.first, !presetAppToAdd.isEmpty {
                             preferences.appPresets[presetAppToAdd] = first.id.uuidString
                             presetAppToAdd = ""
@@ -152,28 +152,28 @@ struct SettingsView: View {
                     }
                     .disabled(presetAppToAdd.isEmpty || preferences.presets.isEmpty)
                 }
-                Picker("All other apps", selection: $preferences.otherAppsPreset) {
-                    Text("Keep current settings").tag("")
+                Picker(String(localized: "All other apps"), selection: $preferences.otherAppsPreset) {
+                    Text(String(localized: "Keep current settings")).tag("")
                     ForEach(preferences.presets) { Text($0.name).tag($0.id.uuidString) }
                 }
             }
 
-            Section("Spoken events and clock") {
-                Toggle("Say when a download finishes", isOn: $preferences.announceDownloads)
-                Toggle("Say when headphones or speakers connect or disconnect", isOn: $preferences.announceDevices)
-                Toggle("Say when the network connection drops or comes back", isOn: $preferences.announceNetwork)
-                Toggle("Say when the battery is low, and when charging starts or stops", isOn: $preferences.announceBattery)
-                Toggle("Say when the screen locks", isOn: $preferences.announceLock)
-                Picker("Talking clock", selection: $preferences.clockInterval) {
-                    Text("Off").tag(0)
-                    Text("Every hour").tag(60)
-                    Text("Every half hour").tag(30)
-                    Text("Every quarter hour").tag(15)
+            Section(String(localized: "Spoken events and clock")) {
+                Toggle(String(localized: "Say when a download finishes"), isOn: $preferences.announceDownloads)
+                Toggle(String(localized: "Say when headphones or speakers connect or disconnect"), isOn: $preferences.announceDevices)
+                Toggle(String(localized: "Say when the network connection drops or comes back"), isOn: $preferences.announceNetwork)
+                Toggle(String(localized: "Say when the battery is low, and when charging starts or stops"), isOn: $preferences.announceBattery)
+                Toggle(String(localized: "Say when the screen locks"), isOn: $preferences.announceLock)
+                Picker(String(localized: "Talking clock"), selection: $preferences.clockInterval) {
+                    Text(String(localized: "Off")).tag(0)
+                    Text(String(localized: "Every hour")).tag(60)
+                    Text(String(localized: "Every half hour")).tag(30)
+                    Text(String(localized: "Every quarter hour")).tag(15)
                 }
             }
 
-            Section("Presets for websites") {
-                Text("Switch to a preset on a website in Safari or Chrome, for example a quieter preset on youtube.com. The first time, your Mac asks to let VoiceOver Audio Split see which site is open.")
+            Section(String(localized: "Presets for websites")) {
+                Text(String(localized: "Switch to a preset on a website in Safari or Chrome, for example a quieter preset on youtube.com. The first time, your Mac asks to let VoiceOver Audio Split see which site is open."))
                     .font(.caption).foregroundStyle(.secondary)
                 ForEach(preferences.sitePresets.keys.sorted(), id: \.self) { site in
                     HStack {
@@ -181,12 +181,12 @@ struct SettingsView: View {
                                                         set: { preferences.sitePresets[site] = $0 })) {
                             ForEach(preferences.presets) { Text($0.name).tag($0.id.uuidString) }
                         }
-                        Button("Remove \(site)") { preferences.sitePresets[site] = nil }
+                        Button(String(localized: "Remove \(site)")) { preferences.sitePresets[site] = nil }
                     }
                 }
                 HStack {
-                    TextField("Website, for example youtube.com", text: $newSite)
-                    Button("Add") {
+                    TextField(String(localized: "Website, for example youtube.com"), text: $newSite)
+                    Button(String(localized: "Add")) {
                         if let first = preferences.presets.first {
                             preferences.sitePresets[SitePresets.normalize(newSite)] = first.id.uuidString
                             newSite = ""
@@ -196,25 +196,25 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Calls") {
-                Picker("Call audio", selection: $preferences.callMode) {
+            Section(String(localized: "Calls")) {
+                Picker(String(localized: "Call audio"), selection: $preferences.callMode) {
                     ForEach(CallMode.allCases) { Text($0.title).tag($0) }
                 }
                 ForEach(preferences.callApps) { app in
                     HStack {
                         Text(app.name)
                         Spacer()
-                        Button("Remove \(app.name)") {
+                        Button(String(localized: "Remove \(app.name)")) {
                             preferences.callApps.removeAll { $0 == app }
                         }
                     }
                 }
                 HStack {
-                    Picker("Add a call app", selection: $appToAdd) {
-                        Text("Choose an open app").tag("")
+                    Picker(String(localized: "Add a call app"), selection: $appToAdd) {
+                        Text(String(localized: "Choose an open app")).tag("")
                         ForEach(addableApps, id: \.bundleID) { Text($0.name).tag($0.bundleID) }
                     }
-                    Button("Add") {
+                    Button(String(localized: "Add")) {
                         if let app = addableApps.first(where: { $0.bundleID == appToAdd }) {
                             preferences.callApps.append(app)
                             appToAdd = ""
@@ -222,45 +222,45 @@ struct SettingsView: View {
                     }
                     .disabled(appToAdd.isEmpty)
                 }
-                Button("Restore default call apps") { preferences.callApps = CallApp.defaults }
+                Button(String(localized: "Restore default call apps")) { preferences.callApps = CallApp.defaults }
             }
 
-            Section("Keyboard and sounds") {
-                Picker("Shortcut key", selection: $preferences.modifier) {
+            Section(String(localized: "Keyboard and sounds")) {
+                Picker(String(localized: "Shortcut key"), selection: $preferences.modifier) {
                     ForEach(ShortcutModifier.allCases) { Text($0.title).tag($0) }
                 }
-                Text("Hold it with a command's key below, or press the layer key first and then the command's key on its own. Digits 1 to 9 switch presets. The key of the same kind on the left keeps working normally.")
+                Text(String(localized: "Hold it with a command's key below, or press the layer key first and then the command's key on its own. Digits 1 to 9 switch presets. The key of the same kind on the left keeps working normally."))
                     .font(.caption).foregroundStyle(.secondary)
-                Toggle("Play a short tone with each change", isOn: $preferences.playTones)
-                Toggle("Keep audio awake, so the first words VoiceOver says aren't cut off", isOn: $preferences.keepAudioAwake)
-                Text("Plays silence so headphones and Bluetooth devices like AirPods don't go to sleep between phrases.")
+                Toggle(String(localized: "Play a short tone with each change"), isOn: $preferences.playTones)
+                Toggle(String(localized: "Keep audio awake, so the first words VoiceOver says aren't cut off"), isOn: $preferences.keepAudioAwake)
+                Text(String(localized: "Plays silence so headphones and Bluetooth devices like AirPods don't go to sleep between phrases."))
                     .font(.caption).foregroundStyle(.secondary)
-                Toggle("Beep each time VoiceOver would speak while it's silenced", isOn: $preferences.beepsWhenSilenced)
-                Toggle("Say what you copy", isOn: $preferences.announceClipboard)
-                Toggle("Use a nearby iPhone as the camera when available", isOn: $preferences.preferIPhoneCamera)
-                Toggle("Keep speech history", isOn: $preferences.speechHistory)
-                Text("Keeps a list of what VoiceOver says, in memory only, to review and copy from the Speech History window.")
+                Toggle(String(localized: "Beep each time VoiceOver would speak while it's silenced"), isOn: $preferences.beepsWhenSilenced)
+                Toggle(String(localized: "Say what you copy"), isOn: $preferences.announceClipboard)
+                Toggle(String(localized: "Use a nearby iPhone as the camera when available"), isOn: $preferences.preferIPhoneCamera)
+                Toggle(String(localized: "Keep speech history"), isOn: $preferences.speechHistory)
+                Text(String(localized: "Keeps a list of what VoiceOver says, in memory only, to review and copy from the Speech History window."))
                     .font(.caption).foregroundStyle(.secondary)
             }
 
-            Section("Low vision") {
-                Picker("Colors for large print", selection: $preferences.readingTheme) {
+            Section(String(localized: "Low vision")) {
+                Picker(String(localized: "Colors for large print"), selection: $preferences.readingTheme) {
                     ForEach(ReadingTheme.allCases) { Text($0.title).tag($0) }
                 }
-                Stepper("Caption text size: \(preferences.captionSize)", value: $preferences.captionSize, in: 20...96, step: 4)
-                Toggle("Show large-print captions of what VoiceOver says", isOn: Binding(
+                Stepper(String(localized: "Caption text size: \(preferences.captionSize)"), value: $preferences.captionSize, in: 20...96, step: 4)
+                Toggle(String(localized: "Show large-print captions of what VoiceOver says"), isOn: Binding(
                     get: { preferences.captionsOn },
                     set: { on in if on != Captions.isShowing { Controller.shared.toggleCaptions() } }))
-                Toggle("Show a focus frame around the VoiceOver cursor", isOn: Binding(
+                Toggle(String(localized: "Show a focus frame around the VoiceOver cursor"), isOn: Binding(
                     get: { preferences.focusFrameOn },
                     set: { on in if on != FocusFrame.isShowing { Controller.shared.toggleFocusFrame() } }))
-                Picker("Focus frame color", selection: $preferences.focusFrameColor) {
+                Picker(String(localized: "Focus frame color"), selection: $preferences.focusFrameColor) {
                     ForEach(FrameColor.allCases) { Text($0.title).tag($0) }
                 }
-                Stepper("Focus frame thickness: \(preferences.focusFrameThickness)",
+                Stepper(String(localized: "Focus frame thickness: \(preferences.focusFrameThickness)"),
                         value: $preferences.focusFrameThickness, in: 2...24, step: 2)
-                Toggle("Flash the focus frame when it moves", isOn: $preferences.focusFrameFlash)
-                Stepper("Doc Reader text size: \(preferences.readerFontSize)", value: $preferences.readerFontSize,
+                Toggle(String(localized: "Flash the focus frame when it moves"), isOn: $preferences.focusFrameFlash)
+                Stepper(String(localized: "Doc Reader text size: \(preferences.readerFontSize)"), value: $preferences.readerFontSize,
                         in: 14...96, step: 4)
             }
             .onChange(of: preferences.focusFrameColor) { FocusFrame.refresh() }
@@ -268,55 +268,55 @@ struct SettingsView: View {
 
             UserCommandsSection()
 
-            Section("Command keys") {
+            Section(String(localized: "Command keys")) {
                 ForEach(Command.allCases) { command in
                     Picker(command.title, selection: keyBinding(command)) {
-                        Text("No key").tag(Key.none)
+                        Text(String(localized: "No key")).tag(Key.none)
                         ForEach(Key.assignable) { Text($0.name).tag($0.code) }
                     }
                 }
-                Button("Restore default keys") { preferences.customKeys = [:] }
-                Text("Choosing a key another command uses swaps the two commands' keys.")
+                Button(String(localized: "Restore default keys")) { preferences.customKeys = [:] }
+                Text(String(localized: "Choosing a key another command uses swaps the two commands' keys."))
                     .font(.caption).foregroundStyle(.secondary)
             }
 
-            Section("Assistant and image descriptions") {
-                Text(hasAPIKey ? "An Anthropic API key is saved in your Keychain." :
-                        "The assistant and image descriptions use Claude. Paste an API key from console.anthropic.com. Requests are billed to that account.")
-                SecureField(hasAPIKey ? "Replace API key" : "API key", text: $apiKey)
+            Section(String(localized: "Assistant and image descriptions")) {
+                Text(hasAPIKey ? String(localized: "An Anthropic API key is saved in your Keychain.") :
+                        String(localized: "The assistant and image descriptions use Claude. Paste an API key from console.anthropic.com. Requests are billed to that account."))
+                SecureField(hasAPIKey ? String(localized: "Replace API key") : String(localized: "API key"), text: $apiKey)
                 HStack {
-                    Button("Save key") {
+                    Button(String(localized: "Save key")) {
                         APIKey.save(apiKey.trimmingCharacters(in: .whitespacesAndNewlines))
                         apiKey = ""
                         hasAPIKey = APIKey.current != nil
-                        Announcer.say("Key saved")
+                        Announcer.say(String(localized: "Key saved"))
                     }
                     .disabled(apiKey.isEmpty)
-                    Button("Remove key") {
+                    Button(String(localized: "Remove key")) {
                         APIKey.save("")
                         hasAPIKey = false
-                        Announcer.say("Key removed")
+                        Announcer.say(String(localized: "Key removed"))
                     }
                     .disabled(!hasAPIKey)
                 }
-                Toggle("Allow sending pictures of the screen for image descriptions", isOn: $preferences.allowImageUpload)
-                Text("Only the item under the VoiceOver cursor is sent, and only when you ask for a description.")
+                Toggle(String(localized: "Allow sending pictures of the screen for image descriptions"), isOn: $preferences.allowImageUpload)
+                Text(String(localized: "Only the item under the VoiceOver cursor is sent, and only when you ask for a description."))
                     .font(.caption).foregroundStyle(.secondary)
             }
 
-            Section("Backup and diagnostics") {
+            Section(String(localized: "Backup and diagnostics")) {
                 HStack {
-                    Button("Export Settings…") { SettingsTransfer.export() }
-                    Button("Import Settings…") { SettingsTransfer.importFromFile() }
+                    Button(String(localized: "Export Settings…")) { SettingsTransfer.export() }
+                    Button(String(localized: "Import Settings…")) { SettingsTransfer.importFromFile() }
                 }
-                Button("Save a Diagnostics Report…") { Diagnostics.save() }
-                Text("Export saves your keys, presets, app and website rules and other settings in one file, to back up or set up another Mac. Diagnostics reports include the app's recent log for bug reports; never your API key or files.")
+                Button(String(localized: "Save a Diagnostics Report…")) { Diagnostics.save() }
+                Text(String(localized: "Export saves your keys, presets, app and website rules and other settings in one file, to back up or set up another Mac. Diagnostics reports include the app's recent log for bug reports; never your API key or files."))
                     .font(.caption).foregroundStyle(.secondary)
             }
 
-            Section("About") {
-                Text("VoiceOver Audio Split \(Self.version)")
-                Text("Copyright 2026 Full Circle AT LLC. Free software under the GNU General Public License version 3.")
+            Section(String(localized: "About")) {
+                Text(String(localized: "VoiceOver Audio Split \(Self.version)"))
+                Text(String(localized: "Copyright 2026 Full Circle AT LLC. Free software under the GNU General Public License version 3."))
                     .font(.caption).foregroundStyle(.secondary)
                 Link("Privacy policy", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split/blob/main/PRIVACY.md")!)
                 Link("Source code on GitHub", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split")!)
@@ -363,8 +363,9 @@ struct SettingsView: View {
 
     private var earBalanceTitle: String {
         let value = preferences.earBalance
-        if value == 0 { return "Ear balance: even" }
-        return "Ear balance: \(value > 0 ? "right" : "left") ear \(abs(value)) decibels louder"
+        if value == 0 { return String(localized: "Ear balance: even") }
+        return value > 0 ? String(localized: "Ear balance: right ear \(abs(value)) decibels louder")
+                         : String(localized: "Ear balance: left ear \(abs(value)) decibels louder")
     }
 
     /// A binding to one field of an app rule, saved through Preferences.

@@ -34,6 +34,12 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] Right Option + O, Doc Reader: words are highlighted as they're read. Save as Word works.
 - [ ] The captions (U) and the focus frame (Y) appear and follow VoiceOver.
 
+## Languages (Spanish, French and German speakers)
+
+- [ ] With your Mac in Spanish, French or German, the menu, Settings and announcements are in your language.
+- [ ] Announcements sound natural when VoiceOver speaks them. Note any phrase that sounds wrong, and what it should say.
+- [ ] The permission requests (microphone, camera, system audio) are in your language.
+
 ## Everyday
 
 - [ ] A finished download is announced, and Right Option + Period opens it.

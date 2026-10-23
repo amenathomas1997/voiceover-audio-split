@@ -31,16 +31,17 @@ enum TextRecognition {
     /// The camera image is not mirrored: text cut off at the image's left edge
     /// means the page sticks out to the user's right.
     static func guidance(for boxes: [CGRect]) -> String? {
-        guard !boxes.isEmpty else { return "No text yet. Hold the page in front of the camera, about a foot away." }
+        guard !boxes.isEmpty else { return String(localized: "No text yet. Hold the page in front of the camera, about a foot away.") }
         let area = boxes.reduce(CGRect.null) { $0.union($1) }
         var advice: [String] = []
-        if area.minX < 0.02 { advice.append("move the page to your left") }
-        if area.maxX > 0.98 { advice.append("move the page to your right") }
-        if area.maxY > 0.98 { advice.append("move the page down") }
-        if area.minY < 0.02 { advice.append("move the page up") }
-        if advice.isEmpty && area.width * area.height < 0.12 { advice.append("hold the page closer") }
+        if area.minX < 0.02 { advice.append(String(localized: "move the page to your left")) }
+        if area.maxX > 0.98 { advice.append(String(localized: "move the page to your right")) }
+        if area.maxY > 0.98 { advice.append(String(localized: "move the page down")) }
+        if area.minY < 0.02 { advice.append(String(localized: "move the page up")) }
+        if advice.isEmpty && area.width * area.height < 0.12 { advice.append(String(localized: "hold the page closer")) }
         guard !advice.isEmpty else { return nil }
-        return "Text is cut off. " + ListFormatter.localizedString(byJoining: advice).capitalizedFirst
+        let fix = ListFormatter.localizedString(byJoining: advice).capitalizedFirst
+        return String(localized: "Text is cut off. \(fix)")
     }
 }
 
@@ -52,7 +53,7 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
     static let shared = ScanReader()
 
     @Published private(set) var scanning = false
-    @Published private(set) var status = "Press Start Scanning, then hold a page up to the camera."
+    @Published private(set) var status = String(localized: "Press Start Scanning, then hold a page up to the camera.")
     @Published private(set) var text = ""
 
     private let queue = DispatchQueue(label: "VoiceOverAudioSplit.scan")
@@ -69,30 +70,30 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
         case .authorized: begin()
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
-                DispatchQueue.main.async { granted ? self.begin() : self.report("Camera access was not allowed") }
+                DispatchQueue.main.async { granted ? self.begin() : self.report(String(localized: "Camera access was not allowed")) }
             }
         default:
-            report("Camera access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Camera.")
+            report(String(localized: "Camera access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Camera."))
         }
     }
 
     private func begin() {
         guard let camera = CameraChoice.preferred(),
-              let input = try? AVCaptureDeviceInput(device: camera) else { return report("No camera found") }
+              let input = try? AVCaptureDeviceInput(device: camera) else { return report(String(localized: "No camera found")) }
         let session = AVCaptureSession()
         session.sessionPreset = .high
         let output = AVCaptureVideoDataOutput()
         output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
         output.alwaysDiscardsLateVideoFrames = true
         output.setSampleBufferDelegate(self, queue: queue)
-        guard session.canAddInput(input), session.canAddOutput(output) else { return report("The camera is busy") }
+        guard session.canAddInput(input), session.canAddOutput(output) else { return report(String(localized: "The camera is busy")) }
         session.addInput(input)
         session.addOutput(output)
         self.session = session
         frames = 0
         previousText = ""
         scanning = true
-        report("Scanning. Hold the page up to the camera.")
+        report(String(localized: "Scanning. Hold the page up to the camera."))
         queue.async { session.startRunning() }
     }
 
@@ -127,7 +128,7 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
         DispatchQueue.main.async {
             self.stop()
             self.text = found
-            self.status = "Text found."
+            self.status = String(localized: "Text found.")
             Announcer.say(found)
         }
     }
@@ -136,15 +137,15 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
 
     /// Reads the text in an image file or PDF; scanned PDF pages are recognized like photos.
     func read(_ url: URL) {
-        report("Reading \(url.lastPathComponent)")
+        report(String(localized: "Reading \(url.lastPathComponent)"))
         DispatchQueue.global(qos: .userInitiated).async {
             let accessing = url.startAccessingSecurityScopedResource()
             defer { if accessing { url.stopAccessingSecurityScopedResource() } }
             let found = Self.text(in: url)
             DispatchQueue.main.async {
                 self.text = found
-                self.status = found.isEmpty ? "No text found." : "Text found."
-                Announcer.say(found.isEmpty ? "No text found in \(url.lastPathComponent)" : found)
+                self.status = found.isEmpty ? String(localized: "No text found.") : String(localized: "Text found.")
+                Announcer.say(found.isEmpty ? String(localized: "No text found in \(url.lastPathComponent)") : found)
             }
         }
     }
@@ -180,26 +181,26 @@ struct ScanView: View {
             Section {
                 Text(reader.status)
                 HStack {
-                    Button(reader.scanning ? "Stop Scanning" : "Start Scanning") {
+                    Button(reader.scanning ? String(localized: "Stop Scanning") : String(localized: "Start Scanning")) {
                         reader.scanning ? reader.stop() : reader.start()
                     }
                     .keyboardShortcut(.defaultAction)
-                    Button("Read a File…") { choosingFile = true }
+                    Button(String(localized: "Read a File…")) { choosingFile = true }
                 }
             }
             if !reader.text.isEmpty {
-                Section("Text") {
+                Section(String(localized: "Text")) {
                     Text(reader.text).textSelection(.enabled)
                     HStack {
-                        Button("Read Again") { Announcer.say(reader.text) }
-                        Button("Copy") {
+                        Button(String(localized: "Read Again")) { Announcer.say(reader.text) }
+                        Button(String(localized: "Copy")) {
                             NSPasteboard.general.clearContents()
                             NSPasteboard.general.setString(reader.text, forType: .string)
-                            Announcer.say("Copied")
+                            Announcer.say(String(localized: "Copied"))
                         }
-                        Button("Save as Text…") { TextExport.save(reader.text, as: .text) }
-                        Button("Save as Word…") { TextExport.save(reader.text, as: .word) }
-                        Button("Open in Doc Reader") {
+                        Button(String(localized: "Save as Text…")) { TextExport.save(reader.text, as: .text) }
+                        Button(String(localized: "Save as Word…")) { TextExport.save(reader.text, as: .word) }
+                        Button(String(localized: "Open in Doc Reader")) {
                             DocReaderModel.shared.load(reader.text)
                             (NSApp.delegate as? AppDelegate)?.showDocReader()
                         }
@@ -207,7 +208,7 @@ struct ScanView: View {
                 }
             }
             Section {
-                Text("Text is recognized on your Mac. Pictures are never saved or sent anywhere.")
+                Text(String(localized: "Text is recognized on your Mac. Pictures are never saved or sent anywhere."))
                     .font(.caption).foregroundStyle(.secondary)
             }
         }

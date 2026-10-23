@@ -17,9 +17,9 @@ enum Layout: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .opposite: "Speech in one ear, other sounds in the other"
-        case .speechBoth: "Speech in both ears, other sounds in one ear"
-        case .othersBoth: "Other sounds in both ears, speech in one ear"
+        case .opposite: String(localized: "Speech in one ear, other sounds in the other")
+        case .speechBoth: String(localized: "Speech in both ears, other sounds in one ear")
+        case .othersBoth: String(localized: "Other sounds in both ears, speech in one ear")
         }
     }
 }
@@ -37,9 +37,9 @@ enum CallMode: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .split: "Split like other sounds"
-        case .bothEars: "Keep in both ears"
-        case .withSpeech: "Put with VoiceOver speech"
+        case .split: String(localized: "Split like other sounds")
+        case .bothEars: String(localized: "Keep in both ears")
+        case .withSpeech: String(localized: "Put with VoiceOver speech")
         }
     }
 }
@@ -60,7 +60,7 @@ struct CallApp: Codable, Hashable, Identifiable {
     var id: String { bundleID }
 
     static let defaults: [CallApp] = [
-        CallApp(name: "Zoom", bundleID: "us.zoom"),
+        CallApp(name: String(localized: "Zoom"), bundleID: "us.zoom"),
         CallApp(name: "Microsoft Teams", bundleID: "com.microsoft.teams"),
         CallApp(name: "FaceTime", bundleID: "com.apple.FaceTime"),
         CallApp(name: "FaceTime and phone calls", bundleID: "com.apple.avconferenced"),
@@ -80,10 +80,10 @@ enum EarChoice: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .follow: "Same as other sounds"
-        case .left: "Left ear"
-        case .right: "Right ear"
-        case .both: "Both ears"
+        case .follow: String(localized: "Same as other sounds")
+        case .left: String(localized: "Left ear")
+        case .right: String(localized: "Right ear")
+        case .both: String(localized: "Both ears")
         }
     }
 }
@@ -96,9 +96,9 @@ enum OneEar: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .off: "Off"
-        case .left: "Everything in the left ear"
-        case .right: "Everything in the right ear"
+        case .off: String(localized: "Off")
+        case .left: String(localized: "Everything in the left ear")
+        case .right: String(localized: "Everything in the right ear")
         }
     }
 }
@@ -137,13 +137,13 @@ struct Preset: Codable, Hashable, Identifiable {
     var earBalance: Int
 
     static let defaults: [Preset] = [
-        Preset(name: "Meeting", split: "left", balance: 6, layout: .opposite, stereoOthers: false, ducking: false,
+        Preset(name: String(localized: "Meeting"), split: "left", balance: 6, layout: .opposite, stereoOthers: false, ducking: false,
                duckingAmount: 10, callMode: .bothEars, clarity: true, leveler: true, volumeLimit: false,
                volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
-        Preset(name: "Music", split: "off", balance: 0, layout: .opposite, stereoOthers: true, ducking: true,
+        Preset(name: String(localized: "Music"), split: "off", balance: 0, layout: .opposite, stereoOthers: true, ducking: true,
                duckingAmount: 9, callMode: .split, clarity: false, leveler: false, volumeLimit: false,
                volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
-        Preset(name: "Focus", split: "left", balance: 9, layout: .opposite, stereoOthers: false, ducking: true,
+        Preset(name: String(localized: "Focus"), split: "left", balance: 9, layout: .opposite, stereoOthers: false, ducking: true,
                duckingAmount: 15, callMode: .split, clarity: true, leveler: true, volumeLimit: false,
                volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
     ]
@@ -157,10 +157,10 @@ enum ReadingTheme: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .blackOnWhite: "Black on white"
-        case .whiteOnBlack: "White on black"
-        case .yellowOnBlack: "Yellow on black"
-        case .blackOnYellow: "Black on yellow"
+        case .blackOnWhite: String(localized: "Black on white")
+        case .whiteOnBlack: String(localized: "White on black")
+        case .yellowOnBlack: String(localized: "Yellow on black")
+        case .blackOnYellow: String(localized: "Black on yellow")
         }
     }
 }

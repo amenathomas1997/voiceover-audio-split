@@ -18,10 +18,10 @@ enum HubSource: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .radio: "Radio"
-        case .podcasts: "Podcasts"
-        case .audiobooks: "Audiobooks"
-        case .news: "News"
+        case .radio: String(localized: "Radio")
+        case .podcasts: String(localized: "Podcasts")
+        case .audiobooks: String(localized: "Audiobooks")
+        case .news: String(localized: "News")
         }
     }
 }
@@ -110,7 +110,7 @@ final class AudioHub: ObservableObject {
 
     @Published var source = HubSource.radio
     @Published private(set) var results: [HubItem] = []
-    @Published private(set) var status = "Choose Radio, Podcasts, Audiobooks or News, then search."
+    @Published private(set) var status = String(localized: "Choose Radio, Podcasts, Audiobooks or News, then search.")
     @Published private(set) var nowPlaying: String?
     @Published private(set) var playing = false
     @Published var volume: Float = 0.8 { didSet { applyVolume() } }
@@ -123,15 +123,15 @@ final class AudioHub: ObservableObject {
 
     func search(_ query: String) {
         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard source == .news || !query.isEmpty else { return report("Type something to search for") }
-        report("Searching")
+        guard source == .news || !query.isEmpty else { return report(String(localized: "Type something to search for")) }
+        report(String(localized: "Searching"))
         Task { @MainActor in
             do {
                 let found = try await find(query, in: source)
                 results = found
-                report(found.isEmpty ? "Nothing found" : "\(found.count) results")
+                report(found.isEmpty ? String(localized: "Nothing found") : String(localized: "\(found.count) results"))
             } catch {
-                report("Couldn't search. Check your internet connection.")
+                report(String(localized: "Couldn't search. Check your internet connection."))
             }
         }
     }
@@ -201,13 +201,13 @@ final class AudioHub: ObservableObject {
         case .audio(let url): play(url, title: item.title)
         case .headline(let summary): Announcer.say(item.title + ". " + summary)
         case .feed(let url):
-            report("Opening \(item.title)")
+            report(String(localized: "Opening \(item.title)"))
             Task { @MainActor in
                 let items = (try? await data(url)).map(RSSFeed.parse) ?? []
                 results = items.compactMap { entry in
                     entry.audio.map { HubItem(title: entry.title, detail: item.title, kind: .audio($0)) }
                 }
-                report(results.isEmpty ? "No episodes found" : "\(item.title): \(results.count) episodes")
+                report(results.isEmpty ? String(localized: "No episodes found") : String(localized: "\(item.title): \(results.count) episodes"))
             }
         }
     }
@@ -221,14 +221,14 @@ final class AudioHub: ObservableObject {
         nowPlaying = title
         playing = true
         Tones.play(.status)
-        Announcer.say("Playing \(title)")
+        Announcer.say(String(localized: "Playing \(title)"))
     }
 
     func togglePlay() {
-        guard nowPlaying != nil else { return Announcer.say("Nothing is playing. Open the audio hub to choose something.") }
+        guard nowPlaying != nil else { return Announcer.say(String(localized: "Nothing is playing. Open the audio hub to choose something.")) }
         if playing { player.pause() } else { player.play() }
         playing.toggle()
-        Announcer.say(playing ? "Playing" : "Paused")
+        Announcer.say(playing ? String(localized: "Playing") : String(localized: "Paused"))
     }
 
     func stop() {
@@ -280,16 +280,16 @@ struct AudioHubView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Picker("Source", selection: $hub.source) {
+            Picker(String(localized: "Source"), selection: $hub.source) {
                 ForEach(HubSource.allCases) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
             HStack {
-                TextField(hub.source == .news ? "Filter headlines (optional)" : "Search \(hub.source.title.lowercased())",
+                TextField(hub.source == .news ? String(localized: "Filter headlines (optional)") : String(localized: "Search \(hub.source.title.lowercased())"),
                           text: $query)
                     .focused($queryFocused)
                     .onSubmit { hub.search(query) }
-                Button(hub.source == .news ? "Get Headlines" : "Search") { hub.search(query) }
+                Button(hub.source == .news ? String(localized: "Get Headlines") : String(localized: "Search")) { hub.search(query) }
                     .keyboardShortcut(.defaultAction)
             }
             Text(hub.status).font(.caption)
@@ -301,28 +301,28 @@ struct AudioHubView: View {
                 openSelection()
                 return .handled
             }
-            .accessibilityLabel("Results. Press Return to open or play.")
+            .accessibilityLabel(String(localized: "Results. Press Return to open or play."))
             HStack {
-                Button("Open or Play") { openSelection() }.disabled(selection == nil)
-                Button(hub.playing ? "Pause" : "Play") { hub.togglePlay() }
+                Button(String(localized: "Open or Play")) { openSelection() }.disabled(selection == nil)
+                Button(hub.playing ? String(localized: "Pause") : String(localized: "Play")) { hub.togglePlay() }
                     .disabled(hub.nowPlaying == nil)
-                Button("Back 30 Seconds") { hub.skip(seconds: -30) }.disabled(hub.nowPlaying == nil)
-                Button("Forward 30 Seconds") { hub.skip(seconds: 30) }.disabled(hub.nowPlaying == nil)
-                Button("Stop") { hub.stop() }.disabled(hub.nowPlaying == nil)
-                Slider(value: $hub.volume, in: 0...1) { Text("Volume") }.frame(width: 140)
+                Button(String(localized: "Back 30 Seconds")) { hub.skip(seconds: -30) }.disabled(hub.nowPlaying == nil)
+                Button(String(localized: "Forward 30 Seconds")) { hub.skip(seconds: 30) }.disabled(hub.nowPlaying == nil)
+                Button(String(localized: "Stop")) { hub.stop() }.disabled(hub.nowPlaying == nil)
+                Slider(value: $hub.volume, in: 0...1) { Text(String(localized: "Volume")) }.frame(width: 140)
             }
-            if let title = hub.nowPlaying { Text("Now playing: \(title)") }
+            if let title = hub.nowPlaying { Text(String(localized: "Now playing: \(title)")) }
             if hub.source == .news {
-                DisclosureGroup("News feeds") {
+                DisclosureGroup(String(localized: "News feeds")) {
                     ForEach(preferences.newsFeeds, id: \.self) { feed in
                         HStack {
                             Text(feed)
-                            Button("Remove") { preferences.newsFeeds.removeAll { $0 == feed } }
+                            Button(String(localized: "Remove")) { preferences.newsFeeds.removeAll { $0 == feed } }
                         }
                     }
                     HStack {
-                        TextField("Add a feed address (RSS)", text: $newFeed)
-                        Button("Add") {
+                        TextField(String(localized: "Add a feed address (RSS)"), text: $newFeed)
+                        Button(String(localized: "Add")) {
                             preferences.newsFeeds.append(newFeed.trimmingCharacters(in: .whitespaces))
                             newFeed = ""
                         }

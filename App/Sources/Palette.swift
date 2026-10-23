@@ -32,16 +32,16 @@ struct PaletteEntry: Identifiable, Hashable {
         let preferences = Preferences.shared
         let commands = Command.allCases.filter { $0 != .commandPalette }.map { command in
             PaletteEntry(id: command.rawValue, title: command.title,
-                         detail: KeyMap.key(for: command).map { "Right Option \($0.name)" } ?? "",
+                         detail: KeyMap.key(for: command).map { String(localized: "Right Option \($0.name)") } ?? "",
                          action: .command(command))
         }
         let presets = preferences.presets.enumerated().map { index, preset in
-            PaletteEntry(id: preset.id.uuidString, title: "Preset: \(preset.name)",
-                         detail: index < 9 ? "Right Option \(index + 1)" : "", action: .preset(preset.id))
+            PaletteEntry(id: preset.id.uuidString, title: String(localized: "Preset: \(preset.name)"),
+                         detail: index < 9 ? String(localized: "Right Option \(index + 1)") : "", action: .preset(preset.id))
         }
         let users = preferences.userCommands.map { command in
             PaletteEntry(id: command.id.uuidString, title: command.name,
-                         detail: command.key.flatMap(Key.named).map { "Right Option \($0.name)" } ?? "Your command",
+                         detail: command.key.flatMap(Key.named).map { String(localized: "Right Option \($0.name)") } ?? String(localized: "Your command"),
                          action: .user(command.id))
         }
         return commands + presets + users
@@ -77,10 +77,10 @@ struct CommandPaletteView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            TextField("Type a command, for example louder, scan or battery", text: $query)
+            TextField(String(localized: "Type a command, for example louder, scan or battery"), text: $query)
                 .focused($searchFocused)
                 .onSubmit { run(results.first { $0.id == selection } ?? results.first) }
-            Text(results.isEmpty ? "No matching commands" : "\(results.count) commands. Press Return to run the first, or choose one below.")
+            Text(results.isEmpty ? String(localized: "No matching commands") : String(localized: "\(results.count) commands. Press Return to run the first, or choose one below."))
                 .font(.caption)
             List(results, selection: $selection) { entry in
                 Text(entry.detail.isEmpty ? entry.title : "\(entry.title), \(entry.detail)").tag(entry.id)
@@ -115,8 +115,8 @@ enum InputHelp {
 
     static func toggle() {
         isOn.toggle()
-        Announcer.say(isOn ? "Input help on. Press any shortcut to hear what it does. Press the input help key again to stop."
-                           : "Input help off")
+        Announcer.say(isOn ? String(localized: "Input help on. Press any shortcut to hear what it does. Press the input help key again to stop.")
+                           : String(localized: "Input help off"))
     }
 
     /// Describes a key press instead of running it.
@@ -137,20 +137,20 @@ final class Tutorial: ObservableObject {
     static let shared = Tutorial()
 
     static let lessons: [TutorialLesson] = [
-        .init(instruction: "Hold the right Option key and press Left Arrow, to put VoiceOver in your left ear.",
-              command: .speechLeft, done: "VoiceOver is in your left ear, and other sounds are in your right ear."),
-        .init(instruction: "Hold Right Option and press Up Arrow, to make speech louder than other sounds.",
-              command: .speechLouder, done: "Speech is louder. Down Arrow does the opposite."),
-        .init(instruction: "Hold Right Option and press Space, to hear what's on.",
-              command: .status, done: "That's the status summary, any time you need it."),
-        .init(instruction: "Hold Right Option and press Q, to quiet everything except VoiceOver. Press it again afterwards to bring sound back.",
-              command: .quiet, done: "Quiet mode works. Remember to press it again to bring sound back."),
-        .init(instruction: "Hold Right Option and press L, then release both and press Space on its own. That's the layer key: after L, any command key works on its own.",
-              command: .status, done: "The layer key works. After L, slash lists every key."),
-        .init(instruction: "Hold Right Option and press Return, to open the command palette. Type a word, such as battery, and press Return.",
-              command: .commandPalette, done: "That's the command palette. It can find and run every command."),
-        .init(instruction: "Hold Right Option and press the left Arrow again, to turn the split off.",
-              command: .speechLeft, done: "The split is off. You've finished the tutorial. Open it again any time from the menu."),
+        .init(instruction: String(localized: "Hold the right Option key and press Left Arrow, to put VoiceOver in your left ear."),
+              command: .speechLeft, done: String(localized: "VoiceOver is in your left ear, and other sounds are in your right ear.")),
+        .init(instruction: String(localized: "Hold Right Option and press Up Arrow, to make speech louder than other sounds."),
+              command: .speechLouder, done: String(localized: "Speech is louder. Down Arrow does the opposite.")),
+        .init(instruction: String(localized: "Hold Right Option and press Space, to hear what's on."),
+              command: .status, done: String(localized: "That's the status summary, any time you need it.")),
+        .init(instruction: String(localized: "Hold Right Option and press Q, to quiet everything except VoiceOver. Press it again afterwards to bring sound back."),
+              command: .quiet, done: String(localized: "Quiet mode works. Remember to press it again to bring sound back.")),
+        .init(instruction: String(localized: "Hold Right Option and press L, then release both and press Space on its own. That's the layer key: after L, any command key works on its own."),
+              command: .status, done: String(localized: "The layer key works. After L, slash lists every key.")),
+        .init(instruction: String(localized: "Hold Right Option and press Return, to open the command palette. Type a word, such as battery, and press Return."),
+              command: .commandPalette, done: String(localized: "That's the command palette. It can find and run every command.")),
+        .init(instruction: String(localized: "Hold Right Option and press the left Arrow again, to turn the split off."),
+              command: .speechLeft, done: String(localized: "The split is off. You've finished the tutorial. Open it again any time from the menu.")),
     ]
 
     @Published private(set) var index = 0
@@ -166,7 +166,7 @@ final class Tutorial: ObservableObject {
             [weak self] note in
             if let command = note.object as? Command { self?.commandRan(command) }
         }
-        speakCurrent(prefix: "Tutorial. \(Self.lessons.count) short steps. Step 1.")
+        speakCurrent(prefix: String(localized: "Tutorial. \(Self.lessons.count) short steps. Step 1."))
     }
 
     func repeatStep() { speakCurrent() }
@@ -175,13 +175,13 @@ final class Tutorial: ObservableObject {
 
     func stop() {
         active = false
-        Announcer.say("Tutorial stopped")
+        Announcer.say(String(localized: "Tutorial stopped"))
     }
 
     private func commandRan(_ command: Command) {
         guard let lesson = current, lesson.command == command else { return }
         // Let the command's own announcement come first.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { self.advance(saying: "Well done. " + lesson.done) }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { self.advance(saying: String(localized: "Well done. \(lesson.done)")) }
     }
 
     private func advance(saying message: String?) {
@@ -191,7 +191,7 @@ final class Tutorial: ObservableObject {
             if let message { Announcer.say(message) }
             return
         }
-        speakCurrent(prefix: [message, "Step \(index + 1)."].compactMap { $0 }.joined(separator: " "))
+        speakCurrent(prefix: [message, String(localized: "Step \(index + 1).")].compactMap { $0 }.joined(separator: " "))
     }
 
     private func speakCurrent(prefix: String? = nil) {
@@ -207,17 +207,17 @@ struct TutorialView: View {
         Form {
             Section {
                 if let lesson = tutorial.current {
-                    Text("Step \(tutorial.index + 1) of \(Tutorial.lessons.count)")
+                    Text(String(localized: "Step \(tutorial.index + 1) of \(Tutorial.lessons.count)"))
                     Text(lesson.instruction)
                 } else {
-                    Text("Practice the main shortcuts in \(Tutorial.lessons.count) short steps. Each step is spoken; do it, and the tutorial notices and moves on. You can switch to other apps while you practice.")
+                    Text(String(localized: "Practice the main shortcuts in \(Tutorial.lessons.count) short steps. Each step is spoken; do it, and the tutorial notices and moves on. You can switch to other apps while you practice."))
                 }
             }
             Section {
                 if tutorial.active {
-                    Button("Repeat Step") { tutorial.repeatStep() }
-                    Button("Skip Step") { tutorial.skip() }
-                    Button("Stop Tutorial") { tutorial.stop() }
+                    Button(String(localized: "Repeat Step")) { tutorial.repeatStep() }
+                    Button(String(localized: "Skip Step")) { tutorial.skip() }
+                    Button(String(localized: "Stop Tutorial")) { tutorial.stop() }
                 } else {
                     Button("Start Tutorial") { tutorial.start() }.keyboardShortcut(.defaultAction)
                 }

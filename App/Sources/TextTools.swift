@@ -27,9 +27,9 @@ struct TextChange: Identifiable, Equatable {
 
     var spoken: String {
         switch kind {
-        case .changed(let from, let to): "Sentence \(sentence): changed \"\(from)\" to \"\(to)\""
-        case .added(let words): "Sentence \(sentence): added \"\(words)\""
-        case .removed(let words): "Sentence \(sentence): removed \"\(words)\""
+        case .changed(let from, let to): String(localized: "Sentence \(sentence): changed \"\(from)\" to \"\(to)\"")
+        case .added(let words): String(localized: "Sentence \(sentence): added \"\(words)\"")
+        case .removed(let words): String(localized: "Sentence \(sentence): removed \"\(words)\"")
         }
     }
 
@@ -80,10 +80,11 @@ enum TextCompare {
     }
 
     static func summary(_ changes: [TextChange]) -> String {
-        guard !changes.isEmpty else { return "No changes. The two versions are the same." }
-        let count = "\(changes.count) \(changes.count == 1 ? "change" : "changes")"
+        guard !changes.isEmpty else { return String(localized: "No changes. The two versions are the same.") }
+        let count = changes.count == 1 ? String(localized: "1 change") : String(localized: "\(changes.count) changes")
         let spoken = changes.prefix(10).map(\.spoken).joined(separator: ". ")
-        return "\(count). \(spoken)" + (changes.count > 10 ? ". And \(changes.count - 10) more in the window." : ".")
+        let more = changes.count > 10 ? ". " + String(localized: "And \(changes.count - 10) more in the window.") : "."
+        return "\(count). \(spoken)" + more
     }
 }
 
@@ -92,7 +93,7 @@ final class CompareModel: ObservableObject {
 
     @Published private(set) var original: String?
     @Published private(set) var changes: [TextChange] = []
-    @Published private(set) var status = "Copy the original text, then choose Save Original."
+    @Published private(set) var status = String(localized: "Copy the original text, then choose Save Original.")
 
     /// The compare key: the first press saves the original, the second compares.
     func step() {
@@ -103,11 +104,11 @@ final class CompareModel: ObservableObject {
         guard let text = clipboardText() else { return }
         original = text
         changes = []
-        report("Original saved. Copy the new version, then press the compare key again.")
+        report(String(localized: "Original saved. Copy the new version, then press the compare key again."))
     }
 
     func compare() {
-        guard let original else { return report("Save the original first.") }
+        guard let original else { return report(String(localized: "Save the original first.")) }
         guard let text = clipboardText() else { return }
         changes = TextCompare.changes(from: original, to: text)
         self.original = nil
@@ -117,12 +118,12 @@ final class CompareModel: ObservableObject {
     func startOver() {
         original = nil
         changes = []
-        report("Starting over. Copy the original text, then choose Save Original.")
+        report(String(localized: "Starting over. Copy the original text, then choose Save Original."))
     }
 
     private func clipboardText() -> String? {
         guard let text = NSPasteboard.general.string(forType: .string), !text.isEmpty else {
-            report("Copy some text first.")
+            report(String(localized: "Copy some text first."))
             return nil
         }
         return text
@@ -142,15 +143,15 @@ struct CompareView: View {
             Section {
                 Text(model.status)
                 HStack {
-                    Button("Save Original") { model.saveOriginal() }
-                    Button("Compare With Clipboard") { model.compare() }
+                    Button(String(localized: "Save Original")) { model.saveOriginal() }
+                    Button(String(localized: "Compare With Clipboard")) { model.compare() }
                         .keyboardShortcut(.defaultAction)
                         .disabled(model.original == nil)
-                    Button("Start Over") { model.startOver() }
+                    Button(String(localized: "Start Over")) { model.startOver() }
                 }
             }
             if !model.changes.isEmpty {
-                Section("Changes") {
+                Section(String(localized: "Changes")) {
                     ForEach(model.changes) { Text($0.spoken).textSelection(.enabled) }
                 }
             }
@@ -171,7 +172,7 @@ struct TextIssue: Identifiable {
 
     var spoken: String {
         guard let sentence, let sentenceNumber else { return problem }
-        return "Sentence \(sentenceNumber): \(problem). \(sentence)"
+        return String(localized: "Sentence \(sentenceNumber): \(problem). \(sentence)")
     }
 }
 
@@ -180,9 +181,9 @@ extension TextAnalyzer {
     static func issues(in text: String) -> [TextIssue] {
         var issues: [TextIssue] = []
         let checks: [(String, String)] = [
-            ("[^ \\n] {2,}[^ \\n]", "double space"),
-            (" [,.;:!?](\\s|$)", "space before punctuation"),
-            ("(?i)\\b(\\w+)\\s+\\1\\b", "repeated word"),
+            ("[^ \\n] {2,}[^ \\n]", String(localized: "double space")),
+            (" [,.;:!?](\\s|$)", String(localized: "space before punctuation")),
+            ("(?i)\\b(\\w+)\\s+\\1\\b", String(localized: "repeated word")),
         ]
         let tokenizer = NLTokenizer(unit: .sentence)
         tokenizer.string = text
@@ -194,13 +195,7 @@ extension TextAnalyzer {
             }
         }
         // Problems that belong to the whole text rather than one sentence.
-        let summary = analyze(text)
-        for problem in ["unmatched parentheses", "unmatched square brackets", "unmatched braces", "unmatched curly quotes",
-                        "odd number of straight quotes", "extra blank lines", "both tabs and spaces", "ending in a space"]
-            where summary.contains(problem) {
-            let detail = summary.components(separatedBy: ". ").first { $0.contains(problem) } ?? problem
-            issues.append(TextIssue(problem: detail, sentence: nil, sentenceNumber: nil))
-        }
+        issues += wholeTextProblems(text).map { TextIssue(problem: $0, sentence: nil, sentenceNumber: nil) }
         return issues
     }
 }
@@ -214,22 +209,23 @@ final class TextCheckerModel: ObservableObject {
 
     func checkClipboard() {
         guard let text = NSPasteboard.general.string(forType: .string), !text.isEmpty else {
-            summary = "Copy some text first, then check it."
+            summary = String(localized: "Copy some text first, then check it.")
             return Announcer.say(summary)
         }
         issues = TextAnalyzer.issues(in: text)
         current = 0
         summary = TextAnalyzer.analyze(text)
         Announcer.say(issues.isEmpty ? summary
-                      : "\(issues.count) \(issues.count == 1 ? "problem" : "problems"). First: \(issues[0].spoken)")
+                      : (issues.count == 1 ? String(localized: "1 problem. First: \(issues[0].spoken)")
+                                           : String(localized: "\(issues.count) problems. First: \(issues[0].spoken)")))
     }
 
     func step(_ delta: Int) {
-        guard !issues.isEmpty else { return Announcer.say("No problems to step through") }
+        guard !issues.isEmpty else { return Announcer.say(String(localized: "No problems to step through")) }
         let next = current + delta
-        guard issues.indices.contains(next) else { return Announcer.say(delta > 0 ? "Last problem" : "First problem") }
+        guard issues.indices.contains(next) else { return Announcer.say(delta > 0 ? String(localized: "Last problem") : String(localized: "First problem")) }
         current = next
-        Announcer.say("Problem \(current + 1) of \(issues.count). \(issues[current].spoken)")
+        Announcer.say(String(localized: "Problem \(current + 1) of \(issues.count). \(issues[current].spoken)"))
     }
 }
 
@@ -239,7 +235,7 @@ struct TextCheckerView: View {
     var body: some View {
         Form {
             Section {
-                Text(model.summary.isEmpty ? "Copy some text, then choose Check Clipboard." : model.summary)
+                Text(model.summary.isEmpty ? String(localized: "Copy some text, then choose Check Clipboard.") : model.summary)
                 HStack {
                     Button("Check Clipboard") { model.checkClipboard() }.keyboardShortcut(.defaultAction)
                     Button("Previous Problem") { model.step(-1) }.keyboardShortcut(.upArrow, modifiers: .command)
@@ -247,7 +243,7 @@ struct TextCheckerView: View {
                 }
             }
             if !model.issues.isEmpty {
-                Section("Problems") {
+                Section(String(localized: "Problems")) {
                     ForEach(Array(model.issues.enumerated()), id: \.element.id) { index, issue in
                         Text("\(index + 1). \(issue.spoken)").textSelection(.enabled)
                     }

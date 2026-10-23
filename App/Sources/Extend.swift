@@ -29,13 +29,13 @@ enum UserCommands {
         case .appleScript:
             guard let url = scriptsFolder?.appendingPathComponent(command.target),
                   let task = try? NSUserAppleScriptTask(url: url) else {
-                return Announcer.say("Couldn't find the script \(command.target)")
+                return Announcer.say(String(localized: "Couldn't find the script \(command.target)"))
             }
             task.execute(withAppleEvent: nil) { result, error in
                 DispatchQueue.main.async {
                     if let error {
                         log("Script \(command.name) failed: \(error.localizedDescription)")
-                        Announcer.say("\(command.name) failed")
+                        Announcer.say(String(localized: "\(command.name) failed"))
                     } else if let text = result?.stringValue, !text.isEmpty {
                         // A script that returns text has it spoken.
                         Announcer.say(text)
@@ -50,7 +50,7 @@ enum UserCommands {
     }
 
     static func openScriptsFolder() {
-        guard let folder = scriptsFolder else { return Announcer.say("The scripts folder isn't available") }
+        guard let folder = scriptsFolder else { return Announcer.say(String(localized: "The scripts folder isn't available")) }
         NSWorkspace.shared.open(folder)
     }
 }
@@ -62,28 +62,28 @@ struct UserCommandsSection: View {
     @State private var shortcutName = ""
 
     var body: some View {
-        Section("Your commands") {
-            Text("Run your own AppleScripts or Shortcuts from a key, the menu or the command palette. A script that returns text has it spoken.")
+        Section(String(localized: "Your commands")) {
+            Text(String(localized: "Run your own AppleScripts or Shortcuts from a key, the menu or the command palette. A script that returns text has it spoken."))
                 .font(.caption).foregroundStyle(.secondary)
             ForEach(preferences.userCommands) { command in
                 HStack {
-                    Picker("\(command.name) (\(command.kind == .appleScript ? "script" : "shortcut"))",
+                    Picker(command.kind == .appleScript ? String(localized: "\(command.name) (script)") : String(localized: "\(command.name) (shortcut)"),
                            selection: keyBinding(command)) {
-                        Text("No key").tag(Key.none)
+                        Text(String(localized: "No key")).tag(Key.none)
                         ForEach(freeKeys(for: command)) { Text($0.name).tag($0.code) }
                     }
-                    Button("Remove \(command.name)") {
+                    Button(String(localized: "Remove \(command.name)")) {
                         preferences.userCommands.removeAll { $0.id == command.id }
                         refreshKeys()
                     }
                 }
             }
             HStack {
-                Picker("Add a script", selection: $scriptToAdd) {
-                    Text(scripts.isEmpty ? "No scripts in the folder yet" : "Choose a script").tag("")
+                Picker(String(localized: "Add a script"), selection: $scriptToAdd) {
+                    Text(scripts.isEmpty ? String(localized: "No scripts in the folder yet") : String(localized: "Choose a script")).tag("")
                     ForEach(scripts, id: \.self) { Text($0).tag($0) }
                 }
-                Button("Add") {
+                Button(String(localized: "Add")) {
                     let name = (scriptToAdd as NSString).deletingPathExtension
                     preferences.userCommands.append(UserCommand(name: name, kind: .appleScript, target: scriptToAdd))
                     scriptToAdd = ""
@@ -91,12 +91,12 @@ struct UserCommandsSection: View {
                 .disabled(scriptToAdd.isEmpty)
             }
             HStack {
-                Button("Open Scripts Folder") { UserCommands.openScriptsFolder() }
-                Button("Refresh Script List") { scripts = UserCommands.availableScripts() }
+                Button(String(localized: "Open Scripts Folder")) { UserCommands.openScriptsFolder() }
+                Button(String(localized: "Refresh Script List")) { scripts = UserCommands.availableScripts() }
             }
             HStack {
-                TextField("Shortcut name, exactly as in the Shortcuts app", text: $shortcutName)
-                Button("Add Shortcut") {
+                TextField(String(localized: "Shortcut name, exactly as in the Shortcuts app"), text: $shortcutName)
+                Button(String(localized: "Add Shortcut")) {
                     let name = shortcutName.trimmingCharacters(in: .whitespaces)
                     preferences.userCommands.append(UserCommand(name: name, kind: .shortcut, target: name))
                     shortcutName = ""
@@ -164,15 +164,15 @@ enum SettingsTransfer {
     @MainActor
     static func export() {
         let panel = NSSavePanel()
-        panel.nameFieldStringValue = "VoiceOver Audio Split settings.voasettings"
+        panel.nameFieldStringValue = String(localized: "VoiceOver Audio Split settings.voasettings")
         panel.allowedContentTypes = [UTType(filenameExtension: "voasettings") ?? .propertyList]
         NSApp.activate()
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
             try exportData().write(to: url)
-            Announcer.say("Settings saved to \(url.lastPathComponent)")
+            Announcer.say(String(localized: "Settings saved to \(url.lastPathComponent)"))
         } catch {
-            Announcer.say("Couldn't save the settings")
+            Announcer.say(String(localized: "Couldn't save the settings"))
         }
     }
 
@@ -184,11 +184,11 @@ enum SettingsTransfer {
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
             let count = try importData(Data(contentsOf: url))
-            Announcer.say("Imported \(count) settings. Restarting VoiceOver Audio Split to use them.")
+            Announcer.say(String(localized: "Imported \(count) settings. Restarting VoiceOver Audio Split to use them."))
             // Settings are read at launch, so restart to apply them all consistently.
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { Relaunch.now() }
         } catch {
-            Announcer.say("That file isn't a VoiceOver Audio Split settings file")
+            Announcer.say(String(localized: "That file isn't a VoiceOver Audio Split settings file"))
         }
     }
 }

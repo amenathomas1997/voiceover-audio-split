@@ -43,15 +43,15 @@ enum Diagnostics {
     @MainActor
     static func save() {
         let panel = NSSavePanel()
-        panel.nameFieldStringValue = "VoiceOver Audio Split diagnostics.txt"
+        panel.nameFieldStringValue = String(localized: "VoiceOver Audio Split diagnostics.txt")
         panel.allowedContentTypes = [.plainText]
         NSApp.activate()
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
             try report().write(to: url, atomically: true, encoding: .utf8)
-            Announcer.say("Diagnostics saved. Attach \(url.lastPathComponent) to your bug report.")
+            Announcer.say(String(localized: "Diagnostics saved. Attach \(url.lastPathComponent) to your bug report."))
         } catch {
-            Announcer.say("Couldn't save the diagnostics report")
+            Announcer.say(String(localized: "Couldn't save the diagnostics report"))
         }
     }
 }
@@ -93,12 +93,12 @@ enum Performance {
     /// Measures the next two seconds as well, then speaks the result.
     static func announce() {
         let startCPU = cpuSeconds()
-        Announcer.say("Measuring for two seconds")
+        Announcer.say(String(localized: "Measuring for two seconds"))
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             let now = (cpuSeconds() - startCPU) / 2 * 100
-            let audio = Mixer.sources.isEmpty ? "Audio capture is off." : "Audio capture is on."
-            Announcer.say(String(format: "Using %.0f percent of one processor core now, %.1f percent on average since it started, and %.0f megabytes of memory. ",
-                                 now, averagePercent(), memoryMegabytes()) + audio)
+            let audio = Mixer.sources.isEmpty ? String(localized: "Audio capture is off.") : String(localized: "Audio capture is on.")
+            let average = String(format: "%.1f", averagePercent())
+            Announcer.say(String(localized: "Using \(Int(now.rounded())) percent of one processor core now, \(average) percent on average since it started, and \(Int(memoryMegabytes().rounded())) megabytes of memory. \(audio)"))
         }
     }
 }

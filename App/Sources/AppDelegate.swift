@@ -82,6 +82,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             log("Check: Downloads folder readable = \(SystemEvents.latestDownload() != nil)")
             log("Check: scripts folder = \(UserCommands.scriptsFolder?.lastPathComponent ?? "unavailable")")
             log("Check: \(Performance.summary())")
+            log("Check: permissions = \(Permission.allCases.map { "\($0.rawValue) \($0.status())" }.joined(separator: ", "))")
             log("Check: camera in use = \(SensorWatch.cameraInUse()), microphone apps = \(SensorWatch.appsUsingMicrophone().count)")
             if let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/3017620422003.json?fields=product_name,brands,quantity"),
                let data = try? await URLSession.shared.data(from: url).0,
@@ -285,7 +286,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         historyWindow = show(historyWindow, title: String(localized: "Speech History"), view: HistoryView())
     }
 
-    private func showSetupGuide() {
+    func showSetupGuide() {
         setupWindow = show(setupWindow, title: String(localized: "Set Up VoiceOver Audio Split"), view: SetupGuideView { [weak self] in
             self?.preferences.finishedSetup = true
             self?.setupWindow?.close()

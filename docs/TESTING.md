@@ -11,6 +11,7 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] First launch: the setup guide opens and VoiceOver reads every step.
 - [ ] Accessibility, system audio recording, and Automation for VoiceOver can each be allowed from the guide.
 - [ ] Settings > About shows the version you were sent.
+- [ ] Settings > Permissions shows each permission as allowed or not, and each button opens the right page of System Settings. Turning one on there updates the list within a few seconds.
 
 ## Split and sound
 

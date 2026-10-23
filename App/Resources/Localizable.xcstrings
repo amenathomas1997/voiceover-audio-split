@@ -1849,6 +1849,28 @@
         }
       }
     },
+    "Accessibility" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bedienungshilfen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accesibilidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibilité"
+          }
+        }
+      }
+    },
     "Acting on: %@" : {
       "localizations" : {
         "de" : {
@@ -2373,6 +2395,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Et plus encore"
+          }
+        }
+      }
+    },
+    "Announcements in your VoiceOver voice, speech history, captions and Read Item. Also turn on “Allow VoiceOver to be controlled with AppleScript” in VoiceOver Utility." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ansagen mit deiner VoiceOver-Stimme, Sprachverlauf, Untertitel und Objekt vorlesen. Aktiviere außerdem „VoiceOver die Steuerung mit AppleScript erlauben“ im VoiceOver-Dienstprogramm."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anuncios con tu voz de VoiceOver, historial de voz, subtítulos y Leer elemento. Activa también “Permitir que VoiceOver se controle con AppleScript” en la Utilidad VoiceOver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annonces avec votre voix VoiceOver, historique de la parole, sous-titres et Lire l’élément. Activez aussi « Autoriser le contrôle de VoiceOver avec AppleScript » dans Utilitaire VoiceOver."
           }
         }
       }
@@ -5017,6 +5061,28 @@
         }
       }
     },
+    "Controlling VoiceOver" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver steuern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controlar VoiceOver"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contrôle de VoiceOver"
+          }
+        }
+      }
+    },
     "Conversation" : {
       "localizations" : {
         "de" : {
@@ -6047,6 +6113,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Description en cours"
+          }
+        }
+      }
+    },
+    "Describing images and videos, and reading the front window." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilder und Videos beschreiben und das vordere Fenster lesen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describir imágenes y videos, y leer la ventana del frente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description d’images et de vidéos, et lecture de la fenêtre au premier plan."
           }
         }
       }
@@ -9307,6 +9395,28 @@
         }
       }
     },
+    "Keyboard shortcuts, custom labels, place markers and Do It for Me." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tastaturkurzbefehle, eigene Beschriftungen, Markierungen und Mach es für mich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atajos de teclado, etiquetas personalizadas, marcadores de lugar y Hazlo por mí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raccourcis clavier, étiquettes personnalisées, repères et Faites-le pour moi."
+          }
+        }
+      }
+    },
     "Korean" : {
       "localizations" : {
         "de" : {
@@ -10557,6 +10667,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réunion"
+          }
+        }
+      }
+    },
+    "Microphone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Micrófono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Micro"
           }
         }
       }
@@ -12629,6 +12761,28 @@
         }
       }
     },
+    "Open %@ Settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen für %@ öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir ajustes de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir les réglages %@"
+          }
+        }
+      }
+    },
     "Open Accessibility settings" : {
       "localizations" : {
         "de" : {
@@ -12735,6 +12889,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir le dossier des scripts"
+          }
+        }
+      }
+    },
+    "Open VoiceOver Utility" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver-Dienstprogramm öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Utilidad VoiceOver"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir Utilitaire VoiceOver"
           }
         }
       }
@@ -12867,6 +13043,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir le menu Commandes, une liste de toutes les commandes avec recherche"
+          }
+        }
+      }
+    },
+    "Open the Setup Guide" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrichtungsassistent öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir la guía de configuración"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir le guide de configuration"
           }
         }
       }
@@ -13465,6 +13663,28 @@
         }
       }
     },
+    "Permissions" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Berechtigungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permisos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisations"
+          }
+        }
+      }
+    },
     "Phone number %@. Copied to the clipboard." : {
       "localizations" : {
         "de" : {
@@ -13901,6 +14121,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Préréglages pour les sites web"
+          }
+        }
+      }
+    },
+    "Presets for websites. Only needed if you use them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voreinstellungen für Websites. Nur nötig, wenn du sie verwendest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preajustes para sitios web. Solo si los usas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préréglages pour les sites web. Seulement si vous les utilisez."
           }
         }
       }
@@ -15797,6 +16039,28 @@
         }
       }
     },
+    "Safari and Chrome" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari und Chrome"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari y Chrome"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari et Chrome"
+          }
+        }
+      }
+    },
     "Same as other sounds" : {
       "localizations" : {
         "de" : {
@@ -16524,6 +16788,28 @@
         }
       }
     },
+    "Scan and Read, the camera readers and the framing check." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scannen und Lesen, die Kameraleser und die Bildausschnittprüfung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escanear y leer, los lectores con cámara y la revisión del encuadre."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numériser et lire, les lecteurs par caméra et la vérification du cadrage."
+          }
+        }
+      }
+    },
     "Scan and Read…" : {
       "localizations" : {
         "de" : {
@@ -16630,6 +16916,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Écran verrouillé"
+          }
+        }
+      }
+    },
+    "Screen recording" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirmaufnahme"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabación de pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement de l’écran"
           }
         }
       }
@@ -18636,6 +18944,28 @@
         }
       }
     },
+    "System audio recording" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemaudioaufnahme"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabación de audio del sistema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement audio du système"
+          }
+        }
+      }
+    },
     "System status" : {
       "localizations" : {
         "de" : {
@@ -19274,6 +19604,28 @@
         }
       }
     },
+    "The audio split and every sound feature. Nothing is recorded." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Audioaufteilung und alle Tonfunktionen. Nichts wird aufgenommen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La división de audio y todas las funciones de sonido. No se graba nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La séparation audio et toutes les fonctions sonores. Rien n’est enregistré."
+          }
+        }
+      }
+    },
     "The camera is busy" : {
       "localizations" : {
         "de" : {
@@ -19446,6 +19798,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La touche de couche fonctionne. Après L, la barre oblique énumère toutes les touches."
+          }
+        }
+      }
+    },
+    "The microphone check." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Mikrofontest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La prueba de micrófono."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le test du micro."
           }
         }
       }
@@ -22596,6 +22970,28 @@
         }
       }
     },
+    "What the app is allowed to do. Each button opens the right page of System Settings, where you can turn VoiceOver Audio Split on or off." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was die App darf. Jede Taste öffnet die passende Seite der Systemeinstellungen, wo du VoiceOver Audio Split ein- oder ausschalten kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que la app tiene permitido. Cada botón abre la página correcta de Ajustes del Sistema, donde puedes activar o desactivar VoiceOver Audio Split."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que l’app est autorisée à faire. Chaque bouton ouvre la bonne page de Réglages Système, où vous pouvez activer ou désactiver VoiceOver Audio Split."
+          }
+        }
+      }
+    },
     "What's On" : {
       "localizations" : {
         "de" : {
@@ -23256,6 +23652,28 @@
         }
       }
     },
+    "allowed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "erlaubt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "permitido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "autorisé"
+          }
+        }
+      }
+    },
     "an odd number of straight quotes" : {
       "localizations" : {
         "de" : {
@@ -23428,6 +23846,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ majuscule"
+          }
+        }
+      }
+    },
+    "checking" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wird geprüft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "comprobando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vérification"
           }
         }
       }
@@ -24028,6 +24468,28 @@
         }
       }
     },
+    "macOS doesn't say; if the feature works, it's allowed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS zeigt es nicht an; wenn die Funktion geht, ist sie erlaubt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS no lo indica; si la función funciona, está permitido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS ne l’indique pas ; si la fonction marche, c’est autorisé"
+          }
+        }
+      }
+    },
     "mainly clear" : {
       "localizations" : {
         "de" : {
@@ -24442,6 +24904,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "volume normal"
+          }
+        }
+      }
+    },
+    "not allowed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nicht erlaubt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no permitido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "non autorisé"
+          }
+        }
+      }
+    },
+    "not asked yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "noch nicht gefragt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aún no se ha pedido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pas encore demandé"
           }
         }
       }

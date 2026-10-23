@@ -10,7 +10,7 @@ settings:
     DEVELOPMENT_TEAM: 9G2D7CDZ5D
     CODE_SIGN_STYLE: Automatic
     MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "202610232030"
+    CURRENT_PROJECT_VERSION: "202610232100"
     SWIFT_VERSION: "5.0"
     # Translations: the compiler lists every translatable phrase, and String
     # Catalogs (Resources/Localizable.xcstrings) hold the translations.

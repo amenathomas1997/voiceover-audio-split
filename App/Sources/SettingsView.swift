@@ -17,6 +17,8 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
+            PermissionsSection()
+
             Section(String(localized: "Where sounds go")) {
                 Picker(String(localized: "Layout"), selection: $preferences.layout) {
                     ForEach(Layout.allCases) { Text($0.title).tag($0) }

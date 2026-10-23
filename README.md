@@ -127,6 +127,7 @@ You can change Right Option to Right Command, Right Control or Right Shift in Se
 - At the bottom: Start at Login, **Backup and Diagnostics** (export, import, diagnostics report, app performance), Settings, Setup Guide and Quit
 
 **Settings window:**
+- **Permissions** (at the top): each permission the app uses and what it's for, whether it's allowed, and a button that opens the right page of System Settings. Also buttons for VoiceOver Utility and the setup guide. macOS doesn't let apps check system audio recording, so that one only has the button.
 - **Layout:**
   - speech in one ear, other sounds in the other (like JAWS)
   - speech in both ears, other sounds in one ear

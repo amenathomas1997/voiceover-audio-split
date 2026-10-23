@@ -51,6 +51,7 @@
 		D89170B4CCBFA1F16381320F /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = C852C0F40A20291624C9ADE7 /* Preferences.swift */; };
 		E23ABF60C137767A1BD60600 /* LowVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C566C892F028DB4224A4B4 /* LowVision.swift */; };
 		E3D6E7F43E13E6E24D2FFCF5 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ED521B579066681EE7B99 /* Palette.swift */; };
+		F813154EB01E6D59C3E4B688 /* PermissionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3044A35D44699F8B35861E8 /* PermissionsSection.swift */; };
 		FBD3C4162ABE42BD600FCE42 /* ScreenText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2670C89F5B31B2CC0FDC9910 /* ScreenText.swift */; };
 		FF6E56D14079FD5F8DB6A17E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E3CC6CC341E487E0870BEC /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
@@ -110,6 +111,7 @@
 		D172FE1FD9DE805D1234180C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		D29ED521B579066681EE7B99 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		D77A939022365857F90AE2E9 /* MicCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicCheck.swift; sourceTree = "<group>"; };
+		E3044A35D44699F8B35861E8 /* PermissionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsSection.swift; sourceTree = "<group>"; };
 		E53E734B886BBD455AE3C73C /* Tones.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tones.swift; sourceTree = "<group>"; };
 		EA5F49B50C694A5495B0BA9B /* Research.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Research.swift; sourceTree = "<group>"; };
 		EB007CCAFB2688150D054DC2 /* DocReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocReader.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				D77A939022365857F90AE2E9 /* MicCheck.swift */,
 				712B0A64C8C45245EEDA2DCD /* Mixer.swift */,
 				D29ED521B579066681EE7B99 /* Palette.swift */,
+				E3044A35D44699F8B35861E8 /* PermissionsSection.swift */,
 				41718968341F2C831BA48924 /* Practice.swift */,
 				C852C0F40A20291624C9ADE7 /* Preferences.swift */,
 				165F1A73BF2EF3A425305B99 /* Readers.swift */,
@@ -340,6 +343,7 @@
 				5E3B041382BD7E1721821B0C /* MicCheck.swift in Sources */,
 				0A1FD19BF9780FD08F310972 /* Mixer.swift in Sources */,
 				E3D6E7F43E13E6E24D2FFCF5 /* Palette.swift in Sources */,
+				F813154EB01E6D59C3E4B688 /* PermissionsSection.swift in Sources */,
 				4D308CBB80FC0103B6D01871 /* Practice.swift in Sources */,
 				D89170B4CCBFA1F16381320F /* Preferences.swift in Sources */,
 				2512DB4E3ABD3D5821517BC3 /* Readers.swift in Sources */,
@@ -441,7 +445,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610232030;
+				CURRENT_PROJECT_VERSION = 202610232100;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -546,7 +550,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610232030;
+				CURRENT_PROJECT_VERSION = 202610232100;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_NS_ASSERTIONS = NO;

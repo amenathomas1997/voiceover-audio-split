@@ -28,7 +28,7 @@
 - **Document accessibility check** for Word documents and PDFs, and **save as braille** (.brf, uncontracted UEB).
 - **Barcode and QR code reader**, **medicine label reader** and **money identifier**.
 - **VoiceOver practice:** learn and quiz modes for VoiceOver's keys.
-- **Typing trainer:** talking lessons from the home row up, finger hints, words per minute and accuracy, best scores, and a one-minute speed test.
+- **Typing trainer:** talking lessons from the home row up, finger hints, words per minute and accuracy, best scores, and a one-minute speed test. A soft click for each right key (or a soft tone, or no sound), and a gentle low sound for a wrong one.
 - **In Spanish, French and German:** the app follows your Mac's language. Translations are new; corrections from native speakers are welcome.
 
 ## 1.0 (beta), October 2026

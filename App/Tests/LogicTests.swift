@@ -586,3 +586,19 @@ final class TypingTrainerTests: XCTestCase {
         XCTAssertEqual(trainer.prompt(for: "f"), "f, foxtrot")
     }
 }
+
+final class TypingSoundTests: XCTestCase {
+    func testTypingSoundsAreShortAndQuiet() {
+        for kind in [TypingSound.click, .tone] {
+            let samples = Tones.typingSamples(kind)
+            XCTAssertLessThan(Double(samples.count) / 44100, 0.08, kind.rawValue)
+            XCTAssertLessThan(samples.map(abs).max()!, 0.1, kind.rawValue)
+            // Ends in silence, so a quick next key doesn't click.
+            XCTAssertLessThan(abs(samples.last!), 0.002, kind.rawValue)
+        }
+        XCTAssertTrue(Tones.typingSamples(.none).isEmpty)
+        let wrong = Tones.wrongSamples()
+        XCTAssertLessThan(wrong.map(abs).max()!, 0.11)
+        XCTAssertLessThan(abs(wrong.last!), 0.01)
+    }
+}

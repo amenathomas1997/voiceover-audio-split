@@ -239,14 +239,14 @@ final class TypingTrainer: ObservableObject {
         if character == expected {
             correct += 1
             typed.append(character)
-            Tones.play(.correct)
+            Tones.playTyping(correct: true)
             if sayEachKey { Announcer.say(KeyHints.name(character)) }
             if typed == current {
                 DispatchQueue.main.asyncAfter(deadline: .now() + (speedTest ? 0.05 : 0.5)) { self.next() }
             }
         } else if character.isLetter || character.isNumber || character.isPunctuation || character.isSymbol || character == " " {
             errors += 1
-            Tones.play(.wrong)
+            Tones.playTyping(correct: false)
             Announcer.say(String(localized: "That was \(KeyHints.name(character)). Type \(KeyHints.name(expected)). \(KeyHints.hint(expected))"))
         }
     }
@@ -336,6 +336,10 @@ struct TypingTrainerView: View {
                     Button(String(localized: "One-minute speed test") + best("speed")) { trainer.startSpeedTest() }
                 }
                 Section(String(localized: "Options")) {
+                    Picker(String(localized: "Sound for each key typed right"), selection: $preferences.typingSound) {
+                        ForEach(TypingSound.allCases) { Text($0.title).tag($0.rawValue) }
+                    }
+                    Button(String(localized: "Hear It")) { Tones.playTyping(correct: true) }
                     Toggle(String(localized: "Say each key I type correctly"), isOn: $trainer.sayEachKey)
                     Text(String(localized: "Finger hints are for the US English keyboard. Lessons build on each other, so start with the first."))
                         .font(.caption).foregroundStyle(.secondary)

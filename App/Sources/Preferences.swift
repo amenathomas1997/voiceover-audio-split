@@ -303,6 +303,8 @@ final class Preferences: ObservableObject {
     @Published var placeMarkers: [PlaceMarker] { didSet { save(try? JSONEncoder().encode(placeMarkers), "placeMarkers") } }
     /// The typing trainer's best words per minute, by lesson.
     @Published var typingBest: [String: Int] { didSet { save(typingBest, "typingBest") } }
+    /// The typing trainer's sound for a key typed right (a TypingSound).
+    @Published var typingSound: String { didSet { save(typingSound, "typingSound") } }
 
     private init() {
         store.register(defaults: [
@@ -373,6 +375,7 @@ final class Preferences: ObservableObject {
         announceMicrophone = store.bool(forKey: "announceMicrophone")
         customLabels = store.data(forKey: "customLabels").flatMap { try? JSONDecoder().decode([CustomLabel].self, from: $0) } ?? []
         typingBest = store.dictionary(forKey: "typingBest") as? [String: Int] ?? [:]
+        typingSound = store.string(forKey: "typingSound") ?? TypingSound.click.rawValue
         placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }

@@ -21,7 +21,7 @@ VoiceOver Audio Split does not collect, store or share any personal information.
 - **Your commands.** Scripts and Shortcuts you add run only when you press their key or choose them. They can do whatever they were written to do, so only add scripts you trust.
 - **Diagnostics reports.** A diagnostics report contains the app's recent log, version and settings (never your API key or files). It's saved only where you choose, and never sent automatically.
 - **Mouse.** The audio mouse follows the pointer's position only while it's on, to play its tone.
-- **Keyboard.** The app watches for its own shortcuts (the right-hand Option key with a command key). Other keystrokes are passed on untouched and never stored.
+- **Keyboard.** The app watches for its own shortcuts (the right-hand Option key with a command key). Other keystrokes are passed on untouched and never stored. While you use VoiceOver practice or the typing trainer, the keys you press are checked against the lesson and then forgotten.
 - **Settings.** Your settings, presets and app volumes are stored on your Mac. If you add an Anthropic API key, it is stored in your Mac's Keychain.
 
 ## Features that use the internet

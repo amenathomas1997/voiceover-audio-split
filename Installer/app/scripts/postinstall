@@ -1,0 +1,15 @@
+#!/bin/zsh
+# Runs as root after the app is in /Applications: make sure Finder, Spotlight and
+# Launchpad know about it straight away, then open it for the person installing,
+# so the setup guide starts.
+APP="/Applications/VoiceOver Audio Split.app"
+USER_NAME=$(stat -f%Su /dev/console)
+USER_ID=$(id -u "$USER_NAME" 2>/dev/null)
+
+LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+"$LSREGISTER" -f "$APP" 2>/dev/null
+
+if [[ -n "$USER_ID" && "$USER_NAME" != "root" ]]; then
+  launchctl asuser "$USER_ID" sudo -u "$USER_NAME" open "$APP" 2>/dev/null
+fi
+exit 0

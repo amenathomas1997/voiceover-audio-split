@@ -39,8 +39,9 @@ body:
         - TestFlight
         - Mac App Store
         - Downloaded from the website
-        - Built from the source code
-        - The script version (installer package)
+        - The installer package (VoiceOver Audio Split.pkg)
+        - Built from the source code in Xcode
+        - The older script version
   - type: input
     id: version
     attributes:

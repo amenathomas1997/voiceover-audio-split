@@ -27,6 +27,8 @@ brew install xcodegen
 2. Open `App/VoiceOverAudioSplit.xcodeproj`, choose your own team under Signing & Capabilities, and run.
 3. Development builds use the app ID `com.fullcircleat.VoiceOverAudioSplit.debug`, so they never clash with an installed copy. macOS asks for permissions separately for a development build.
 
+To build an installer package that puts the app in Applications, run `./build.sh` (without `sudo`); see the README's "Installer package" section.
+
 Run the tests with Product > Test, or:
 
 ```bash
@@ -48,10 +50,10 @@ The [README](README.md#project-layout) describes each file. In short:
 - **Windows:** each one is a SwiftUI view, such as `SettingsView`, `DocReaderView` and `AudioHubView`, opened from `AppDelegate`.
 
 **Adding a command:**
-1. Add a case to `Command`, with a title and a default key that isn't already used. The tests check this.
+1. Add a case to `Command`, with a title. Every letter key is taken, so most new commands have no default key (`nil`); people can give them one in Settings. A default key must not already be used; the tests check this.
 2. Handle it in `Controller.run(_:)`.
-3. Add a menu item in `AppDelegate.menuNeedsUpdate`.
-4. Add a line to the setup guide's shortcut list and the README's shortcut table.
+3. Add a menu item to the submenu it belongs in, in `AppDelegate.menuNeedsUpdate`. Keep the top of the menu for the split.
+4. If it has a key, add a line to the setup guide's shortcut list and the README's shortcut table. Describe it in the README either way, and add a step to `docs/TESTING.md`.
 
 ## Translations
 
@@ -63,7 +65,7 @@ The app is in English, Spanish, French and German. Every phrase is in `App/Resou
 - **Spoken text:** most phrases are spoken by VoiceOver, so keep them short and natural, and avoid symbols and abbreviations that read badly.
 - **Short lowercase phrases,** such as "move closer" or "red", are inserted into longer sentences; keep them lowercase where your language allows.
 
-**New text in code:** wrap anything the app shows or speaks in `String(localized:)`, and write whole sentences with interpolation, such as `String(localized: "Copied \(count) phrases")`, rather than joining pieces with `+`, because word order differs between languages. Don't wrap technical text such as bundle IDs, AppleScript, file paths or log messages. The build lists new phrases in the catalog automatically when you open it in Xcode.
+**New text in code:** wrap anything the app shows or speaks in `String(localized:)`, and write whole sentences with interpolation, such as `String(localized: "Copied \(count) phrases")`, rather than joining pieces with `+`, because word order differs between languages. Interpolate whole strings: older versions of Xcode, like the one CI uses, reject a `Substring` (such as `text.dropFirst(4)`) inside `String(localized:)`, so wrap it in `String(...)`. Don't wrap technical text such as bundle IDs, AppleScript, file paths or log messages. The build lists new phrases in the catalog automatically when you open it in Xcode.
 
 ## Accessibility rules for changes
 
@@ -77,7 +79,7 @@ Every change must work fully with VoiceOver and the keyboard:
 ## Pull requests
 
 - Keep each pull request to one change, and describe what it does and how you tested it.
-- CI must pass. It checks that the Xcode project matches `project.yml`, builds Debug and Release, runs the unit tests, and builds the script-version installer.
+- CI must pass. It checks that the Xcode project matches `project.yml`, builds Debug and Release, runs the unit tests, and builds both installer packages (the app, and the older script version).
 - Add unit tests for any logic that doesn't need hardware or permissions.
 
 ## License of contributions

@@ -6,6 +6,8 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 
 ## Setup
 
+- [ ] Installer package (if you were sent one instead of TestFlight): after it finishes, the app is in Applications and in Launchpad, and it opens by itself.
+
 - [ ] First launch: the setup guide opens and VoiceOver reads every step.
 - [ ] Accessibility, system audio recording, and Automation for VoiceOver can each be allowed from the guide.
 - [ ] Settings > About shows the version you were sent.
@@ -25,7 +27,7 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] Right Option + Return opens the command palette. Type "battery" and press Return.
 - [ ] Right Option + Grave Accent turns input help on. Shortcuts then only describe themselves.
 - [ ] The tutorial (in the menu) notices each step.
-- [ ] Right Option + M opens the menu, even when the menu bar is full.
+- [ ] Right Option + M opens the menu, even when the menu bar is full. Each submenu opens with Right Arrow and closes with Left Arrow, and shortcuts are read with their items.
 
 ## Reading and seeing
 

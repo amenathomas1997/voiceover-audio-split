@@ -314,7 +314,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.removeAllItems()
         let side = controller.activeSide
 
-        // Split
+        // The split, at the top: what's used most. Everything else is grouped in submenus
+        // (VoiceOver: Right Arrow opens a submenu, Left Arrow closes it).
         let status = NSMenuItem(title: controller.describeSplit(), action: nil, keyEquivalent: "")
         status.isEnabled = false
         menu.addItem(status)
@@ -322,16 +323,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: menu, String(localized: "Speech Right"), command: .speechRight, checked: side == .right) { $0.setSide(.right) }
         add(to: menu, String(localized: "Audio Split Off"), checked: side == nil) { $0.setSide(nil) }
         add(to: menu, String(localized: "What's On"), command: .status) { $0.announceStatus() }
-        let layoutMenu = submenu(in: menu, String(localized: "Layout"))
-        for layout in Layout.allCases {
-            add(to: layoutMenu, layout.title, checked: preferences.layout == layout) { [preferences] controller in
-                preferences.layout = layout
-                DispatchQueue.main.async { controller.announceStatus() }
-            }
-        }
-        menu.addItem(.separator())
-
-        // Volume
         let balance = NSMenuItem(title: Controller.describe(balance: controller.balance), action: nil, keyEquivalent: "")
         balance.isEnabled = false
         menu.addItem(balance)
@@ -341,118 +332,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: menu, String(localized: "Other Sounds Louder"), command: .othersLouder) { [preferences] in
             $0.changeBalance(by: -preferences.balanceStep)
         }
-        add(to: menu, String(localized: "Reset Volume Balance")) { $0.resetBalance() }
         add(to: menu, String(localized: "Quiet Everything But VoiceOver"), command: .quiet, checked: controller.quietAll) { $0.toggleQuiet() }
-        add(to: menu, String(localized: "Lower Other Sounds While VoiceOver Speaks"), checked: preferences.ducking) { [preferences] _ in
+        add(to: menu, String(localized: "Command Palette…"), command: .commandPalette) { $0.run(.commandPalette) }
+        menu.addItem(.separator())
+
+        // Sound and devices
+        let sound = submenu(in: menu, String(localized: "Sound and Devices"))
+        let layoutMenu = submenu(in: sound, String(localized: "Layout"))
+        for layout in Layout.allCases {
+            add(to: layoutMenu, layout.title, checked: preferences.layout == layout) { [preferences] controller in
+                preferences.layout = layout
+                DispatchQueue.main.async { controller.announceStatus() }
+            }
+        }
+        add(to: sound, String(localized: "Reset Volume Balance")) { $0.resetBalance() }
+        add(to: sound, String(localized: "Lower Other Sounds While VoiceOver Speaks"), checked: preferences.ducking) { [preferences] _ in
             preferences.ducking.toggle()
             Announcer.say(preferences.ducking ? String(localized: "Other sounds lower while VoiceOver speaks") : String(localized: "Other sounds stay at the same volume"))
         }
-        menu.addItem(.separator())
-
-        // Apps
+        sound.addItem(.separator())
         let appName = controller.frontAppName ?? String(localized: "Front App")
-        add(to: menu, String(localized: "\(appName) Louder"), command: .appLouder) { $0.changeFrontAppVolume(by: 3) }
-        add(to: menu, String(localized: "\(appName) Quieter"), command: .appQuieter) { $0.changeFrontAppVolume(by: -3) }
-        add(to: menu, String(localized: "Mute \(appName)"), command: .appMute, checked: controller.frontAppMuted) { $0.toggleFrontAppMute() }
-        add(to: menu, String(localized: "What's Playing"), command: .playing) { $0.announcePlaying() }
-        menu.addItem(.separator())
-
-        // Speech on demand and VoiceOver tools
-        add(to: menu, String(localized: "Silence VoiceOver"), command: .silence, checked: controller.speechSilenced) { $0.toggleSilence() }
-        add(to: menu, String(localized: "Read Item Under VoiceOver Cursor"), command: .readItem) { $0.readItem() }
-        add(to: menu, String(localized: "Speech History…"), command: .history) { [weak self] _ in self?.showHistory() }
-        add(to: menu, String(localized: "Say Clipboard"), command: .clipboard) { $0.sayClipboard() }
-        add(to: menu, String(localized: "Check Camera Framing"), command: .camera) { $0.checkCamera() }
-        menu.addItem(.separator())
-
-        // Help and research
-        add(to: menu, String(localized: "Describe Image Under VoiceOver Cursor"), command: .describeImage) { $0.run(.describeImage) }
-        add(to: menu, String(localized: "Ask the Assistant…"), command: .assistant) { $0.run(.assistant) }
-        add(to: menu, String(localized: "Check Clipboard Text…"), command: .analyzeText) { $0.analyzeClipboard() }
-        add(to: menu, CompareModel.shared.original == nil ? String(localized: "Compare Text: Save Original") : String(localized: "Compare Text: Compare With Clipboard"),
-            command: .compareText) { $0.run(.compareText) }
-        add(to: menu, String(localized: "Research It…"), command: .research) { $0.run(.research) }
-        add(to: menu, String(localized: "System Status"), command: .systemStatus) { $0.announceSystemStatus() }
-        menu.addItem(.separator())
-
-        // VoiceOver help
-        add(to: menu, String(localized: "Restart VoiceOver"), command: .rescueVoiceOver) { $0.run(.rescueVoiceOver) }
-        add(to: menu, String(localized: "Keep Audio Awake (Prevents Clipped Words)"), checked: preferences.keepAudioAwake) { [preferences] _ in
-            preferences.keepAudioAwake.toggle()
-            Announcer.say(preferences.keepAudioAwake ? String(localized: "Keeping audio awake") : String(localized: "Audio can sleep"))
-        }
-        add(to: menu, String(localized: "Find a VoiceOver Command…"), command: .voiceOverCommands) { $0.run(.voiceOverCommands) }
-        add(to: menu, String(localized: "Report a Bug to Apple…"), command: .reportBug) { $0.run(.reportBug) }
-        add(to: menu, String(localized: "Label Item Under VoiceOver Cursor…"), command: .customLabel) { $0.run(.customLabel) }
-        add(to: menu, String(localized: "Add a Place Marker"), command: .placeMarker) { $0.run(.placeMarker) }
-        add(to: menu, String(localized: "Next Place Marker"), command: .nextPlaceMarker) { $0.run(.nextPlaceMarker) }
-        add(to: menu, String(localized: "Do It for Me…"), command: .doItForMe) { $0.run(.doItForMe) }
-        menu.addItem(.separator())
-
-        // Finding and learning commands
-        add(to: menu, String(localized: "Command Palette…"), command: .commandPalette) { $0.run(.commandPalette) }
-        add(to: menu, String(localized: "Input Help"), command: .inputHelp, checked: InputHelp.isOn) { $0.run(.inputHelp) }
-        add(to: menu, String(localized: "Tutorial…"), command: .tutorial) { $0.run(.tutorial) }
-        add(to: menu, String(localized: "VoiceOver Practice…"), command: .practice) { $0.run(.practice) }
-        add(to: menu, String(localized: "Typing Trainer…"), command: .typingTrainer) { $0.run(.typingTrainer) }
-        add(to: menu, String(localized: "Translate…"), command: .translate) { $0.run(.translate) }
-        add(to: menu, String(localized: "Audio Mouse"), command: .audioMouse, checked: AudioMouse.isOn) { $0.run(.audioMouse) }
-        add(to: menu, String(localized: "Beeps While VoiceOver Is Silenced"), command: .beepMode, checked: preferences.beepsWhenSilenced) {
-            $0.run(.beepMode)
-        }
-        if !preferences.userCommands.isEmpty {
-            let yours = submenu(in: menu, String(localized: "Your Commands"))
-            for command in preferences.userCommands {
-                add(to: yours, command.name, equivalent: command.key.flatMap(Key.named)?.equivalent) { _ in
-                    UserCommands.run(command.id)
-                }
-            }
-        }
-        menu.addItem(.separator())
-
-        // Screen, meetings and everyday tools
-        add(to: menu, String(localized: "Read Text in Front Window"), command: .readWindow) { $0.run(.readWindow) }
-        add(to: menu, String(localized: "Open Last Window Text in Doc Reader")) { _ in ScreenText.openInDocReader() }
-        add(to: menu, String(localized: "Describe What's Happening in Video"), command: .describeVideo) { $0.run(.describeVideo) }
-        add(to: menu, String(localized: "Microphone Check"), command: .micCheck) { $0.run(.micCheck) }
-        add(to: menu, String(localized: "Open Latest Download"), command: .openDownload) { $0.run(.openDownload) }
-        add(to: menu, String(localized: "Identify a Color"), command: .colorIdentifier) { $0.run(.colorIdentifier) }
-        add(to: menu, String(localized: "Light Detector"), command: .lightDetector, checked: LightDetector.isRunning) { $0.run(.lightDetector) }
-        add(to: menu, String(localized: "Read a Barcode or QR Code"), command: .codeReader, checked: CodeReader.isRunning) { $0.run(.codeReader) }
-        add(to: menu, String(localized: "Read a Medicine Label"), command: .labelReader, checked: LabelReader.isRunning) { $0.run(.labelReader) }
-        add(to: menu, String(localized: "Identify Money"), command: .moneyReader) { $0.run(.moneyReader) }
-        add(to: menu, String(localized: "Camera and Microphone in Use"), command: .sensorStatus) { $0.run(.sensorStatus) }
-        menu.addItem(.separator())
-
-        // Reading, low vision and listening
-        add(to: menu, String(localized: "Doc Reader…"), command: .docReader) { $0.run(.docReader) }
-        add(to: menu, String(localized: "Scan and Read…"), command: .scanAndRead) { $0.run(.scanAndRead) }
-        add(to: menu, String(localized: "Check a Document's Accessibility…"), command: .documentCheck) { $0.run(.documentCheck) }
-        add(to: menu, String(localized: "Save as Braille…"), command: .brailleExport) { $0.run(.brailleExport) }
-        add(to: menu, String(localized: "Large-Print Captions"), command: .captions, checked: Captions.isShowing) { $0.toggleCaptions() }
-        add(to: menu, String(localized: "Focus Frame"), command: .focusFrame, checked: FocusFrame.isShowing) { $0.toggleFocusFrame() }
-        add(to: menu, String(localized: "Audio Hub…"), command: .audioHub) { $0.run(.audioHub) }
-        if let title = AudioHub.shared.nowPlaying {
-            add(to: menu, AudioHub.shared.playing ? String(localized: "Pause \(title)") : String(localized: "Play \(title)"), command: .hubPlayPause) {
-                _ in AudioHub.shared.togglePlay()
-            }
-        }
-        menu.addItem(.separator())
-
-        // Devices
-        add(to: menu, String(localized: "Next Output Device"), command: .device) { $0.nextOutputDevice() }
-        add(to: menu, String(localized: "Mute Microphone"), command: .microphone, checked: AudioSystem.isMicMuted) { $0.toggleMicrophone() }
-        menu.addItem(.separator())
-
-        // Presets, hearing and clarity
-        let presetsMenu = submenu(in: menu, String(localized: "Presets"))
-        for (index, preset) in preferences.presets.enumerated() {
-            add(to: presetsMenu, preset.name, equivalent: index < 9 ? "\(index + 1)" : nil) { $0.applyPreset(preset) }
-        }
-        if !preferences.presets.isEmpty { presetsMenu.addItem(.separator()) }
-        add(to: presetsMenu, String(localized: "Save or Edit Presets in Settings…")) { [weak self] _ in self?.showSettings() }
-
-        let hearingMenu = submenu(in: menu, String(localized: "Hearing and Clarity"))
+        add(to: sound, String(localized: "\(appName) Louder"), command: .appLouder) { $0.changeFrontAppVolume(by: 3) }
+        add(to: sound, String(localized: "\(appName) Quieter"), command: .appQuieter) { $0.changeFrontAppVolume(by: -3) }
+        add(to: sound, String(localized: "Mute \(appName)"), command: .appMute, checked: controller.frontAppMuted) { $0.toggleFrontAppMute() }
+        add(to: sound, String(localized: "What's Playing"), command: .playing) { $0.announcePlaying() }
+        sound.addItem(.separator())
+        add(to: sound, String(localized: "Next Output Device"), command: .device) { $0.nextOutputDevice() }
+        add(to: sound, String(localized: "Mute Microphone"), command: .microphone, checked: AudioSystem.isMicMuted) { $0.toggleMicrophone() }
+        add(to: sound, String(localized: "Microphone Check"), command: .micCheck) { $0.run(.micCheck) }
+        add(to: sound, String(localized: "Camera and Microphone in Use"), command: .sensorStatus) { $0.run(.sensorStatus) }
+        sound.addItem(.separator())
+        let hearingMenu = submenu(in: sound, String(localized: "Hearing and Clarity"))
         toggle(in: hearingMenu, String(localized: "Speech Clarity Boost"), \.clarity, on: String(localized: "Speech clarity on"), off: String(localized: "Speech clarity off"))
         toggle(in: hearingMenu, String(localized: "Even Out Loud Media"), \.leveler, on: String(localized: "Loud media evened out"), off: String(localized: "Media leveling off"))
         toggle(in: hearingMenu, String(localized: "Volume Limit"), \.volumeLimit, on: String(localized: "Volume limit on"), off: String(localized: "Volume limit off"))
@@ -462,6 +372,102 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 [preferences] _ in
                 preferences.oneEar = choice
                 Announcer.say(choice == .off ? String(localized: "Normal stereo") : choice.title)
+            }
+        }
+        add(to: sound, String(localized: "Audio Hub…"), command: .audioHub) { $0.run(.audioHub) }
+        if let title = AudioHub.shared.nowPlaying {
+            add(to: sound, AudioHub.shared.playing ? String(localized: "Pause \(title)") : String(localized: "Play \(title)"), command: .hubPlayPause) {
+                _ in AudioHub.shared.togglePlay()
+            }
+        }
+
+        // Presets
+        let presetsMenu = submenu(in: menu, String(localized: "Presets"))
+        for (index, preset) in preferences.presets.enumerated() {
+            add(to: presetsMenu, preset.name, equivalent: index < 9 ? "\(index + 1)" : nil) { $0.applyPreset(preset) }
+        }
+        if !preferences.presets.isEmpty { presetsMenu.addItem(.separator()) }
+        add(to: presetsMenu, String(localized: "Save or Edit Presets in Settings…")) { [weak self] _ in self?.showSettings() }
+
+        // Speech
+        let speech = submenu(in: menu, String(localized: "Speech"))
+        add(to: speech, String(localized: "Silence VoiceOver"), command: .silence, checked: controller.speechSilenced) { $0.toggleSilence() }
+        add(to: speech, String(localized: "Beeps While VoiceOver Is Silenced"), command: .beepMode, checked: preferences.beepsWhenSilenced) {
+            $0.run(.beepMode)
+        }
+        add(to: speech, String(localized: "Read Item Under VoiceOver Cursor"), command: .readItem) { $0.readItem() }
+        add(to: speech, String(localized: "Speech History…"), command: .history) { [weak self] _ in self?.showHistory() }
+        add(to: speech, String(localized: "Say Clipboard"), command: .clipboard) { $0.sayClipboard() }
+        add(to: speech, String(localized: "System Status"), command: .systemStatus) { $0.announceSystemStatus() }
+        add(to: speech, String(localized: "Large-Print Captions"), command: .captions, checked: Captions.isShowing) { $0.toggleCaptions() }
+
+        // Reading and text
+        let reading = submenu(in: menu, String(localized: "Reading and Text"))
+        add(to: reading, String(localized: "Doc Reader…"), command: .docReader) { $0.run(.docReader) }
+        add(to: reading, String(localized: "Scan and Read…"), command: .scanAndRead) { $0.run(.scanAndRead) }
+        add(to: reading, String(localized: "Read Text in Front Window"), command: .readWindow) { $0.run(.readWindow) }
+        add(to: reading, String(localized: "Open Last Window Text in Doc Reader")) { _ in ScreenText.openInDocReader() }
+        reading.addItem(.separator())
+        add(to: reading, String(localized: "Check Clipboard Text…"), command: .analyzeText) { $0.analyzeClipboard() }
+        add(to: reading, CompareModel.shared.original == nil ? String(localized: "Compare Text: Save Original") : String(localized: "Compare Text: Compare With Clipboard"),
+            command: .compareText) { $0.run(.compareText) }
+        add(to: reading, String(localized: "Translate…"), command: .translate) { $0.run(.translate) }
+        reading.addItem(.separator())
+        add(to: reading, String(localized: "Check a Document's Accessibility…"), command: .documentCheck) { $0.run(.documentCheck) }
+        add(to: reading, String(localized: "Save as Braille…"), command: .brailleExport) { $0.run(.brailleExport) }
+        reading.addItem(.separator())
+        add(to: reading, String(localized: "Focus Frame"), command: .focusFrame, checked: FocusFrame.isShowing) { $0.toggleFocusFrame() }
+
+        // Camera
+        let camera = submenu(in: menu, String(localized: "Camera"))
+        add(to: camera, String(localized: "Read a Barcode or QR Code"), command: .codeReader, checked: CodeReader.isRunning) { $0.run(.codeReader) }
+        add(to: camera, String(localized: "Read a Medicine Label"), command: .labelReader, checked: LabelReader.isRunning) { $0.run(.labelReader) }
+        add(to: camera, String(localized: "Identify Money"), command: .moneyReader) { $0.run(.moneyReader) }
+        add(to: camera, String(localized: "Identify a Color"), command: .colorIdentifier) { $0.run(.colorIdentifier) }
+        add(to: camera, String(localized: "Light Detector"), command: .lightDetector, checked: LightDetector.isRunning) { $0.run(.lightDetector) }
+        add(to: camera, String(localized: "Check Camera Framing"), command: .camera) { $0.checkCamera() }
+
+        // Assistant and research
+        let assistant = submenu(in: menu, String(localized: "Assistant and Research"))
+        add(to: assistant, String(localized: "Describe Image Under VoiceOver Cursor"), command: .describeImage) { $0.run(.describeImage) }
+        add(to: assistant, String(localized: "Describe What's Happening in Video"), command: .describeVideo) { $0.run(.describeVideo) }
+        add(to: assistant, String(localized: "Ask the Assistant…"), command: .assistant) { $0.run(.assistant) }
+        add(to: assistant, String(localized: "Do It for Me…"), command: .doItForMe) { $0.run(.doItForMe) }
+        add(to: assistant, String(localized: "Research It…"), command: .research) { $0.run(.research) }
+
+        // VoiceOver help
+        let help = submenu(in: menu, String(localized: "VoiceOver Help"))
+        add(to: help, String(localized: "Restart VoiceOver"), command: .rescueVoiceOver) { $0.run(.rescueVoiceOver) }
+        add(to: help, String(localized: "Keep Audio Awake (Prevents Clipped Words)"), checked: preferences.keepAudioAwake) { [preferences] _ in
+            preferences.keepAudioAwake.toggle()
+            Announcer.say(preferences.keepAudioAwake ? String(localized: "Keeping audio awake") : String(localized: "Audio can sleep"))
+        }
+        add(to: help, String(localized: "Find a VoiceOver Command…"), command: .voiceOverCommands) { $0.run(.voiceOverCommands) }
+        help.addItem(.separator())
+        add(to: help, String(localized: "Label Item Under VoiceOver Cursor…"), command: .customLabel) { $0.run(.customLabel) }
+        add(to: help, String(localized: "Add a Place Marker"), command: .placeMarker) { $0.run(.placeMarker) }
+        add(to: help, String(localized: "Next Place Marker"), command: .nextPlaceMarker) { $0.run(.nextPlaceMarker) }
+        help.addItem(.separator())
+        add(to: help, String(localized: "Report a Bug to Apple…"), command: .reportBug) { $0.run(.reportBug) }
+
+        // Learning
+        let learning = submenu(in: menu, String(localized: "Learning"))
+        add(to: learning, String(localized: "Tutorial…"), command: .tutorial) { $0.run(.tutorial) }
+        add(to: learning, String(localized: "Input Help"), command: .inputHelp, checked: InputHelp.isOn) { $0.run(.inputHelp) }
+        add(to: learning, String(localized: "VoiceOver Practice…"), command: .practice) { $0.run(.practice) }
+        add(to: learning, String(localized: "Typing Trainer…"), command: .typingTrainer) { $0.run(.typingTrainer) }
+
+        // Everyday tools
+        let tools = submenu(in: menu, String(localized: "Everyday Tools"))
+        add(to: tools, String(localized: "Open Latest Download"), command: .openDownload) { $0.run(.openDownload) }
+        add(to: tools, String(localized: "Audio Mouse"), command: .audioMouse, checked: AudioMouse.isOn) { $0.run(.audioMouse) }
+
+        if !preferences.userCommands.isEmpty {
+            let yours = submenu(in: menu, String(localized: "Your Commands"))
+            for command in preferences.userCommands {
+                add(to: yours, command.name, equivalent: command.key.flatMap(Key.named)?.equivalent) { _ in
+                    UserCommands.run(command.id)
+                }
             }
         }
         menu.addItem(.separator())

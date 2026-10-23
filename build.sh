@@ -1,102 +1,125 @@
 #!/bin/zsh
-# Builds the installer: build/VoiceOver Audio Split.pkg
+# Builds an installer for the VoiceOver Audio Split app: build/VoiceOver Audio Split.pkg
+# It puts the app in the Applications folder (macOS asks for an administrator
+# password, as for any app installed there), removes the older script version
+# if it's installed, and opens the app.
 #
 #   ./build.sh            build the installer
-#   ./build.sh install    build it and install it for the current user
+#   ./build.sh install    build it and install it on this Mac
 #
-# The package installs into the user's home folder (no admin password):
-#   ~/Applications/VoiceOver Audio Split/
-#     VO Audio Split.app                  the audio splitter (runs only while the split is on)
-#     VO Audio Split Keys.app             Right Option + arrow shortcuts (always running)
-#     Uninstall VoiceOver Audio Split.app
-#     Scripts/                            double-clickable commands
-#   ~/Library/LaunchAgents/local.voaudiosplit.keys.plist  (written by Installer/scripts/postinstall)
-#
-# Signing for other Macs: without a Developer ID, people must choose "Open Anyway"
-# in System Settings > Privacy & Security the first time. To sign and notarize, set:
-#   DEVELOPER_ID_APP="Developer ID Application: Name (TEAMID)"
-#   DEVELOPER_ID_INSTALLER="Developer ID Installer: Name (TEAMID)"
-#   NOTARY_PROFILE=<profile saved with: xcrun notarytool store-credentials>
+# Needs Xcode. Signing:
+#   * With "Developer ID Application" and "Developer ID Installer" certificates in
+#     your keychain (Xcode > Settings > Accounts > Manage Certificates), they're used
+#     automatically, and the installer opens on any Mac.
+#   * Without them, the app gets a local signature: the installer works on the Mac
+#     that built it, but other Macs block it.
+#   * To notarize as well, save your notary details once with
+#       xcrun notarytool store-credentials VoiceOverAudioSplit
+#     and build with NOTARY_PROFILE=VoiceOverAudioSplit ./build.sh
+# Or choose identities yourself with DEVELOPER_ID_APP and DEVELOPER_ID_INSTALLER.
 set -euo pipefail
 cd "${0:A:h}"
 
-VERSION=$(plutil -extract CFBundleShortVersionString raw Resources/Info.plist)
-SIGN_ID="${DEVELOPER_ID_APP:--}"
-PAYLOAD="build/payload"
-DEST="$PAYLOAD/Applications/VoiceOver Audio Split"
-PKG="build/VoiceOver Audio Split.pkg"
+if [[ $EUID -eq 0 ]]; then
+  echo "Run ./build.sh without sudo. It asks for your password itself when installing." >&2
+  echo "(Built with sudo, files belong to the administrator account and can't be rebuilt.)" >&2
+  exit 1
+fi
+BUILD="${BUILD_DIR:-build}"
+mkdir -p "$BUILD"
+if [[ ! -w "$BUILD" ]]; then
+  echo "The $BUILD folder belongs to another account, probably from running with sudo." >&2
+  echo "Remove it once with: sudo rm -rf \"$PWD/$BUILD\"" >&2
+  exit 1
+fi
 
-rm -rf build
-mkdir -p build/scripts "$DEST/Scripts"
+APP_NAME="VoiceOver Audio Split"
+PROJECT="App/VoiceOverAudioSplit.xcodeproj"
+ENTITLEMENTS="App/Resources/VoiceOverAudioSplit.entitlements"
+PAYLOAD="$BUILD/app-payload"
+PKG="$BUILD/$APP_NAME.pkg"
 
-# Compile the AppleScripts: .scpt for the shortcut helper, double-clickable apps for people.
-python3 Scripts/make_scripts.py
-for script in Scripts/*.applescript; do
-  name="${${script:t}%.applescript}"
-  osacompile -o "build/scripts/$name.scpt" "$script"
-  osacompile -o "$DEST/Scripts/$name.app" "$script"
-done
-osacompile -o "$DEST/Uninstall VoiceOver Audio Split.app" Installer/Uninstall.applescript
-
-# build_app <source dir> <executable> <bundle name> <Info.plist> [resources dir]
-build_app() {
-  local app="$DEST/$3.app"
-  mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
-  swiftc -O -target arm64-apple-macos14.2 -o "build/$2-arm64" "$1"/*.swift
-  swiftc -O -target x86_64-apple-macos14.2 -o "build/$2-x86_64" "$1"/*.swift
-  lipo -create -output "$app/Contents/MacOS/$2" "build/$2-arm64" "build/$2-x86_64"
-  cp "$4" "$app/Contents/Info.plist"
-  [[ -n "${5:-}" ]] && cp -R "$5" "$app/Contents/Resources/Scripts"
-  codesign --force --options runtime --timestamp=none --sign "$SIGN_ID" \
-    --identifier "$(plutil -extract CFBundleIdentifier raw "$4")" "$app"
+identity() {
+  security find-identity -v -p "${2:-codesigning}" 2>/dev/null | sed -n "s/.*\"\\($1: .*\\)\"/\\1/p" | head -1
 }
-build_app Sources/Split VOAudioSplit "VO Audio Split" Resources/Info.plist
-build_app Sources/Keys VOAudioSplitKeys "VO Audio Split Keys" Resources/Keys-Info.plist build/scripts
-for applet in "$DEST/Scripts/"*.app "$DEST/Uninstall VoiceOver Audio Split.app"; do
-  codesign --force --sign "$SIGN_ID" "$applet"
-done
+APP_ID="${DEVELOPER_ID_APP:-$(identity "Developer ID Application")}"
+INSTALLER_ID="${DEVELOPER_ID_INSTALLER:-$(identity "Developer ID Installer" basic)}"
 
-# Keep the apps where we put them, even if another copy exists elsewhere on the Mac.
-pkgbuild --analyze --root "$PAYLOAD" build/components.plist >/dev/null
+rm -rf "$PAYLOAD" "$BUILD/app-component.pkg" "$BUILD/app-distribution.xml" "$PKG"
+mkdir -p "$PAYLOAD/Applications"
+
+echo "Building $APP_NAME…"
+xcodebuild -project "$PROJECT" -scheme VoiceOverAudioSplit -configuration Release \
+  -derivedDataPath "$BUILD/app" -destination 'generic/platform=macOS' \
+  CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO build -quiet
+cp -R "$BUILD/app/Build/Products/Release/$APP_NAME.app" "$PAYLOAD/Applications/"
+APP="$PAYLOAD/Applications/$APP_NAME.app"
+# For example 1.0.202610231930: the version, then the build number, so each build counts as newer.
+VERSION="$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist").$(plutil -extract CFBundleVersion raw "$APP/Contents/Info.plist")"
+
+if [[ -n "$APP_ID" ]]; then
+  echo "Signing with $APP_ID"
+  codesign --force --options runtime --timestamp --entitlements "$ENTITLEMENTS" --sign "$APP_ID" "$APP"
+else
+  echo "No Developer ID Application certificate: signing for this Mac only."
+  codesign --force --options runtime --entitlements "$ENTITLEMENTS" --sign - "$APP"
+fi
+codesign --verify --strict "$APP"
+
+# Install exactly where we put it. Without this, the installer "updates" any other
+# copy with the same app ID it finds (such as one in Xcode's build folder) instead,
+# and nothing appears in Applications.
+pkgbuild --analyze --root "$PAYLOAD" "$BUILD/app-components.plist" >/dev/null
 python3 -c '
 import plistlib, sys
 path = sys.argv[1]
 items = plistlib.load(open(path, "rb"))
 for item in items:
     item["BundleIsRelocatable"] = False
-plistlib.dump(items, open(path, "wb"))' build/components.plist
+    item["BundleOverwriteAction"] = "upgrade"
+plistlib.dump(items, open(path, "wb"))' "$BUILD/app-components.plist"
 
-pkgbuild --root "$PAYLOAD" --component-plist build/components.plist \
-  --scripts Installer/scripts --identifier local.voaudiosplit.pkg --version "$VERSION" \
-  --install-location / build/component.pkg >/dev/null
+pkgbuild --root "$PAYLOAD" --component-plist "$BUILD/app-components.plist" \
+  --scripts Installer/app/scripts --identifier com.fullcircleat.VoiceOverAudioSplit.pkg \
+  --version "$VERSION" --install-location / "$BUILD/app-component.pkg" >/dev/null
 
-cat > build/distribution.xml <<EOF
+cat > "$BUILD/app-distribution.xml" <<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <installer-gui-script minSpecVersion="2">
-  <title>VoiceOver Audio Split</title>
+  <title>$APP_NAME</title>
   <welcome file="welcome.html" mime-type="text/html"/>
   <conclusion file="conclusion.html" mime-type="text/html"/>
-  <domains enable_anywhere="false" enable_currentUserHome="true" enable_localSystem="false"/>
+  <domains enable_anywhere="false" enable_currentUserHome="false" enable_localSystem="true"/>
   <options customize="never" require-scripts="false" hostArchitectures="arm64,x86_64"/>
   <volume-check>
     <allowed-os-versions><os-version min="14.2"/></allowed-os-versions>
   </volume-check>
   <choices-outline><line choice="default"/></choices-outline>
-  <choice id="default" title="VoiceOver Audio Split"><pkg-ref id="local.voaudiosplit.pkg"/></choice>
-  <pkg-ref id="local.voaudiosplit.pkg" version="$VERSION">component.pkg</pkg-ref>
+  <choice id="default" title="$APP_NAME"><pkg-ref id="com.fullcircleat.VoiceOverAudioSplit.pkg"/></choice>
+  <pkg-ref id="com.fullcircleat.VoiceOverAudioSplit.pkg" version="$VERSION">app-component.pkg</pkg-ref>
 </installer-gui-script>
 EOF
 
-productbuild_args=(--distribution build/distribution.xml --resources Installer/resources --package-path build)
-[[ -n "${DEVELOPER_ID_INSTALLER:-}" ]] && productbuild_args+=(--sign "$DEVELOPER_ID_INSTALLER")
+productbuild_args=(--distribution "$BUILD/app-distribution.xml" --resources Installer/app/resources --package-path "$BUILD")
+if [[ -n "$INSTALLER_ID" ]]; then
+  echo "Signing the installer with $INSTALLER_ID"
+  productbuild_args+=(--sign "$INSTALLER_ID")
+fi
 productbuild "${productbuild_args[@]}" "$PKG" >/dev/null
 
 if [[ -n "${NOTARY_PROFILE:-}" ]]; then
+  if [[ -z "$APP_ID" || -z "$INSTALLER_ID" ]]; then
+    echo "Notarizing needs both Developer ID certificates." >&2
+    exit 1
+  fi
   xcrun notarytool submit "$PKG" --keychain-profile "$NOTARY_PROFILE" --wait
   xcrun stapler staple "$PKG"
 fi
 echo "Built $PKG"
+if [[ -z "$APP_ID" || -z "$INSTALLER_ID" ]]; then
+  echo "Note: not signed with a Developer ID, so it only installs cleanly on this Mac."
+fi
 
 if [[ "${1:-}" == "install" ]]; then
-  installer -pkg "$PKG" -target CurrentUserHomeDirectory
+  sudo installer -pkg "$PKG" -target /
 fi

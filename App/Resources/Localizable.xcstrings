@@ -2685,6 +2685,28 @@
         }
       }
     },
+    "Assistant and Research" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assistent und Recherche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asistente e investigación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assistant et recherche"
+          }
+        }
+      }
+    },
     "Assistant and image descriptions" : {
       "localizations" : {
         "de" : {
@@ -3649,6 +3671,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appels"
+          }
+        }
+      }
+    },
+    "Camera" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cámara"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caméra"
           }
         }
       }
@@ -6755,6 +6799,28 @@
         }
       }
     },
+    "Everyday Tools" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alltagswerkzeuge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herramientas cotidianas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outils du quotidien"
+          }
+        }
+      }
+    },
     "Everything but VoiceOver is quiet" : {
       "localizations" : {
         "de" : {
@@ -9699,6 +9765,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apprentissage : entendre les touches avec chaque exercice"
+          }
+        }
+      }
+    },
+    "Learning" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprendizaje"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apprentissage"
           }
         }
       }
@@ -14807,6 +14895,28 @@
         }
       }
     },
+    "Reading and Text" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lesen und Text"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lectura y texto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture et texte"
+          }
+        }
+      }
+    },
     "Reading speed" : {
       "localizations" : {
         "de" : {
@@ -17118,6 +17228,28 @@
         }
       }
     },
+    "Sound and Devices" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton und Geräte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonido y dispositivos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son et appareils"
+          }
+        }
+      }
+    },
     "Sound for each key typed right" : {
       "localizations" : {
         "de" : {
@@ -17290,6 +17422,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Espagnol"
+          }
+        }
+      }
+    },
+    "Speech" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parole"
           }
         }
       }
@@ -21822,6 +21976,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Commandes VoiceOver"
+          }
+        }
+      }
+    },
+    "VoiceOver Help" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver-Hilfe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda de VoiceOver"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aide VoiceOver"
           }
         }
       }

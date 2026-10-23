@@ -31,6 +31,9 @@
 - **Typing trainer:** talking lessons from the home row up, finger hints, words per minute and accuracy, best scores, and a one-minute speed test. A soft click for each right key (or a soft tone, or no sound), and a gentle low sound for a wrong one.
 - **In Spanish, French and German:** the app follows your Mac's language. Translations are new; corrections from native speakers are welcome.
 
+- **An easier menu:** the split stays at the top, and everything else is grouped in submenus: Sound and Devices, Presets, Speech, Reading and Text, Camera, Assistant and Research, VoiceOver Help, Learning and Everyday Tools.
+- **Installer package for the app:** `./build.sh` now builds an installer that puts the app in the Applications folder and removes the older script version, whose shortcuts clashed. The older script version's builder is now `./build-script-version.sh`.
+
 ## 1.0 (beta), October 2026
 
 First public beta.

@@ -9,7 +9,10 @@
 - **Sound control:** quiet everything but VoiceOver, set the volume of individual apps, switch output devices, mute the microphone, and use presets that switch automatically for each app.
 - **Hearing and clarity:** a speech clarity boost, leveling for loud media, a volume limit, one-ear mode and ear balance.
 - **Speech tools:** speech on demand, speech history, captions, say clipboard, and system status.
-- **Reading and low vision:** a large-print Doc Reader, camera text reading (Scan and Read), and a focus frame.
+- **Reading and low vision:** a large-print Doc Reader, camera text reading (Scan and Read), captions and a focus frame.
+- **Everyday tools:** barcode, QR code, medicine label and money readers, a color identifier and light detector, a document accessibility check, braille files, and camera and microphone alerts.
+- **Working with apps:** custom labels for unlabeled controls, place markers on web pages, and Do It for Me.
+- **Learning:** a tutorial, input help, VoiceOver practice and a talking typing trainer.
 - **Fixes for problems AppleVis users report:**
 - **Keep audio awake** (in Settings or the menu) plays silence, so headphones and Bluetooth devices like AirPods don't sleep between phrases and cut off VoiceOver's first words.
 - **Presets for websites** (in Settings) switch to a preset on a site in Safari or Chrome, which VoiceOver's own activities don't do. While a browser is in front and website presets exist, the app checks the current address every two seconds. The first time, macOS asks to let the app see which site is open.
@@ -37,16 +40,17 @@
 - **Medicine label reader:** reads the largest text first, usually the medicine's name, then the rest, and keeps reading new text as you turn the bottle. Everything it read is copied when you stop.
 - **Identify money:** Claude names the banknotes or coins in a camera picture. Needs an API key and image descriptions allowed.
 - **VoiceOver practice:** the app names a task, such as "go to the next heading", and you press the VoiceOver keys for it. Learn mode says the keys; quiz mode keeps score. Keys are caught while you practice, so nothing moves.
-- **Typing trainer:** a talking typing tutor, like Talking Typer or TypingClub. Sixteen lessons add a few keys at a time from the home row, then capitals, numbers, punctuation, words and sentences. Each key is named with its finger and row; a right key plays a tone, and a wrong one says what you pressed and what to type. Each lesson ends with words per minute and accuracy, your best speed is kept, and there's a one-minute speed test. Finger hints are for the US English keyboard, and the practice words are English. Quick Nav can stay on.
+- **Typing trainer:** a talking typing tutor, like Talking Typer or TypingClub. Sixteen lessons add a few keys at a time from the home row, then capitals, numbers, punctuation, words and sentences. Each key is named with its finger and row. A right key plays a soft click (or a soft tone, or nothing, as you choose), and a wrong one plays a gentle low sound and says what you pressed and what to type. Each lesson ends with words per minute and accuracy, your best speed is kept, and there's a one-minute speed test. Finger hints are for the US English keyboard, and the practice words are English. Quick Nav can stay on.
 
 **Languages:** English, Spanish, French and German. The app uses your Mac's language (System Settings, General, Language and Region). The translations are new, so please report anything that reads oddly. To add a language, open `App/Resources/Localizable.xcstrings` in Xcode.
 
 **Diagnostics and performance:** "Save a Diagnostics Report" writes the app's recent log, version and settings (never the API key) to a file you choose, for bug reports. "App Performance" says how much processor time and memory the app uses. The [testing checklist](docs/TESTING.md) is for VoiceOver users testing each release.
 
 **Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.
-- **Optional AI:** image descriptions and an assistant, using Claude with your own API key.
 
-**Get it:** the public beta is on TestFlight. The link will be here when the beta is approved. It needs macOS 14.2 or later, and headphones are recommended.
+**Optional AI:** image descriptions, video descriptions, an assistant, Do It for Me and the money identifier use Claude with your own API key. Everything else works without it.
+
+**Get it:** the public beta is on TestFlight. The link will be here when the beta is approved. To install it without TestFlight, build the [installer package](#installer-package-outside-the-app-store). It needs macOS 14.2 or later, and headphones are recommended.
 
 **Privacy:** nothing is collected or recorded. See the [privacy policy](PRIVACY.md).
 
@@ -102,19 +106,25 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + Grave Accent | Input help: shortcuts say what they do instead of doing it. Press again to stop. |
 | Right Option + Apostrophe | Translates the clipboard on your Mac (macOS 15 or later) |
 
-Every key can be changed in Settings, under Command keys (like JAWS Keyboard Manager). Choosing a key another command uses swaps the two commands' keys. Digits 1 to 9 always switch presets, and slash always lists the layer keys.
+Every letter key is in use, so newer commands start without a key: the tutorial, VoiceOver practice, the typing trainer, the audio mouse, beeps, custom labels, place markers, Do It for Me, the document check, braille, the barcode, label and money readers, camera and microphone status, export and import, diagnostics and app performance. They're in the menu and the command palette.
+
+Every key can be changed in Settings, under Command keys (like JAWS Keyboard Manager), including giving a key to a command that has none. Choosing a key another command uses swaps the two commands' keys. Digits 1 to 9 always switch presets, and slash always lists the layer keys.
 
 You can change Right Option to Right Command, Right Control or Right Shift in Settings. The key of the same kind on the left keeps working normally. Each change plays a short tone, from the side it describes, and then VoiceOver announces it.
 
-**Menu:** the same commands, plus:
-- Audio Split Off
-- Layout
-- Reset Volume Balance
-- Lower Other Sounds While VoiceOver Speaks
-- Start at Login
-- Settings…
-- Setup Guide…
-- Quit
+**Menu** (Right Option + M). The split is at the top, and everything else is grouped in submenus; with VoiceOver, Right Arrow opens a submenu and Left Arrow closes it. Each item shows its shortcut, if it has one.
+- At the top: what's on now, Speech Left, Speech Right, Audio Split Off, What's On, the balance, Speech Louder, Other Sounds Louder, Quiet Everything But VoiceOver, and the Command Palette
+- **Sound and Devices:** Layout, Reset Volume Balance, Lower Other Sounds While VoiceOver Speaks, the app in front (louder, quieter, mute), What's Playing, Next Output Device, Mute Microphone, Microphone Check, Camera and Microphone in Use, **Hearing and Clarity**, and the Audio Hub
+- **Presets:** your presets, by number
+- **Speech:** Silence VoiceOver, Beeps While VoiceOver Is Silenced, Read Item, Speech History, Say Clipboard, System Status, Large-Print Captions
+- **Reading and Text:** Doc Reader, Scan and Read, Read Text in Front Window, Check Clipboard Text, Compare Text, Translate, Check a Document's Accessibility, Save as Braille, Focus Frame
+- **Camera:** barcode and QR code reader, medicine label reader, Identify Money, Identify a Color, Light Detector, Check Camera Framing
+- **Assistant and Research:** Describe Image, Describe What's Happening in Video, Ask the Assistant, Do It for Me, Research It
+- **VoiceOver Help:** Restart VoiceOver, Keep Audio Awake, Find a VoiceOver Command, custom labels, place markers, Report a Bug to Apple
+- **Learning:** Tutorial, Input Help, VoiceOver Practice, Typing Trainer
+- **Everyday Tools:** Open Latest Download, Audio Mouse
+- **Your Commands**, once you've added some
+- At the bottom: Start at Login, **Backup and Diagnostics** (export, import, diagnostics report, app performance), Settings, Setup Guide and Quit
 
 **Settings window:**
 - **Layout:**
@@ -135,8 +145,16 @@ You can change Right Option to Right Command, Right Control or Right Shift in Se
   - **Volume limit:** keeps all sound below a set level, on top of the Mac's own volume.
   - **One ear:** VoiceOver and all other sound are combined into one ear, for people who hear on one side only. Tones play in that ear too.
   - **Ear balance:** makes one ear up to 12 dB louder than the other.
-- **Apps:** give any app its own volume (30 dB quieter to 6 dB louder), mute, or ear (left, right, both, or the same as other sounds). Helper processes count as part of their app, so this also works for apps such as Zoom that play sound from a separate helper. Safari's sound comes from a WebKit process that other apps share, such as Mail, so a Safari setting also applies to them.
+- **Apps:** give any app its own volume (30 dB quieter to 6 dB louder), mute, ear (left, right, both, the same as other sounds, or a position you choose anywhere from fully left to fully right), and bass and treble (12 dB either way). Helper processes count as part of their app, so this also works for apps such as Zoom that play sound from a separate helper. Safari's sound comes from a WebKit process that other apps share, such as Mail, so a Safari setting also applies to them.
 - **Presets:** saved combinations of the split, balance, layout, calls, clarity and hearing settings. Switch with Right Option and a number, or from the menu. "Meeting", "Music" and "Focus" are included, and you can save your own from the current settings.
+- **Automatic presets** and **presets for websites** (see below).
+- **Spoken events and clock:** downloads, devices, network, battery, screen lock, camera and microphone use, and the talking clock, each on or off.
+- **Low vision:** reading colors, Doc Reader and caption text sizes, and the focus frame's color, thickness and flash.
+- **Your commands:** AppleScripts and Shortcuts on keys.
+- **Custom labels and place markers:** the count of each, place markers to delete, and a button to manage labels.
+- **Command keys:** a key for every command, or No key.
+- **Assistant and image descriptions:** the Anthropic API key and whether pictures may be sent.
+- **Backup and diagnostics**, and **About** (version, license, source code, privacy policy).
 
 **Setup guide:** opens on first launch, and later from the menu. It walks through the permissions one at a time and checks each one:
 1. Accessibility, for the shortcuts.
@@ -185,17 +203,17 @@ The app remembers everything between restarts, except quiet mode, which always e
   open -a "App/build/dd/Build/Products/Debug/VoiceOver Audio Split.app" --args --check-online
   ```
 - `App/Sources/FaceCheck.swift` is the camera framing check, and `App/Sources/HistoryView.swift` is the Speech History window.
-- `App/Sources/Tones.swift` plays the confirmation tones.
-- `App/Sources/SettingsView.swift` and `App/Sources/SetupGuideView.swift` are the two windows.
-- `App/Sources/Hotkeys.swift` handles Right Option + arrow keys.
+- `App/Sources/Tones.swift` plays the confirmation tones and the typing trainer's sounds.
+- `App/Sources/SettingsView.swift` and `App/Sources/SetupGuideView.swift` are the Settings window and the setup guide.
 - `App/Sources/Announcer.swift` sends announcements to VoiceOver.
+- `App/Resources/Localizable.xcstrings` and `App/Resources/InfoPlist.xcstrings` hold the Spanish, French and German translations.
 - `App/project.yml` defines the Xcode project. After you add or rename files, run `xcodegen` in `App/` (version 2.45.4, the version CI uses). The generated `VoiceOverAudioSplit.xcodeproj` opens normally in Xcode.
 - `App/Tools/make_icon.swift` redraws the app icon.
-- `App/Tests/` has unit tests for the logic that needs no hardware or permissions: the Text Analyzer, volume balance, ear routing for each layout, app rules, quiet and silence modes, speech on a second device, command keys, presets, AppleScript quoting, Doc Reader sentence and paragraph steps, Scan and Read guidance, and RSS feed reading. Run them with Product > Test in Xcode, or:
+- `App/Tests/` has unit tests for the logic that needs no hardware or permissions: routing for each layout, app positions and tone, balance, quiet and silence modes, command keys and presets, the Text Analyzer and text comparison, Doc Reader and Scan and Read, braille and the document check, QR codes and product names, typing lessons and VoiceOver practice, translations, and more. Run them with Product > Test in Xcode, or:
   ```bash
   xcodebuild -project App/VoiceOverAudioSplit.xcodeproj -scheme VoiceOverAudioSplit -destination 'platform=macOS' test
   ```
-- **CI** (GitHub Actions, `.github/workflows/ci.yml`) runs on every push and pull request. It checks that the Xcode project matches `project.yml`, builds the app in Debug and Release, runs the unit tests, and builds the script-version installer package. Test results and the installer are attached to each run.
+- **CI** (GitHub Actions, `.github/workflows/ci.yml`) runs on every push and pull request. It checks that the Xcode project matches `project.yml`, builds the app in Debug and Release, runs the unit tests, and builds the app's installer package (checking that it installs into Applications) and the script-version package. Test results and both packages are attached to each run. Packages built by CI aren't signed with a Developer ID.
 - Development builds have a self-test that tries device switching, the microphone mute and app matching inside the sandbox, then puts everything back:
   ```bash
   open -a "App/build/dd/Build/Products/Debug/VoiceOver Audio Split.app" --args --self-test
@@ -217,9 +235,23 @@ Team: Full Circle AT LLC (9G2D7CDZ5D). Bundle ID: `com.fullcircleat.VoiceOverAud
 
 To build without uploading anything, run `App/release.sh`. The package goes to `App/build/export/`. You can also use Xcode itself: open `App/VoiceOverAudioSplit.xcodeproj`, choose Product > Archive, then Distribute App > TestFlight & App Store.
 
+## Installer package (outside the App Store)
+
+To install the app without TestFlight, for example on your own Macs, build an installer package:
+
+```bash
+./build.sh
+```
+
+Run it without `sudo`. It needs Xcode, and makes `build/VoiceOver Audio Split.pkg`. Double-click the package: it asks for your password, puts the app in the Applications folder, removes the older script version if it's installed, and opens the app so the setup guide starts. `./build.sh install` builds it and installs it straight away.
+
+- **On the Mac that built it**, the package installs without any warnings.
+- **For other Macs**, sign it with your Developer ID. In Xcode, go to Settings > Accounts > Manage Certificates and add a **Developer ID Application** and a **Developer ID Installer** certificate; `build.sh` finds them by itself. To notarize as well, save your notary details once with `xcrun notarytool store-credentials VoiceOverAudioSplit`, then run `NOTARY_PROFILE=VoiceOverAudioSplit ./build.sh`. Without this, other Macs block the package.
+- If `build.sh` says the build folder belongs to another account, it was once run with `sudo`. Remove it with `sudo rm -rf build` and run `./build.sh` again.
+
 ## Older version: scripts and installer package
 
-Before the app, this project was a set of AppleScripts plus two small helper apps, built with `./build.sh` into a standalone installer (`build/VoiceOver Audio Split.pkg`). That version is not sandboxed, so it cannot go through TestFlight, but it can be shared directly. The sections below describe it.
+Before the app, this project was a set of AppleScripts plus two small helper apps, built with `./build-script-version.sh` into a standalone installer (`build/VoiceOver Audio Split (script version).pkg`). It has none of the app's newer features, and installing the app removes it. That version is not sandboxed, so it cannot go through TestFlight, but it can be shared directly. The sections below describe it.
 
 ## Why it is not only an AppleScript
 
@@ -232,10 +264,10 @@ AppleScript cannot move a sound to one ear, and macOS has no built-in setting fo
 ## Install (older version)
 
 ```bash
-./build.sh
+./build-script-version.sh
 ```
 
-This builds `build/VoiceOver Audio Split.pkg`, which anyone can double-click to install. No admin password is needed, because everything goes into the user's own account. Because the package isn't signed with a Developer ID, other Macs block it the first time. The user then goes to System Settings > Privacy & Security and chooses Open Anyway. Run `./build.sh install` to install it on this Mac.
+This builds `build/VoiceOver Audio Split (script version).pkg`, which anyone can double-click to install. No admin password is needed, because everything goes into the user's own account. Because the package isn't signed with a Developer ID, other Macs block it the first time. The user then goes to System Settings > Privacy & Security and chooses Open Anyway. Run `./build-script-version.sh install` to install it on this Mac.
 
 Older builds installed these pieces directly:
 - `~/Applications/VO Audio Split.app`
@@ -250,7 +282,7 @@ Older builds installed these pieces directly:
   - **Reset Volume Balance** (sets speech and other sounds to equal volume)
   - **Toggle Start at Login**
 
-The scripts are generated from `Scripts/make_scripts.py`. To change them, edit that file and run `./build.sh` again.
+The scripts are generated from `Scripts/make_scripts.py`. To change them, edit that file and run `./build-script-version.sh` again.
 
 ## Keyboard shortcuts
 
@@ -277,7 +309,7 @@ Toggle Start at Login turns automatic startup on or off. When it is on, the spli
 
 1. **Allow audio capture.** The first time the split starts, macOS asks whether VO Audio Split can record system audio. Choose Allow. If you missed the prompt, go to System Settings > Privacy & Security > Screen & System Audio Recording and turn on VO Audio Split under "System Audio Recording Only".
 2. **Let scripts speak through VoiceOver.** Open VoiceOver Utility (VO-F8), go to General, and check "Allow VoiceOver to be controlled with AppleScript". Without this, the scripts use the system voice for their announcements.
-3. **Allow the shortcuts.** Go to System Settings > Privacy & Security > Accessibility and turn on VO Audio Split Keys. The shortcuts start working within two seconds, with no restart needed. After you run `./build.sh` again, macOS may treat the rebuilt app as new. If the shortcuts stop working, turn VO Audio Split Keys off and back on in that list.
+3. **Allow the shortcuts.** Go to System Settings > Privacy & Security > Accessibility and turn on VO Audio Split Keys. The shortcuts start working within two seconds, with no restart needed. After you run `./build-script-version.sh` again, macOS may treat the rebuilt app as new. If the shortcuts stop working, turn VO Audio Split Keys off and back on in that list.
 
 ## Notes
 

@@ -45,7 +45,7 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 > - Apple Events to Safari and Chrome (temporary exception): only if the user sets presets for websites; the app asks the browser for the current tab's address to switch the user's audio preset. Addresses are not stored or sent.
 > - Microphone: a five-second microphone check before calls that reports the voice and background noise levels. Nothing is recorded.
 > - Downloads folder (read-only): announcing when a download finishes and opening the latest download.
-> - Camera: on-device text reading (Scan and Read) and a framing check before video calls. Pictures are never saved or sent.
+> - Camera: on-device text reading (Scan and Read), a framing check before video calls, a color identifier, and a light detector. Pictures are never saved or sent.
 > - Network: optional lookups (Wikipedia, weather), the audio hub (radio, podcasts, LibriVox, news), and optional image descriptions with the user's own Anthropic API key.
 > - User-selected files (read and write): opening documents in the large-print Doc Reader, and saving recognized text as a text or Word file where the user chooses.
 >

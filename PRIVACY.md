@@ -8,7 +8,7 @@ VoiceOver Audio Split does not collect, store or share any personal information.
 
 - **Sound.** To split, lower or adjust sound, the app captures your Mac's audio and plays it back immediately. Nothing is recorded or saved.
 - **VoiceOver's speech text.** Speech history and captions read what VoiceOver has just said. This text is kept in memory only, never written to disk, and cleared when the app quits.
-- **Camera.** The camera framing check and Scan and Read analyze camera pictures on your Mac with Apple's Vision framework. Pictures are not saved or sent anywhere.
+- **Camera.** The camera framing check, Scan and Read, the color identifier and the light detector analyze camera pictures on your Mac with Apple's Vision framework. Pictures are not saved or sent anywhere.
 - **Files you open or save.** Doc Reader and Scan and Read read only the files you choose, and save text only where you choose.
 - **Microphone.** The microphone check listens for about five seconds and measures how loud your voice and the background are. The sound is never recorded or saved.
 - **Downloads folder.** If download announcements are on, the app notices new files in your Downloads folder and says their names. It never opens or reads them unless you ask it to open the latest download.
@@ -43,7 +43,7 @@ Like any internet request, these services can see your IP address. Dictionary de
 | Screen recording | Describe image (the item under the VoiceOver cursor), reading the front window's text, and describing a video |
 | Microphone | The microphone check |
 | Downloads folder (read only) | Saying when a download finishes, and opening the latest download |
-| Camera | Camera framing check, Scan and Read |
+| Camera | Camera framing check, Scan and Read, color identifier, light detector |
 | Automation (VoiceOver) | Speaking announcements in your VoiceOver voice, speech history, captions, Read Item, the focus frame, and restarting VoiceOver |
 | Automation (Safari, Chrome) | Presets for websites, only if you set any |
 | Files you choose | Opening files in Doc Reader and Scan and Read, and saving text |

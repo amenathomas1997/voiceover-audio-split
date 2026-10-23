@@ -4,7 +4,7 @@ labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: Thank you for reporting this. Plain sentences are perfect; no special format is needed.
+      value: Thank you for reporting this. Plain sentences are perfect; no special format is needed. Only "What happened?" and "What did you expect to happen?" must be filled in.
   - type: textarea
     id: what-happened
     attributes:
@@ -23,11 +23,29 @@ body:
     attributes:
       label: Steps to make it happen again
       description: For example, "1. Turn the split on with Right Option and Left Arrow. 2. Open Zoom. 3. ..."
+  - type: dropdown
+    id: how-often
+    attributes:
+      label: How often does it happen?
+      options:
+        - Every time
+        - Sometimes
+        - Once so far
+  - type: dropdown
+    id: install
+    attributes:
+      label: Where did you get the app?
+      options:
+        - TestFlight
+        - Mac App Store
+        - Downloaded from the website
+        - Built from the source code
+        - The script version (installer package)
   - type: input
     id: version
     attributes:
       label: App version
-      description: In Settings, under About, for example "1.0 (202610221631)".
+      description: In Settings, under About, for example "1.0 (202610231400)".
   - type: input
     id: macos
     attributes:
@@ -38,8 +56,24 @@ body:
     attributes:
       label: Headphones or speakers in use
       description: For example, AirPods Pro, the MacBook speakers, or a USB headset.
+  - type: input
+    id: language
+    attributes:
+      label: Language of your Mac, if not English
+      description: For example, Spanish. Leave empty for English.
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics report
+      description: Optional, but it helps a lot. In the app's menu, choose "Save a Diagnostics Report…", then attach the file here (drag it in, or paste its text). It contains the app's log for the last hour and your settings, never your API key.
   - type: textarea
     id: extra
     attributes:
       label: Anything else?
       description: Other apps that were open, VoiceOver settings, or anything else that might help.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you send
+      options:
+        - label: I looked through the open issues and this hasn't been reported yet.

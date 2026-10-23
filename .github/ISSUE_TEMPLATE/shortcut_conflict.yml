@@ -1,0 +1,49 @@
+name: Keyboard shortcut problem
+description: A shortcut does nothing, does the wrong thing, or clashes with VoiceOver or another app
+labels: [bug, shortcuts]
+body:
+  - type: markdown
+    attributes:
+      value: You can hear what a key is set to with input help (Right Option and Grave Accent), and change any key in Settings, under Keys.
+  - type: input
+    id: keys
+    attributes:
+      label: Which keys did you press?
+      description: For example, "Right Option and D".
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened instead?
+      description: For example, nothing, VoiceOver did something else, or another app reacted.
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: Which app was in front?
+      description: For example, Safari on youtube.com, Mail, or Zoom.
+  - type: dropdown
+    id: how-often
+    attributes:
+      label: How often does it happen?
+      options:
+        - Every time
+        - Sometimes
+        - Only in one app
+  - type: checkboxes
+    id: setup
+    attributes:
+      label: Your setup
+      description: Tick any that are true.
+      options:
+        - label: Quick Nav was on
+        - label: I use another keyboard tool, such as Karabiner-Elements, BetterTouchTool or Keyboard Maestro
+        - label: I changed this key in Settings
+        - label: I use a keyboard without a Right Option key, or an external keyboard
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: In Settings, under About.

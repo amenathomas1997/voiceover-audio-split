@@ -1,0 +1,35 @@
+name: Beta test report
+description: Results from the testing checklist for a TestFlight build
+labels: [testing]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for testing. Go through the [testing checklist](https://github.com/amenathomas1997/voiceover-audio-split/blob/main/docs/TESTING.md) with headphones, then paste your results here. For each step, say works, doesn't work (and what you heard instead), or not tried.
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: In Settings, under About, for example "1.0 (202610231400)".
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: Mac and macOS version
+      description: For example, "MacBook Air M2". The macOS version is in the Apple menu, under About This Mac.
+  - type: input
+    id: audio
+    attributes:
+      label: Headphones or speakers
+  - type: textarea
+    id: results
+    attributes:
+      label: Checklist results
+      description: Paste the checklist with your answers, or list only the steps that didn't work.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else you noticed
+      description: Things that were slow, confusing, or that you liked.

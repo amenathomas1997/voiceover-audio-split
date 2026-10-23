@@ -1,0 +1,28 @@
+name: Translation fix or new language
+description: A phrase reads oddly in your language, or you'd like to help add a language
+labels: [translation]
+body:
+  - type: markdown
+    attributes:
+      value: The app is in English, Spanish, French and German. The translations are new, so corrections from native speakers are very welcome. You don't need to know any code.
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      description: For example, Spanish (Mexico) or French (Canada).
+    validations:
+      required: true
+  - type: textarea
+    id: phrases
+    attributes:
+      label: What the app says now, and what it should say
+      description: 'One phrase per line, for example "Now: Ratón sonoro. Better: Mouse de audio." Where you heard it helps too, such as the menu or an announcement.'
+    validations:
+      required: true
+  - type: checkboxes
+    id: more
+    attributes:
+      label: Helping more
+      options:
+        - label: I'd like to review the whole translation for my language
+        - label: I'd like to help add a new language

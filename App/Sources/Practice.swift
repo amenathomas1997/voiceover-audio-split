@@ -37,10 +37,11 @@ struct Drill: Hashable {
         Drill(task: String(localized: "Hear where the item is in its window"), keys: String(localized: "VO Shift Command N"), keyCode: 45, shift: true, command: true),
     ]
 
-    /// Whether a key press with these modifiers is this drill's keys.
-    func matches(keyCode: Int64, flags: CGEventFlags) -> Bool {
-        keyCode == self.keyCode && flags.contains([.maskControl, .maskAlternate])
-            && flags.contains(.maskShift) == shift && flags.contains(.maskCommand) == command
+    /// Whether a key press with these modifiers is this drill's keys. Letters are matched
+    /// by the letter typed, so French and German keyboards work.
+    func matches(keyCode: Int64, flags: CGEventFlags, letter: Character? = nil) -> Bool {
+        KeyCombo(code: self.keyCode, shift: shift, command: command).matches(keyCode: keyCode, flags: flags, letter: letter)
+            && flags.contains([.maskControl, .maskAlternate])
     }
 }
 
@@ -70,7 +71,9 @@ final class PracticeModel: ObservableObject {
         let thisSession = session
         TypingTrainer.shared.stop()
         LessonRunner.shared.stop()
-        Hotkeys.keyObserver = { [weak self] keyCode, flags, _ in self?.handle(keyCode, flags) ?? false }
+        Hotkeys.keyObserver = { [weak self] keyCode, flags, event in
+            self?.handle(keyCode, flags, letter: KeyCombo.letter(typedBy: event)) ?? false
+        }
         let mode = learnMode ? String(localized: "Learn mode: I'll say the keys too.") : String(localized: "Quiz mode.")
         Announcer.say(String(localized: "VoiceOver practice. \(mode) Press Escape to stop."))
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
@@ -114,7 +117,7 @@ final class PracticeModel: ObservableObject {
     }
 
     /// Takes Escape and anything pressed with VO; other keys go through as usual.
-    private func handle(_ keyCode: Int64, _ flags: CGEventFlags) -> Bool {
+    private func handle(_ keyCode: Int64, _ flags: CGEventFlags, letter: Character?) -> Bool {
         if keyCode == Key.escape {
             DispatchQueue.main.async { self.stop() }
             return true
@@ -124,7 +127,7 @@ final class PracticeModel: ObservableObject {
         DispatchQueue.main.async {
             // Between tasks (or after a quick second press) there's nothing to answer.
             guard self.running, let drill = self.current else { return }
-            if drill.matches(keyCode: keyCode, flags: flags) {
+            if drill.matches(keyCode: keyCode, flags: flags, letter: letter) {
                 if self.firstTry { self.score += 1 }
                 self.current = nil
                 self.lastResult = String(localized: "Right: \(drill.keys)")

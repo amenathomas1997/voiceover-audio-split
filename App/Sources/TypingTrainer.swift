@@ -186,7 +186,7 @@ final class TypingTrainer: ObservableObject {
         deadline = nil
         session += 1
         let thisSession = session
-        Hotkeys.keyObserver = { [weak self] keyCode, flags, characters in self?.handle(keyCode, flags, characters) ?? false }
+        Hotkeys.keyObserver = { [weak self] keyCode, flags, event in self?.handle(keyCode, flags, event?.characters ?? "") ?? false }
         Announcer.say(intro)
         DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
             guard let self, self.running, self.session == thisSession else { return }

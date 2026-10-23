@@ -314,6 +314,8 @@ final class Preferences: ObservableObject {
     @Published var typingSound: String { didSet { save(typingSound, "typingSound") } }
     /// VoiceOver lessons finished, by lesson ID.
     @Published var lessonsDone: [String] { didSet { save(lessonsDone, "lessonsDone") } }
+    /// Lesson keys missed in a quick check, to practice again.
+    @Published var lessonsMissed: [String] { didSet { save(lessonsMissed, "lessonsMissed") } }
 
     private init() {
         store.register(defaults: [
@@ -386,6 +388,7 @@ final class Preferences: ObservableObject {
         typingBest = store.dictionary(forKey: "typingBest") as? [String: Int] ?? [:]
         typingSound = store.string(forKey: "typingSound") ?? TypingSound.click.rawValue
         lessonsDone = store.stringArray(forKey: "lessonsDone") ?? []
+        lessonsMissed = store.stringArray(forKey: "lessonsMissed") ?? []
         placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }

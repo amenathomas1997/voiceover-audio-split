@@ -42,9 +42,9 @@ enum Hotkeys {
     nonisolated(unsafe) private static var swallowedKeys = Set<Int64>()
     /// Read on the event tap thread; written on main when the setting changes.
     nonisolated(unsafe) static var modifier = ShortcutModifier.option
-    /// While set (VoiceOver practice, the typing trainer), sees every key press first,
-    /// with the character it types; returning true takes the key.
-    nonisolated(unsafe) static var keyObserver: ((Int64, CGEventFlags, String) -> Bool)?
+    /// While set (VoiceOver lessons and practice, the typing trainer), sees every key press
+    /// first, with the key event for its characters; returning true takes the key.
+    nonisolated(unsafe) static var keyObserver: ((Int64, CGEventFlags, NSEvent?) -> Bool)?
 
     static var isTrusted: Bool { AXIsProcessTrusted() }
 
@@ -104,7 +104,7 @@ enum Hotkeys {
         if isRepeat && swallowedKeys.contains(keyCode) { return nil }
 
         if let observer = keyObserver, event.getIntegerValueField(.keyboardEventAutorepeat) == 0,
-           observer(keyCode, event.flags, NSEvent(cgEvent: event)?.characters ?? "") {
+           observer(keyCode, event.flags, NSEvent(cgEvent: event)) {
             swallowedKeys.insert(keyCode)
             return nil
         }

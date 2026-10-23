@@ -708,8 +708,13 @@ final class LessonTests: XCTestCase {
     }
 
     func testEveryLessonIsComplete() {
-        XCTAssertEqual(Lesson.course.count, 10)
-        XCTAssertEqual(Set(Lesson.course.map(\.id)).count, 10)
+        XCTAssertEqual(Lesson.course.count, 16)
+        XCTAssertEqual(Set(Lesson.course.map(\.id)).count, 16)
+        // Lesson titles are numbered in order.
+        for (index, lesson) in Lesson.course.enumerated() {
+            XCTAssertTrue(lesson.title.hasPrefix("\(index + 1). "), lesson.title)
+        }
+        XCTAssertEqual(Set(Lesson.allPractice.map(\.id)).count, Lesson.allPractice.count)
         for lesson in Lesson.all {
             XCTAssertFalse(lesson.practice.isEmpty, lesson.id)
             guard case .explain = lesson.steps.first?.kind else { return XCTFail("\(lesson.id) starts with an explanation") }
@@ -726,5 +731,53 @@ final class LessonTests: XCTestCase {
         let html = PracticeWebPage.html
         XCTAssertEqual(html.components(separatedBy: "<h2").count - 1, 5)
         XCTAssertTrue(html.contains("<table>") && html.contains("<form") && html.contains("<a href"))
+    }
+}
+
+final class DeeperLessonTests: XCTestCase {
+    func testHintsSayWhatToHold() {
+        XCTAssertEqual(LessonRunner.howToPress(KeyCombo(code: 4, command: true)),
+                       "Hold Control, Option, and Command, keep holding, then press H. Control and Option are side by side at the bottom left of the keyboard.")
+        XCTAssertEqual(LessonRunner.howToPress(KeyCombo(code: 48, vo: false)), "Press Tab on its own.")
+        XCTAssertTrue(LessonRunner.howToPress(KeyCombo(code: 99)).hasSuffix("On a laptop, also hold Fn for the F keys."))
+        XCTAssertEqual(LessonRunner.howToPress(KeyCombo(code: 37, vo: false, command: true, option: true)),
+                       "Hold Option and Command, keep holding, then press L.")
+    }
+
+    func testPracticeAreaTasks() {
+        let runner = LessonRunner()
+        XCTAssertFalse(Mission.pressedPlay.isDone(runner))
+        runner.pressedPlay = true
+        XCTAssertTrue(Mission.pressedPlay.isDone(runner))
+        runner.notes = " a"
+        XCTAssertFalse(Mission.typedInField.isDone(runner))
+        runner.notes = "hello"
+        XCTAssertTrue(Mission.typedInField.isDone(runner))
+        runner.subscribed = true
+        XCTAssertTrue(Mission.checkedSubscribe.isDone(runner))
+    }
+
+    func testEveryLessonHasSomethingToDo() {
+        for lesson in Lesson.all {
+            let tasks = lesson.steps.filter { if case .mission = $0.kind { true } else { false } }
+            XCTAssertFalse(lesson.practice.isEmpty && tasks.isEmpty, lesson.id)
+        }
+    }
+}
+
+final class KeyboardLayoutTests: XCTestCase {
+    func testLettersMatchWhereverTheyAre() {
+        // On a French keyboard, A is where Q is on a US keyboard (key code 12).
+        let readAll = KeyCombo(code: 0)
+        XCTAssertTrue(readAll.matches(keyCode: 12, flags: [.maskControl, .maskAlternate], letter: "a"))
+        XCTAssertFalse(readAll.matches(keyCode: 0, flags: [.maskControl, .maskAlternate], letter: "q"))
+        // Without a letter (US keyboard, older calls), the key is enough.
+        XCTAssertTrue(readAll.matches(keyCode: 0, flags: [.maskControl, .maskAlternate]))
+        // Arrows aren't letters, so they still go by key.
+        XCTAssertTrue(KeyCombo(code: 124).matches(keyCode: 124, flags: [.maskControl, .maskAlternate], letter: nil))
+        XCTAssertEqual(KeyCombo.describe(keyCode: 12, flags: [.maskControl, .maskAlternate], letter: "a"), "VO A")
+        // VoiceOver practice too: German Z is where Y is on a US keyboard (key code 16).
+        let repeatPhrase = Drill.all.first { $0.keyCode == 6 }!
+        XCTAssertTrue(repeatPhrase.matches(keyCode: 16, flags: [.maskControl, .maskAlternate], letter: "z"))
     }
 }

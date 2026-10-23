@@ -93,6 +93,7 @@ final class PermissionsModel: ObservableObject {
     private var timer: Timer?
 
     func start() {
+        guard timer == nil else { return }
         refresh()
         // Pick up changes made in System Settings while this window is open.
         timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in self?.refresh() }
@@ -118,6 +119,9 @@ struct PermissionsSection: View {
         Section(String(localized: "Permissions")) {
             Text(String(localized: "What the app is allowed to do. Each button opens the right page of System Settings, where you can turn VoiceOver Audio Split on or off."))
                 .font(.caption).foregroundStyle(.secondary)
+                // On one row, not the whole section: a Form applies section modifiers to every row.
+                .onAppear { model.start() }
+                .onDisappear { model.stop() }
             ForEach(Permission.allCases) { permission in
                 HStack(alignment: .firstTextBaseline) {
                     VStack(alignment: .leading, spacing: 2) {
@@ -142,8 +146,6 @@ struct PermissionsSection: View {
                 }
             }
         }
-        .onAppear { model.start() }
-        .onDisappear { model.stop() }
     }
 
     private func describe(_ status: Permission.Status?) -> String {

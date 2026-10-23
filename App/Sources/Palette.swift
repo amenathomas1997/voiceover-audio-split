@@ -32,16 +32,16 @@ struct PaletteEntry: Identifiable, Hashable {
         let preferences = Preferences.shared
         let commands = Command.allCases.filter { $0 != .commandPalette }.map { command in
             PaletteEntry(id: command.rawValue, title: command.title,
-                         detail: KeyMap.key(for: command).map { String(localized: "Right Option \($0.name)") } ?? "",
+                         detail: KeyMap.key(for: command).map { "\(preferences.modifier.title) \($0.name)" } ?? "",
                          action: .command(command))
         }
         let presets = preferences.presets.enumerated().map { index, preset in
             PaletteEntry(id: preset.id.uuidString, title: String(localized: "Preset: \(preset.name)"),
-                         detail: index < 9 ? String(localized: "Right Option \(index + 1)") : "", action: .preset(preset.id))
+                         detail: index < 9 ? "\(preferences.modifier.title) \(index + 1)" : "", action: .preset(preset.id))
         }
         let users = preferences.userCommands.map { command in
             PaletteEntry(id: command.id.uuidString, title: command.name,
-                         detail: command.key.flatMap(Key.named).map { String(localized: "Right Option \($0.name)") } ?? String(localized: "Your command"),
+                         detail: command.key.flatMap(Key.named).map { "\(preferences.modifier.title) \($0.name)" } ?? String(localized: "Your command"),
                          action: .user(command.id))
         }
         return commands + presets + users
@@ -178,10 +178,19 @@ final class Tutorial: ObservableObject {
         Announcer.say(String(localized: "Tutorial stopped"))
     }
 
+    private var advancing = false
+
     private func commandRan(_ command: Command) {
-        guard let lesson = current, lesson.command == command else { return }
-        // Let the command's own announcement come first.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { self.advance(saying: String(localized: "Well done. \(lesson.done)")) }
+        guard let lesson = current, lesson.command == command, !advancing else { return }
+        // Let the command's own announcement come first. Pressing the key again meanwhile
+        // doesn't skip a step, and a stop or restart cancels it.
+        advancing = true
+        let step = index
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            self.advancing = false
+            guard self.active, self.index == step else { return }
+            self.advance(saying: String(localized: "Well done. \(lesson.done)"))
+        }
     }
 
     private func advance(saying message: String?) {

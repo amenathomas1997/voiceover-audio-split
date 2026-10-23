@@ -55,6 +55,14 @@ final class Controller {
     /// Restores the saved state at launch, without announcing it.
     func restore() {
         preferences.onChange = { [weak self] in self?.update() }
+        // Capture can fail (permission turned off, an unusual output device); say so,
+        // at most every half minute, instead of announcing a split that does nothing.
+        var lastFailure = Date.distantPast
+        NotificationCenter.default.addObserver(forName: Splitter.failed, object: nil, queue: .main) { _ in
+            guard Date().timeIntervalSince(lastFailure) > 30 else { return }
+            lastFailure = Date()
+            Announcer.say(String(localized: "The sound split couldn't start. Check System audio recording in Settings, under Permissions, and try another output device."))
+        }
         watchFrontApp()
         AudioSystem.start()
         SystemStatus.start()
@@ -287,7 +295,8 @@ final class Controller {
         case .translate:
             TranslateModel.shared.loadClipboard()
             app?.showTranslate()
-            TranslateModel.shared.translate()
+            // After the window has appeared: it only reacts to requests made while it's showing.
+            DispatchQueue.main.async { TranslateModel.shared.translate() }
         case .audioMouse: AudioMouse.toggle()
         case .beepMode:
             preferences.beepsWhenSilenced.toggle()
@@ -391,6 +400,8 @@ final class Controller {
     }
 
     var frontAppName: String? { frontApp?.localizedName }
+    /// The app in front, or the last one before this app's own windows came forward.
+    var lastUsedApp: NSRunningApplication? { frontApp }
 
     /// The preset last switched on automatically, so switching between apps that
     /// share a preset doesn't announce it again.
@@ -438,7 +449,7 @@ final class Controller {
         guard let front = NSWorkspace.shared.frontmostApplication, let bundleID = front.bundleIdentifier,
               let script = SitePresets.browsers[bundleID] else { return }
         let rules = preferences.sitePresets
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             let host = AppleScriptRunner.run(script, logErrors: false).flatMap { URL(string: $0)?.host() }
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }

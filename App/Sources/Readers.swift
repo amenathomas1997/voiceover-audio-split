@@ -197,11 +197,19 @@ enum LabelReader {
         if let text { DispatchQueue.main.async { Announcer.say(text) } }
     }
 
-    /// The same line read again, or a longer or shorter reading of it, counts as heard.
-    private static func isHeard(_ line: String) -> Bool {
+    /// The same line read again, or a slightly longer or shorter reading of it, counts
+    /// as heard. A new line that only contains a short one heard before ("5 mg" inside
+    /// "Take 5 mg twice daily") is new.
+    static func isRepeat(_ line: String, of heard: [String]) -> Bool {
         let key = normalized(line)
-        return heard.contains { let other = normalized($0); return other.contains(key) || key.contains(other) }
+        return heard.contains { earlier in
+            let other = normalized(earlier)
+            guard other.contains(key) || key.contains(other) else { return false }
+            return Double(min(key.count, other.count)) >= 0.8 * Double(max(key.count, other.count))
+        }
     }
+
+    private static func isHeard(_ line: String) -> Bool { isRepeat(line, of: heard) }
 
     static func normalized(_ text: String) -> String {
         text.lowercased().filter { $0.isLetter || $0.isNumber }
@@ -232,10 +240,13 @@ enum MoneyReader {
         Tones.play(.status)
         Announcer.say(String(localized: "Hold the banknote flat, about 20 centimeters from the camera."))
         var frames = 0
+        var sent = false
         feed.start(preset: .high, { pixels in
             frames += 1
-            // Give the person time to hold it up after the instruction.
-            guard frames == 90, let jpeg = jpeg(pixels) else { return }
+            // Give the person time to hold it up after the instruction. If a picture
+            // can't be made, try the next one rather than waiting forever.
+            guard frames >= 90, !sent, let jpeg = jpeg(pixels) else { return }
+            sent = true
             DispatchQueue.main.async {
                 feed.stop()
                 Announcer.say(String(localized: "Identifying"))

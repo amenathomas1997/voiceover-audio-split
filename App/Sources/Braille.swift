@@ -15,7 +15,7 @@ enum Braille {
         ".": "4", ",": "1", ";": "2", ":": "3", "!": "6", "?": "8", "'": "'", "\u{2019}": "'", "\u{2018}": "'",
         "-": "-", "\u{2013}": ",-", "\u{2014}": ",-", "(": "\"<", ")": "\">", "[": ".<", "]": ".>", "/": "_/",
         "&": "@&", "@": "@a", "#": "_?", "$": "@s", "%": ".0", "*": "\"9", "+": "\"6", "=": "\"7",
-        "\u{201C}": "8", "\u{201D}": "0",
+        "\u{201C}": "8", "\u{201D}": "0", "\u{2026}": "444",
     ]
 
     /// One line of text in Braille ASCII, uncontracted UEB.
@@ -50,7 +50,8 @@ enum Braille {
             }
             if character.isLetter, character.isASCII {
                 // After a number, letters a to j would read as digits: end the number first.
-                if inNumber && "abcdefghij".contains(character.lowercased()) { output += ";" }
+                // (A capital sign ends the number by itself.)
+                if inNumber && character.isLowercase && "abcdefghij".contains(character) { output += ";" }
                 inNumber = false
                 if character.isUppercase && !allCaps { output += "," }
                 output += character.lowercased()

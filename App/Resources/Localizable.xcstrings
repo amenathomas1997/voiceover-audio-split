@@ -155,6 +155,28 @@
         }
       }
     },
+    "%@ can't be played right now. Try another one." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kann gerade nicht abgespielt werden. Versuche etwas anderes."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ no se puede reproducir ahora. Prueba con otro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ne peut pas être lu pour le moment. Essayez-en un autre."
+          }
+        }
+      }
+    },
     "%@ connected" : {
       "localizations" : {
         "de" : {
@@ -4951,6 +4973,28 @@
         }
       }
     },
+    "Comparing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird verglichen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comparando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comparaison"
+          }
+        }
+      }
+    },
     "Connected over Ethernet" : {
       "localizations" : {
         "de" : {
@@ -5673,6 +5717,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossible de lire la fenêtre"
+          }
+        }
+      }
+    },
+    "Couldn't read this page's address. In System Settings, Privacy and Security, Automation, let VoiceOver Audio Split control your browser." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Adresse dieser Seite konnte nicht gelesen werden. Erlaube VoiceOver Audio Split unter „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Automation“, deinen Browser zu steuern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer la dirección de esta página. En Ajustes del Sistema, Privacidad y seguridad, Automatización, permite que VoiceOver Audio Split controle tu navegador."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de lire l’adresse de cette page. Dans Réglages Système, Confidentialité et sécurité, Automatisation, autorisez VoiceOver Audio Split à contrôler votre navigateur."
           }
         }
       }
@@ -7235,6 +7301,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Terminé. %@"
+          }
+        }
+      }
+    },
+    "Finished: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu Ende: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminado: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminé : %@"
           }
         }
       }
@@ -15863,46 +15951,90 @@
         }
       }
     },
-    "Right Option %@" : {
+    "Right Command" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rechte Wahltaste %@"
+            "value" : "Rechte Befehlstaste"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opción derecha %@"
+            "value" : "Comando derecho"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Option droite %@"
+            "value" : "Commande droite"
           }
         }
       }
     },
-    "Right Option %lld" : {
+    "Right Control" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rechte Wahltaste %lld"
+            "value" : "Rechte Control-Taste"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opción derecha %lld"
+            "value" : "Control derecho"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Option droite %lld"
+            "value" : "Contrôle droite"
+          }
+        }
+      }
+    },
+    "Right Option" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechte Wahltaste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opción derecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Option droite"
+          }
+        }
+      }
+    },
+    "Right Shift" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechte Umschalttaste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mayúsculas derecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maj droite"
           }
         }
       }
@@ -17246,6 +17378,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Définissez le titre dans le programme qui a créé le PDF, ou dans Acrobat sous Fichier, Propriétés."
+          }
+        }
+      }
+    },
+    "Settings imported. Quit VoiceOver Audio Split and open it again to use them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen importiert. Beende VoiceOver Audio Split und öffne es erneut, um sie zu verwenden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes importados. Sal de VoiceOver Audio Split y vuelve a abrirlo para usarlos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglages importés. Quittez VoiceOver Audio Split et rouvrez-le pour les utiliser."
           }
         }
       }
@@ -18724,6 +18878,28 @@
         }
       }
     },
+    "Still working on the last request" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die letzte Anfrage läuft noch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía trabajando en la última solicitud"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dernière demande est toujours en cours"
+          }
+        }
+      }
+    },
     "Stop" : {
       "localizations" : {
         "de" : {
@@ -19692,6 +19868,28 @@
         }
       }
     },
+    "The camera isn't sending a picture. Check that it's connected and not in use, then try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Kamera liefert kein Bild. Prüfe, ob sie angeschlossen und nicht in Gebrauch ist, und versuche es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La cámara no envía imagen. Comprueba que esté conectada y no esté en uso, y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La caméra n’envoie pas d’image. Vérifiez qu’elle est connectée et pas utilisée, puis réessayez."
+          }
+        }
+      }
+    },
     "The clipboard has no text" : {
       "localizations" : {
         "de" : {
@@ -20000,6 +20198,28 @@
         }
       }
     },
+    "The sound split couldn't start. Check System audio recording in Settings, under Permissions, and try another output device." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Tonaufteilung konnte nicht starten. Prüfe „Systemaudioaufnahme“ in den Einstellungen unter „Berechtigungen“ und versuche ein anderes Ausgabegerät."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La división de sonido no pudo iniciarse. Revisa Grabación de audio del sistema en Ajustes, en Permisos, y prueba otro dispositivo de salida."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La séparation du son n’a pas pu démarrer. Vérifiez Enregistrement audio du système dans les Réglages, sous Autorisations, et essayez une autre sortie audio."
+          }
+        }
+      }
+    },
     "The split is off. You've finished the tutorial. Open it again any time from the menu." : {
       "localizations" : {
         "de" : {
@@ -20106,6 +20326,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il n'y a aucun texte à enregistrer"
+          }
+        }
+      }
+    },
+    "These texts are too long to compare. Try a part of each, up to about 15,000 words." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Texte sind zu lang zum Vergleichen. Versuche einen Teil von jedem, bis etwa 15.000 Wörter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estos textos son demasiado largos para compararlos. Prueba con una parte de cada uno, de hasta unas 15.000 palabras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ces textes sont trop longs pour être comparés. Essayez une partie de chacun, jusqu’à environ 15 000 mots."
           }
         }
       }
@@ -22442,6 +22684,28 @@
         }
       }
     },
+    "VoiceOver couldn't be restarted. In VoiceOver Utility, turn on Allow VoiceOver to be controlled with AppleScript, or press Command F5 twice." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver konnte nicht neu gestartet werden. Aktiviere im VoiceOver-Dienstprogramm „VoiceOver die Steuerung mit AppleScript erlauben“ oder drücke zweimal Befehl F5."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo reiniciar VoiceOver. En la Utilidad VoiceOver, activa Permitir que VoiceOver se controle con AppleScript, o pulsa Comando F5 dos veces."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de redémarrer VoiceOver. Dans Utilitaire VoiceOver, activez Autoriser le contrôle de VoiceOver avec AppleScript, ou appuyez deux fois sur Commande F5."
+          }
+        }
+      }
+    },
     "VoiceOver did not respond. Check the setting above. Until then, announcements use the Mac's standard voice." : {
       "localizations" : {
         "de" : {
@@ -23979,50 +24243,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "gris foncé"
-          }
-        }
-      }
-    },
-    "degrees Celsius" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grad Celsius"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "grados Celsius"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "degrés Celsius"
-          }
-        }
-      }
-    },
-    "degrees Fahrenheit" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grad Fahrenheit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "grados Fahrenheit"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "degrés Fahrenheit"
           }
         }
       }

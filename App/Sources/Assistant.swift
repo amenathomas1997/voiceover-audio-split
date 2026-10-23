@@ -137,7 +137,7 @@ enum ScreenPicture {
                 .intersection(CGRect(x: 0, y: 0, width: display.width, height: display.height))
         }
         configuration.sourceRect = area
-        let scale = CGFloat(NSScreen.main?.backingScaleFactor ?? 2)
+        let scale = await MainActor.run { backingScale(of: display.displayID) }
         configuration.width = Int(area.width * scale)
         configuration.height = Int(area.height * scale)
         let filter = SCContentFilter(display: display, excludingWindows: [])
@@ -146,6 +146,33 @@ enum ScreenPicture {
             throw Failure(message: String(localized: "Couldn't capture the screen."))
         }
         return png
+    }
+
+    /// The pixel scale of one display (2 for most Retina screens), not just the main one.
+    @MainActor
+    private static func backingScale(of displayID: CGDirectDisplayID) -> CGFloat {
+        let screen = NSScreen.screens.first {
+            ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value == displayID
+        }
+        return screen?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
+    }
+
+    /// A picture made small enough to send: at most 2576 pixels on its long side, as
+    /// JPEG. A full 5K screen as PNG is over the API's 5 MB limit for one image.
+    static func forUpload(_ png: Data) -> Data {
+        guard let source = NSBitmapImageRep(data: png)?.cgImage else { return png }
+        let longest = CGFloat(max(source.width, source.height))
+        let scale = min(1, 2576 / longest)
+        let width = Int(CGFloat(source.width) * scale), height = Int(CGFloat(source.height) * scale)
+        guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                      space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return png }
+        context.interpolationQuality = .high
+        context.setFillColor(.white)
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
+        guard let image = context.makeImage() else { return png }
+        return NSBitmapImageRep(cgImage: image).representation(using: .jpeg, properties: [.compressionFactor: 0.85]) ?? png
     }
 
     /// A PNG of the front window of the app in front (leaving out this app's own windows).
@@ -167,7 +194,8 @@ enum ScreenPicture {
             throw Failure(message: String(localized: "No window to read."))
         }
         let configuration = SCStreamConfiguration()
-        let scale = CGFloat(NSScreen.main?.backingScaleFactor ?? 2)
+        let displayID = content.displays.first { $0.frame.intersects(window.frame) }?.displayID ?? CGMainDisplayID()
+        let scale = await MainActor.run { backingScale(of: displayID) }
         configuration.width = Int(window.frame.width * scale)
         configuration.height = Int(window.frame.height * scale)
         let image = try await SCScreenshotManager.captureImage(
@@ -214,6 +242,8 @@ final class AssistantModel: ObservableObject {
 
     /// Starts a new conversation about a picture of the screen.
     func describeImage(_ target: ImageTarget = .voiceOverCursor) {
+        // One request at a time, so a second press can't mix two conversations.
+        guard !busy else { return Announcer.say(String(localized: "Still working on the last request")) }
         guard Preferences.shared.allowImageUpload else {
             waitingForImageConsent = true
             showWindow?()
@@ -241,8 +271,8 @@ final class AssistantModel: ObservableObject {
                 }
                 if opensWindow { showWindow?() }
                 let content: [[String: Any]] = [
-                    ["type": "image", "source": ["type": "base64", "media_type": "image/png",
-                                                 "data": png.base64EncodedString()]],
+                    ["type": "image", "source": ["type": "base64", "media_type": "image/jpeg",
+                                                 "data": ScreenPicture.forUpload(png).base64EncodedString()]],
                     ["type": "text", "text": request],
                 ]
                 await send(content)

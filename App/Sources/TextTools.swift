@@ -110,9 +110,20 @@ final class CompareModel: ObservableObject {
     func compare() {
         guard let original else { return report(String(localized: "Save the original first.")) }
         guard let text = clipboardText() else { return }
-        changes = TextCompare.changes(from: original, to: text)
+        // Comparing two long, very different texts takes a long time; this keeps it to seconds.
+        let words = original.split(whereSeparator: \.isWhitespace).count + text.split(whereSeparator: \.isWhitespace).count
+        guard words <= 30_000 else {
+            return report(String(localized: "These texts are too long to compare. Try a part of each, up to about 15,000 words."))
+        }
         self.original = nil
-        report(TextCompare.summary(changes))
+        report(String(localized: "Comparing"))
+        DispatchQueue.global(qos: .userInitiated).async {
+            let found = TextCompare.changes(from: original, to: text)
+            DispatchQueue.main.async {
+                self.changes = found
+                self.report(TextCompare.summary(found))
+            }
+        }
     }
 
     func startOver() {

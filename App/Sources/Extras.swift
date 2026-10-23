@@ -48,6 +48,10 @@ enum ClipboardWatcher {
                 let count = NSPasteboard.general.changeCount
                 guard count != lastCount else { return }
                 lastCount = count
+                // Password managers mark what they copy as concealed: never read that aloud.
+                let types = NSPasteboard.general.types ?? []
+                let concealed = ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType", "com.agilebits.onepassword"]
+                if types.contains(where: { concealed.contains($0.rawValue) }) { return }
                 let description = Clipboard.describe()
                 let shown = description.count > 120 ? String(description.prefix(120)) + "…" : description
                 Announcer.say(String(localized: "Copied: \(shown)"))
@@ -71,6 +75,7 @@ enum AudioMouse {
     nonisolated(unsafe) private static var level: Double = 0
     nonisolated(unsafe) private static var phase: Double = 0
     private static var fadeWork: DispatchWorkItem?
+    private static var configurationObserver: Any?
 
     static var isOn: Bool { !monitors.isEmpty }
 
@@ -99,7 +104,15 @@ enum AudioMouse {
         let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 2)!
         engine.attach(source)
         engine.connect(source, to: engine.mainMixerNode, format: format)
-        do { try engine.start() } catch { return Announcer.say(String(localized: "Audio mouse couldn't start")) }
+        do { try engine.start() } catch {
+            engine.detach(source) // Otherwise the next try adds a second tone.
+            return Announcer.say(String(localized: "Audio mouse couldn't start"))
+        }
+        // Switching the output device stops the engine; start it again so the tone carries on.
+        configurationObserver = NotificationCenter.default.addObserver(
+            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { _ in
+            if isOn && !engine.isRunning { try? engine.start() }
+        }
         let handler: (NSEvent) -> Void = { _ in moved() }
         if let global = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged], handler: handler) {
             monitors.append(global)
@@ -116,6 +129,8 @@ enum AudioMouse {
     private static func stop() {
         monitors.forEach(NSEvent.removeMonitor)
         monitors.removeAll()
+        if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
+        configurationObserver = nil
         engine.stop()
         for node in engine.attachedNodes where node is AVAudioSourceNode { engine.detach(node) }
         Announcer.say(String(localized: "Audio mouse off"))

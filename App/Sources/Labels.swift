@@ -30,6 +30,8 @@ enum CustomLabels {
     private static let queue = DispatchQueue(label: "VoiceOverAudioSplit.labels")
     nonisolated(unsafe) private static var lastBounds: CGRect?
     nonisolated(unsafe) private static var labels: [CustomLabel] = []
+    /// The label last spoken, so scrolling with the cursor on the same control doesn't repeat it.
+    nonisolated(unsafe) private static var lastSpoken: UUID?
 
     /// Watches the VoiceOver cursor while any label exists.
     static func update(_ current: [CustomLabel]) {
@@ -52,8 +54,11 @@ enum CustomLabels {
               labels.contains(where: { $0.element.bundleID == front }),
               let bounds = VoiceOverText.cursorBounds(), bounds != lastBounds else { return }
         lastBounds = bounds
-        guard let element = AX.underVoiceOverCursor(), let signature = ElementSignature(element),
-              let match = labels.first(where: { $0.element.matches(signature) }) else { return }
+        let match = AX.underVoiceOverCursor().flatMap(ElementSignature.init).flatMap { signature in
+            labels.first { $0.element.matches(signature) }
+        }
+        defer { lastSpoken = match?.id }
+        guard let match, match.id != lastSpoken else { return }
         // Let VoiceOver start describing the control first.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { Announcer.say(match.label) }
     }
@@ -132,7 +137,9 @@ enum PlaceMarkers {
     /// The current page: the front browser tab's address, or the front app.
     static func currentPage() -> String? {
         guard let app = NSWorkspace.shared.frontmostApplication, let bundleID = app.bundleIdentifier else { return nil }
-        if let script = SitePresets.browsers[bundleID], let address = AppleScriptRunner.run(script, logErrors: false) {
+        if let script = SitePresets.browsers[bundleID] {
+            // In a browser, markers belong to the page; if the address can't be read, don't guess.
+            guard let address = AppleScriptRunner.run(script, logErrors: false), !address.isEmpty else { return nil }
             return page(for: address)
         }
         return "app:" + bundleID
@@ -149,7 +156,8 @@ enum PlaceMarkers {
     static func add() {
         queue.async {
             guard Hotkeys.isTrusted else { return say(String(localized: "Allow keyboard shortcuts in Settings first; place markers use the same permission.")) }
-            guard let page = currentPage(), let element = AX.underVoiceOverCursor(), let signature = ElementSignature(element) else {
+            guard let page = currentPage() else { return say(addressUnavailable) }
+            guard let element = AX.underVoiceOverCursor(), let signature = ElementSignature(element) else {
                 return say(String(localized: "No item under the VoiceOver cursor"))
             }
             let spoken = (VoiceOverText.itemUnderCursor() ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -167,7 +175,7 @@ enum PlaceMarkers {
     static func next() {
         let markers = Preferences.shared.placeMarkers
         queue.async {
-            guard let page = currentPage() else { return }
+            guard let page = currentPage() else { return say(addressUnavailable) }
             let here = markers.filter { $0.page == page }
             guard !here.isEmpty else { return say(String(localized: "No place markers on this page. Add one with Add a Place Marker.")) }
             let index = (nextIndex[page] ?? 0) % here.count
@@ -183,14 +191,28 @@ enum PlaceMarkers {
 
     /// The element matching a signature: same identifier or text first, then the same place.
     static func find(_ signature: ElementSignature, in window: AXUIElement) -> AXUIElement? {
-        let candidates = AX.descendants(of: window).filter { AX.string($0, kAXRoleAttribute) == signature.role }
-        return candidates.first { ElementSignature($0)?.matches(signature) == true }
-            ?? candidates.first { !signature.text.isEmpty && AX.text($0).localizedCaseInsensitiveContains(signature.text) }
+        let candidates = AX.descendants(of: window).compactMap { element -> (AXUIElement, ElementSignature)? in
+            guard AX.string(element, kAXRoleAttribute) == signature.role, let found = ElementSignature(element) else { return nil }
+            return (element, found)
+        }
+        // Of several controls with the same name (three Reply buttons), the one nearest the saved spot.
+        func distance(_ other: ElementSignature) -> Int { abs(other.x - signature.x) + abs(other.y - signature.y) }
+        let same = candidates.filter { $0.1.matches(signature) }
+            .ifEmpty(candidates.filter { !signature.text.isEmpty && $0.1.text.caseInsensitiveCompare(signature.text) == .orderedSame })
+        return same.min { distance($0.1) < distance($1.1) }?.0
     }
 
     private static func say(_ text: String) {
         DispatchQueue.main.async { Announcer.say(text) }
     }
+
+    private static var addressUnavailable: String {
+        String(localized: "Couldn't read this page's address. In System Settings, Privacy and Security, Automation, let VoiceOver Audio Split control your browser.")
+    }
+}
+
+private extension Array {
+    func ifEmpty(_ other: @autoclosure () -> [Element]) -> [Element] { isEmpty ? other() : self }
 }
 
 struct PlaceMarkersSection: View {

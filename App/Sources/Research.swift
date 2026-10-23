@@ -63,10 +63,10 @@ enum Research {
         var search = URLComponents(string: "https://en.wikipedia.org/w/api.php")!
         search.queryItems = [.init(name: "action", value: "opensearch"), .init(name: "search", value: topic),
                              .init(name: "limit", value: "1"), .init(name: "format", value: "json")]
-        guard let results = try await json(search.url!) as? [Any], results.count > 1,
+        guard let results = try await json(search.encodedURL) as? [Any], results.count > 1,
               let title = (results[1] as? [String])?.first else { return String(localized: "No Wikipedia article found for \(topic)") }
         let path = title.replacingOccurrences(of: " ", with: "_")
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? title
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed.subtracting(CharacterSet(charactersIn: "/"))) ?? title
         guard let summary = try await json(URL(string: "https://en.wikipedia.org/api/rest_v1/page/summary/\(path)")!)
                 as? [String: Any],
               let extract = summary["extract"] as? String else { return String(localized: "No summary available for \(title)") }
@@ -76,7 +76,7 @@ enum Research {
     private static func weather(_ city: String) async throws -> String {
         var geocode = URLComponents(string: "https://geocoding-api.open-meteo.com/v1/search")!
         geocode.queryItems = [.init(name: "name", value: city), .init(name: "count", value: "1")]
-        guard let places = (try await json(geocode.url!) as? [String: Any])?["results"] as? [[String: Any]],
+        guard let places = (try await json(geocode.encodedURL) as? [String: Any])?["results"] as? [[String: Any]],
               let place = places.first,
               let latitude = place["latitude"] as? Double, let longitude = place["longitude"] as? Double else {
             return String(localized: "Couldn't find a place called \(city)")
@@ -97,7 +97,6 @@ enum Research {
               let daily = result["daily"] as? [String: Any] else { return String(localized: "No weather available for \(name)") }
         func number(_ value: Any?) -> Int? { (value as? Double).map { Int($0.rounded()) } }
         func first(_ key: String) -> Int? { number((daily[key] as? [Any])?.first) }
-        let unit = fahrenheit ? String(localized: "degrees Fahrenheit") : String(localized: "degrees Celsius")
         var parts = ["\(name): \(describe(code: current["weather_code"] as? Int ?? -1))"]
         if let temperature = number(current["temperature_2m"]) {
             parts.append(fahrenheit ? String(localized: "\(temperature) degrees Fahrenheit") : String(localized: "\(temperature) degrees Celsius"))
@@ -170,5 +169,15 @@ struct ResearchView: View {
             busy = false
             Announcer.say(answer)
         }
+    }
+}
+
+extension URLComponents {
+    /// The address with "+" in search text kept as a plus sign. URLComponents leaves "+"
+    /// alone, and most servers read it as a space, so "C++" would search for "C".
+    var encodedURL: URL {
+        var copy = self
+        copy.percentEncodedQuery = percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+        return copy.url!
     }
 }

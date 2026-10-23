@@ -56,6 +56,8 @@ final class PracticeModel: ObservableObject {
     let rounds = 10
     private var queue: [Drill] = []
     private var firstTry = true
+    /// Counts starts and stops, so a delayed step from an earlier run is ignored.
+    private var session = 0
 
     func start() {
         queue = Array(Drill.all.shuffled().prefix(rounds))
@@ -63,16 +65,24 @@ final class PracticeModel: ObservableObject {
         score = 0
         running = true
         lastResult = ""
+        current = nil
+        session += 1
+        let thisSession = session
         TypingTrainer.shared.stop()
         Hotkeys.keyObserver = { [weak self] keyCode, flags, _ in self?.handle(keyCode, flags) ?? false }
         let mode = learnMode ? String(localized: "Learn mode: I'll say the keys too.") : String(localized: "Quiz mode.")
         Announcer.say(String(localized: "VoiceOver practice. \(mode) Press Escape to stop."))
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in self?.next() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
+            guard self?.session == thisSession else { return }
+            self?.next()
+        }
     }
 
     func stop() {
-        Hotkeys.keyObserver = nil
+        // Only release the keys if practice holds them; the typing trainer may be using them.
         guard running else { return }
+        Hotkeys.keyObserver = nil
+        session += 1
         running = false
         current = nil
         Announcer.say(String(localized: "Practice stopped. \(score) right out of \(round)."))
@@ -108,14 +118,22 @@ final class PracticeModel: ObservableObject {
             DispatchQueue.main.async { self.stop() }
             return true
         }
-        guard flags.contains([.maskControl, .maskAlternate]), let drill = current else { return false }
+        // While practice runs, every VO key is taken, also between tasks, so nothing moves.
+        guard flags.contains([.maskControl, .maskAlternate]), running else { return false }
         DispatchQueue.main.async {
+            // Between tasks (or after a quick second press) there's nothing to answer.
+            guard self.running, let drill = self.current else { return }
             if drill.matches(keyCode: keyCode, flags: flags) {
                 if self.firstTry { self.score += 1 }
+                self.current = nil
                 self.lastResult = String(localized: "Right: \(drill.keys)")
                 Tones.play(.louder)
                 Announcer.say(String(localized: "Right."))
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { self.next() }
+                let thisSession = self.session
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                    guard self.session == thisSession else { return }
+                    self.next()
+                }
             } else {
                 self.firstTry = false
                 Tones.play(.quieter)

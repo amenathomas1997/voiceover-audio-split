@@ -70,6 +70,14 @@ enum VoiceOverRescue {
                 for _ in 0..<20 where NSWorkspace.shared.isVoiceOverEnabled {
                     try? await Task.sleep(for: .milliseconds(250))
                 }
+                if NSWorkspace.shared.isVoiceOverEnabled {
+                    // VoiceOver didn't quit, usually because AppleScript control is off.
+                    await MainActor.run {
+                        Announcer.useSystemVoice = Controller.shared.speechSilenced
+                        Announcer.say(String(localized: "VoiceOver couldn't be restarted. In VoiceOver Utility, turn on Allow VoiceOver to be controlled with AppleScript, or press Command F5 twice."))
+                    }
+                    return
+                }
             }
             let configuration = NSWorkspace.OpenConfiguration()
             configuration.activates = false

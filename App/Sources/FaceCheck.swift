@@ -9,7 +9,10 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     static let shared = FaceCheck()
 
     private let queue = DispatchQueue(label: "VoiceOverAudioSplit.camera")
+    /// Main thread: set while a check is under way.
     private var session: AVCaptureSession?
+    /// Camera queue: the session that is running, and its frame count.
+    private var running: AVCaptureSession?
     private var frames = 0
     private var completion: ((String) -> Void)?
 
@@ -44,9 +47,27 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         session.addInput(input)
         session.addOutput(output)
         self.session = session
-        self.completion = completion
-        frames = 0
-        queue.async { session.startRunning() }
+        queue.async {
+            self.running = session
+            self.completion = completion
+            self.frames = 0
+            session.startRunning()
+        }
+        // If the camera never sends a picture, say so instead of waiting forever.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+            guard let self, self.session === session else { return }
+            self.queue.async {
+                guard let running = self.running, running === session else { return }
+                running.stopRunning()
+                self.running = nil
+                let completion = self.completion
+                self.completion = nil
+                DispatchQueue.main.async {
+                    self.session = nil
+                    completion?(String(localized: "The camera isn't sending a picture. Check that it's connected and not in use, then try again."))
+                }
+            }
+        }
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer,
@@ -55,11 +76,14 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         // Skip the first second or so while the camera adjusts its exposure.
         guard frames == 30, let pixels = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let message = Self.describe(pixels)
-        session?.stopRunning()
-        session = nil
+        running?.stopRunning()
+        running = nil
         let completion = self.completion
         self.completion = nil
-        DispatchQueue.main.async { completion?(message) }
+        DispatchQueue.main.async {
+            self.session = nil
+            completion?(message)
+        }
     }
 
     private static func describe(_ pixels: CVPixelBuffer) -> String {

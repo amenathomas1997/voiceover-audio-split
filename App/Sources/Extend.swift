@@ -201,8 +201,14 @@ enum Relaunch {
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.createsNewApplicationInstance = true
         configuration.activates = false
-        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { _, _ in
-            DispatchQueue.main.async { NSApp.terminate(nil) }
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { _, error in
+            DispatchQueue.main.async {
+                // Only quit once the new copy is running; otherwise the shortcuts would just vanish.
+                guard error == nil else {
+                    return Announcer.say(String(localized: "Settings imported. Quit VoiceOver Audio Split and open it again to use them."))
+                }
+                NSApp.terminate(nil)
+            }
         }
     }
 }

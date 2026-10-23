@@ -98,6 +98,11 @@ enum Hotkeys {
         }
         guard type == .keyDown else { return Unmanaged.passUnretained(event) }
 
+        // A held key whose first press was taken: take its repeats too, so they don't
+        // reach VoiceOver or type into the app (and so a held layer key doesn't cancel the layer).
+        let isRepeat = event.getIntegerValueField(.keyboardEventAutorepeat) != 0
+        if isRepeat && swallowedKeys.contains(keyCode) { return nil }
+
         if let observer = keyObserver, event.getIntegerValueField(.keyboardEventAutorepeat) == 0,
            observer(keyCode, event.flags, NSEvent(cgEvent: event)?.characters ?? "") {
             swallowedKeys.insert(keyCode)
@@ -126,7 +131,12 @@ enum Hotkeys {
               flags.rawValue & rightBit != 0,
               flags.rawValue & leftBit == 0,
               flags.intersection(otherModifiers).isEmpty
-        else { return Unmanaged.passUnretained(event) }
+        else {
+            // Passed on whole: forget any old taken press of this key whose release was missed
+            // (for example in a password field), so this release reaches the app.
+            swallowedKeys.remove(keyCode)
+            return Unmanaged.passUnretained(event)
+        }
 
         // Swallow the key either way so held keys don't type into the focused app.
         swallowedKeys.insert(keyCode)

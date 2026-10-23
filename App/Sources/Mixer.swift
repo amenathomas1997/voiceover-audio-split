@@ -21,6 +21,8 @@ import Foundation
 enum Mixer {
     enum Source: Equatable {
         case speech, others, calls
+        /// Call apps set to go with VoiceOver: placed like speech, but not silenced with it.
+        case callsWithSpeech
         case app(String)
     }
 
@@ -102,6 +104,9 @@ enum Mixer {
     // MARK: Main thread
 
     static var state = State() { didSet { recompute() } }
+    /// Set by the Splitter: output channels of the main device. A mono device (AirPods in
+    /// a call, a USB speaker) gets everything on its one channel instead of losing an ear.
+    static var mainChannels = 2 { didSet { recompute() } }
     /// Set by the Splitter: one entry per tap, in tap order.
     static var sources: [Source] = [] { didSet { recompute() } }
     /// Set by the Splitter: the first output channel of the speech device when
@@ -178,6 +183,15 @@ enum Mixer {
             case .calls:
                 placement = place(.both, stereo: true)
                 gain = othersGain
+            case .callsWithSpeech:
+                if separateSpeech, let base = speechDeviceChannel {
+                    placement = place(.both, stereo: false, base: base)
+                } else if s.split == nil || s.layout == .speechBoth {
+                    placement = place(.both, stereo: true)
+                } else {
+                    placement = place(speechEar, stereo: false)
+                }
+                gain = s.quietAll ? 1 : s.speechGain
             case .app(let bundleID):
                 let rule = s.appRules.first { $0.bundleID == bundleID } ?? AppRule(name: "", bundleID: bundleID)
                 switch rule.ear {
@@ -195,6 +209,16 @@ enum Mixer {
                         toneFilters[index * 4 + 2 + side].setHighShelf(frequency: 4000, gainDB: Double(rule.treble), sampleRate: sampleRate)
                     }
                 }
+            }
+            if mainChannels == 1 {
+                // One speaker: both ears' routes play on it, at the level of one.
+                let left = placement[0], right = placement[1]
+                if let left, let right {
+                    placement[0] = Route(fromLeft: (left.fromLeft + right.fromLeft) / 2, fromRight: (left.fromRight + right.fromRight) / 2)
+                } else if let right {
+                    placement[0] = right
+                }
+                placement[1] = nil
             }
             for (channel, route) in placement where channel < maxChannels {
                 table[index * maxChannels + channel] = Route(fromLeft: route.fromLeft * gain,
@@ -234,16 +258,18 @@ enum Mixer {
 
     /// Mixes one buffer from `sourceData` (filled for `count` sources) into `output`.
     static func render(count: Int, tapFrames: Int, output: UnsafeMutableAudioBufferListPointer) {
-        let frames = min(tapFrames, maxFrames)
+        var frames = min(tapFrames, maxFrames)
         let sources = min(count, routedSources)
 
         // Map every output channel to its memory, interleaved or not, and clear it.
         var totalChannels = 0
+        var outputFrames = Int.max
         for buffer in output {
             guard let data = buffer.mData else { continue }
             let channels = max(Int(buffer.mNumberChannels), 1)
             let samples = data.assumingMemoryBound(to: Float.self)
             let bufferFrames = Int(buffer.mDataByteSize) / MemoryLayout<Float>.size / channels
+            outputFrames = min(outputFrames, bufferFrames)
             for i in 0..<(bufferFrames * channels) { samples[i] = 0 }
             for c in 0..<channels where totalChannels < maxChannels {
                 channelBase[totalChannels] = samples + c
@@ -251,6 +277,8 @@ enum Mixer {
                 totalChannels += 1
             }
         }
+        // Never write past the end of the smallest output buffer.
+        frames = min(frames, outputFrames == .max ? 0 : outputFrames)
         guard frames > 0 else { return }
 
         // Speech: detect it (for ducking) and apply the clarity boost.
@@ -336,6 +364,22 @@ enum Mixer {
         let release = 1 - expf(-1 / Float(renderRate * 0.15))
         for p in 0..<pairCount {
             let l = pairs[p], r = pairs[p] + 1
+            if r >= totalChannels, l < totalChannels, let mono = channelBase[l] {
+                // A one-channel device: still apply the volume limit and the safety clamp.
+                let stride = channelStride[l]
+                var gain = limiterGain[p]
+                for f in 0..<frames {
+                    var a = mono[f * stride] * max(earGainLeft, earGainRight)
+                    if limiterEnabled {
+                        let target = abs(a) > limiterCeiling ? limiterCeiling / abs(a) : 1
+                        gain = min(target, gain + (1 - gain) * release)
+                        a *= gain
+                    }
+                    mono[f * stride] = max(-1, min(1, a))
+                }
+                limiterGain[p] = gain
+                continue
+            }
             guard r < totalChannels, let left = channelBase[l], let right = channelBase[r] else { continue }
             let ls = channelStride[l], rs = channelStride[r]
             var gain = limiterGain[p]

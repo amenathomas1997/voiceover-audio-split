@@ -111,6 +111,7 @@ enum FocusFrame {
         guard let panel else { return }
         guard let bounds, bounds.width > 2, bounds.height > 2 else {
             panel.orderOut(nil)
+            lastBounds = nil // So the frame comes back even if the cursor is in the same place.
             return
         }
         guard bounds != lastBounds else { return }

@@ -49,7 +49,14 @@ enum ShortcutModifier: String, CaseIterable, Identifiable {
     case option, command, control, shift
 
     var id: String { rawValue }
-    var title: String { "Right \(rawValue.capitalized)" }
+    var title: String {
+        switch self {
+        case .option: String(localized: "Right Option")
+        case .command: String(localized: "Right Command")
+        case .control: String(localized: "Right Control")
+        case .shift: String(localized: "Right Shift")
+        }
+    }
 }
 
 /// An app whose audio counts as a call. Matched by bundle ID prefix, because

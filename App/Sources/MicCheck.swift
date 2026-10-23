@@ -14,7 +14,8 @@ enum MicCheck {
         let clipped: Bool
     }
 
-    private static let engine = AVAudioEngine()
+    /// A new engine for each check, so a microphone change since the last one is picked up.
+    private static var engine = AVAudioEngine()
     private static var running = false
 
     static func run() {
@@ -39,9 +40,10 @@ enum MicCheck {
     }
 
     private static func listen() {
+        engine = AVAudioEngine()
         let input = engine.inputNode
         let format = input.outputFormat(forBus: 0)
-        guard format.sampleRate > 0 else {
+        guard format.sampleRate > 0, format.channelCount > 0 else {
             running = false
             return Announcer.say(String(localized: "No microphone found"))
         }

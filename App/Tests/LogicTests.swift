@@ -602,3 +602,89 @@ final class TypingSoundTests: XCTestCase {
         XCTAssertLessThan(abs(wrong.last!), 0.01)
     }
 }
+
+/// Fixes from the code audit, October 2026.
+final class AuditFixTests: XCTestCase {
+    override func tearDown() {
+        Mixer.mainChannels = 2
+        Mixer.sources = []
+        Mixer.state = Mixer.State()
+    }
+
+    func testMonoDeviceKeepsBothEarsSounds() {
+        Mixer.mainChannels = 1
+        Mixer.sources = [.speech, .others]
+        Mixer.state = Mixer.State(split: .right)
+        // Speech would be on channel 1, which a mono device doesn't have: it plays on channel 0.
+        XCTAssertGreaterThan(Mixer.route(source: 0, channel: 0).fromLeft, 0)
+        XCTAssertGreaterThan(Mixer.route(source: 1, channel: 0).fromLeft, 0)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 1).fromLeft, 0)
+    }
+
+    func testCallsWithSpeechAreNotSilencedWithVoiceOver() {
+        Mixer.sources = [.speech, .others, .callsWithSpeech]
+        Mixer.state = Mixer.State(split: .left, speechMuted: true)
+        XCTAssertEqual(Mixer.route(source: 0, channel: 0).fromLeft, 0, "VoiceOver silenced")
+        XCTAssertGreaterThan(Mixer.route(source: 2, channel: 0).fromLeft, 0, "the call stays, in the speech ear")
+        XCTAssertEqual(Mixer.route(source: 2, channel: 1).fromLeft, 0)
+    }
+
+    func testMedicineLabelKeepsNewLinesContainingShortOnes() {
+        XCTAssertFalse(LabelReader.isRepeat("Take 5 mg twice daily", of: ["5 mg"]))
+        XCTAssertTrue(LabelReader.isRepeat("IBUPROFEN 200mg", of: ["IBUPROFEN 200 mg"]))
+        XCTAssertTrue(LabelReader.isRepeat("Take one tablet daily.", of: ["Take one tablet daily"]))
+    }
+
+    func testWordHeadingsInOtherLanguagesAndDecorativePictures() {
+        let styles = """
+        <w:styles><w:style w:type="paragraph" w:styleId="berschrift1"><w:name w:val="heading 1"/></w:style>
+        <w:style w:type="paragraph" w:styleId="Titel"><w:name w:val="Title"/></w:style></w:styles>
+        """
+        XCTAssertEqual(DocumentCheck.headingLevels(styles), ["berschrift1": 1, "Titel": 0])
+        let document = """
+        <w:document><w:body><w:p><w:pPr><w:pStyle w:val="berschrift1"/></w:pPr><w:r><w:t>Einleitung</w:t></w:r></w:p>
+        <w:p><w:r><w:drawing><wp:docPr id="1" name="Bild 1"><a:extLst><a:ext><adec:decorative xmlns:adec="http://schemas.microsoft.com/office/drawing/2017/decorative" val="1"/></a:ext></a:extLst></wp:docPr></w:drawing></w:r></w:p>
+        <w:tbl><w:tr><w:tc><w:p/></w:tc><w:tc><w:p/></w:tc><w:tc><w:p/></w:tc></w:tr></w:tbl>
+        <w:p><w:r><w:br w:type="page"/></w:r></w:p><w:p/><w:p/>
+        </w:body></w:document>
+        """
+        let findings = DocumentCheck.checkWord(["word/document.xml": Data(document.utf8), "word/styles.xml": Data(styles.utf8)]).map(\.problem)
+        XCTAssertFalse(findings.contains { $0.contains("heading") }, "\(findings)")
+        XCTAssertFalse(findings.contains { $0.contains("picture") }, "\(findings)")
+        XCTAssertFalse(findings.contains { $0.contains("Blank lines") }, "\(findings)")
+    }
+
+    func testDamagedZipDoesNotCrash() {
+        var bytes = [UInt8](repeating: 0, count: 40)
+        bytes += [0x50, 0x4b, 0x05, 0x06, 0, 0, 0, 0, 1, 0, 1, 0, 0x33, 0, 0, 0, 0x20, 0, 0, 0, 0, 0]
+        XCTAssertEqual(Zip.entries(Data(bytes))?.count, 0)
+    }
+
+    func testBrailleCapitalAfterNumberAndEllipsis() {
+        XCTAssertEqual(Braille.translate("3D"), "#c,d")
+        XCTAssertEqual(Braille.translate("3d"), "#c;d")
+        XCTAssertEqual(Braille.translate("wait\u{2026}"), "wait444")
+    }
+
+    func testFeedSummariesLoseTags() {
+        XCTAssertEqual(RSSFeed.plain("<p>Tom &amp; Jerry&#8217;s <b>show</b></p><br/>Part&nbsp;2"), "Tom & Jerry\u{2019}s show Part 2")
+    }
+
+    func testPlusSignsSurviveInSearches() {
+        var components = URLComponents(string: "https://example.com/search")!
+        components.queryItems = [.init(name: "term", value: "C++ tips")]
+        XCTAssertEqual(components.encodedURL.absoluteString, "https://example.com/search?term=C%2B%2B%20tips")
+    }
+
+    func testPicturesForClaudeAreShrunk() throws {
+        let image = NSImage(size: NSSize(width: 5120, height: 2880), flipped: false) { rect in
+            NSColor.systemBlue.setFill(); rect.fill(); return true
+        }
+        let rep = try XCTUnwrap(NSBitmapImageRep(data: try XCTUnwrap(image.tiffRepresentation)))
+        let png = try XCTUnwrap(rep.representation(using: .png, properties: [:]))
+        let upload = ScreenPicture.forUpload(png)
+        let result = try XCTUnwrap(NSBitmapImageRep(data: upload))
+        XCTAssertLessThanOrEqual(max(result.pixelsWide, result.pixelsHigh), 2576)
+        XCTAssertLessThan(upload.count, 5_000_000)
+    }
+}

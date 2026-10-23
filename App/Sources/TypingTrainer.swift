@@ -149,6 +149,11 @@ final class TypingTrainer: ObservableObject {
     private var errors = 0
     private var started = Date()
     private var deadline: Date?
+    /// Counts starts and stops, so a delayed step from an earlier lesson is ignored.
+    private var session = 0
+    /// The trainer's window: keys are only taken while it's the one in front, so typing
+    /// in the command palette or Settings during a lesson still works.
+    weak var window: NSWindow?
     /// Hints are given the first time a key comes up in a lesson, and after a mistake.
     private var hinted = Set<Character>()
 
@@ -174,12 +179,16 @@ final class TypingTrainer: ObservableObject {
         errors = 0
         hinted = []
         result = ""
+        current = ""
+        typed = ""
         running = true
         deadline = nil
+        session += 1
+        let thisSession = session
         Hotkeys.keyObserver = { [weak self] keyCode, flags, characters in self?.handle(keyCode, flags, characters) ?? false }
         Announcer.say(intro)
         DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
-            guard let self, self.running else { return }
+            guard let self, self.running, self.session == thisSession else { return }
             self.started = Date()
             if self.speedTest { self.deadline = Date().addingTimeInterval(60) }
             self.next()
@@ -190,6 +199,9 @@ final class TypingTrainer: ObservableObject {
         guard running else { return }
         Hotkeys.keyObserver = nil
         running = false
+        session += 1
+        current = ""
+        typed = ""
         Announcer.say(String(localized: "Typing practice stopped. \(summary())"))
     }
 
@@ -222,7 +234,7 @@ final class TypingTrainer: ObservableObject {
 
     /// Takes plain and shifted typing and Escape; anything with Command, Control or Option passes through.
     private func handle(_ keyCode: Int64, _ flags: CGEventFlags, _ characters: String) -> Bool {
-        guard NSApp.isActive else { return false }
+        guard NSApp.isActive, window == nil || NSApp.keyWindow === window else { return false }
         if keyCode == Key.escape {
             DispatchQueue.main.async { self.stop() }
             return true
@@ -242,7 +254,11 @@ final class TypingTrainer: ObservableObject {
             Tones.playTyping(correct: true)
             if sayEachKey { Announcer.say(KeyHints.name(character)) }
             if typed == current {
-                DispatchQueue.main.asyncAfter(deadline: .now() + (speedTest ? 0.05 : 0.5)) { self.next() }
+                let thisSession = session
+                DispatchQueue.main.asyncAfter(deadline: .now() + (speedTest ? 0.05 : 0.5)) {
+                    guard self.session == thisSession else { return }
+                    self.next()
+                }
             }
         } else if character.isLetter || character.isNumber || character.isPunctuation || character.isSymbol || character == " " {
             errors += 1

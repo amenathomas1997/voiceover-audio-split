@@ -31,6 +31,12 @@
 - **Typing trainer:** talking lessons from the home row up, finger hints, words per minute and accuracy, best scores, and a one-minute speed test. A soft click for each right key (or a soft tone, or no sound), and a gentle low sound for a wrong one.
 - **In Spanish, French and German:** the app follows your Mac's language. Translations are new; corrections from native speakers are welcome.
 
+- **Fixes from a full code audit:**
+  - Sound: AirPods in a call (and other one-channel devices) no longer lose one ear; silencing VoiceOver no longer silences calls set to go with speech; connecting a device rebuilds the sound once instead of several times; a split that can't start now says so; choosing speakers yourself is no longer undone.
+  - Keys: held shortcut keys no longer leak repeats to VoiceOver; closing VoiceOver practice or the typing trainer always gives the keys back; practice can't score twice, and the trainer only takes keys while its window is in front.
+  - Camera: tools can't leave the camera on when stopped quickly, can't start twice while macOS asks for permission, and say so if the camera sends no picture.
+  - Reading and documents: the medicine label reader no longer skips dosing lines; the document check reads PDF tags and language properly, finds headings in non-English Word documents, and no longer reports empty table cells, page breaks or decorative pictures; large or damaged Word files can't crash it.
+  - Other: pictures sent for descriptions are sized to fit, plain-http radio streams and podcast feeds play, playback failures are announced, "Say what you copy" never reads passwords copied from a password manager, Firefox downloads are announced when they finish, "C++" searches work, and Do It for Me always acts on the app you came from and can't press twice.
 - **Permissions in Settings:** see what the app is allowed to do, and open the right page of System Settings for each permission.
 - **An easier menu:** the split stays at the top, and everything else is grouped in submenus: Sound and Devices, Presets, Speech, Reading and Text, Camera, Assistant and Research, VoiceOver Help, Learning and Everyday Tools.
 - **Installer package for the app:** `./build.sh` now builds an installer that puts the app in the Applications folder and removes the older script version, whose shortcuts clashed. The older script version is retired and its source removed.

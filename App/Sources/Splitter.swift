@@ -170,6 +170,9 @@ private func parentPID(of pid: pid_t) -> pid_t {
 }
 
 final class Splitter {
+    /// Posted on the main thread when capture can't start, so the user is told.
+    static let failed = Notification.Name("VoiceOverAudioSplit.splitFailed")
+
     private let configuration: SplitConfiguration
     private let queue = DispatchQueue(label: "VOAudioSplit.io", qos: .userInteractive)
 
@@ -198,17 +201,62 @@ final class Splitter {
         for selector in [kAudioHardwarePropertyProcessObjectList, kAudioHardwarePropertyDefaultOutputDevice,
                          kAudioHardwarePropertyDevices] {
             var addr = address(selector)
-            let block: AudioObjectPropertyListenerBlock = { [weak self] _, _ in
-                // Debounce: process and device lists change in bursts.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { self?.rebuildIfNeeded() }
-            }
+            let block: AudioObjectPropertyListenerBlock = { [weak self] _, _ in self?.scheduleRebuild() }
             AudioObjectAddPropertyListenerBlock(system, &addr, DispatchQueue.main, block)
             listeners.append((selector, block))
         }
     }
 
+    private var pendingRebuild: DispatchWorkItem?
+
+    /// Process and device lists change in bursts (connecting AirPods fires several
+    /// changes in a second): wait for them to settle, then rebuild once.
+    private func scheduleRebuild(force: Bool = false) {
+        pendingRebuild?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            if force { self?.built = nil }
+            self?.rebuildIfNeeded()
+        }
+        pendingRebuild = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: work)
+    }
+
+    /// Listeners on the output device itself: its channel count or sample rate can change
+    /// without it changing (AirPods switch to a mono, lower-rate mode during calls).
+    private var deviceListeners: [(AudioObjectID, AudioObjectPropertySelector, AudioObjectPropertyListenerBlock)] = []
+
+    /// Rebuilds only on a real change: building can itself make the device report a
+    /// change, which mustn't start a loop.
+    private func watchDevice(_ device: AudioObjectID) {
+        func shape() -> (Int, Float64) {
+            (outputChannelCount(device), readValue(device, kAudioDevicePropertyNominalSampleRate, default: Float64(0)))
+        }
+        let builtShape = shape()
+        for selector in [kAudioDevicePropertyStreamConfiguration, kAudioDevicePropertyNominalSampleRate] {
+            var addr = AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeWildcard,
+                                                  mElement: kAudioObjectPropertyElementMain)
+            let block: AudioObjectPropertyListenerBlock = { [weak self] _, _ in
+                if shape() != builtShape { self?.scheduleRebuild(force: true) }
+            }
+            if AudioObjectAddPropertyListenerBlock(device, &addr, DispatchQueue.main, block) == noErr {
+                deviceListeners.append((device, selector, block))
+            }
+        }
+    }
+
+    private func unwatchDevices() {
+        for (device, selector, block) in deviceListeners {
+            var addr = AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeWildcard,
+                                                  mElement: kAudioObjectPropertyElementMain)
+            AudioObjectRemovePropertyListenerBlock(device, &addr, DispatchQueue.main, block)
+        }
+        deviceListeners.removeAll()
+    }
+
     /// Stops capturing and returns audio to normal.
     func stop() {
+        pendingRebuild?.cancel()
+        pendingRebuild = nil
         let system = AudioObjectID(kAudioObjectSystemObject)
         for (selector, block) in listeners {
             var addr = address(selector)
@@ -238,9 +286,9 @@ final class Splitter {
         var calls = Set(processes.filter { candidate in
             configuration.callAppPrefixes.contains { belongs(candidate, to: $0, appPIDs: callPIDs) }
         }.map(\.object)).subtracting(inApps)
-        var speech = Set(processes.filter(isSpeechProcess).map(\.object))
-        if configuration.callMode == .withSpeech { speech.formUnion(calls) }
-        if configuration.callMode != .bothEars { calls = [] }
+        let speech = Set(processes.filter(isSpeechProcess).map(\.object))
+        // Calls set to go with speech get their own tap, so silencing VoiceOver doesn't silence the call.
+        if configuration.callMode == .split { calls = [] }
 
         // Never tap our own output (tones, the mix itself): that would feed back.
         let me = Set(processes.filter { $0.pid == getpid() }.map(\.object))
@@ -272,6 +320,7 @@ final class Splitter {
         } catch {
             log("Could not start audio: \(error)")
             teardown()
+            NotificationCenter.default.post(name: Splitter.failed, object: nil)
         }
     }
 
@@ -298,7 +347,7 @@ final class Splitter {
         ]
         if !plan.calls.isEmpty {
             tapUIDs.append(try makeTap(CATapDescription(stereoMixdownOfProcesses: Array(plan.calls)), name: "calls"))
-            sources.append(.calls)
+            sources.append(configuration.callMode == .withSpeech ? .callsWithSpeech : .calls)
         }
         for (bundleID, objects) in plan.apps.sorted(by: { $0.key < $1.key }) {
             tapUIDs.append(try makeTap(CATapDescription(stereoMixdownOfProcesses: Array(objects)), name: bundleID))
@@ -326,8 +375,11 @@ final class Splitter {
         try check(AudioHardwareCreateAggregateDevice(description as CFDictionary, &aggregate), "create aggregate device")
 
         Mixer.sampleRate = readValue(aggregate, kAudioDevicePropertyNominalSampleRate, default: Float64(48000))
+        Mixer.mainChannels = outputChannelCount(plan.output)
         Mixer.speechDeviceChannel = subDevices.count > 1 ? outputChannelCount(plan.output) : nil
         Mixer.sources = sources
+        watchDevice(plan.output)
+        if let speechDevice = plan.speechDevice { watchDevice(speechDevice) }
 
         let tapCount = sources.count
         try check(AudioDeviceCreateIOProcIDWithBlock(&ioProc, aggregate, queue) { _, input, _, output, _ in
@@ -355,6 +407,10 @@ final class Splitter {
     }
 
     private func teardown() {
+        unwatchDevices()
+        // Nothing is captured until the next build sets these again.
+        Mixer.sources = []
+        Mixer.speechDeviceChannel = nil
         if aggregate != kAudioObjectUnknown {
             if let ioProc {
                 AudioDeviceStop(aggregate, ioProc)

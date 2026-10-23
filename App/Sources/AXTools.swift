@@ -7,6 +7,17 @@ import AppKit
 import ApplicationServices
 
 enum AX {
+    /// How long to wait for an app to answer. The default is about six seconds per
+    /// question, which would stall these features for minutes on a frozen app.
+    static let timeout: Float = 1
+
+    /// An app's accessibility element, with the shorter timeout.
+    static func application(_ pid: pid_t) -> AXUIElement {
+        let element = AXUIElementCreateApplication(pid)
+        AXUIElementSetMessagingTimeout(element, timeout)
+        return element
+    }
+
     static func string(_ element: AXUIElement, _ attribute: String) -> String {
         var value: CFTypeRef?
         guard AXUIElementCopyAttributeValue(element, attribute as CFString, &value) == .success else { return "" }
@@ -33,6 +44,9 @@ enum AX {
         var position: CFTypeRef?, size: CFTypeRef?
         guard AXUIElementCopyAttributeValue(element, kAXPositionAttribute as CFString, &position) == .success,
               AXUIElementCopyAttributeValue(element, kAXSizeAttribute as CFString, &size) == .success else { return nil }
+        // Some apps return something other than a position or size here.
+        guard let position, let size, CFGetTypeID(position) == AXValueGetTypeID(), CFGetTypeID(size) == AXValueGetTypeID()
+        else { return nil }
         var point = CGPoint.zero, extent = CGSize.zero
         AXValueGetValue(position as! AXValue, .cgPoint, &point)
         AXValueGetValue(size as! AXValue, .cgSize, &extent)
@@ -54,8 +68,8 @@ enum AX {
         return ""
     }
 
-    static func press(_ element: AXUIElement) -> Bool {
-        AXUIElementPerformAction(element, kAXPressAction as CFString) == .success
+    static func pressResult(_ element: AXUIElement) -> AXError {
+        AXUIElementPerformAction(element, kAXPressAction as CFString)
     }
 
     static func focus(_ element: AXUIElement) -> Bool {
@@ -67,7 +81,9 @@ enum AX {
         guard let bounds = VoiceOverText.cursorBounds() else { return nil }
         var found: AXUIElement?
         let point = CGPoint(x: bounds.midX, y: bounds.midY)
-        guard AXUIElementCopyElementAtPosition(AXUIElementCreateSystemWide(), Float(point.x), Float(point.y), &found) == .success
+        let system = AXUIElementCreateSystemWide()
+        AXUIElementSetMessagingTimeout(system, timeout)
+        guard AXUIElementCopyElementAtPosition(system, Float(point.x), Float(point.y), &found) == .success
         else { return nil }
         return found
     }
@@ -75,15 +91,17 @@ enum AX {
     /// The front app's focused window.
     static func frontWindow() -> AXUIElement? {
         guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
-        let element = AXUIElementCreateApplication(app.processIdentifier)
+        let element = application(app.processIdentifier)
         return self.element(element, kAXFocusedWindowAttribute) ?? self.element(element, kAXMainWindowAttribute)
     }
 
     /// Every element below `root`, depth first, up to `limit` elements.
-    static func descendants(of root: AXUIElement, limit: Int = 6000) -> [AXUIElement] {
+    /// Stops after `seconds` too, so a slow app can't hold things up for long.
+    static func descendants(of root: AXUIElement, limit: Int = 6000, seconds: TimeInterval = 8) -> [AXUIElement] {
         var result: [AXUIElement] = []
         var stack = [root]
-        while let next = stack.popLast(), result.count < limit {
+        let deadline = Date().addingTimeInterval(seconds)
+        while let next = stack.popLast(), result.count < limit, Date() < deadline {
             result.append(next)
             stack.append(contentsOf: children(next).reversed())
         }

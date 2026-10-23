@@ -90,17 +90,22 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
         session.addInput(input)
         session.addOutput(output)
         self.session = session
-        frames = 0
-        previousText = ""
         scanning = true
         report(String(localized: "Scanning. Hold the page up to the camera."))
-        queue.async { session.startRunning() }
+        // Counters are used on the camera queue, so reset them there, before it starts.
+        queue.async {
+            self.frames = 0
+            self.previousText = ""
+            session.startRunning()
+        }
     }
 
+    /// Stops on the camera queue, after any start still waiting there, so the camera is always left off.
     func stop() {
-        session?.stopRunning()
-        session = nil
+        guard let session else { return }
+        self.session = nil
         scanning = false
+        queue.async { session.stopRunning() }
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer,
@@ -117,7 +122,7 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
         if let advice = TextRecognition.guidance(for: lines.map(\.box)) {
             guard Date().timeIntervalSince(lastGuidance) > 3 else { return }
             lastGuidance = Date()
-            DispatchQueue.main.async { self.report(advice) }
+            DispatchQueue.main.async { if self.scanning { self.report(advice) } }
             return
         }
         // Read once the same text is seen twice in a row, so the page has stopped moving.
@@ -126,6 +131,7 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
             return
         }
         DispatchQueue.main.async {
+            guard self.scanning else { return } // Stopped meanwhile.
             self.stop()
             self.text = found
             self.status = String(localized: "Text found.")
@@ -152,7 +158,8 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
 
     private static func text(in url: URL) -> String {
         if url.pathExtension.lowercased() == "pdf", let pdf = PDFDocument(url: url) {
-            return (0..<pdf.pageCount).compactMap { index -> String? in
+            return (0..<pdf.pageCount).compactMap { index -> String? in autoreleasepool {
+                // Each scanned page is a large picture; free it before the next one.
                 guard let page = pdf.page(at: index) else { return nil }
                 if let string = page.string, !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     return string
@@ -160,7 +167,7 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
                 // A scanned page: render it and recognize the text.
                 let image = page.thumbnail(of: CGSize(width: 2000, height: 2600), for: .mediaBox)
                 return image.cgImage(forProposedRect: nil, context: nil, hints: nil).map(TextRecognition.text)
-            }.joined(separator: "\n\n")
+            } }.joined(separator: "\n\n")
         }
         guard let image = NSImage(contentsOf: url)?.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return "" }
         return TextRecognition.text(in: image)

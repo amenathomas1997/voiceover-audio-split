@@ -57,6 +57,13 @@ enum AudioSystem {
             let current = defaultOutputDevice()
             guard current != choice.device, outputDevices().contains(where: { $0.id == choice.device }),
                   outputDevices().contains(where: { $0.id == current }) else { return }
+            // Only undo Bluetooth devices taking the sound back on their own. Speakers or
+            // headphones chosen in Control Center, or plugged in, are the user's choice.
+            let transport: UInt32 = readValue(current, kAudioDevicePropertyTransportType, default: UInt32(0))
+            guard transport == kAudioDeviceTransportTypeBluetooth || transport == kAudioDeviceTransportTypeBluetoothLE else {
+                held = nil
+                return
+            }
             let taker = outputDevices().first { $0.id == current }?.name ?? "Another device"
             if choice.restores < 8 {
                 held?.restores += 1

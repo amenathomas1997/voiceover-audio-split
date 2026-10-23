@@ -56,7 +56,12 @@ enum SystemEvents {
     private static func finishedDownloads() -> Set<String> {
         guard let folder = downloadsFolder,
               let names = try? FileManager.default.contentsOfDirectory(atPath: folder.path) else { return [] }
-        return Set(names.filter { !isPartial($0) })
+        // Firefox makes an empty file with the final name beside "name.part" while downloading.
+        let all = Set(names)
+        return Set(names.filter { name in
+            !isPartial(name) && !all.contains(name + ".part")
+                && ((try? FileManager.default.attributesOfItem(atPath: folder.appendingPathComponent(name).path)[.size] as? Int) ?? 1) != 0
+        })
     }
 
     private static func watchDownloads() {
@@ -163,7 +168,7 @@ enum SystemEvents {
         guard Preferences.shared.announceBattery, let before else { return }
         if now.charging != before.charging {
             Announcer.say(now.charging ? String(localized: "Charging, \(now.percent) percent") : String(localized: "Not charging, \(now.percent) percent"))
-        } else if !now.charging, let level = lowLevels.first(where: { before.percent > $0 && now.percent <= $0 }) {
+        } else if !now.charging, let level = lowLevels.last(where: { before.percent > $0 && now.percent <= $0 }) {
             Tones.play(.quieter)
             Announcer.say(String(localized: "Battery low: \(level) percent"))
         }

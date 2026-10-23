@@ -221,7 +221,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// Notes the control under the VoiceOver cursor before the window takes focus.
     func showLabelEditor() {
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let captured = CustomLabels.capture()
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
@@ -239,10 +239,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func showDoItForMe() {
-        // Act on the app that was in front, not this one.
-        if let front = NSWorkspace.shared.frontmostApplication, front.bundleIdentifier != Bundle.main.bundleIdentifier {
-            DoItModel.shared.target = front
-        }
+        // Act on the last app used, never this one (the palette or Settings may be in front).
+        DoItModel.shared.target = controller.lastUsedApp
         doItWindow = show(doItWindow, title: String(localized: "Do It for Me"), view: DoItForMeView())
     }
 
@@ -255,11 +253,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func showPractice() {
+        let isNew = practiceWindow == nil
         practiceWindow = show(practiceWindow, title: String(localized: "VoiceOver Practice"), view: PracticeView())
+        if isNew, let practiceWindow { whenClosed(practiceWindow) { PracticeModel.shared.stop() } }
     }
 
     func showTypingTrainer() {
+        let isNew = typingWindow == nil
         typingWindow = show(typingWindow, title: String(localized: "Typing Trainer"), view: TypingTrainerView())
+        TypingTrainer.shared.window = typingWindow
+        if isNew, let typingWindow { whenClosed(typingWindow) { TypingTrainer.shared.stop() } }
+    }
+
+    /// Practice and the trainer take keys while they run; closing their window must
+    /// always give the keys back. (SwiftUI's onDisappear doesn't fire for a closed window
+    /// that is kept for reuse.)
+    private func whenClosed(_ window: NSWindow, _ action: @escaping () -> Void) {
+        NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { _ in
+            action()
+        }
     }
 
     func showCompare() {

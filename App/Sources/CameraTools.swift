@@ -22,26 +22,42 @@ enum CameraChoice {
     }
 }
 
-/// Delivers camera frames to a handler until stopped.
+/// Delivers camera frames to a handler until stopped. Start, stop and the frame
+/// handler all go through the camera's own queue, in order, so a quick stop after a
+/// start always leaves the camera off.
 final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private let queue = DispatchQueue(label: "VoiceOverAudioSplit.camera-feed")
+    // Main thread only.
     private var session: AVCaptureSession?
     private var device: AVCaptureDevice?
+    /// Waiting for the camera permission answer.
+    private var asking = false
+    private var noPicture: DispatchWorkItem?
+    // Camera queue only.
     private var frames = 0
     private var handler: ((CVPixelBuffer) -> Void)?
+    private var firstFrame: (() -> Void)?
 
-    var isRunning: Bool { session != nil }
+    /// Also true while the permission question is open, so a second press doesn't start twice.
+    var isRunning: Bool { session != nil || asking }
 
     /// Calls `handler` on a background queue with each frame, after the camera has settled.
-    /// Reading small print needs more detail than the default size gives: pass `.high`.
+    /// `started` runs on the main thread when the first picture arrives. If none comes
+    /// within 10 seconds, the feed stops and `failed` says so.
     func start(preset: AVCaptureSession.Preset = .medium, _ handler: @escaping (CVPixelBuffer) -> Void,
-               failed: @escaping (String) -> Void) {
+               started: (() -> Void)? = nil, failed: @escaping (String) -> Void) {
+        guard !isRunning else { return }
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized: break
         case .notDetermined:
+            asking = true
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
-                    granted ? self.start(preset: preset, handler, failed: failed) : failed(String(localized: "Camera access was not allowed"))
+                    // Stopped while the question was open: don't start afterwards.
+                    guard self.asking else { return }
+                    self.asking = false
+                    granted ? self.start(preset: preset, handler, started: started, failed: failed)
+                            : failed(String(localized: "Camera access was not allowed"))
                 }
             }
             return
@@ -61,20 +77,43 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         session.addOutput(output)
         self.session = session
         self.device = camera
-        self.handler = handler
-        frames = 0
-        queue.async { session.startRunning() }
+        let watchdog = DispatchWorkItem { [weak self] in
+            guard let self, self.session === session else { return }
+            self.stop()
+            failed(String(localized: "The camera isn't sending a picture. Check that it's connected and not in use, then try again."))
+        }
+        noPicture = watchdog
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: watchdog)
+        queue.async {
+            self.frames = 0
+            self.handler = handler
+            self.firstFrame = { [weak self] in
+                self?.noPicture?.cancel()
+                started?()
+            }
+            session.startRunning()
+        }
     }
 
     func stop() {
-        session?.stopRunning()
-        session = nil
-        handler = nil
+        asking = false
+        noPicture?.cancel()
+        guard let session else { return }
+        self.session = nil
+        queue.async {
+            self.handler = nil
+            self.firstFrame = nil
+            session.stopRunning()
+        }
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer,
                        from connection: AVCaptureConnection) {
         frames += 1
+        if frames == 1, let firstFrame {
+            self.firstFrame = nil
+            DispatchQueue.main.async(execute: firstFrame)
+        }
         // Let the camera settle for about a second, then hold exposure and color steady.
         if frames == 30 { lockAdjustments() }
         guard frames > 30, let pixels = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
@@ -246,15 +285,17 @@ enum LightDetector {
         feed.start({ pixels in
             let color = CameraFeed.averageColor(pixels, centerFraction: 0.8)
             frequency = tone(forBrightness: (color.r + color.g + color.b) / 3)
+        }, started: {
+            // Start the tone once pictures arrive (after any permission question),
+            // and after the announcement, so it doesn't talk over it.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                guard isRunning, !engine.isRunning else { return }
+                try? engine.start()
+            }
         }, failed: { message in
             stop(announce: false)
             Announcer.say(message)
         })
-        // Start the tone after the announcement, so it doesn't talk over it.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            guard isRunning, !engine.isRunning else { return }
-            try? engine.start()
-        }
         // Switch off after two minutes, in case it's forgotten.
         let work = DispatchWorkItem { if isRunning { stop(announce: true) } }
         stopWork = work

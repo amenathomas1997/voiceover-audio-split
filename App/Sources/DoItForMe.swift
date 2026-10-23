@@ -47,7 +47,7 @@ final class DoItModel: ObservableObject {
         Announcer.say(String(localized: "Looking"))
         let pid = target.processIdentifier
         Task.detached {
-            let app = AXUIElementCreateApplication(pid)
+            let app = AX.application(pid)
             guard let window = AX.element(app, kAXFocusedWindowAttribute) ?? AX.element(app, kAXMainWindowAttribute) else {
                 return await self.finish(String(localized: "That app has no window open."))
             }
@@ -59,7 +59,7 @@ final class DoItModel: ObservableObject {
                                                   system: Self.system)
                 guard let choice = Choice(reply.text) else { return await self.finish(String(localized: "The answer couldn't be understood. Try asking another way.")) }
                 let element = choice.element.flatMap { $0 >= 0 && $0 < controls.count ? controls[$0].element : nil }
-                await self.act(choice, on: element, named: choice.element.flatMap { $0 < controls.count ? controls[$0].line : nil })
+                await self.act(choice, on: element, named: choice.element.flatMap { $0 >= 0 && $0 < controls.count ? controls[$0].line : nil })
             } catch let failure as Claude.Failure {
                 await self.finish(failure.message)
             } catch {
@@ -103,7 +103,12 @@ final class DoItModel: ObservableObject {
         NSApp.hide(nil)
         target?.activate()
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-            let pressed = AX.press(element) || (AX.moveVoiceOverCursor(to: element) && VoiceOverText.run("tell vo cursor to perform action") != nil)
+            // A slow app can report "couldn't complete" after the press already happened;
+            // only press through VoiceOver when the control has no press action at all.
+            let result = AX.pressResult(element)
+            let pressed = result == .success || result == .cannotComplete
+                || ([.actionUnsupported, .attributeUnsupported].contains(result)
+                    && AX.moveVoiceOverCursor(to: element) && VoiceOverText.run("tell vo cursor to perform action") != nil)
             DispatchQueue.main.async {
                 Announcer.say(pressed ? String(localized: "Pressed") : String(localized: "It couldn't be pressed"))
             }

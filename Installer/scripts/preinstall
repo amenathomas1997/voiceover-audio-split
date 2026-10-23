@@ -4,7 +4,9 @@
 # (AppleScripts and helper apps in ~/Applications), whose shortcuts clash with the app's.
 USER_NAME=$(stat -f%Su /dev/console)
 USER_ID=$(id -u "$USER_NAME" 2>/dev/null)
-USER_HOME=$(dscl . -read "/Users/$USER_NAME" NFSHomeDirectory 2>/dev/null | awk '{print $2}')
+# /Search also finds network and mobile accounts, not just local ones.
+USER_HOME=$(dscl /Search -read "/Users/$USER_NAME" NFSHomeDirectory 2>/dev/null | awk '{print $2}')
+[[ -z "$USER_HOME" ]] && USER_HOME=$(eval echo "~$USER_NAME")
 
 pkill -x "VoiceOver Audio Split" 2>/dev/null
 

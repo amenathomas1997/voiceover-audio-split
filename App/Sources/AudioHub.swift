@@ -91,15 +91,26 @@ final class RSSFeed: NSObject, XMLParserDelegate {
         }
     }
 
-    /// Strips HTML tags and entities from a summary.
+    /// Strips HTML tags and entities from a summary. Done by hand: the system HTML
+    /// reader is slow and only safe on the main thread, and feeds have hundreds of items.
     static func plain(_ html: String) -> String {
-        guard html.contains("<") || html.contains("&"),
-              let data = html.data(using: .utf8),
-              let attributed = try? NSAttributedString(data: data, options: [
-                .documentType: NSAttributedString.DocumentType.html,
-                .characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)
-        else { return html }
-        return attributed.string.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard html.contains("<") || html.contains("&") else { return html }
+        var text = html.replacingOccurrences(of: #"<(br|p|/p|li|div|/div)\b[^>]*>"#, with: " ", options: [.regularExpression, .caseInsensitive])
+        text = text.replacingOccurrences(of: #"<[^>]+>"#, with: "", options: .regularExpression)
+        let entities = ["&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": "\"", "&#39;": "'", "&apos;": "'", "&nbsp;": " ",
+                        "&rsquo;": "\u{2019}", "&lsquo;": "\u{2018}", "&rdquo;": "\u{201D}", "&ldquo;": "\u{201C}",
+                        "&mdash;": "\u{2014}", "&ndash;": "\u{2013}", "&hellip;": "\u{2026}"]
+        for (entity, character) in entities { text = text.replacingOccurrences(of: entity, with: character) }
+        // Numeric entities such as &#8217; and &#x2019;.
+        let numeric = try! NSRegularExpression(pattern: "&#(x?)([0-9a-fA-F]+);")
+        for match in numeric.matches(in: text, range: NSRange(text.startIndex..., in: text)).reversed() {
+            guard let whole = Range(match.range, in: text), let digits = Range(match.range(at: 2), in: text),
+                  let code = UInt32(text[digits], radix: match.range(at: 1).length > 0 ? 16 : 10),
+                  let scalar = Unicode.Scalar(code) else { continue }
+            text.replaceSubrange(whole, with: String(Character(scalar)))
+        }
+        return text.replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
@@ -143,7 +154,7 @@ final class AudioHub: ObservableObject {
             url.queryItems = [.init(name: "name", value: query), .init(name: "limit", value: "40"),
                               .init(name: "hidebroken", value: "true"), .init(name: "order", value: "clickcount"),
                               .init(name: "reverse", value: "true")]
-            let stations = try await json(url.url!) as? [[String: Any]] ?? []
+            let stations = try await json(url.encodedURL) as? [[String: Any]] ?? []
             return stations.compactMap { station in
                 guard let name = station["name"] as? String,
                       let address = (station["url_resolved"] as? String).flatMap(URL.init(string:)) else { return nil }
@@ -155,7 +166,7 @@ final class AudioHub: ObservableObject {
             var url = URLComponents(string: "https://itunes.apple.com/search")!
             url.queryItems = [.init(name: "media", value: "podcast"), .init(name: "term", value: query),
                               .init(name: "limit", value: "30")]
-            let shows = (try await json(url.url!) as? [String: Any])?["results"] as? [[String: Any]] ?? []
+            let shows = (try await json(url.encodedURL) as? [String: Any])?["results"] as? [[String: Any]] ?? []
             return shows.compactMap { show in
                 guard let name = show["collectionName"] as? String,
                       let feed = (show["feedUrl"] as? String).flatMap(URL.init(string:)) else { return nil }
@@ -168,7 +179,7 @@ final class AudioHub: ObservableObject {
                 var url = URLComponents(string: "https://librivox.org/api/feed/audiobooks/")!
                 url.queryItems = [.init(name: field, value: value), .init(name: "format", value: "json"),
                                   .init(name: "extended", value: "1"), .init(name: "limit", value: "30")]
-                return (try? await json(url.url!) as? [String: Any])?["books"] as? [[String: Any]] ?? []
+                return (try? await json(url.encodedURL) as? [String: Any])?["books"] as? [[String: Any]] ?? []
             }
             var found = await books("title", "^" + query)
             if found.isEmpty { found = await books("author", query) }
@@ -214,8 +225,27 @@ final class AudioHub: ObservableObject {
 
     // MARK: Playing
 
+    private var itemStatus: NSKeyValueObservation?
+    private var endObserver: Any?
+
     private func play(_ url: URL, title: String) {
-        player.replaceCurrentItem(with: AVPlayerItem(url: url))
+        let item = AVPlayerItem(url: url)
+        // Say when a station or episode can't play, instead of "Playing" and silence,
+        // and notice when an episode ends.
+        itemStatus = item.observe(\.status) { [weak self] item, _ in
+            guard item.status == .failed else { return }
+            DispatchQueue.main.async {
+                self?.playing = false
+                Announcer.say(String(localized: "\(title) can't be played right now. Try another one."))
+            }
+        }
+        if let endObserver { NotificationCenter.default.removeObserver(endObserver) }
+        endObserver = NotificationCenter.default.addObserver(forName: AVPlayerItem.didPlayToEndTimeNotification, object: item,
+                                                             queue: .main) { [weak self] _ in
+            self?.playing = false
+            Announcer.say(String(localized: "Finished: \(title)"))
+        }
+        player.replaceCurrentItem(with: item)
         applyVolume()
         player.play()
         nowPlaying = title
@@ -254,10 +284,19 @@ final class AudioHub: ObservableObject {
 
     // MARK: Network
 
+    /// Plain "http" addresses (common for podcast feeds) are tried over "https", since
+    /// macOS only allows secure connections for app data.
     private func data(_ url: URL) async throws -> Data {
-        var request = URLRequest(url: url)
-        request.setValue("VoiceOverAudioSplit/1.0 (accessibility app)", forHTTPHeaderField: "User-Agent")
-        return try await URLSession.shared.data(for: request).0
+        func fetch(_ url: URL) async throws -> Data {
+            var request = URLRequest(url: url)
+            request.setValue("VoiceOverAudioSplit/1.0 (accessibility app)", forHTTPHeaderField: "User-Agent")
+            return try await URLSession.shared.data(for: request).0
+        }
+        if url.scheme?.lowercased() == "http", var secure = URLComponents(url: url, resolvingAgainstBaseURL: false) {
+            secure.scheme = "https"
+            if let https = secure.url { return try await fetch(https) }
+        }
+        return try await fetch(url)
     }
 
     private func json(_ url: URL) async throws -> Any {

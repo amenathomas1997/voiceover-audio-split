@@ -127,6 +127,8 @@ final class CommandKeyTests: XCTestCase {
         XCTAssertEqual(KeyMap.commandForKey[40], .systemStatus)
         XCTAssertNil(KeyMap.commandForKey[Command.systemStatus.defaultKey])
         XCTAssertEqual(KeyMap.key(for: .systemStatus)?.name, "K")
+        // K is also the default for restarting VoiceOver: the chosen key wins.
+        XCTAssertNil(KeyMap.key(for: .rescueVoiceOver))
     }
 
     func testLayerHelpListsEveryCommand() {
@@ -197,5 +199,44 @@ final class ReadingTests: XCTestCase {
         XCTAssertEqual(items[0].audio, URL(string: "https://example.com/1.mp3"))
         XCTAssertNil(items[1].audio)
         XCTAssertEqual(items[1].summary, "Plain summary")
+    }
+}
+
+final class PainPointTests: XCTestCase {
+    func testCompareFindsChangesAddsAndRemovals() {
+        let changes = TextCompare.changes(from: "I went their today. It was very good.",
+                                          to: "I went there today. It was good. Thanks.")
+        XCTAssertEqual(changes.map(\.kind), [
+            .changed(from: "their", to: "there"),
+            .removed("very"),
+            .added("Thanks."),
+        ])
+        XCTAssertEqual(changes.map(\.sentence), [1, 2, 3])
+        XCTAssertTrue(TextCompare.summary(changes).hasPrefix("3 changes."))
+        XCTAssertTrue(TextCompare.changes(from: "Same text.", to: "Same text.").isEmpty)
+    }
+
+    func testTextCheckerNamesTheSentence() {
+        let issues = TextAnalyzer.issues(in: "This is fine. This has has a repeat. And (one more.")
+        let repeated = issues.first { $0.problem == "repeated word" }
+        XCTAssertEqual(repeated?.sentenceNumber, 2)
+        XCTAssertEqual(repeated?.sentence, "This has has a repeat.")
+        XCTAssertTrue(issues.contains { $0.problem.contains("unmatched parentheses") && $0.sentence == nil })
+    }
+
+    func testWebsiteRulesMatchSubdomains() {
+        let rules = ["youtube.com": "quiet"]
+        XCTAssertEqual(SitePresets.match(host: "www.youtube.com", in: rules), "quiet")
+        XCTAssertEqual(SitePresets.match(host: "m.YouTube.com", in: rules), "quiet")
+        XCTAssertNil(SitePresets.match(host: "notyoutube.com", in: rules))
+        XCTAssertEqual(SitePresets.normalize("https://www.YouTube.com/watch?v=1"), "youtube.com")
+        XCTAssertEqual(SitePresets.normalize(" www.bbc.co.uk "), "bbc.co.uk")
+    }
+
+    func testVoiceOverCommandSearch() {
+        XCTAssertTrue(VoiceOverCommands.search("rotor").contains { $0.keys == "VO U" })
+        XCTAssertTrue(VoiceOverCommands.search("next heading").first?.keys.hasPrefix("VO Command H") ?? false)
+        XCTAssertEqual(VoiceOverCommands.search("").count, VoiceOverCommands.all.count)
+        XCTAssertTrue(VoiceOverCommands.search("zzzz").isEmpty)
     }
 }

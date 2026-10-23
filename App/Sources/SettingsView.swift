@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var presetAppToAdd = ""
     @State private var apiKey = ""
     @State private var hasAPIKey = APIKey.current != nil
+    @State private var newSite = ""
 
     var body: some View {
         Form {
@@ -157,6 +158,30 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Presets for websites") {
+                Text("Switch to a preset on a website in Safari or Chrome, for example a quieter preset on youtube.com. The first time, your Mac asks to let VoiceOver Audio Split see which site is open.")
+                    .font(.caption).foregroundStyle(.secondary)
+                ForEach(preferences.sitePresets.keys.sorted(), id: \.self) { site in
+                    HStack {
+                        Picker(site, selection: Binding(get: { preferences.sitePresets[site] ?? "" },
+                                                        set: { preferences.sitePresets[site] = $0 })) {
+                            ForEach(preferences.presets) { Text($0.name).tag($0.id.uuidString) }
+                        }
+                        Button("Remove \(site)") { preferences.sitePresets[site] = nil }
+                    }
+                }
+                HStack {
+                    TextField("Website, for example youtube.com", text: $newSite)
+                    Button("Add") {
+                        if let first = preferences.presets.first {
+                            preferences.sitePresets[SitePresets.normalize(newSite)] = first.id.uuidString
+                            newSite = ""
+                        }
+                    }
+                    .disabled(SitePresets.normalize(newSite).isEmpty || preferences.presets.isEmpty)
+                }
+            }
+
             Section("Calls") {
                 Picker("Call audio", selection: $preferences.callMode) {
                     ForEach(CallMode.allCases) { Text($0.title).tag($0) }
@@ -193,6 +218,9 @@ struct SettingsView: View {
                 Text("Hold it with a command's key below, or press the layer key first and then the command's key on its own. Digits 1 to 9 switch presets. The key of the same kind on the left keeps working normally.")
                     .font(.caption).foregroundStyle(.secondary)
                 Toggle("Play a short tone with each change", isOn: $preferences.playTones)
+                Toggle("Keep audio awake, so the first words VoiceOver says aren't cut off", isOn: $preferences.keepAudioAwake)
+                Text("Plays silence so headphones and Bluetooth devices like AirPods don't go to sleep between phrases.")
+                    .font(.caption).foregroundStyle(.secondary)
                 Toggle("Keep speech history", isOn: $preferences.speechHistory)
                 Text("Keeps a list of what VoiceOver says, in memory only, to review and copy from the Speech History window.")
                     .font(.caption).foregroundStyle(.secondary)

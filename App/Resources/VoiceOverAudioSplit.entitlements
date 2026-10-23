@@ -17,6 +17,8 @@
 	<key>com.apple.security.temporary-exception.apple-events</key>
 	<array>
 		<string>com.apple.VoiceOver</string>
+		<string>com.apple.Safari</string>
+		<string>com.google.Chrome</string>
 	</array>
 </dict>
 </plist>

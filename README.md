@@ -10,7 +10,12 @@
 - **Hearing and clarity:** a speech clarity boost, leveling for loud media, a volume limit, one-ear mode and ear balance.
 - **Speech tools:** speech on demand, speech history, captions, say clipboard, and system status.
 - **Reading and low vision:** a large-print Doc Reader, camera text reading (Scan and Read), and a focus frame.
-- **Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.
+- **Fixes for problems AppleVis users report:**
+- **Keep audio awake** (in Settings or the menu) plays silence, so headphones and Bluetooth devices like AirPods don't sleep between phrases and cut off VoiceOver's first words.
+- **Presets for websites** (in Settings) switch to a preset on a site in Safari or Chrome, which VoiceOver's own activities don't do. While a browser is in front and website presets exist, the app checks the current address every two seconds. The first time, macOS asks to let the app see which site is open.
+- **Keys you choose always win.** If a later version adds a command whose default key you already use, the new command waits for you to give it a key.
+
+**Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.
 - **Optional AI:** image descriptions and an assistant, using Claude with your own API key.
 
 **Get it:** the public beta is on TestFlight. The link will be here when the beta is approved. It needs macOS 14.2 or later, and headphones are recommended.
@@ -46,7 +51,7 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + L | Layer: press the next key on its own to run its command. Slash lists the layer keys; Escape cancels. |
 | Right Option + I | Describes the image under the VoiceOver cursor using Claude, with follow-up questions in the Assistant window (like JAWS Picture Smart AI) |
 | Right Option + A | Opens the Assistant to ask about using the Mac and VoiceOver (like FS Companion) |
-| Right Option + T | Analyzes the text on the clipboard for formatting problems (like JAWS Text Analyzer) |
+| Right Option + T | Text Checker: finds formatting problems in the clipboard text, each with its sentence, to step through with Command + Up and Down Arrow (like JAWS Text Analyzer) |
 | Right Option + G | Opens Research It: dictionary definitions, Wikipedia summaries, and weather |
 | Right Option + B | System status: time, battery, network, output device and volume, microphone |
 | Right Option + O | Doc Reader: large-print reading window that reads aloud and highlights each word (like SuperNova Doc Reader) |
@@ -55,6 +60,10 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + Y | Focus frame: a thick, colored frame that follows the VoiceOver cursor |
 | Right Option + P | Audio hub: internet radio, podcasts, LibriVox audiobooks, news headlines (like SuperNova Connect) |
 | Right Option + J | Play or pause the audio hub |
+| Right Option + K | Restarts VoiceOver, the usual fix when Quick Nav stops working or focus gets stuck. Progress is spoken in the system voice while VoiceOver is off. |
+| Right Option + E | Compare text: press once with the original copied, then again with the new version copied, to hear every change. Useful after Writing Tools proofreading, which VoiceOver can't review. |
+| Right Option + V | Finds a VoiceOver command: type "heading" or "rotor" and hear the keys |
+| Right Option + Comma | Reports a bug to Apple: adds your Mac's details to your description, for Feedback Assistant or accessibility@apple.com |
 
 Every key can be changed in Settings, under Command keys (like JAWS Keyboard Manager). Choosing a key another command uses swaps the two commands' keys. Digits 1 to 9 always switch presets, and slash always lists the layer keys.
 
@@ -129,6 +138,7 @@ The app remembers everything between restarts, except quiet mode, which always e
 - `App/Sources/SpeechTools.swift` has speech history, Read Item and Say Clipboard. It also sends every AppleScript request to VoiceOver through one queue, because NSAppleScript isn't safe to use from several threads at once.
 - `App/Sources/Commands.swift` lists every command, its default key, and the keys it can move to. `App/Sources/Hotkeys.swift` turns key presses into commands.
 - `App/Sources/Assistant.swift` has the Claude client, the API key in the Keychain, the screen capture, and the Assistant window. `App/Sources/Research.swift` is Research It. `App/Sources/SystemStatus.swift` has system status and the Text Analyzer.
+- `App/Sources/Rescue.swift` (keep audio awake and restarting VoiceOver), `App/Sources/TextTools.swift` (compare text and the Text Checker) and `App/Sources/Helpers.swift` (the VoiceOver command finder and bug reports).
 - `App/Sources/DocReader.swift`, `App/Sources/ScanReader.swift`, `App/Sources/LowVision.swift` (captions and the focus frame) and `App/Sources/AudioHub.swift` are the reading, low-vision and audio hub features.
 - Development builds can check text recognition and the online services without any permission prompts:
   ```bash

@@ -59,23 +59,30 @@ final class SpeechHistory: ObservableObject {
     }
 }
 
-enum VoiceOverText {
+enum AppleScriptRunner {
     /// NSAppleScript isn't safe to use from several threads at once, and history,
-    /// announcements and Read Item all talk to VoiceOver, so every request goes
-    /// through this one queue.
-    private static let queue = DispatchQueue(label: "VoiceOverAudioSplit.voiceover-script")
+    /// announcements, Read Item, the focus frame and website presets all use it,
+    /// so every script goes through this one queue.
+    private static let queue = DispatchQueue(label: "VoiceOverAudioSplit.applescript")
 
+    /// Runs a script and returns its text result, or nil on failure. Don't call from the main thread.
+    @discardableResult
+    static func run(_ source: String, logErrors: Bool = true) -> String? {
+        queue.sync {
+            var error: NSDictionary?
+            let result = NSAppleScript(source: source)?.executeAndReturnError(&error)
+            if let error, logErrors { log("AppleScript failed: \(error[NSAppleScript.errorMessage] ?? error)") }
+            return error == nil ? (result?.stringValue ?? "") : nil
+        }
+    }
+}
+
+enum VoiceOverText {
     /// Runs one line of AppleScript inside `tell application "VoiceOver"` and
     /// returns the text result, or nil on failure. Don't call from the main thread.
     @discardableResult
     static func run(_ line: String, logErrors: Bool = true) -> String? {
-        queue.sync {
-            var error: NSDictionary?
-            let result = NSAppleScript(source: "tell application id \"com.apple.VoiceOver\" to \(line)")?
-                .executeAndReturnError(&error)
-            if let error, logErrors { log("VoiceOver script failed: \(error[NSAppleScript.errorMessage] ?? error)") }
-            return error == nil ? (result?.stringValue ?? "") : nil
-        }
+        AppleScriptRunner.run("tell application id \"com.apple.VoiceOver\" to \(line)", logErrors: logErrors)
     }
 
     /// Escapes text for use inside an AppleScript string.
@@ -104,5 +111,28 @@ enum Clipboard {
         }
         if board.data(forType: .tiff) != nil || board.data(forType: .png) != nil { return "An image" }
         return "The clipboard is empty"
+    }
+}
+
+/// Presets for websites: which browsers can be asked for their current address,
+/// and how a site's host name matches a rule.
+enum SitePresets {
+    /// Bundle ID to the AppleScript that returns the front tab's address.
+    static let browsers: [String: String] = [
+        "com.apple.Safari": "tell application id \"com.apple.Safari\" to return URL of front document",
+        "com.google.Chrome": "tell application id \"com.google.Chrome\" to return URL of active tab of front window",
+    ]
+
+    /// A rule for "youtube.com" also matches "www.youtube.com" and "m.youtube.com".
+    static func match(host: String, in rules: [String: String]) -> String? {
+        let host = host.lowercased()
+        return rules.first { site, _ in host == site || host.hasSuffix("." + site) }?.value
+    }
+
+    /// "https://www.YouTube.com/watch" or "www.youtube.com" becomes "youtube.com".
+    static func normalize(_ entry: String) -> String {
+        var text = entry.trimmingCharacters(in: .whitespaces).lowercased()
+        if let host = URL(string: text.contains("://") ? text : "https://\(text)")?.host() { text = host }
+        return text.hasPrefix("www.") ? String(text.dropFirst(4)) : text
     }
 }

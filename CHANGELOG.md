@@ -1,5 +1,15 @@
 # Changelog
 
+## Next
+
+- **Keep audio awake,** so the first words VoiceOver says aren't cut off by sleeping headphones.
+- **Restart VoiceOver** with one key (Right Option + K).
+- **Compare text** to hear every change between two versions (Right Option + E).
+- **Text Checker** steps through each formatting problem with its sentence (Right Option + T).
+- **Presets for websites** in Safari and Chrome.
+- **Find a VoiceOver command** (Right Option + V), and **report a bug to Apple** (Right Option + Comma).
+- Keys you choose are no longer replaced when a new command uses the same default key.
+
 ## 1.0 (beta), October 2026
 
 First public beta.

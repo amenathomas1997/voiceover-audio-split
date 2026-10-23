@@ -19,6 +19,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var docReaderWindow: NSWindow?
     private var scanWindow: NSWindow?
     private var audioHubWindow: NSWindow?
+    private var compareWindow: NSWindow?
+    private var textCheckerWindow: NSWindow?
+    private var commandsWindow: NSWindow?
+    private var bugReportWindow: NSWindow?
 
     static func main() {
         let app = NSApplication.shared
@@ -178,6 +182,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         audioHubWindow = show(audioHubWindow, title: "Audio Hub", view: AudioHubView())
     }
 
+    func showCompare() {
+        compareWindow = show(compareWindow, title: "Compare Text", view: CompareView())
+    }
+
+    func showTextChecker() {
+        textCheckerWindow = show(textCheckerWindow, title: "Text Checker", view: TextCheckerView())
+    }
+
+    func showVoiceOverCommands() {
+        commandsWindow = show(commandsWindow, title: "VoiceOver Commands", view: VoiceOverCommandsView())
+    }
+
+    func showBugReport() {
+        bugReportWindow = show(bugReportWindow, title: "Report a Bug to Apple", view: BugReportView())
+    }
+
     func showResearch() {
         researchWindow = show(researchWindow, title: "Research It", view: ResearchView())
     }
@@ -269,9 +289,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Help and research
         add(to: menu, "Describe Image Under VoiceOver Cursor", command: .describeImage) { $0.run(.describeImage) }
         add(to: menu, "Ask the Assistant…", command: .assistant) { $0.run(.assistant) }
-        add(to: menu, "Analyze Clipboard Text", command: .analyzeText) { $0.analyzeClipboard() }
+        add(to: menu, "Check Clipboard Text…", command: .analyzeText) { $0.analyzeClipboard() }
+        add(to: menu, CompareModel.shared.original == nil ? "Compare Text: Save Original" : "Compare Text: Compare With Clipboard",
+            command: .compareText) { $0.run(.compareText) }
         add(to: menu, "Research It…", command: .research) { $0.run(.research) }
         add(to: menu, "System Status", command: .systemStatus) { $0.announceSystemStatus() }
+        menu.addItem(.separator())
+
+        // VoiceOver help
+        add(to: menu, "Restart VoiceOver", command: .rescueVoiceOver) { $0.run(.rescueVoiceOver) }
+        add(to: menu, "Keep Audio Awake (Prevents Clipped Words)", checked: preferences.keepAudioAwake) { [preferences] _ in
+            preferences.keepAudioAwake.toggle()
+            Announcer.say(preferences.keepAudioAwake ? "Keeping audio awake" : "Audio can sleep")
+        }
+        add(to: menu, "Find a VoiceOver Command…", command: .voiceOverCommands) { $0.run(.voiceOverCommands) }
+        add(to: menu, "Report a Bug to Apple…", command: .reportBug) { $0.run(.reportBug) }
         menu.addItem(.separator())
 
         // Reading, low vision and listening

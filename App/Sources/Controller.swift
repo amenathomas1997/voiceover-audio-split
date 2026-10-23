@@ -102,6 +102,8 @@ final class Controller {
         Announcer.useSystemVoice = speechSilenced
         AudioHub.shared.applyMix(othersGain: activeSide == nil ? 1 : gains.others, quiet: quietAll)
         SpeechHistory.shared.update(enabled: preferences.speechHistory)
+        KeepAudioAwake.update(enabled: preferences.keepAudioAwake)
+        updateSiteWatching()
 
         if !engineNeeded {
             if splitter != nil { log("Audio capture off.") }
@@ -258,6 +260,12 @@ final class Controller {
         case .focusFrame: toggleFocusFrame()
         case .audioHub: app?.showAudioHub()
         case .hubPlayPause: AudioHub.shared.togglePlay()
+        case .rescueVoiceOver: MainActor.assumeIsolated { VoiceOverRescue.restart() }
+        case .compareText:
+            CompareModel.shared.step()
+            if CompareModel.shared.original == nil { app?.showCompare() }
+        case .voiceOverCommands: app?.showVoiceOverCommands()
+        case .reportBug: app?.showBugReport()
         }
     }
 
@@ -307,12 +315,11 @@ final class Controller {
         Announcer.say(SystemStatus.summary())
     }
 
+    /// Checks the clipboard and opens the Text Checker to step through the problems.
     func analyzeClipboard() {
-        guard let text = NSPasteboard.general.string(forType: .string), !text.isEmpty else {
-            return Announcer.say("Copy some text first, then analyze it")
-        }
         Tones.play(.status)
-        Announcer.say(TextAnalyzer.analyze(text))
+        TextCheckerModel.shared.checkClipboard()
+        (NSApp.delegate as? AppDelegate)?.showTextChecker()
     }
 
     func checkCamera() {
@@ -351,13 +358,53 @@ final class Controller {
     /// other apps. Apps with neither leave the current settings alone.
     private func applyAutomaticPreset(for app: NSRunningApplication?) {
         guard let bundleID = app?.bundleIdentifier else { return }
-        let presetID = preferences.appPresets[bundleID]
-            ?? (preferences.otherAppsPreset.isEmpty ? nil : preferences.otherAppsPreset)
+        // In a browser, a preset for the current website wins (checked by the site timer).
+        if SitePresets.browsers[bundleID] != nil, currentSitePresetID != nil { return }
+        applyAutomaticPreset(id: appPresetID(for: bundleID), reason: bundleID)
+    }
+
+    private func appPresetID(for bundleID: String) -> String? {
+        preferences.appPresets[bundleID] ?? (preferences.otherAppsPreset.isEmpty ? nil : preferences.otherAppsPreset)
+    }
+
+    private func applyAutomaticPreset(id presetID: String?, reason: String) {
         guard let presetID, presetID != automaticPresetID,
               let preset = preferences.presets.first(where: { $0.id.uuidString == presetID }) else { return }
         automaticPresetID = presetID
-        log("Automatic preset \(preset.name) for \(bundleID).")
+        log("Automatic preset \(preset.name) for \(reason).")
         applyPreset(preset)
+    }
+
+    // MARK: - Website presets
+
+    private var siteTimer: Timer?
+    /// The website preset in effect, if the front browser is on a site that has one.
+    private var currentSitePresetID: String?
+
+    /// Checks the front browser's address every two seconds, only while website presets exist.
+    private func updateSiteWatching() {
+        if preferences.sitePresets.isEmpty {
+            siteTimer?.invalidate()
+            siteTimer = nil
+            currentSitePresetID = nil
+        } else if siteTimer == nil {
+            siteTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in self?.checkSite() }
+        }
+    }
+
+    private func checkSite() {
+        guard let front = NSWorkspace.shared.frontmostApplication, let bundleID = front.bundleIdentifier,
+              let script = SitePresets.browsers[bundleID] else { return }
+        let rules = preferences.sitePresets
+        DispatchQueue.global(qos: .utility).async {
+            let host = AppleScriptRunner.run(script, logErrors: false).flatMap { URL(string: $0)?.host() }
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                let sitePreset = host.flatMap { SitePresets.match(host: $0, in: rules) }
+                self.currentSitePresetID = sitePreset
+                self.applyAutomaticPreset(id: sitePreset ?? self.appPresetID(for: bundleID), reason: host ?? bundleID)
+            }
+        }
     }
 
     var frontAppMuted: Bool {

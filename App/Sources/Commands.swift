@@ -11,6 +11,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case silence, readItem, history, clipboard, camera, layer
     case describeImage, assistant, analyzeText, research, systemStatus
     case docReader, scanAndRead, captions, focusFrame, audioHub, hubPlayPause
+    case rescueVoiceOver, compareText, voiceOverCommands, reportBug
 
     var id: String { rawValue }
 
@@ -37,7 +38,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .layer: "Layer key"
         case .describeImage: "Describe image under VoiceOver cursor"
         case .assistant: "Ask the assistant"
-        case .analyzeText: "Analyze clipboard text"
+        case .analyzeText: "Check clipboard text"
         case .research: "Research It"
         case .systemStatus: "System status"
         case .docReader: "Doc Reader"
@@ -46,6 +47,10 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .focusFrame: "Focus frame"
         case .audioHub: "Audio hub"
         case .hubPlayPause: "Audio hub play or pause"
+        case .rescueVoiceOver: "Restart VoiceOver"
+        case .compareText: "Compare text"
+        case .voiceOverCommands: "Find a VoiceOver command"
+        case .reportBug: "Report a bug to Apple"
         }
     }
 
@@ -81,6 +86,10 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .focusFrame: 16
         case .audioHub: 35
         case .hubPlayPause: 38
+        case .rescueVoiceOver: 40
+        case .compareText: 14
+        case .voiceOverCommands: 9
+        case .reportBug: 43
         }
     }
 }
@@ -136,10 +145,16 @@ enum KeyMap {
         commandForKey = build(custom)
     }
 
+    /// Keys the user chose always win. A command whose default key is already
+    /// taken by a chosen key (for example a default added in a later version)
+    /// has no key until one is chosen for it in Settings.
     private static func build(_ custom: [String: Int64]) -> [Int64: Command] {
         var map: [Int64: Command] = [:]
         for command in Command.allCases {
-            map[custom[command.rawValue] ?? command.defaultKey] = command
+            if let key = custom[command.rawValue] { map[key] = command }
+        }
+        for command in Command.allCases where custom[command.rawValue] == nil && map[command.defaultKey] == nil {
+            map[command.defaultKey] = command
         }
         return map
     }

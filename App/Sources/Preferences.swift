@@ -231,6 +231,10 @@ final class Preferences: ObservableObject {
     @Published var focusFrameColor: FrameColor { didSet { save(focusFrameColor.rawValue, "focusFrameColor") } }
     @Published var focusFrameThickness: Int { didSet { save(focusFrameThickness, "focusFrameThickness") } }
     @Published var focusFrameFlash: Bool { didSet { save(focusFrameFlash, "focusFrameFlash") } }
+    /// Play silence so headphones and Bluetooth devices don't sleep and clip VoiceOver's first words.
+    @Published var keepAudioAwake: Bool { didSet { save(keepAudioAwake, "keepAudioAwake") } }
+    /// Preset to switch to on a website, by host name such as "youtube.com" (preset IDs as strings).
+    @Published var sitePresets: [String: String] { didSet { save(sitePresets, "sitePresets") } }
     /// News feeds for the audio hub (RSS addresses).
     @Published var newsFeeds: [String] { didSet { save(newsFeeds, "newsFeeds") } }
     /// Keep a list of what VoiceOver says, to review with the history window.
@@ -247,6 +251,7 @@ final class Preferences: ObservableObject {
             "readerRate": 0.5, "captionsOn": false, "captionSize": 40, "focusFrameOn": false,
             "focusFrameColor": FrameColor.yellow.rawValue, "focusFrameThickness": 8, "focusFrameFlash": true,
             "newsFeeds": ["https://feeds.bbci.co.uk/news/rss.xml", "https://feeds.npr.org/1001/rss.xml"],
+            "keepAudioAwake": false,
         ])
         layout = Layout(rawValue: store.string(forKey: "layout") ?? "") ?? .opposite
         stereoOthers = store.bool(forKey: "stereoOthers")
@@ -285,6 +290,8 @@ final class Preferences: ObservableObject {
         focusFrameThickness = store.integer(forKey: "focusFrameThickness")
         focusFrameFlash = store.bool(forKey: "focusFrameFlash")
         newsFeeds = store.stringArray(forKey: "newsFeeds") ?? []
+        keepAudioAwake = store.bool(forKey: "keepAudioAwake")
+        sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
             ?? Preset.defaults
     }

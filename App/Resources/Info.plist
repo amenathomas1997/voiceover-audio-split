@@ -29,7 +29,7 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>VoiceOver Audio Split asks VoiceOver to announce changes, such as which ear speech is in, using your VoiceOver voice.</string>
+	<string>VoiceOver Audio Split asks VoiceOver to announce changes in your VoiceOver voice, and, if you set presets for websites, asks Safari or Chrome which website is open.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>VoiceOver Audio Split checks whether your face is centered and well lit before a video call. Pictures are only analyzed on this Mac and never saved.</string>
 	<key>NSAudioCaptureUsageDescription</key>

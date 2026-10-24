@@ -36,9 +36,11 @@
 	<key>NSAppleEventsUsageDescription</key>
 	<string>VoiceOver Audio Split asks VoiceOver to announce changes in your VoiceOver voice, and, if you set presets for websites, asks Safari or Chrome which website is open.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>VoiceOver Audio Split's microphone check listens for a few seconds to tell you whether you sound clear. Nothing is recorded or saved.</string>
+	<string>VoiceOver Audio Split uses the microphone for the microphone check, which listens for a few seconds to tell you whether you sound clear, and, if you turn it on, to hear the voice command “Launch VoiceOver training”. Nothing is recorded, saved or sent.</string>
 	<key>NSCameraUseContinuityCameraDeviceType</key>
 	<true/>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>VoiceOver Audio Split recognizes the voice command “Launch VoiceOver training” on your Mac, only if you turn it on in Settings. What you say is never recorded, saved or sent.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>VoiceOver Audio Split uses the camera to read text, labels and codes you hold up, identify colors and light, and check your framing before a video call. Pictures are analyzed on this Mac and never saved; only the money identifier sends a picture, and only when you ask.</string>
 	<key>NSAudioCaptureUsageDescription</key>

@@ -114,8 +114,8 @@
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Der Mikrofontest von VoiceOver Audio Split hört einige Sekunden zu, um dir zu sagen, ob du klar zu hören bist. Nichts wird aufgenommen oder gespeichert."
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split verwendet das Mikrofon für den Mikrofontest, der einige Sekunden zuhört, um dir zu sagen, ob du klar zu hören bist, und, wenn du es aktivierst, für den Sprachbefehl „VoiceOver-Training starten“. Nichts wird aufgenommen, gespeichert oder gesendet."
           }
         },
         "en" : {
@@ -126,14 +126,36 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "La prueba de micrófono de VoiceOver Audio Split escucha unos segundos para decirte si se te oye con claridad. No se graba ni se guarda nada."
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split usa el micrófono para la prueba de micrófono, que escucha unos segundos para decirte si se te oye con claridad, y, si lo activas, para oír el comando de voz “Abrir entrenamiento de VoiceOver”. No se graba, guarda ni envía nada."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Le test du micro de VoiceOver Audio Split écoute quelques secondes pour vous dire si l’on vous entend clairement. Rien n’est enregistré ni conservé."
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split utilise le micro pour le test du micro, qui écoute quelques secondes pour vous dire si l’on vous entend clairement, et, si vous l’activez, pour entendre la commande vocale « Lancer la formation VoiceOver ». Rien n’est enregistré, conservé ni envoyé."
+          }
+        }
+      }
+    },
+    "NSSpeechRecognitionUsageDescription" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split erkennt den Sprachbefehl „VoiceOver-Training starten“ auf deinem Mac, nur wenn du ihn in den Einstellungen aktivierst. Was du sagst, wird nie aufgenommen, gespeichert oder gesendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split reconoce el comando de voz “Abrir entrenamiento de VoiceOver” en tu Mac, solo si lo activas en Ajustes. Lo que dices nunca se graba, guarda ni envía."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split reconnaît la commande vocale « Lancer la formation VoiceOver » sur votre Mac, uniquement si vous l’activez dans les Réglages. Ce que vous dites n’est jamais enregistré, conservé ni envoyé."
           }
         }
       }

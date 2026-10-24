@@ -20,6 +20,7 @@ VoiceOver Audio Split does not collect, store or share any personal information.
 - **Translation.** Translate uses Apple's on-device translation. Text isn't sent anywhere, though macOS may download a language the first time.
 - **Your commands.** Scripts and Shortcuts you add run only when you press their key or choose them. They can do whatever they were written to do, so only add scripts you trust.
 - **Diagnostics reports.** A diagnostics report contains the app's recent log, version and settings (never your API key or files). It's saved only where you choose, and never sent automatically.
+- **Voice command.** If you turn on "Listen for Launch VoiceOver training", the app listens through the Mac's built-in microphone for that phrase, using Apple's speech recognition on your Mac (on-device only). What you say is never recorded, saved or sent anywhere, and only the phrase does anything. The microphone indicator stays on while it listens. It's off unless you turn it on.
 - **Mouse.** The audio mouse follows the pointer's position only while it's on, to play its tone.
 - **Keyboard.** The app watches for its own shortcuts (the right-hand Option key with a command key). Other keystrokes are passed on untouched and never stored. While you use VoiceOver practice or the typing trainer, the keys you press are checked against the lesson and then forgotten.
 - **Settings.** Your settings, presets and app volumes are stored on your Mac. If you add an Anthropic API key, it is stored in your Mac's Keychain.
@@ -50,7 +51,8 @@ Like any internet request, these services can see your IP address. Dictionary de
 | Accessibility | The keyboard shortcuts, custom labels, place markers and Do It for Me |
 | System audio recording | Splitting and adjusting sound |
 | Screen recording | Describe image (the item under the VoiceOver cursor), reading the front window's text, and describing a video |
-| Microphone | The microphone check |
+| Microphone | The microphone check, and the voice command if you turn it on |
+| Speech Recognition | The voice command "Launch VoiceOver training", if you turn it on; recognized on your Mac only |
 | Downloads folder (read only) | Saying when a download finishes, and opening the latest download |
 | Camera | Camera framing check, Scan and Read, color identifier, light detector, barcode and QR code reader, medicine label reader, money identifier |
 | Automation (VoiceOver) | Speaking announcements in your VoiceOver voice, speech history, captions, Read Item, the focus frame, restarting VoiceOver, and moving the VoiceOver cursor for place markers and Do It for Me |

@@ -5941,6 +5941,28 @@
         }
       }
     },
+    "Choose a lesson from the list. Each one is a button." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle eine Lektion aus der Liste. Jede ist eine Taste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige una lección de la lista. Cada una es un botón."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez une leçon dans la liste. Chacune est un bouton."
+          }
+        }
+      }
+    },
     "Choose a script" : {
       "localizations" : {
         "de" : {
@@ -14631,6 +14653,50 @@
         }
       }
     },
+    "Learning on your own." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du lernst allein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprendes por tu cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous apprenez en autonomie."
+          }
+        }
+      }
+    },
+    "Learning with a trainer." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du lernst mit Trainerin oder Trainer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprendes con alguien que te enseña."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous apprenez avec un formateur."
+          }
+        }
+      }
+    },
     "Left" : {
       "localizations" : {
         "de" : {
@@ -15133,6 +15199,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Liens"
+          }
+        }
+      }
+    },
+    "Listen for “Launch VoiceOver training”" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf „VoiceOver-Training starten“ hören"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuchar “Abrir entrenamiento de VoiceOver”"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écouter « Lancer la formation VoiceOver »"
           }
         }
       }
@@ -21561,6 +21649,28 @@
         }
       }
     },
+    "Press Return to start %@, or Escape to choose another lesson from the list." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücke den Zeilenschalter, um %@ zu starten, oder Escape, um eine andere Lektion aus der Liste zu wählen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsa Retorno para empezar %@, o Escape para elegir otra lección de la lista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur Retour pour commencer %@, ou sur Échap pour choisir une autre leçon dans la liste."
+          }
+        }
+      }
+    },
     "Press Return when you're ready to go on." : {
       "localizations" : {
         "de" : {
@@ -24619,6 +24729,28 @@
         }
       }
     },
+    "Say it anywhere on the Mac to open VoiceOver Lessons. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag es überall auf dem Mac, um die VoiceOver-Lektionen zu öffnen. Die Sprache wird auf deinem Mac erkannt und nie aufgenommen, gespeichert oder gesendet. Es wird das eingebaute Mikrofon verwendet, damit deine AirPods ihren vollen Klang behalten, und die Mikrofonanzeige bleibt an, solange zugehört wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dilo en cualquier lugar de la Mac para abrir las lecciones de VoiceOver. La voz se reconoce en tu Mac y nunca se graba, guarda ni envía. Usa el micrófono integrado, así tus AirPods conservan todo su sonido, y el indicador del micrófono queda encendido mientras escucha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dites-le n'importe où sur le Mac pour ouvrir les leçons VoiceOver. La parole est reconnue sur votre Mac et n'est jamais enregistrée, conservée ni envoyée. Le micro intégré est utilisé, pour que vos AirPods gardent tout leur son, et l'indicateur du micro reste allumé pendant l'écoute."
+          }
+        }
+      }
+    },
     "Say what you copy" : {
       "localizations" : {
         "de" : {
@@ -26512,6 +26644,28 @@
         }
       }
     },
+    "Speech Recognition" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spracherkennung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconocimiento de voz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnaissance vocale"
+          }
+        }
+      }
+    },
     "Speech Right" : {
       "localizations" : {
         "de" : {
@@ -27432,6 +27586,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Étape 3 : entendre les annonces avec la voix de VoiceOver"
+          }
+        }
+      }
+    },
+    "Step 4, optional: Open VoiceOver training by voice" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schritt 4, optional: VoiceOver-Training per Sprache öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paso 4, opcional: Abrir el entrenamiento de VoiceOver con la voz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étape 4, facultative : ouvrir la formation VoiceOver à la voix"
           }
         }
       }
@@ -29394,24 +29570,24 @@
         }
       }
     },
-    "The microphone check." : {
+    "The microphone check, and the voice command if you turn it on." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Mikrofontest."
+            "value" : "Der Mikrofontest und der Sprachbefehl, wenn du ihn aktivierst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La prueba de micrófono."
+            "value" : "La prueba de micrófono, y el comando de voz si lo activas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le test du micro."
+            "value" : "Le test du micro, et la commande vocale si vous l'activez."
           }
         }
       }
@@ -29742,6 +29918,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La séparation est désactivée. Vous avez terminé le tutoriel. Rouvrez-le à tout moment depuis le menu."
+          }
+        }
+      }
+    },
+    "The voice command “Launch VoiceOver training”, if you turn it on. Recognized on your Mac." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Sprachbefehl „VoiceOver-Training starten“, wenn du ihn aktivierst. Er wird auf deinem Mac erkannt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El comando de voz “Abrir entrenamiento de VoiceOver”, si lo activas. Se reconoce en tu Mac."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La commande vocale « Lancer la formation VoiceOver », si vous l'activez. Reconnue sur votre Mac."
           }
         }
       }
@@ -30908,6 +31106,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Activez la séparation une première fois. Votre Mac demande d'autoriser l'enregistrement de l'audio du système ; choisissez Autoriser. Un casque donne les meilleurs résultats."
+          }
+        }
+      }
+    },
+    "Turn this on to open VoiceOver Lessons from anywhere by saying: Launch VoiceOver training. Your Mac asks to allow speech recognition and the microphone. Speech is recognized on your Mac and never sent." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktiviere das, um die VoiceOver-Lektionen von überall zu öffnen, indem du sagst: VoiceOver-Training starten. Dein Mac fragt nach der Erlaubnis für Spracherkennung und Mikrofon. Die Sprache wird auf deinem Mac erkannt und nie gesendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actívalo para abrir las lecciones de VoiceOver desde cualquier lugar diciendo: Abrir entrenamiento de VoiceOver. Tu Mac te pedirá permitir el reconocimiento de voz y el micrófono. La voz se reconoce en tu Mac y nunca se envía."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activez cette option pour ouvrir les leçons VoiceOver de n'importe où en disant : Lancer la formation VoiceOver. Votre Mac demande d'autoriser la reconnaissance vocale et le micro. La parole est reconnue sur votre Mac et n'est jamais envoyée."
           }
         }
       }
@@ -33222,6 +33442,116 @@
         }
       }
     },
+    "Voice command" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprachbefehl"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comando de voz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande vocale"
+          }
+        }
+      }
+    },
+    "Voice command isn't available: this Mac can't recognize speech on the device." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Sprachbefehl ist nicht verfügbar: Dieser Mac kann Sprache nicht auf dem Gerät erkennen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El comando de voz no está disponible: esta Mac no puede reconocer la voz en el dispositivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La commande vocale n'est pas disponible : ce Mac ne peut pas reconnaître la parole sur l'appareil."
+          }
+        }
+      }
+    },
+    "Voice command needs Speech Recognition. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Speech Recognition." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Sprachbefehl braucht die Spracherkennung. Erlaube VoiceOver Audio Split in „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Spracherkennung“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El comando de voz necesita Reconocimiento de voz. Permite VoiceOver Audio Split en Ajustes del Sistema, Privacidad y seguridad, Reconocimiento de voz."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La commande vocale a besoin de la reconnaissance vocale. Autorisez VoiceOver Audio Split dans Réglages Système, Confidentialité et sécurité, Reconnaissance vocale."
+          }
+        }
+      }
+    },
+    "Voice command needs the microphone. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Microphone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Sprachbefehl braucht das Mikrofon. Erlaube VoiceOver Audio Split in „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Mikrofon“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El comando de voz necesita el micrófono. Permite VoiceOver Audio Split en Ajustes del Sistema, Privacidad y seguridad, Micrófono."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La commande vocale a besoin du micro. Autorisez VoiceOver Audio Split dans Réglages Système, Confidentialité et sécurité, Micro."
+          }
+        }
+      }
+    },
+    "Voice command waits for a built-in or wired microphone, so your Bluetooth headphones keep their full sound quality." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Sprachbefehl wartet auf ein eingebautes oder kabelgebundenes Mikrofon, damit deine Bluetooth-Kopfhörer ihre volle Klangqualität behalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El comando de voz espera un micrófono integrado o con cable, para que tus audífonos Bluetooth conserven toda su calidad de sonido."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La commande vocale attend un micro intégré ou filaire, pour que vos écouteurs Bluetooth gardent toute leur qualité sonore."
+          }
+        }
+      }
+    },
     "VoiceOver Audio Split %@" : {
       "localizations" : {
         "de" : {
@@ -34168,6 +34498,28 @@
         }
       }
     },
+    "Welcome to VoiceOver Lessons. Are you learning on your own, or with a trainer? Press 1 to learn on your own: I'll explain more, tell you exactly what went wrong, and give hints. Press 2 if a trainer is with you: shorter prompts, and a report for the trainer. Or press Return to keep learning %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Willkommen bei den VoiceOver-Lektionen. Lernst du allein oder mit Trainerin oder Trainer? Drücke 1, um allein zu lernen: Ich erkläre mehr, sage dir genau, was nicht gepasst hat, und gebe Hinweise. Drücke 2, wenn jemand dich unterrichtet: kürzere Ansagen und ein Bericht. Oder drücke den Zeilenschalter, um weiter %@ zu lernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te damos la bienvenida a las lecciones de VoiceOver. ¿Aprendes por tu cuenta o con alguien que te enseña? Pulsa 1 para aprender por tu cuenta: te explicaré más, te diré exactamente qué salió mal y te daré pistas. Pulsa 2 si alguien te está enseñando: indicaciones más cortas y un informe para quien enseña. O pulsa Retorno para seguir aprendiendo %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenue dans les leçons VoiceOver. Apprenez-vous en autonomie ou avec un formateur ? Appuyez sur 1 pour apprendre en autonomie : j'explique davantage, je vous dis exactement ce qui n'allait pas et je donne des indices. Appuyez sur 2 si un formateur est avec vous : des consignes plus courtes et un rapport pour le formateur. Ou appuyez sur Retour pour continuer %@."
+          }
+        }
+      }
+    },
     "Welcome. VoiceOver is the screen reader built into your Mac. It reads what's on the screen and lets you do everything from the keyboard. Command F5 turns it on and off. On a Mac with Touch ID, you can also hold Command and press Touch ID three times quickly." : {
       "localizations" : {
         "de" : {
@@ -35070,6 +35422,28 @@
         }
       }
     },
+    "You're starting from the beginning." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du fängst ganz von vorn an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empiezas desde el principio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous commencez depuis le début."
+          }
+        }
+      }
+    },
     "You're too loud and may sound distorted. Move back a little or lower the input volume." : {
       "localizations" : {
         "de" : {
@@ -35110,6 +35484,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Votre voix est trop faible. Rapprochez-vous du micro ou augmentez le volume d'entrée."
+          }
+        }
+      }
+    },
+    "You've done %lld of %lld lessons." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %lld von %lld Lektionen gemacht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has hecho %lld de %lld lecciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez fait %lld leçons sur %lld."
           }
         }
       }
@@ -37052,6 +37448,28 @@
         }
       }
     },
+    "on your own" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "allein"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "por tu cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "en autonomie"
+          }
+        }
+      }
+    },
     "opening System Settings, finding a setting with the sidebar or search, and reaching the VoiceOver and Accessibility settings." : {
       "localizations" : {
         "de" : {
@@ -37950,6 +38368,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "vent %lld miles par heure"
+          }
+        }
+      }
+    },
+    "with a trainer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mit Trainerin oder Trainer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "con alguien que te enseña"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "avec un formateur"
           }
         }
       }

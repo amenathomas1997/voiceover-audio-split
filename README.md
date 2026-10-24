@@ -45,7 +45,11 @@
   - **Going further:** 16. understanding what VoiceOver says (dimmed, selected, collapsed, rows, hints); 17. writing and saving in TextEdit; 18. Pages; 19. Numbers (cells, formulas, rows and columns); 20. Keynote (slides and playing a slideshow); 21. System Settings; 22. a web errand in Safari; 23. Safari in depth: tabs, adding, organizing and removing bookmarks, the Reading List, history, downloads and private windows.
   - **Review:** 24. a mixed review.
 
-  **Two ways to learn,** chosen at the top of the lessons window:
+  **Opening the lessons:** from the menu (Learning), the command palette, or by voice. Turn on **Listen for "Launch VoiceOver training"** in Settings, under Voice command, or in the setup guide. Then saying "Launch VoiceOver training" anywhere on the Mac opens the lessons; in Spanish, French or German, say the same in your language. Speech is recognized on the Mac and never recorded or sent. It listens through the Mac's built-in microphone, so AirPods keep full sound quality; with only a Bluetooth microphone, it waits. The microphone indicator stays on while it listens.
+
+  **A spoken welcome** greets you when the lessons open: "Are you learning on your own, or with a trainer? Press 1… Press 2… or Return to keep your choice." It then says how far you've got and offers to start your next lesson with Return, or Escape to choose from the list.
+
+  **Two ways to learn,** chosen in the spoken welcome or at the top of the lessons window:
   - **On my own** gives more detail, so no trainer is needed:
     - Each lesson starts with what you'll learn and how many steps it has, and every step says where you are ("Step 3 of 9").
     - A wrong press is explained exactly ("You weren't holding the VO keys", "Shift isn't needed", "The key is H, not G"). Hints build up with each miss, and after three misses it offers to skip.

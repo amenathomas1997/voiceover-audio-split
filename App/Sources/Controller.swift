@@ -115,6 +115,7 @@ final class Controller {
         SystemEvents.updateClock()
         SensorWatch.update()
         CustomLabels.update(preferences.customLabels)
+        VoiceCommand.shared.update(enabled: preferences.voiceCommand)
         BeepMode.update(active: speechSilenced && preferences.beepsWhenSilenced)
         ClipboardWatcher.update(enabled: preferences.announceClipboard)
         updateSiteWatching()

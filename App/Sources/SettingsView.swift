@@ -168,6 +168,12 @@ struct SettingsView: View {
                 }
             }
 
+            Section(String(localized: "Voice command")) {
+                Toggle(String(localized: "Listen for \u{201C}Launch VoiceOver training\u{201D}"), isOn: $preferences.voiceCommand)
+                Text(String(localized: "Say it anywhere on the Mac to open VoiceOver Lessons. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens."))
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
             Section(String(localized: "Spoken events and clock")) {
                 Toggle(String(localized: "Say when a download finishes"), isOn: $preferences.announceDownloads)
                 Toggle(String(localized: "Say when headphones or speakers connect or disconnect"), isOn: $preferences.announceDevices)

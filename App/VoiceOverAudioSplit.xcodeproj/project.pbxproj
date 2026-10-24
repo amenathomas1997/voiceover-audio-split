@@ -22,6 +22,7 @@
 		3BDE91278AEBE6414BA5BAD6 /* SystemStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CF3299924E24F7F6C46A876 /* SystemStatus.swift */; };
 		3CC805809ABFF018748764F3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 760BD6D213BAE3CF4CB72D2B /* SettingsView.swift */; };
 		3F688EF3FAC6ABADD6E68D6E /* Tones.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53E734B886BBD455AE3C73C /* Tones.swift */; };
+		460C20151914D3E5BDCB61E0 /* VoiceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D93A789E8C3E97D04624C9 /* VoiceCommand.swift */; };
 		4D01AD2D2EDF83DD8E3B1DE4 /* AXTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B37868A677F10581E1B92 /* AXTools.swift */; };
 		4D308CBB80FC0103B6D01871 /* Practice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41718968341F2C831BA48924 /* Practice.swift */; };
 		4E0166972FF319DA20CDCEE6 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DC305F6B600AF15463D660 /* HistoryView.swift */; };
@@ -88,6 +89,7 @@
 		4F42EEFA664F74971023329C /* Braille.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Braille.swift; sourceTree = "<group>"; };
 		5180FC427B94C760EDAAA4FD /* Labels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Labels.swift; sourceTree = "<group>"; };
 		53CBA5AC541C99ACE8057901 /* Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Events.swift; sourceTree = "<group>"; };
+		55D93A789E8C3E97D04624C9 /* VoiceCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCommand.swift; sourceTree = "<group>"; };
 		57E60AE325830BBA9CD22B23 /* LogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogicTests.swift; sourceTree = "<group>"; };
 		5970A1F832E6825D9B032D6A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		5B7782E1F761F8B34CCAC087 /* Extend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extend.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				7FBEEE5BCF915A4797A7E517 /* TextTools.swift */,
 				E53E734B886BBD455AE3C73C /* Tones.swift */,
 				7B1C81BFD8ACC3BF8DAA1F36 /* TypingTrainer.swift */,
+				55D93A789E8C3E97D04624C9 /* VoiceCommand.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 				8B54C37360BD8D51C2902625 /* TextTools.swift in Sources */,
 				3F688EF3FAC6ABADD6E68D6E /* Tones.swift in Sources */,
 				7650F4CE52B7F1E055672BB0 /* TypingTrainer.swift in Sources */,
+				460C20151914D3E5BDCB61E0 /* VoiceCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,7 +453,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610241000;
+				CURRENT_PROJECT_VERSION = 202610241200;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -554,7 +558,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610241000;
+				CURRENT_PROJECT_VERSION = 202610241200;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_NS_ASSERTIONS = NO;

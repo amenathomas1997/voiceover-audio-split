@@ -718,7 +718,14 @@ struct LessonResult: Identifiable, Hashable {
 final class LessonRunner: ObservableObject {
     static let shared = LessonRunner()
 
-    enum Phase: Equatable { case idle, explaining, checking, done }
+    enum Phase: Equatable {
+        case idle, explaining, checking, done
+        /// The spoken welcome: choosing a mode (1 or 2), then ready to start the next lesson.
+        case choosingMode, ready
+    }
+
+    /// Not in a lesson: the window shows the list of lessons.
+    var isBetweenLessons: Bool { [.idle, .done, .choosingMode, .ready].contains(phase) }
 
     @Published private(set) var phase = Phase.idle
     @Published private(set) var lesson: Lesson?
@@ -838,7 +845,73 @@ final class LessonRunner: ObservableObject {
         return parts.joined(separator: " ")
     }
 
+    // MARK: Welcome
+
+    /// The lesson to suggest: the first one not done yet, or the review.
+    var nextLesson: Lesson { Lesson.course.first { !Preferences.shared.lessonsDone.contains($0.id) } ?? Lesson.review }
+
+    /// Spoken when the lessons window opens: how are you learning, then the next lesson.
+    /// Everything has a key, so it works without finding anything on screen.
+    func welcome() {
+        guard isBetweenLessons else { return }
+        PracticeModel.shared.stop()
+        TypingTrainer.shared.stop()
+        session += 1
+        phase = .choosingMode
+        Hotkeys.keyObserver = { [weak self] keyCode, flags, _ in self?.handleWelcome(keyCode, flags) ?? false }
+        let current = LessonMode.current == .onYourOwn ? String(localized: "on your own") : String(localized: "with a trainer")
+        let words = String(localized: "Welcome to VoiceOver Lessons. Are you learning on your own, or with a trainer? Press 1 to learn on your own: I'll explain more, tell you exactly what went wrong, and give hints. Press 2 if a trainer is with you: shorter prompts, and a report for the trainer. Or press Return to keep learning \(current).")
+        let thisSession = session
+        // Let VoiceOver finish saying the window's name first.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+            guard let self, self.session == thisSession else { return }
+            self.say(words)
+        }
+    }
+
+    private func handleWelcome(_ keyCode: Int64, _ flags: CGEventFlags) -> Bool {
+        guard NSApp.isActive, window == nil || NSApp.keyWindow === window else { return false }
+        let plain = flags.intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift]).isEmpty && !flags.contains(.maskAlphaShift)
+        guard plain else { return false }
+        let numbers: [Int64: LessonMode] = [18: .onYourOwn, 83: .onYourOwn, 19: .withTrainer, 84: .withTrainer]
+        switch (phase, keyCode) {
+        case (.choosingMode, _) where numbers[keyCode] != nil:
+            DispatchQueue.main.async { self.chose(numbers[keyCode]!) }
+            return true
+        case (.choosingMode, 36):
+            DispatchQueue.main.async { self.chose(LessonMode.current) }
+            return true
+        case (.ready, 36):
+            DispatchQueue.main.async { self.start(self.nextLesson) }
+            return true
+        case (_, Key.escape):
+            DispatchQueue.main.async { self.endWelcome() }
+            return true
+        default:
+            return false
+        }
+    }
+
+    private func chose(_ mode: LessonMode) {
+        Preferences.shared.lessonMode = mode.rawValue
+        phase = .ready
+        let how = mode == .onYourOwn ? String(localized: "Learning on your own.") : String(localized: "Learning with a trainer.")
+        let next = nextLesson
+        let done = Preferences.shared.lessonsDone.filter { id in Lesson.course.contains { $0.id == id } }.count
+        let progress = done == 0 ? String(localized: "You're starting from the beginning.")
+                                 : String(localized: "You've done \(done) of \(Lesson.course.count) lessons.")
+        say("\(how) \(progress) " + String(localized: "Press Return to start \(next.title), or Escape to choose another lesson from the list."))
+    }
+
+    private func endWelcome() {
+        Hotkeys.keyObserver = nil
+        session += 1
+        phase = .idle
+        say(String(localized: "Choose a lesson from the list. Each one is a button."))
+    }
+
     func stop() {
+        if phase == .choosingMode || phase == .ready { return endWelcome() }
         guard phase != .idle && phase != .done else { return }
         Hotkeys.keyObserver = nil
         stopMission()
@@ -1350,7 +1423,7 @@ struct LessonsView: View {
 
     var body: some View {
         Form {
-            if runner.phase == .idle || runner.phase == .done {
+            if runner.isBetweenLessons {
                 Section(String(localized: "VoiceOver Lessons")) {
                     Text(String(localized: "A course for learning VoiceOver from the beginning, in four levels. Each lesson explains a skill, then you try the keys, answer questions and do tasks for real. Start with lesson 1, or pick any lesson."))
                         .font(.caption).foregroundStyle(.secondary)

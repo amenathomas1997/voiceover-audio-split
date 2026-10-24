@@ -877,3 +877,27 @@ final class LessonTeachingTests: XCTestCase {
         XCTAssertTrue(LessonMode.allCases.allSatisfy { !$0.title.isEmpty })
     }
 }
+
+final class VoiceCommandTests: XCTestCase {
+    func testLaunchPhrase() {
+        XCTAssertTrue(VoiceCommand.isLaunchCommand("Launch VoiceOver training"))
+        XCTAssertTrue(VoiceCommand.isLaunchCommand("launch voice over training"))
+        XCTAssertTrue(VoiceCommand.isLaunchCommand("Open VoiceOver lessons please"))
+        XCTAssertTrue(VoiceCommand.isLaunchCommand("Abrir entrenamiento de VoiceOver"))
+        XCTAssertTrue(VoiceCommand.isLaunchCommand("Lancer la formation VoiceOver"))
+        XCTAssertTrue(VoiceCommand.isLaunchCommand("VoiceOver-Training starten"))
+        XCTAssertFalse(VoiceCommand.isLaunchCommand("Turn on VoiceOver"))
+        XCTAssertFalse(VoiceCommand.isLaunchCommand("my training session tomorrow"))
+    }
+
+    func testWelcomeSuggestsTheFirstLessonNotDone() {
+        let saved = Preferences.shared.lessonsDone
+        defer { Preferences.shared.lessonsDone = saved }
+        Preferences.shared.lessonsDone = []
+        XCTAssertEqual(LessonRunner.shared.nextLesson.id, "start")
+        Preferences.shared.lessonsDone = ["start", "moving"]
+        XCTAssertEqual(LessonRunner.shared.nextLesson.id, "reading")
+        Preferences.shared.lessonsDone = Lesson.course.map(\.id)
+        XCTAssertEqual(LessonRunner.shared.nextLesson.id, "review")
+    }
+}

@@ -31,6 +31,8 @@
 - **Typing trainer:** talking lessons from the home row up, finger hints, words per minute and accuracy, best scores, and a one-minute speed test. A soft click for each right key (or a soft tone, or no sound), and a gentle low sound for a wrong one.
 - **In Spanish, French and German:** the app follows your Mac's language. Translations are new; corrections from native speakers are welcome.
 
+- **"Launch VoiceOver training":** an optional voice command that opens the lessons from anywhere, recognized on the Mac through the built-in microphone.
+- **A spoken welcome** to the lessons: choose on your own (1) or with a trainer (2), then Return starts your next lesson.
 - **VoiceOver Lessons, on your own or with a trainer:**
   - **On your own:** fuller explanations, step numbers, exact feedback on wrong keys, hints that build up, praise that names the keys, recaps, and advice on what to do next.
   - **With a trainer:** short prompts, hints on request, trainer notes for every lesson, and a session report that can be copied.

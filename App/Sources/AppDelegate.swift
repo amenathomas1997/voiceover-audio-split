@@ -4,6 +4,7 @@
 
 import AppKit
 import CoreAudio
+import Speech
 import SwiftUI
 import WebKit
 
@@ -90,6 +91,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             try? await Task.sleep(for: .milliseconds(300))
             let headings = (try? await web.evaluateJavaScript("document.querySelectorAll('h1,h2').length")) as? Int
             log("Check: practice web page headings = \(headings ?? -1)")
+            log("Check: voice command on-device = \(SFSpeechRecognizer(locale: Locale(identifier: "en-US"))?.supportsOnDeviceRecognition ?? false), built-in microphone = \(VoiceCommand.builtInMicrophone() != nil)")
             log("Check: permissions = \(Permission.allCases.map { "\($0.rawValue) \($0.status())" }.joined(separator: ", "))")
             log("Check: camera in use = \(SensorWatch.cameraInUse()), microphone apps = \(SensorWatch.appsUsingMicrophone().count)")
             if let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/3017620422003.json?fields=product_name,brands,quantity"),
@@ -271,6 +273,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         lessonsWindow = show(lessonsWindow, title: String(localized: "VoiceOver Lessons"), view: LessonsView())
         LessonRunner.shared.window = lessonsWindow
         if isNew, let lessonsWindow { whenClosed(lessonsWindow) { LessonRunner.shared.stop() } }
+        // Spoken welcome: on your own or with a trainer, then the next lesson.
+        LessonRunner.shared.welcome()
     }
 
     func showTypingTrainer() {

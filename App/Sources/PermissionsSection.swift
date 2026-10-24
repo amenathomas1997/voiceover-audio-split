@@ -5,10 +5,11 @@
 
 import AppKit
 import AVFoundation
+import Speech
 import SwiftUI
 
 enum Permission: String, CaseIterable, Identifiable {
-    case accessibility, systemAudio, voiceOver, screen, microphone, camera, automation
+    case accessibility, systemAudio, voiceOver, screen, microphone, speech, camera, automation
 
     var id: String { rawValue }
 
@@ -21,6 +22,7 @@ enum Permission: String, CaseIterable, Identifiable {
         case .voiceOver: String(localized: "Controlling VoiceOver")
         case .screen: String(localized: "Screen recording")
         case .microphone: String(localized: "Microphone")
+        case .speech: String(localized: "Speech Recognition")
         case .camera: String(localized: "Camera")
         case .automation: String(localized: "Safari and Chrome")
         }
@@ -32,7 +34,8 @@ enum Permission: String, CaseIterable, Identifiable {
         case .systemAudio: String(localized: "The audio split and every sound feature. Nothing is recorded.")
         case .voiceOver: String(localized: "Announcements in your VoiceOver voice, speech history, captions and Read Item. Also turn on \u{201C}Allow VoiceOver to be controlled with AppleScript\u{201D} in VoiceOver Utility.")
         case .screen: String(localized: "Describing images and videos, and reading the front window.")
-        case .microphone: String(localized: "The microphone check.")
+        case .microphone: String(localized: "The microphone check, and the voice command if you turn it on.")
+        case .speech: String(localized: "The voice command \u{201C}Launch VoiceOver training\u{201D}, if you turn it on. Recognized on your Mac.")
         case .camera: String(localized: "Scan and Read, the camera readers and the framing check.")
         case .automation: String(localized: "Presets for websites. Only needed if you use them.")
         }
@@ -46,6 +49,7 @@ enum Permission: String, CaseIterable, Identifiable {
         case .voiceOver, .automation: "Privacy_Automation"
         case .screen: "Privacy_ScreenCapture"
         case .microphone: "Privacy_Microphone"
+        case .speech: "Privacy_SpeechRecognition"
         case .camera: "Privacy_Camera"
         }
         return URL(string: "x-apple.systempreferences:com.apple.preference.security?\(page)")!
@@ -58,6 +62,12 @@ enum Permission: String, CaseIterable, Identifiable {
         case .systemAudio: return .unknown // macOS doesn't let apps check this.
         case .screen: return CGPreflightScreenCaptureAccess() ? .allowed : .notAllowed
         case .microphone: return Self.capture(.audio)
+        case .speech:
+            switch SFSpeechRecognizer.authorizationStatus() {
+            case .authorized: return .allowed
+            case .notDetermined: return .notAsked
+            default: return .notAllowed
+            }
         case .camera: return Self.capture(.video)
         case .voiceOver: return Self.automation("com.apple.VoiceOver")
         case .automation:

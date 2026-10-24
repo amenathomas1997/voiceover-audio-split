@@ -321,6 +321,8 @@ final class Preferences: ObservableObject {
     @Published var lessonChallengeBest: Int { didSet { save(lessonChallengeBest, "lessonChallengeBest") } }
     /// VoiceOver lessons: on your own (more detail and feedback) or with a trainer (a LessonMode).
     @Published var lessonMode: String { didSet { save(lessonMode, "lessonMode") } }
+    /// Listen for "Launch VoiceOver training" anywhere on the Mac.
+    @Published var voiceCommand: Bool { didSet { save(voiceCommand, "voiceCommand") } }
 
     private init() {
         store.register(defaults: [
@@ -397,6 +399,7 @@ final class Preferences: ObservableObject {
         lessonSchedule = store.dictionary(forKey: "lessonSchedule") as? [String: [Double]] ?? [:]
         lessonChallengeBest = store.integer(forKey: "lessonChallengeBest")
         lessonMode = store.string(forKey: "lessonMode") ?? LessonMode.onYourOwn.rawValue
+        voiceCommand = store.bool(forKey: "voiceCommand")
         placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }

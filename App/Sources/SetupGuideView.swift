@@ -53,6 +53,12 @@ struct SetupGuideView: View {
                 }
             }
 
+            Section(String(localized: "Step 4, optional: Open VoiceOver training by voice")) {
+                Text(String(localized: "Turn this on to open VoiceOver Lessons from anywhere by saying: Launch VoiceOver training. Your Mac asks to allow speech recognition and the microphone. Speech is recognized on your Mac and never sent."))
+                Toggle(String(localized: "Listen for \u{201C}Launch VoiceOver training\u{201D}"), isOn: Binding(
+                    get: { Preferences.shared.voiceCommand }, set: { Preferences.shared.voiceCommand = $0 }))
+            }
+
             Section(String(localized: "Shortcuts")) {
                 Text(String(localized: "Hold \(Preferences.shared.modifier.title) and press:"))
                 Text(String(localized: "Left Arrow or Right Arrow: put speech in that ear. Press again to turn the split off."))

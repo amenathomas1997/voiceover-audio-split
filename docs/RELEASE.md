@@ -120,7 +120,6 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 > - Continuity Camera: the camera tools can use a nearby iPhone (NSCameraUseContinuityCameraDeviceType).
 > - User scripts: the user can add their own AppleScripts to the app's Application Scripts folder (run with NSUserAppleScriptTask) or name a Shortcut (run with the shortcuts:// URL scheme). Nothing runs unless the user adds it.
 > - User-selected files (read and write): opening documents in the large-print Doc Reader, and saving recognized text as a text or Word file where the user chooses.
->
 > - Anthropic API (optional): image and video descriptions, the assistant, Do It for Me and the money identifier use the user's own Anthropic API key, entered in Settings. Nothing is sent without that key, pictures are sent only after the user allows it once, and each request is made only when the user asks. No account with us is needed; the app has no sign-in.
 > - Updates: this App Store build doesn't download or install code. Updates come only through the App Store.
 >

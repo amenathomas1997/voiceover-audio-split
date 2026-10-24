@@ -2,6 +2,7 @@
 
 ## Next
 
+- **Check for updates:** the app looks on GitHub once a day for a newer version, or when you choose Check for Updates in the menu, the command palette, Settings, or say "Audio Split, check for updates". It asks before downloading, checks the download, then opens Apple's Installer. Copies from TestFlight or the App Store update there instead.
 - **Audit fixes:**
   - Voice commands ignore the app's and VoiceOver's own speech, so reading "VoiceOver Audio Split" or the help no longer sets off a command.
   - "Launch VoiceOver training" needs a word like launch or open, and doesn't restart an open lesson.

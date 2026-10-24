@@ -1044,3 +1044,57 @@ final class DeepAuditFixTests: XCTestCase {
         XCTAssertEqual(combo.letter, ".")
     }
 }
+
+final class UpdateCheckTests: XCTestCase {
+    private func release(_ tag: String, notes: String = "", assets: [[String: Any]]? = nil) throws -> Data {
+        let installer: [String: Any] = [
+            "name": "VoiceOver-Audio-Split.pkg", "size": 3_140_711,
+            "digest": "sha256:6AD579581646D62EE79BF15A3202DDAF635B60466810A2957B5BCF22FD693896",
+            "browser_download_url": "https://github.com/amenathomas1997/voiceover-audio-split/releases/download/\(tag)/VoiceOver-Audio-Split.pkg",
+        ]
+        return try JSONSerialization.data(withJSONObject: ["tag_name": tag, "body": notes, "assets": assets ?? [installer]])
+    }
+
+    func testReadsGitHubsLatestRelease() throws {
+        let found = try XCTUnwrap(UpdateCheck.parse(release("v1.2", notes: "Fixes.\n\nBuild 202611011200")))
+        XCTAssertEqual(found.version, "1.2")
+        XCTAssertEqual(found.build, "202611011200")
+        XCTAssertEqual(found.size, 3_140_711)
+        XCTAssertEqual(found.sha256, "6ad579581646d62ee79bf15a3202ddaf635b60466810a2957b5bcf22fd693896")
+        XCTAssertEqual(found.installer.lastPathComponent, "VoiceOver-Audio-Split.pkg")
+    }
+
+    func testNoInstallerMeansNoUpdate() throws {
+        XCTAssertNil(UpdateCheck.parse(try release("v1.2", assets: [["name": "Source.zip", "browser_download_url": "https://example.com/a.zip"]])))
+        XCTAssertNil(UpdateCheck.parse(try release("v1.2", assets: [["name": "VoiceOver-Audio-Split.pkg", "browser_download_url": "http://example.com/a.pkg"]])),
+                     "only over https")
+        XCTAssertNil(UpdateCheck.parse(Data("not json".utf8)))
+    }
+
+    func testNewerVersions() throws {
+        func newer(_ tag: String, _ notes: String = "", than version: String, build: String = "202610241900") throws -> Bool {
+            UpdateCheck.isNewer(try XCTUnwrap(UpdateCheck.parse(release(tag, notes: notes))), thanVersion: version, build: build)
+        }
+        XCTAssertTrue(try newer("v1.1", than: "1.0"))
+        XCTAssertTrue(try newer("v1.0.1", than: "1.0"))
+        XCTAssertTrue(try newer("v2.0", than: "1.10"))
+        XCTAssertTrue(try newer("v1.10", than: "1.9"), "compared as numbers, not text")
+        XCTAssertFalse(try newer("v1.0", than: "1.0"))
+        XCTAssertFalse(try newer("v0.9", than: "1.0"))
+        XCTAssertTrue(try newer("v1.0", "Build 202611011200", than: "1.0"), "same version, newer build")
+        XCTAssertFalse(try newer("v1.0", "Build 202610241900", than: "1.0"))
+        XCTAssertFalse(try newer("v1.0", "Build 202601010000", than: "1.0"))
+    }
+
+    func testNotesAsPlainText() {
+        let text = UpdateCheck.plain("## Install\n\n1. Download **the installer**.\nSee the [README](https://example.com).\n\n\n\nBuild `1`")
+        XCTAssertEqual(text, "Install\n\n1. Download the installer.\nSee the README.\n\nBuild 1")
+    }
+
+    func testChecksum() throws {
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent("checksum-test.txt")
+        try Data("abc".utf8).write(to: file)
+        defer { try? FileManager.default.removeItem(at: file) }
+        XCTAssertEqual(try UpdateCheck.sha256(of: file), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+    }
+}

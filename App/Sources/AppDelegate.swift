@@ -88,6 +88,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         controller.restore()
         Hotkeys.start()
         if !preferences.finishedSetup { showSetupGuide() }
+        Updater.shared.startAutomaticChecks()
         #if DEBUG
         if CommandLine.arguments.contains("--self-test") { selfTest() }
         #endif
@@ -551,6 +552,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: backup, String(localized: "Import Settings…"), command: .importSettings) { $0.run(.importSettings) }
         add(to: backup, String(localized: "Save a Diagnostics Report…"), command: .diagnostics) { $0.run(.diagnostics) }
         add(to: backup, String(localized: "App Performance"), command: .performance) { $0.run(.performance) }
+        if !UpdateCheck.isStoreCopy {
+            add(to: menu, String(localized: "Check for Updates…"), command: .checkForUpdates) { $0.run(.checkForUpdates) }
+        }
         add(to: menu, String(localized: "Settings…")) { [weak self] _ in self?.showSettings() }
         add(to: menu, String(localized: "Setup Guide…")) { [weak self] _ in self?.showSetupGuide() }
         menu.addItem(.separator())

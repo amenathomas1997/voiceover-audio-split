@@ -3543,6 +3543,28 @@
         }
       }
     },
+    "Already checking for updates" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es wird bereits nach Updates gesucht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya estoy buscando actualizaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche de mises à jour déjà en cours"
+          }
+        }
+      }
+    },
     "Always listen for “Audio Split” and “Launch VoiceOver training”" : {
       "localizations" : {
         "de" : {
@@ -5809,6 +5831,94 @@
         }
       }
     },
+    "Check for Updates Now" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt nach Updates suchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones ahora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher des mises à jour maintenant"
+          }
+        }
+      }
+    },
+    "Check for Updates…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Updates suchen …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher des mises à jour…"
+          }
+        }
+      }
+    },
+    "Check for updates" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Updates suchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher des mises à jour"
+          }
+        }
+      }
+    },
+    "Check for updates automatically" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatisch nach Updates suchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones automáticamente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher automatiquement les mises à jour"
+          }
+        }
+      }
+    },
     "Checking" : {
       "localizations" : {
         "de" : {
@@ -5827,6 +5937,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vérification"
+          }
+        }
+      }
+    },
+    "Checking for updates" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche nach Updates"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando actualizaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche de mises à jour"
           }
         }
       }
@@ -8647,6 +8779,28 @@
         }
       }
     },
+    "Couldn't check for updates. Check your internet connection, and try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es konnte nicht nach Updates gesucht werden. Prüfe deine Internetverbindung und versuche es später noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo buscar actualizaciones. Revisa tu conexión a internet e inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de rechercher des mises à jour. Vérifiez votre connexion à Internet, puis réessayez plus tard."
+          }
+        }
+      }
+    },
     "Couldn't find a place called %@" : {
       "localizations" : {
         "de" : {
@@ -9901,6 +10055,28 @@
         }
       }
     },
+    "Download and Install" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laden und installieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargar e instalar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Télécharger et installer"
+          }
+        }
+      }
+    },
     "Download finished: %@" : {
       "localizations" : {
         "de" : {
@@ -9919,6 +10095,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Téléchargement terminé : %@"
+          }
+        }
+      }
+    },
+    "Downloading the update" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Update wird geladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargando la actualización"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Téléchargement de la mise à jour"
           }
         }
       }
@@ -14653,6 +14851,28 @@
         }
       }
     },
+    "Later" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Später"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más tarde"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus tard"
+          }
+        }
+      }
+    },
     "Layer" : {
       "localizations" : {
         "de" : {
@@ -19229,6 +19449,28 @@
         }
       }
     },
+    "Once a day, the app asks GitHub whether a newer version is out; nothing about you is sent. If there is one, it asks before downloading. The installer is checked, then opens in Apple's Installer." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einmal am Tag fragt die App bei GitHub nach, ob es eine neuere Version gibt; dabei wird nichts über dich gesendet. Wenn es eine gibt, fragt sie, bevor sie sie lädt. Das Installationspaket wird geprüft und dann im Installationsprogramm von Apple geöffnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una vez al día, la app pregunta a GitHub si hay una versión más reciente; no se envía nada sobre ti. Si la hay, te pregunta antes de descargarla. El instalador se comprueba y luego se abre en el Instalador de Apple."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une fois par jour, l'app demande à GitHub si une version plus récente est sortie ; rien ne vous concernant n'est envoyé. S'il y en a une, elle vous demande avant de la télécharger. Le programme d'installation est vérifié, puis s'ouvre dans le Programme d'installation d'Apple."
+          }
+        }
+      }
+    },
     "Once more, the ones that were missed." : {
       "localizations" : {
         "de" : {
@@ -20435,6 +20677,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Horaires d'ouverture"
+          }
+        }
+      }
+    },
+    "Opening the installer. Follow its steps; VoiceOver Audio Split closes while it installs and opens again afterwards." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Installationsprogramm wird geöffnet. Folge seinen Schritten; VoiceOver Audio Split wird während der Installation beendet und danach wieder geöffnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abriendo el instalador. Sigue sus pasos; VoiceOver Audio Split se cierra mientras se instala y se vuelve a abrir después."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouverture du programme d'installation. Suivez ses étapes ; VoiceOver Audio Split se ferme pendant l'installation et se rouvre ensuite."
           }
         }
       }
@@ -26710,6 +26974,28 @@
         }
       }
     },
+    "Skip This Version" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Version überspringen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitir esta versión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorer cette version"
+          }
+        }
+      }
+    },
     "Skipped." : {
       "localizations" : {
         "de" : {
@@ -30274,6 +30560,28 @@
         }
       }
     },
+    "The installer couldn't be opened. Opening the download page instead." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Installationsprogramm konnte nicht geöffnet werden. Stattdessen wird die Downloadseite geöffnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo abrir el instalador. Abriendo la página de descarga."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'ouvrir le programme d'installation. Ouverture de la page de téléchargement à la place."
+          }
+        }
+      }
+    },
     "The item chooser lists everything in the window. Press VO I, type part of a name, and press Return to go there." : {
       "localizations" : {
         "de" : {
@@ -30758,6 +31066,50 @@
         }
       }
     },
+    "The update couldn't be downloaded. Check your internet connection, and try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Update konnte nicht geladen werden. Prüfe deine Internetverbindung und versuche es später noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo descargar la actualización. Revisa tu conexión a internet e inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de télécharger la mise à jour. Vérifiez votre connexion à Internet, puis réessayez plus tard."
+          }
+        }
+      }
+    },
+    "The update didn't download correctly, so nothing was installed. Try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Update wurde nicht richtig geladen, deshalb wurde nichts installiert. Versuche es später noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La actualización no se descargó bien, así que no se instaló nada. Inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La mise à jour ne s'est pas téléchargée correctement ; rien n'a donc été installé. Réessayez plus tard."
+          }
+        }
+      }
+    },
     "The voice command “Launch VoiceOver training”, if you turn it on. Recognized on your Mac." : {
       "localizations" : {
         "de" : {
@@ -31062,6 +31414,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cette commande n'a pas de touche pour le moment ; choisissez-en une dans les Réglages, ou passez cette étape."
+          }
+        }
+      }
+    },
+    "This copy was installed from TestFlight or the App Store, which bring its updates." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Kopie wurde über TestFlight oder den App Store installiert, die ihre Updates liefern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta copia se instaló desde TestFlight o el App Store, que traen sus actualizaciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette copie a été installée depuis TestFlight ou l'App Store, qui fournissent ses mises à jour."
           }
         }
       }
@@ -32602,6 +32976,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flèche haut : parole plus forte. Flèche bas : autres sons plus forts."
+          }
+        }
+      }
+    },
+    "Updates" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updates"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mises à jour"
           }
         }
       }
@@ -34582,6 +34978,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "VoiceOver Audio Split %@"
+          }
+        }
+      }
+    },
+    "VoiceOver Audio Split %@ is available" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split %@ ist verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split %@ está disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split %@ est disponible"
           }
         }
       }
@@ -36610,6 +37028,50 @@
         }
       }
     },
+    "You have the latest version, %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die neueste Version, %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tienes la versión más reciente, %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez la dernière version, %@."
+          }
+        }
+      }
+    },
+    "You have version %@. Install the update now? The app closes while it installs and opens again afterwards." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast Version %@. Das Update jetzt installieren? Die App wird während der Installation beendet und danach wieder geöffnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tienes la versión %@. ¿Instalar la actualización ahora? La app se cierra mientras se instala y se vuelve a abrir después."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez la version %@. Installer la mise à jour maintenant ? L'app se ferme pendant l'installation et se rouvre ensuite."
+          }
+        }
+      }
+    },
     "You pressed Pause." : {
       "localizations" : {
         "de" : {
@@ -37293,6 +37755,7 @@
       }
     },
     "battery" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -37512,6 +37975,29 @@
         }
       }
     },
+    "check for updates|update the app" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nach updates suchen|app aktualisieren|update suchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "buscar actualizaciones|actualizar la app|actualizar la aplicación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rechercher des mises à jour|mettre à jour l'app|mettre à jour l'application"
+          }
+        }
+      }
+    },
     "checking" : {
       "localizations" : {
         "de" : {
@@ -37601,6 +38087,7 @@
       }
     },
     "daily practice" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -37756,6 +38243,7 @@
       }
     },
     "find|go to" : {
+      "comment" : "Voice command words that start a Do It for Me request, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -38681,6 +39169,7 @@
       }
     },
     "mute my microphone|mute microphone" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -38725,6 +39214,7 @@
       }
     },
     "next lesson" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -38747,6 +39237,7 @@
       }
     },
     "next output device|switch output" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -38901,6 +39392,7 @@
       }
     },
     "no|cancel|never mind" : {
+      "comment" : "Voice answers meaning no, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39187,6 +39679,7 @@
       }
     },
     "preset" : {
+      "comment" : "The word preset, as said in a voice command",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39253,6 +39746,7 @@
       }
     },
     "quiet everything" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39319,6 +39813,7 @@
       }
     },
     "read the window|read the screen" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39341,6 +39836,7 @@
       }
     },
     "read this barcode|barcode" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39363,6 +39859,7 @@
       }
     },
     "read this label" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39385,6 +39882,7 @@
       }
     },
     "read this page|scan" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39451,6 +39949,7 @@
       }
     },
     "repeat that|repeat" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39495,6 +39994,7 @@
       }
     },
     "restart voiceover" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39649,6 +40149,7 @@
       }
     },
     "sound back" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39715,6 +40216,7 @@
       }
     },
     "speak again|start talking" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39737,6 +40239,7 @@
       }
     },
     "speech left" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39759,6 +40262,7 @@
       }
     },
     "speech right" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39781,6 +40285,7 @@
       }
     },
     "split off" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39825,6 +40330,7 @@
       }
     },
     "stop talking|silence voiceover" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39847,6 +40353,7 @@
       }
     },
     "system status" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40001,6 +40508,7 @@
       }
     },
     "turn on voiceover|start voiceover" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40155,6 +40663,7 @@
       }
     },
     "unmute|unmute my microphone" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40199,6 +40708,7 @@
       }
     },
     "what can i say|help" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40221,6 +40731,7 @@
       }
     },
     "what color is this" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40243,6 +40754,7 @@
       }
     },
     "what did voiceover say" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40265,6 +40777,7 @@
       }
     },
     "what money is this" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40287,6 +40800,7 @@
       }
     },
     "what time is it" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40309,6 +40823,7 @@
       }
     },
     "what's playing" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40331,6 +40846,7 @@
       }
     },
     "what's using my microphone" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40353,6 +40869,7 @@
       }
     },
     "where am i" : {
+      "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40529,6 +41046,7 @@
       }
     },
     "yes|okay|confirm" : {
+      "comment" : "Voice answers meaning yes, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {

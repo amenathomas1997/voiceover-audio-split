@@ -31,7 +31,7 @@
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "VoiceOver Audio Split lässt VoiceOver Änderungen mit deiner VoiceOver-Stimme ansagen und fragt Safari oder Chrome, welche Website geöffnet ist, wenn du Voreinstellungen für Websites festlegst."
           }
         },
@@ -43,13 +43,13 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "VoiceOver Audio Split pide a VoiceOver que anuncie los cambios con tu voz de VoiceOver y, si configuras preajustes para sitios web, pregunta a Safari o Chrome qué sitio web está abierto."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "VoiceOver Audio Split demande à VoiceOver d’annoncer les changements avec votre voix VoiceOver et, si vous définissez des préréglages pour des sites web, demande à Safari ou Chrome quel site est ouvert."
           }
         }
@@ -84,7 +84,7 @@
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "VoiceOver Audio Split verwendet die Kamera, um Texte, Etiketten und Codes zu lesen, die du davor hältst, Farben und Licht zu erkennen und vor einem Videoanruf deinen Bildausschnitt zu prüfen. Bilder werden auf diesem Mac analysiert und nie gespeichert; nur die Geld-Erkennung sendet ein Bild, und nur wenn du darum bittest."
           }
         },
@@ -96,13 +96,13 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "VoiceOver Audio Split usa la cámara para leer textos, etiquetas y códigos que acerques, identificar colores y luz, y revisar tu encuadre antes de una videollamada. Las imágenes se analizan en este Mac y nunca se guardan; solo el identificador de dinero envía una imagen, y solo cuando lo pides."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "VoiceOver Audio Split utilise la caméra pour lire les textes, étiquettes et codes que vous lui présentez, identifier les couleurs et la lumière, et vérifier votre cadrage avant un appel vidéo. Les images sont analysées sur ce Mac et jamais conservées ; seul l’identificateur de billets envoie une image, et uniquement à votre demande."
           }
         }
@@ -121,7 +121,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "VoiceOver Audio Split's microphone check listens for a few seconds to tell you whether you sound clear. Nothing is recorded or saved."
+            "value" : "VoiceOver Audio Split uses the microphone for the microphone check, which listens for a few seconds to tell you whether you sound clear, and, if you turn it on, to hear the voice command “Launch VoiceOver training”. Nothing is recorded, saved or sent."
           }
         },
         "es" : {
@@ -139,11 +139,19 @@
       }
     },
     "NSSpeechRecognitionUsageDescription" : {
+      "comment" : "Privacy - Speech Recognition Usage Description",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "VoiceOver Audio Split erkennt den Sprachbefehl „VoiceOver-Training starten“ auf deinem Mac, nur wenn du ihn in den Einstellungen aktivierst. Was du sagst, wird nie aufgenommen, gespeichert oder gesendet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VoiceOver Audio Split recognizes the voice command “Launch VoiceOver training” on your Mac, only if you turn it on in Settings. What you say is never recorded, saved or sent."
           }
         },
         "es" : {

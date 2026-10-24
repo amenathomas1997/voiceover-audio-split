@@ -40,6 +40,7 @@ These connect only when you use them, and send only what is needed:
 | Audio hub: radio | Radio Browser | Your search words; then the station you choose streams to you |
 | Audio hub: podcasts | Apple (iTunes Search) and the podcast's own host | Your search words; then the show's feed and episodes you choose |
 | Audio hub: audiobooks | LibriVox | Your search words; then the book's chapters you choose |
+| Check for updates (on by default, once a day; turn it off in Settings, Updates) | GitHub | A request for the latest release's details; if you choose to install it, the download of the installer. Not used by TestFlight or App Store copies. |
 | Audio hub: news | The news feeds listed in the app (BBC and NPR by default, or ones you add) | A request for the headlines |
 
 Like any internet request, these services can see your IP address. Dictionary definitions use the Mac's built-in dictionary and don't use the internet.

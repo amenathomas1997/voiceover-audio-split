@@ -328,6 +328,12 @@ final class Preferences: ObservableObject {
     @Published var typingSayEachKey: Bool { didSet { save(typingSayEachKey, "typingSayEachKey") } }
     /// Listen for "Launch VoiceOver training" anywhere on the Mac.
     @Published var voiceCommand: Bool { didSet { save(voiceCommand, "voiceCommand") } }
+    /// Look for a new version on GitHub once a day (not for TestFlight or App Store copies).
+    @Published var checkForUpdates: Bool { didSet { save(checkForUpdates, "checkForUpdates") } }
+    /// A version the user chose to skip ("1.1" plus its build), so it isn't offered again by itself.
+    var skippedUpdate: String { didSet { save(skippedUpdate, "skippedUpdate") } }
+    /// When updates were last checked, in seconds since 1970.
+    var lastUpdateCheck: Double { didSet { save(lastUpdateCheck, "lastUpdateCheck") } }
 
     private init() {
         store.register(defaults: [
@@ -407,6 +413,9 @@ final class Preferences: ObservableObject {
         practiceLearnMode = store.object(forKey: "practiceLearnMode") as? Bool ?? true
         typingSayEachKey = store.bool(forKey: "typingSayEachKey")
         voiceCommand = store.bool(forKey: "voiceCommand")
+        checkForUpdates = store.object(forKey: "checkForUpdates") as? Bool ?? true
+        skippedUpdate = store.string(forKey: "skippedUpdate") ?? ""
+        lastUpdateCheck = store.double(forKey: "lastUpdateCheck")
         placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }

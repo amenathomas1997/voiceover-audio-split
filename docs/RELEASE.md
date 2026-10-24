@@ -58,6 +58,14 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 
 For Macs that can't use TestFlight, `./build.sh` makes `build/VoiceOver Audio Split.pkg`, which installs the app in Applications. To share it, sign it with Developer ID certificates and notarize it; see the README's "Installer package" section. The App Store and TestFlight builds don't use it.
 
+To publish a new version, raise `CURRENT_PROJECT_VERSION` (and `MARKETING_VERSION` for a new version number) in `App/project.yml`, commit and push, then run:
+
+```
+NOTARY_PROFILE=VoiceOverAudioSplit ./build.sh publish
+```
+
+It builds, signs and notarizes the installer, and creates a GitHub release with the changelog's "Next" section as its notes. **Check for Updates** in installed copies then finds it. It relies on two things the script takes care of: the installer is always called `VoiceOver-Audio-Split.pkg`, and the notes end with `Build` and the build number, so a new build of the same version still counts as newer. The website's download button links to `releases/latest/download/VoiceOver-Audio-Split.pkg`, so it always gets the newest one.
+
 ## 8. Export compliance
 
 The app's Info.plist sets `ITSAppUsesNonExemptEncryption` to `NO`. It uses only Apple's standard HTTPS, so no export documentation is needed.

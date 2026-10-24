@@ -6,6 +6,9 @@
 #
 #   ./build.sh            build the installer
 #   ./build.sh install    build it and install it on this Mac
+#   NOTARY_PROFILE=VoiceOverAudioSplit ./build.sh publish
+#                         build, notarize and publish it as a GitHub release, which the
+#                         app's Check for Updates finds (needs the gh command, signed in)
 #
 # Needs Xcode. Signing:
 #   * With "Developer ID Application" and "Developer ID Installer" certificates in
@@ -144,4 +147,28 @@ fi
 
 if [[ "${1:-}" == "install" ]]; then
   sudo installer -pkg "$PKG" -target /
+fi
+
+# A GitHub release, in the form Check for Updates looks for: the installer is always
+# named VoiceOver-Audio-Split.pkg, and the notes end with "Build" and the build number.
+if [[ "${1:-}" == "publish" ]]; then
+  if [[ -z "${NOTARY_PROFILE:-}" ]]; then
+    echo "Publishing needs a notarized installer: run with NOTARY_PROFILE=VoiceOverAudioSplit." >&2
+    exit 1
+  fi
+  command -v gh >/dev/null || { echo "Publishing needs the gh command (brew install gh), signed in with gh auth login." >&2; exit 1; }
+  INFO="$APP/Contents/Info.plist"
+  VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$INFO")
+  BUILD_NUMBER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$INFO")
+  TAG="v$VERSION"
+  gh release view "$TAG" >/dev/null 2>&1 && TAG="v$VERSION-build$BUILD_NUMBER"
+  PUBLISH="$BUILD/publish"
+  rm -rf "$PUBLISH" && mkdir -p "$PUBLISH"
+  cp "$PKG" "$PUBLISH/VoiceOver-Audio-Split.pkg"
+  # The notes: the changelog's "Next" section, then the build number.
+  awk '/^## Next/{on=1; next} /^## /{on=0} on' CHANGELOG.md > "$PUBLISH/notes.md"
+  printf '\nSHA-256 of the installer: `%s`\n\nBuild %s\n' "$(shasum -a 256 "$PKG" | cut -d' ' -f1)" "$BUILD_NUMBER" >> "$PUBLISH/notes.md"
+  gh release create "$TAG" "$PUBLISH/VoiceOver-Audio-Split.pkg" --target "$(git rev-parse HEAD)" \
+    --title "VoiceOver Audio Split $VERSION" --notes-file "$PUBLISH/notes.md"
+  echo "Published $TAG. Check for Updates in the app now offers it."
 fi

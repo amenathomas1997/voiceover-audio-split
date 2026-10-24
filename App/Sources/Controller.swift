@@ -306,6 +306,7 @@ final class Controller {
         case .importSettings: MainActor.assumeIsolated { SettingsTransfer.importFromFile() }
         case .diagnostics: MainActor.assumeIsolated { Diagnostics.save() }
         case .performance: Performance.announce()
+        case .checkForUpdates: MainActor.assumeIsolated { Updater.shared.check(userInitiated: true) }
         case .sensorStatus: SensorWatch.queueSummary()
         case .customLabel: app?.showLabelEditor()
         case .placeMarker: PlaceMarkers.add()

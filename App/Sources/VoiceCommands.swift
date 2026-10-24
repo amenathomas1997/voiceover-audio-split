@@ -229,6 +229,12 @@ enum VoiceCommands {
                     DispatchQueue.main.async { Announcer.say(last.isEmpty ? String(localized: "VoiceOver hasn't said anything yet.") : last) }
                 }
             },
+            // The app
+            VoiceAction(name: String(localized: "Check for updates"),
+                        phrases: phrases("check for updates|check for update|update the app|any updates|is there an update",
+                                         String(localized: "check for updates|update the app", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { Updater.shared.check(userInitiated: true) }
+            },
             // Learning
             VoiceAction(name: String(localized: "Next lesson"),
                         phrases: phrases("next lesson|start a lesson|continue the lessons",

@@ -341,6 +341,15 @@ struct SettingsView: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
 
+            if !UpdateCheck.isStoreCopy {
+                Section(String(localized: "Updates")) {
+                    Toggle(String(localized: "Check for updates automatically"), isOn: $preferences.checkForUpdates)
+                    Button(String(localized: "Check for Updates Now")) { Updater.shared.check(userInitiated: true) }
+                    Text(String(localized: "Once a day, the app asks GitHub whether a newer version is out; nothing about you is sent. If there is one, it asks before downloading. The installer is checked, then opens in Apple's Installer."))
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+
             Section(String(localized: "About")) {
                 Text(String(localized: "VoiceOver Audio Split \(Self.version)"))
                 Text(String(localized: "Copyright 2026 Full Circle AT LLC. Free software under the GNU General Public License version 3."))

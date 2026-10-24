@@ -49,6 +49,7 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] In a lesson, open the rotor (VO U), type letters and press Escape: the rotor closes and the lesson keeps going. Escape twice stops the lesson.
 - [ ] With Caps Lock switched on for capitals, lesson keys (Return, R, B, H, S) still work.
 - [ ] Copy and paste (Command C, V) work in the Assistant and Settings text fields.
+- [ ] Check for Updates (menu) says "You have the latest version" on the newest build. With an older installed build, it offers the update, downloads it, and Installer opens; after installing, the app opens again.
 - [ ] Check a Word document with a picture and no headings, and a scanned PDF: the problems are listed with fixes.
 - [ ] Save some text as braille and open the .brf file on a notetaker or braille display.
 - [ ] Read a QR code (for example a Wi-Fi code) and a food barcode. Read a medicine bottle while turning it.

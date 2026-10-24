@@ -277,7 +277,13 @@ To build without uploading anything, run `App/release.sh`. The package goes to `
 
 ## Installer package (outside the App Store)
 
-To install the app without TestFlight, for example on your own Macs, build an installer package:
+**Download:** the newest signed and notarized installer is always at [releases/latest](https://github.com/amenathomas1997/voiceover-audio-split/releases/latest/download/VoiceOver-Audio-Split.pkg). Open it and follow its steps.
+
+**Updates:** copies installed this way check GitHub once a day for a newer version (turn this off in Settings, under Updates). You can also choose **Check for Updates** in the menu or the command palette, or say "Audio Split, check for updates". It tells you what's new and asks before downloading; the download is checked against the checksum GitHub publishes, then Apple's Installer opens. The app closes while it installs and opens again afterwards. Copies from TestFlight or the App Store get their updates there.
+
+**Publishing a release:** `NOTARY_PROFILE=VoiceOverAudioSplit ./build.sh publish` builds, notarizes and publishes the installer as a GitHub release (see docs/RELEASE.md).
+
+To build the installer yourself, for example on your own Macs:
 
 ```bash
 ./build.sh

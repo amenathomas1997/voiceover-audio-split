@@ -25,11 +25,21 @@ Answer **Data Not Collected**. The app has no accounts, analytics or tracking, a
 
 ## 4. TestFlight: beta app description
 
-> VoiceOver Audio Split puts VoiceOver's speech in one ear and every other sound in the other, like the audio split in JAWS. It also lets you control your Mac's sound from the keyboard: quiet everything but VoiceOver, set the volume of individual apps, switch output devices, and mute the microphone. It adds hearing and clarity options, speech on demand and speech history, large-print reading and captions, camera text reading, and an audio hub for radio, podcasts, audiobooks and news. Everyday tools read barcodes, QR codes, medicine labels and money, check documents for accessibility, and save braille files. Custom labels, place markers and camera and microphone alerts help with other apps, and VoiceOver practice and a talking typing trainer help you learn. Spanish, French and German are included. Everything works from the keyboard with Right Option and a key, and a setup guide walks you through each permission.
+> VoiceOver Audio Split puts VoiceOver's speech in one ear and every other sound in the other, like the audio split in JAWS. It also lets you control your Mac's sound from the keyboard: quiet everything but VoiceOver, set the volume of individual apps, switch output devices, mute the microphone, and use presets that switch automatically for each app or website.
+>
+> It adds hearing and clarity options, speech on demand and speech history, large-print reading and captions, camera text reading, and an audio hub for radio, podcasts, audiobooks and news. Everyday tools read barcodes, QR codes, medicine labels and money, check documents for accessibility, and save braille files. Custom labels, place markers and camera and microphone alerts help with other apps.
+>
+> VoiceOver Lessons teach VoiceOver from the very beginning in 24 spoken lessons, up to Mail, Pages, Numbers, Keynote and Safari, with a mode for learning on your own and one for learning with a trainer. VoiceOver practice and a talking typing trainer help you build speed. Voice commands work hands-free: say "Audio Split" and a command, recognized on your Mac.
+>
+> Everything works from the keyboard with Right Option and a key, and a setup guide walks you through each permission. Spanish, French and German are included.
 
 ## 5. TestFlight: what to test
 
-> Please try the split with headphones: Right Option + Left Arrow or Right Arrow. Then try Right Option + Space to hear what's on, and Right Option + M for the menu, where everything else is grouped in submenus. New in this build: the Camera, Learning and Reading and Text submenus have barcode and label readers, VoiceOver practice, a typing trainer, a document check and braille files. We'd especially like to hear how it works with your headphones, during Zoom, Teams or FaceTime calls, and with your own VoiceOver settings. Send feedback from the TestFlight app, or open an issue on GitHub.
+> Please try the split with headphones: Right Option + Left Arrow or Right Arrow. Then try Right Option + Space to hear what's on, and Right Option + M for the menu, where everything else is grouped in submenus.
+>
+> New in this build: VoiceOver Lessons (in the menu under Learning), with a spoken welcome that asks whether you're learning on your own or with a trainer. Voice commands: turn them on in Settings, under Voice command, then say "Audio Split, what can I say?" or "Launch VoiceOver training". Many fixes from a full code review, including lessons working with Caps Lock as the VO key, and copy and paste in text fields.
+>
+> We'd especially like to hear how it works with your headphones, during Zoom, Teams or FaceTime calls, with your own VoiceOver settings, and how the lessons work for someone new to VoiceOver. Send feedback from the TestFlight app, or email amena.thomas@fullcircleat.com.
 
 ## 6. Beta App Review and App Review: notes
 

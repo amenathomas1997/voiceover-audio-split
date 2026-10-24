@@ -18,6 +18,64 @@ Text to paste into App Store Connect, and the steps for a public TestFlight beta
 - **Support URL:** https://github.com/amenathomas1997/voiceover-audio-split#readme (public, with the feedback email; opening an issue would need a GitHub account)
 - **Contact email:** amena.thomas@fullcircleat.com
 - **Copyright:** 2026 Full Circle AT LLC
+- **Promotional text (up to 170 characters):** VoiceOver's speech in one ear, everything else in the other. Plus sound control, reading tools and spoken VoiceOver lessons, all from the keyboard.
+- **Keywords (up to 100 characters):** voiceover,screen reader,blind,low vision,accessibility,audio,split,speech,braille,lessons,hearing
+- **Description:**
+
+> VoiceOver Audio Split puts VoiceOver's speech in one ear and everything else in the other, like the audio split in JAWS. Listen to a meeting, a video or music while VoiceOver keeps talking, without the two getting in each other's way. It also brings favorite features from JAWS, NVDA and SuperNova to the Mac, and every one of them works from the keyboard.
+>
+> AUDIO SPLIT
+> • Speech in one ear and other sounds in the other, or speech in both ears with other sounds in one.
+> • Adjust the balance between speech and other sounds with one key.
+> • Calls from Zoom, Teams and FaceTime can stay in both ears or follow the split.
+> • Send VoiceOver to a separate device, such as a speaker or a second headset.
+>
+> CONTROL YOUR MAC'S SOUND
+> • Quiet everything except VoiceOver, instantly.
+> • Set the volume, ear and tone of individual apps.
+> • Switch output devices, and mute every microphone with one key.
+> • Presets that switch automatically for each app or website.
+> • Keep audio awake, so headphones don't cut off VoiceOver's first words.
+>
+> HEARING AND CLARITY
+> • A speech clarity boost, a leveler for loud media, a volume limit, one-ear mode and ear balance.
+>
+> SPEECH AND READING
+> • Speech history, captions of what VoiceOver says, and system status on demand.
+> • Doc Reader: large-print reading with the spoken word highlighted, in high-contrast colors.
+> • Scan and Read: read printed text with the camera.
+> • An audio hub for radio, podcasts, audiobooks and news.
+>
+> EVERYDAY TOOLS
+> • Read barcodes, QR codes and medicine labels with the camera.
+> • Identify colors, and detect light.
+> • Check Word documents and PDFs for accessibility problems.
+> • Save text as a braille file (.brf) for embossers and notetakers.
+> • Hear when an app turns on the camera or microphone, when downloads finish and when devices connect.
+>
+> WORKING WITH APPS
+> • Give your own names to unlabeled buttons, and hear them when VoiceOver reaches them.
+> • Place markers to jump back to a spot on a web page.
+>
+> LEARN VOICEOVER
+> • VoiceOver Lessons: 24 spoken lessons from the very beginning, up to Mail, Pages, Numbers, Keynote and Safari bookmarks.
+> • Learn on your own, with detailed feedback and hints, or with a trainer, with a session report.
+> • Daily practice that brings keys back on a schedule, and a one-minute challenge.
+> • VoiceOver practice and a talking typing trainer.
+>
+> VOICE COMMANDS
+> • Say "Audio Split" and a command, such as "quiet everything" or "what time is it?". Speech is recognized on your Mac.
+>
+> OPTIONAL AI
+> • Describe images and videos, ask questions about what's on screen, identify money, or ask for a control by name, using Claude with your own Anthropic API key. Everything else works without it.
+>
+> BUILT FOR THE KEYBOARD
+> • Every command is Right Option and a key, and you can change any key. A command palette finds every command by typing, and a setup guide walks you through each permission.
+>
+> PRIVATE BY DESIGN
+> • No accounts, no analytics, no tracking. Audio is processed on your Mac and never recorded.
+>
+> Available in English, Spanish, French and German. Free and open source under the GNU General Public License.
 
 ## 3. App privacy ("nutrition label")
 

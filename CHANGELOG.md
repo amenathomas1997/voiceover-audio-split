@@ -2,6 +2,8 @@
 
 ## Next
 
+## 1.0.1, 24 October 2026
+
 - **Check for updates:** the app looks on GitHub once a day for a newer version, or when you choose Check for Updates in the menu, the command palette, Settings, or say "Audio Split, check for updates". It asks before downloading, checks the download, then opens Apple's Installer. Copies from TestFlight or the App Store update there instead.
 - Coming from 1.0: install this version by hand once, from the download below. After that, updates come from Check for Updates.
 - Installers built in folders that macOS adds Finder information to (such as Documents) now sign correctly.

@@ -51,6 +51,7 @@
 		B4C472D6599B7D2958FB9560 /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2903F36A41CAE18B15E34E70 /* Commands.swift */; };
 		BE4ECA4B1CFB6123DD2E1042 /* DoItForMe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86869C904A7EDF0B72C0C829 /* DoItForMe.swift */; };
 		D89170B4CCBFA1F16381320F /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = C852C0F40A20291624C9ADE7 /* Preferences.swift */; };
+		DE4ADDE76F036EC0BCC5F5BC /* VoiceCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D86BBD852ABAB656676F57 /* VoiceCommands.swift */; };
 		E23ABF60C137767A1BD60600 /* LowVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C566C892F028DB4224A4B4 /* LowVision.swift */; };
 		E3D6E7F43E13E6E24D2FFCF5 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ED521B579066681EE7B99 /* Palette.swift */; };
 		F813154EB01E6D59C3E4B688 /* PermissionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3044A35D44699F8B35861E8 /* PermissionsSection.swift */; };
@@ -108,6 +109,7 @@
 		A51294BFC7A2A2C6B104F15D /* Splitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Splitter.swift; sourceTree = "<group>"; };
 		B023FC949563E9D8606496D2 /* ScanReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanReader.swift; sourceTree = "<group>"; };
 		B30592014E2ED93CBCAA2F43 /* AudioHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioHub.swift; sourceTree = "<group>"; };
+		B3D86BBD852ABAB656676F57 /* VoiceCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCommands.swift; sourceTree = "<group>"; };
 		BB4D4325032A8A5C2F10B256 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		C7214CFBC7E24540688094FC /* VoiceOverAudioSplit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoiceOverAudioSplit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C852C0F40A20291624C9ADE7 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				E53E734B886BBD455AE3C73C /* Tones.swift */,
 				7B1C81BFD8ACC3BF8DAA1F36 /* TypingTrainer.swift */,
 				55D93A789E8C3E97D04624C9 /* VoiceCommand.swift */,
+				B3D86BBD852ABAB656676F57 /* VoiceCommands.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -368,6 +371,7 @@
 				3F688EF3FAC6ABADD6E68D6E /* Tones.swift in Sources */,
 				7650F4CE52B7F1E055672BB0 /* TypingTrainer.swift in Sources */,
 				460C20151914D3E5BDCB61E0 /* VoiceCommand.swift in Sources */,
+				DE4ADDE76F036EC0BCC5F5BC /* VoiceCommands.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,7 +457,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610241200;
+				CURRENT_PROJECT_VERSION = 202610241500;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -558,7 +562,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610241200;
+				CURRENT_PROJECT_VERSION = 202610241500;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_NS_ASSERTIONS = NO;

@@ -23,7 +23,7 @@ enum SystemStatus {
         return [time, battery(), network(), output(), microphone()].compactMap { $0 }.joined(separator: ". ")
     }
 
-    private static func battery() -> String? {
+    static func battery() -> String? {
         guard let info = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
               let sources = IOPSCopyPowerSourcesList(info)?.takeRetainedValue() as? [CFTypeRef] else { return nil }
         for source in sources {

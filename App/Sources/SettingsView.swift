@@ -169,9 +169,12 @@ struct SettingsView: View {
             }
 
             Section(String(localized: "Voice command")) {
-                Toggle(String(localized: "Listen for \u{201C}Launch VoiceOver training\u{201D}"), isOn: $preferences.voiceCommand)
-                Text(String(localized: "Say it anywhere on the Mac to open VoiceOver Lessons. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens."))
+                Toggle(String(localized: "Always listen for \u{201C}Audio Split\u{201D} and \u{201C}Launch VoiceOver training\u{201D}"), isOn: $preferences.voiceCommand)
+                Text(String(localized: "Say Audio Split, then a command, such as: Audio Split, quiet everything. Say Audio Split, what can I say, to hear them all. Launch VoiceOver training works on its own. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens."))
                     .font(.caption).foregroundStyle(.secondary)
+                Text(String(localized: "Prefer not to keep the microphone on? Leave this off and give Listen for a Voice Command a key in Command keys: press it, then say the command without Audio Split."))
+                    .font(.caption).foregroundStyle(.secondary)
+                Button(String(localized: "Hear the Voice Commands")) { Announcer.say(VoiceCommands.whatCanISay()) }
             }
 
             Section(String(localized: "Spoken events and clock")) {

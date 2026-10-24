@@ -1,5 +1,7 @@
-// VoiceCommand.swift — say "Launch VoiceOver training" anywhere on the Mac to open
-// VoiceOver Lessons. Off until turned on in Settings or the setup guide.
+// VoiceCommand.swift — listening for voice commands: "Audio Split" and a command (see
+// VoiceCommands.swift), or "Launch VoiceOver training" on its own. Always listening once
+// turned on in Settings or the setup guide; otherwise the "Listen for a voice command"
+// key listens for one command, without the wake word.
 // Listening is done on the Mac (on-device speech recognition): nothing is recorded,
 // saved or sent. It uses the Mac's built-in microphone, because using AirPods' or
 // another Bluetooth headset's microphone would drop their sound to low quality; with
@@ -21,6 +23,13 @@ final class VoiceCommand {
     private var lastHeard = Date.distantPast
     private(set) var isListening = false
     private var wanted = false
+    /// Push-to-talk: until this time, the next thing said is a command, no wake word needed.
+    private var oneShotUntil: Date?
+    /// A command being said: it's acted on once the speaker pauses.
+    private var pendingCommand = ""
+    private var pauseTimer: Timer?
+    /// A risky command waiting for yes or no.
+    private var awaitingAnswer: (action: VoiceAction, from: Date, until: Date)?
 
     /// Starts or stops listening to match the setting.
     func update(enabled: Bool) {
@@ -29,16 +38,29 @@ final class VoiceCommand {
         enabled ? requestThenStart() : stop()
     }
 
-    private func requestThenStart() {
+    /// Push-to-talk: listen for one command, without the wake word.
+    func listenOnce() {
+        oneShotUntil = Date().addingTimeInterval(8)
+        // A tone only: spoken words could be heard as the command.
+        Tones.play(.status)
+        if !isListening { requestThenStart(oneShot: true) }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8.5) { [weak self] in
+            guard let self, let until = self.oneShotUntil, until <= Date() else { return }
+            self.oneShotUntil = nil
+            if !self.wanted { self.stop() }
+        }
+    }
+
+    private func requestThenStart(oneShot: Bool = false) {
         SFSpeechRecognizer.requestAuthorization { status in
             DispatchQueue.main.async {
-                guard self.wanted else { return }
+                guard self.wanted || oneShot else { return }
                 guard status == .authorized else {
                     return Announcer.say(String(localized: "Voice command needs Speech Recognition. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Speech Recognition."))
                 }
                 AVCaptureDevice.requestAccess(for: .audio) { granted in
                     DispatchQueue.main.async {
-                        guard self.wanted else { return }
+                        guard self.wanted || oneShot else { return }
                         granted ? self.start() : Announcer.say(String(localized: "Voice command needs the microphone. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Microphone."))
                     }
                 }
@@ -94,8 +116,9 @@ final class VoiceCommand {
         self.request = request
         task = recognizer.recognitionTask(with: request) { [weak self] result, error in
             guard let self else { return }
-            if let text = result?.bestTranscription.formattedString, Self.isLaunchCommand(text) {
-                DispatchQueue.main.async { self.heard() }
+            if let text = result?.bestTranscription.formattedString {
+                let final = result?.isFinal == true
+                DispatchQueue.main.async { if self.request === request { self.process(text, final: final) } }
             }
             if error != nil || result?.isFinal == true {
                 // Ended (silence, a limit or an error): carry on listening.
@@ -105,14 +128,94 @@ final class VoiceCommand {
         }
     }
 
-    private func heard() {
+    /// Everything heard so far in this recognition task.
+    private func process(_ text: String, final: Bool) {
+        // A yes or no for a risky command, or for a press Do It for Me is waiting on.
+        if let waiting = awaitingAnswer, waiting.until > Date() {
+            // The question itself ("Say yes or no") mustn't count as the answer.
+            guard Date() >= waiting.from else { return }
+            let yes = VoiceCommands.says(text, any: VoiceCommands.yes), no = VoiceCommands.says(text, any: VoiceCommands.no)
+            guard yes || no else { return }
+            awaitingAnswer = nil
+            if yes {
+                Tones.play(.louder)
+                waiting.action.perform()
+            } else {
+                Announcer.say(String(localized: "Cancelled"))
+            }
+            listen()
+            if !wanted { DispatchQueue.main.asyncAfter(deadline: .now() + 1) { if !self.wanted { self.stop() } } }
+            return
+        }
+        if DoItModel.shared.pendingPress != nil, VoiceCommands.says(text, any: VoiceCommands.yes) {
+            DoItModel.shared.confirmPress()
+            return listen()
+        }
+        if Self.isLaunchCommand(text) && VoiceCommands.command(after: text) == nil {
+            return launchLessons()
+        }
+        let pushToTalk = oneShotUntil.map { $0 > Date() } ?? false
+        guard let command = VoiceCommands.command(after: text) ?? (pushToTalk ? VoiceCommands.normalize(text) : nil),
+              !command.isEmpty else { return }
+        // Wait for a short pause, so "speech left" isn't taken as "speech".
+        pendingCommand = command
+        pauseTimer?.invalidate()
+        if final { return perform(command) }
+        pauseTimer = Timer.scheduledTimer(withTimeInterval: 1.2, repeats: false) { [weak self] _ in
+            guard let self else { return }
+            self.perform(self.pendingCommand)
+        }
+    }
+
+    private func perform(_ command: String) {
+        pauseTimer?.invalidate()
+        pendingCommand = ""
+        oneShotUntil = nil
         // One phrase is heard several times as it's recognized; act once.
+        guard Date().timeIntervalSince(lastHeard) > 2 else { return }
+        lastHeard = Date()
+        defer {
+            listen() // Start afresh, so the same words aren't heard again.
+            if !wanted && awaitingAnswer == nil { DispatchQueue.main.asyncAfter(deadline: .now() + 1) { if !self.wanted { self.stop() } } }
+        }
+        log("Voice command: \(command)")
+        if Self.isLaunchCommand(command) { return launchLessons() }
+        if let request = VoiceCommands.findRequest(in: command), !request.isEmpty {
+            Tones.play(.status)
+            let model = DoItModel.shared
+            model.target = Controller.shared.lastUsedApp
+            model.request = request
+            return model.run()
+        }
+        guard let action = VoiceCommands.match(command, in: VoiceCommands.all) else {
+            Tones.play(.quieter)
+            return Announcer.say(String(localized: "Sorry, I didn't catch that. Say Audio Split, what can I say."))
+        }
+        if let question = action.confirm {
+            let words = question + " " + String(localized: "Say yes or no.")
+            // Answers count once the question has been said, from a fresh start.
+            let asked = Date().addingTimeInterval(1 + Double(words.split(separator: " ").count) * 0.35)
+            awaitingAnswer = (action, asked, asked.addingTimeInterval(8))
+            Tones.play(.status)
+            Announcer.say(words)
+            DispatchQueue.main.asyncAfter(deadline: .now() + asked.timeIntervalSinceNow) { [weak self] in self?.listen() }
+            DispatchQueue.main.asyncAfter(deadline: .now() + asked.timeIntervalSinceNow + 8.5) { [weak self] in
+                guard let self, self.awaitingAnswer?.action.name == action.name else { return }
+                self.awaitingAnswer = nil
+                if !self.wanted { self.stop() }
+            }
+            return
+        }
+        Tones.play(.status)
+        action.perform()
+    }
+
+    private func launchLessons() {
         guard Date().timeIntervalSince(lastHeard) > 5 else { return }
         lastHeard = Date()
         Tones.play(.status)
         NSApp.activate()
         (NSApp.delegate as? AppDelegate)?.showLessons()
-        // Start afresh, so the same words aren't heard again.
         listen()
     }
 

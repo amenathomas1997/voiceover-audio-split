@@ -901,3 +901,53 @@ final class VoiceCommandTests: XCTestCase {
         XCTAssertEqual(LessonRunner.shared.nextLesson.id, "review")
     }
 }
+
+final class VoiceCommandsTests: XCTestCase {
+    func testWakeWord() {
+        XCTAssertEqual(VoiceCommands.command(after: "Audio Split, quiet everything."), "quiet everything")
+        XCTAssertEqual(VoiceCommands.command(after: "hey AudioSplit what time is it?"), "what time is it")
+        XCTAssertEqual(VoiceCommands.command(after: "Audio splits speech left"), "speech left")
+        XCTAssertNil(VoiceCommands.command(after: "quiet everything"))
+    }
+
+    func testCommandsAreMatched() {
+        let all = VoiceCommands.all
+        func name(_ said: String) -> String? { VoiceCommands.match(said, in: all)?.name }
+        XCTAssertEqual(name("speech left"), "Speech left")
+        XCTAssertEqual(name("turn on voiceover please"), "Turn on VoiceOver")
+        XCTAssertEqual(name("restart voiceover"), "Restart VoiceOver")
+        XCTAssertEqual(name("what's using my microphone"), "What's using my microphone?")
+        XCTAssertEqual(name("unmute my microphone"), "Unmute", "the longer phrase wins over mute")
+        XCTAssertEqual(name("mute my microphone"), "Mute my microphone")
+        XCTAssertEqual(name("what time is it"), "What time is it?")
+        XCTAssertEqual(name("read this barcode"), "Read this barcode")
+        XCTAssertEqual(name("what can i say"), "What can I say?")
+        XCTAssertNil(name("make me a sandwich"))
+        XCTAssertNotNil(VoiceCommands.match("restart voiceover", in: all)?.confirm, "restarting asks first")
+        XCTAssertNotNil(VoiceCommands.match("next output device", in: all)?.confirm, "switching output asks first")
+        XCTAssertNil(VoiceCommands.match("quiet everything", in: all)?.confirm)
+    }
+
+    func testPresetsByName() {
+        let saved = Preferences.shared.presets
+        defer { Preferences.shared.presets = saved }
+        Preferences.shared.presets = Preset.defaults
+        let first = Preset.defaults[0].name
+        XCTAssertEqual(VoiceCommands.match("\(first) preset", in: VoiceCommands.all)?.name, "\(first) preset")
+    }
+
+    func testAnswersAndRequests() {
+        XCTAssertTrue(VoiceCommands.says("Yes please", any: VoiceCommands.yes))
+        XCTAssertTrue(VoiceCommands.says("no thanks", any: VoiceCommands.no))
+        XCTAssertFalse(VoiceCommands.says("yesterday", any: VoiceCommands.yes), "whole words only")
+        XCTAssertEqual(VoiceCommands.findRequest(in: "find the search field"), "the search field")
+        XCTAssertEqual(VoiceCommands.findRequest(in: "go to the send button"), "the send button")
+        XCTAssertNil(VoiceCommands.findRequest(in: "quiet everything"))
+    }
+
+    func testWhatCanISayListsTheCommands() {
+        let text = VoiceCommands.whatCanISay()
+        XCTAssertTrue(text.hasPrefix("Say Audio Split, then a command."))
+        XCTAssertTrue(text.contains("Turn on VoiceOver") && text.contains("Quiet everything") && text.contains("Daily practice"))
+    }
+}

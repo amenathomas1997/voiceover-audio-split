@@ -31,6 +31,7 @@
 - **Typing trainer:** talking lessons from the home row up, finger hints, words per minute and accuracy, best scores, and a one-minute speed test. A soft click for each right key (or a soft tone, or no sound), and a gentle low sound for a wrong one.
 - **In Spanish, French and German:** the app follows your Mac's language. Translations are new; corrections from native speakers are welcome.
 
+- **Voice commands with the wake word "Audio Split":** rescue (turn on or restart VoiceOver, where am I, stop talking), hands-free camera readers, sound control, quick questions, learning, presets by name, and "find…" for Do It for Me. Risky commands ask for a yes or no. A push-to-talk command listens for one command without the wake word or an always-on microphone.
 - **"Launch VoiceOver training":** an optional voice command that opens the lessons from anywhere, recognized on the Mac through the built-in microphone.
 - **A spoken welcome** to the lessons: choose on your own (1) or with a trainer (2), then Return starts your next lesson.
 - **VoiceOver Lessons, on your own or with a trainer:**

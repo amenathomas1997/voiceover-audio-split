@@ -319,6 +319,7 @@ final class Controller {
         case .practice: app?.showPractice()
         case .typingTrainer: app?.showTypingTrainer()
         case .voiceOverLessons: app?.showLessons()
+        case .listenForCommand: VoiceCommand.shared.listenOnce()
         }
     }
 

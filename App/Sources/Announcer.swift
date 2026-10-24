@@ -14,7 +14,11 @@ enum Announcer {
     /// While VoiceOver is silenced its voice can't be heard, so use the system voice.
     nonisolated(unsafe) static var useSystemVoice = false
 
+    /// The last thing announced, for "Audio Split, repeat that".
+    private(set) static var lastText = ""
+
     static func say(_ text: String) {
+        lastText = text
         queue.async {
             if !useSystemVoice && NSWorkspace.shared.isVoiceOverEnabled && sendToVoiceOver(text) { return }
             DispatchQueue.main.async {

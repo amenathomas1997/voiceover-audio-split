@@ -480,6 +480,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: help, String(localized: "Add a Place Marker"), command: .placeMarker) { $0.run(.placeMarker) }
         add(to: help, String(localized: "Next Place Marker"), command: .nextPlaceMarker) { $0.run(.nextPlaceMarker) }
         help.addItem(.separator())
+        add(to: help, String(localized: "Listen for a Voice Command"), command: .listenForCommand) { $0.run(.listenForCommand) }
         add(to: help, String(localized: "Report a Bug to Apple…"), command: .reportBug) { $0.run(.reportBug) }
 
         // Learning

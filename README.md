@@ -71,6 +71,16 @@
 - **VoiceOver practice:** the app names a task, such as "go to the next heading", and you press the VoiceOver keys for it. Learn mode says the keys; quiz mode keeps score. Keys are caught while you practice, so nothing moves.
 - **Typing trainer:** a talking typing tutor, like Talking Typer or TypingClub. Sixteen lessons add a few keys at a time from the home row, then capitals, numbers, punctuation, words and sentences. Each key is named with its finger and row. A right key plays a soft click (or a soft tone, or nothing, as you choose), and a wrong one plays a gentle low sound and says what you pressed and what to type. Each lesson ends with words per minute and accuracy, your best speed is kept, and there's a one-minute speed test. Finger hints are for the US English keyboard, and the practice words are English. Quick Nav can stay on.
 
+**Voice commands** (Settings > Voice command, or the setup guide; off until you turn them on): say **"Audio Split"**, then a command. In Spanish, French or German, say the command in your language after "Audio Split".
+- **Rescue:** turn on VoiceOver; restart VoiceOver (asks first); where am I?; stop talking; speak again; what can I say?
+- **Hands-free:** read this page (Scan and Read); what color is this?; read this barcode; read this label; what money is this?; read the window.
+- **Sound:** speech left; speech right; split off; quiet everything; sound back; mute my microphone; unmute; next output device (asks first); any preset by name, such as "Meeting preset".
+- **Questions:** what time is it?; how's my battery?; system status; what's playing?; what's using my microphone?; what did VoiceOver say?
+- **Learning:** next lesson; daily practice; repeat that. "Launch VoiceOver training" works without the wake word.
+- **Do It for Me:** "find…" or "go to…" and the name of a control, such as "Audio Split, find the search field". It moves the VoiceOver cursor there, and if a press is waiting, "yes" confirms it.
+
+Commands that change something important ask "Say yes or no" first. Speech is recognized on the Mac and never recorded or sent. The app listens through the Mac's built-in microphone, so AirPods keep full sound quality, and the microphone indicator stays on while it listens. To avoid an always-on microphone, leave it off and give **Listen for a Voice Command** a key in Settings > Command keys: press the key, then say a command without "Audio Split".
+
 **Languages:** English, Spanish, French and German. The app uses your Mac's language (System Settings, General, Language and Region). The translations are new, so please report anything that reads oddly. To add a language, open `App/Resources/Localizable.xcstrings` in Xcode.
 
 **Diagnostics and performance:** "Save a Diagnostics Report" writes the app's recent log, version and settings (never the API key) to a file you choose, for bug reports. "App Performance" says how much processor time and memory the app uses. The [testing checklist](docs/TESTING.md) is for VoiceOver users testing each release.

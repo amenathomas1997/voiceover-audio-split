@@ -53,9 +53,9 @@ struct SetupGuideView: View {
                 }
             }
 
-            Section(String(localized: "Step 4, optional: Open VoiceOver training by voice")) {
-                Text(String(localized: "Turn this on to open VoiceOver Lessons from anywhere by saying: Launch VoiceOver training. Your Mac asks to allow speech recognition and the microphone. Speech is recognized on your Mac and never sent."))
-                Toggle(String(localized: "Listen for \u{201C}Launch VoiceOver training\u{201D}"), isOn: Binding(
+            Section(String(localized: "Step 4, optional: Voice commands")) {
+                Text(String(localized: "Turn this on to control the app by voice from anywhere: say Audio Split, then a command, such as Audio Split, turn on VoiceOver, or Audio Split, what time is it. Launch VoiceOver training opens the lessons. Your Mac asks to allow speech recognition and the microphone. Speech is recognized on your Mac and never sent."))
+                Toggle(String(localized: "Always listen for \u{201C}Audio Split\u{201D} and \u{201C}Launch VoiceOver training\u{201D}"), isOn: Binding(
                     get: { Preferences.shared.voiceCommand }, set: { Preferences.shared.voiceCommand = $0 }))
             }
 

@@ -463,6 +463,28 @@
         }
       }
     },
+    "%@ preset" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voreinstellung %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preajuste %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préréglage %@"
+          }
+        }
+      }
+    },
     "%@ stopped using the microphone" : {
       "localizations" : {
         "de" : {
@@ -3495,6 +3517,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Autorisé. Revenez à l'image et appuyez à nouveau sur le raccourci de description."
+          }
+        }
+      }
+    },
+    "Always listen for “Audio Split” and “Launch VoiceOver training”" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Immer auf „Audio Split“ und „VoiceOver-Training starten“ hören"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuchar siempre “Audio Split” y “Abrir entrenamiento de VoiceOver”"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toujours écouter « Audio Split » et « Lancer la formation VoiceOver »"
           }
         }
       }
@@ -11969,6 +12013,28 @@
         }
       }
     },
+    "Hear the Voice Commands" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprachbefehle anhören"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oír los comandos de voz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entendre les commandes vocales"
+          }
+        }
+      }
+    },
     "Hear where the item is in its window" : {
       "localizations" : {
         "de" : {
@@ -12519,6 +12585,28 @@
         }
       }
     },
+    "How's my battery?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie voll ist meine Batterie?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cómo está la batería?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "État de la batterie"
+          }
+        }
+      }
+    },
     "I couldn't hear you. Check that the right microphone is selected and not muted." : {
       "localizations" : {
         "de" : {
@@ -12537,6 +12625,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Je ne vous ai pas entendu. Vérifiez que le bon micro est sélectionné et qu'il n'est pas coupé."
+          }
+        }
+      }
+    },
+    "I couldn't tell where you are." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich konnte nicht erkennen, wo du bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pude saber dónde estás."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je n'ai pas pu déterminer où vous êtes."
           }
         }
       }
@@ -15203,24 +15313,46 @@
         }
       }
     },
-    "Listen for “Launch VoiceOver training”" : {
+    "Listen for a Voice Command" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auf „VoiceOver-Training starten“ hören"
+            "value" : "Auf einen Sprachbefehl hören"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escuchar “Abrir entrenamiento de VoiceOver”"
+            "value" : "Escuchar un comando de voz"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Écouter « Lancer la formation VoiceOver »"
+            "value" : "Écouter une commande vocale"
+          }
+        }
+      }
+    },
+    "Listen for a voice command, without saying Audio Split" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf einen Sprachbefehl hören, ohne Audio Split zu sagen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuchar un comando de voz, sin decir Audio Split"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écouter une commande vocale, sans dire Audio Split"
           }
         }
       }
@@ -16655,6 +16787,28 @@
         }
       }
     },
+    "Mute my microphone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofon stummschalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silencia mi micrófono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coupe mon micro"
+          }
+        }
+      }
+    },
     "Network connection back" : {
       "localizations" : {
         "de" : {
@@ -16981,6 +17135,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Titre suivant"
+          }
+        }
+      }
+    },
+    "Next lesson" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächste Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçon suivante"
           }
         }
       }
@@ -18257,6 +18433,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rien à lire. Vérifiez que VoiceOver autorise le contrôle par AppleScript."
+          }
+        }
+      }
+    },
+    "Nothing to repeat yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nichts zum Wiederholen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay nada que repetir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien à répéter pour l'instant."
           }
         }
       }
@@ -21363,6 +21561,28 @@
         }
       }
     },
+    "Prefer not to keep the microphone on? Leave this off and give Listen for a Voice Command a key in Command keys: press it, then say the command without Audio Split." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Möchtest du das Mikrofon lieber nicht eingeschaltet lassen? Lass diese Option aus und gib „Auf einen Sprachbefehl hören“ unter „Befehlstasten“ eine Taste: Drück sie und sag dann den Befehl ohne Audio Split."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Prefieres no dejar el micrófono activado? Deja esto desactivado y asigna una tecla a Escuchar un comando de voz en Teclas de comandos: púlsala y luego di el comando sin Audio Split."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous préférez ne pas laisser le micro allumé ? Laissez cette option désactivée et attribuez une touche à Écouter une commande vocale dans Touches des commandes : appuyez dessus, puis dites la commande sans Audio Split."
+          }
+        }
+      }
+    },
     "Preset %@" : {
       "localizations" : {
         "de" : {
@@ -22265,6 +22485,28 @@
         }
       }
     },
+    "Quiet everything" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles stumm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silencia todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silence total"
+          }
+        }
+      }
+    },
     "Quiet everything but VoiceOver" : {
       "localizations" : {
         "de" : {
@@ -22859,6 +23101,94 @@
         }
       }
     },
+    "Read the window" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenster vorlesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee la ventana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lis la fenêtre"
+          }
+        }
+      }
+    },
+    "Read this barcode" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barcode lesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee este código de barras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lis ce code-barres"
+          }
+        }
+      }
+    },
+    "Read this label" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etikett lesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee esta etiqueta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lis cette étiquette"
+          }
+        }
+      }
+    },
+    "Read this page" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seite vorlesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee esta página"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lis cette page"
+          }
+        }
+      }
+    },
     "Reading" : {
       "localizations" : {
         "de" : {
@@ -23189,6 +23519,28 @@
         }
       }
     },
+    "Repeat that" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederhol das"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repite eso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répète"
+          }
+        }
+      }
+    },
     "Repeat the last thing VoiceOver said" : {
       "localizations" : {
         "de" : {
@@ -23493,6 +23845,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redémarrer VoiceOver"
+          }
+        }
+      }
+    },
+    "Restart VoiceOver?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver neu starten?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Reiniciar VoiceOver?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redémarrer VoiceOver ?"
           }
         }
       }
@@ -24641,6 +25015,50 @@
         }
       }
     },
+    "Say Audio Split, then a command, such as: Audio Split, quiet everything. Say Audio Split, what can I say, to hear them all. Launch VoiceOver training works on its own. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag Audio Split und dann einen Befehl, zum Beispiel: Audio Split, alles stumm. Sag Audio Split, was kann ich sagen, um alle zu hören. „VoiceOver-Training starten“ funktioniert auch allein. Die Sprache wird auf deinem Mac erkannt und nie aufgenommen, gesichert oder gesendet. Es wird das eingebaute Mikrofon verwendet, damit AirPods ihren vollen Klang behalten, und die Mikrofonanzeige bleibt an, solange zugehört wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di Audio Split y luego un comando, por ejemplo: Audio Split, silencia todo. Di Audio Split, qué puedo decir, para oírlos todos. Abrir entrenamiento de VoiceOver funciona por sí solo. La voz se reconoce en tu Mac y nunca se graba, guarda ni envía. Usa el micrófono integrado, así que los AirPods conservan todo su sonido, y el indicador del micrófono permanece encendido mientras escucha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dites Audio Split, puis une commande, par exemple : Audio Split, silence total. Dites Audio Split, que puis-je dire, pour toutes les entendre. Lancer la formation VoiceOver fonctionne seul. La parole est reconnue sur votre Mac et n'est jamais enregistrée, conservée ni envoyée. Le micro intégré est utilisé, donc les AirPods gardent tout leur son, et l'indicateur du micro reste allumé pendant l'écoute."
+          }
+        }
+      }
+    },
+    "Say Audio Split, then a command. For example: %@. You can also say find, or go to, and the name of a control, and I'll take you there. And Launch VoiceOver training works on its own." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag Audio Split und dann einen Befehl. Zum Beispiel: %@. Du kannst auch „finde“ oder „gehe zu“ und den Namen eines Bedienelements sagen, und ich bringe dich dorthin. Und „VoiceOver-Training starten“ funktioniert auch allein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di Audio Split y luego un comando. Por ejemplo: %@. También puedes decir busca, o ve a, y el nombre de un control, y te llevaré allí. Y Abrir entrenamiento de VoiceOver funciona por sí solo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dites Audio Split, puis une commande. Par exemple : %@. Vous pouvez aussi dire trouve, ou va à, suivi du nom d'un élément, et je vous y emmène. Et Lancer la formation VoiceOver fonctionne seul."
+          }
+        }
+      }
+    },
     "Say Clipboard" : {
       "localizations" : {
         "de" : {
@@ -24725,28 +25143,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Énoncer chaque touche tapée correctement"
-          }
-        }
-      }
-    },
-    "Say it anywhere on the Mac to open VoiceOver Lessons. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sag es überall auf dem Mac, um die VoiceOver-Lektionen zu öffnen. Die Sprache wird auf deinem Mac erkannt und nie aufgenommen, gespeichert oder gesendet. Es wird das eingebaute Mikrofon verwendet, damit deine AirPods ihren vollen Klang behalten, und die Mikrofonanzeige bleibt an, solange zugehört wird."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dilo en cualquier lugar de la Mac para abrir las lecciones de VoiceOver. La voz se reconoce en tu Mac y nunca se graba, guarda ni envía. Usa el micrófono integrado, así tus AirPods conservan todo su sonido, y el indicador del micrófono queda encendido mientras escucha."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dites-le n'importe où sur le Mac pour ouvrir les leçons VoiceOver. La parole est reconnue sur votre Mac et n'est jamais enregistrée, conservée ni envoyée. Le micro intégré est utilisé, pour que vos AirPods gardent tout leur son, et l'indicateur du micro reste allumé pendant l'écoute."
           }
         }
       }
@@ -24923,6 +25319,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annoncer le verrouillage de l'écran"
+          }
+        }
+      }
+    },
+    "Say yes or no." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag ja oder nein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di sí o no."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dites oui ou non."
           }
         }
       }
@@ -26292,6 +26710,28 @@
         }
       }
     },
+    "Sorry, I didn't catch that. Say Audio Split, what can I say." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entschuldige, das habe ich nicht verstanden. Sag Audio Split, was kann ich sagen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perdona, no te entendí. Di Audio Split, qué puedo decir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désolé, je n'ai pas compris. Dites Audio Split, que puis-je dire."
+          }
+        }
+      }
+    },
     "Sound and Devices" : {
       "localizations" : {
         "de" : {
@@ -26314,6 +26754,28 @@
         }
       }
     },
+    "Sound back" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton zurück"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recupera el sonido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remets le son"
+          }
+        }
+      }
+    },
     "Sound for each key typed right" : {
       "localizations" : {
         "de" : {
@@ -26332,6 +26794,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Son pour chaque touche correcte"
+          }
+        }
+      }
+    },
+    "Sound is already on." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Ton ist bereits an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El sonido ya está activado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le son est déjà activé."
           }
         }
       }
@@ -26486,6 +26970,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Espagnol"
+          }
+        }
+      }
+    },
+    "Speak again" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wieder sprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a hablar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parle de nouveau"
           }
         }
       }
@@ -26952,6 +27458,28 @@
         }
       }
     },
+    "Speech left" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache links"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz a la izquierda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voix à gauche"
+          }
+        }
+      }
+    },
     "Speech left (again: split off)" : {
       "localizations" : {
         "de" : {
@@ -27084,6 +27612,28 @@
         }
       }
     },
+    "Speech right" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache rechts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz a la derecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voix à droite"
+          }
+        }
+      }
+    },
     "Speech right (again: split off)" : {
       "localizations" : {
         "de" : {
@@ -27190,6 +27740,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Séparer comme les autres sons"
+          }
+        }
+      }
+    },
+    "Split off" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Split aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactiva la división"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désactive la séparation"
           }
         }
       }
@@ -27590,24 +28162,24 @@
         }
       }
     },
-    "Step 4, optional: Open VoiceOver training by voice" : {
+    "Step 4, optional: Voice commands" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schritt 4, optional: VoiceOver-Training per Sprache öffnen"
+            "value" : "Schritt 4, optional: Sprachbefehle"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Paso 4, opcional: Abrir el entrenamiento de VoiceOver con la voz"
+            "value" : "Paso 4, opcional: Comandos de voz"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étape 4, facultative : ouvrir la formation VoiceOver à la voix"
+            "value" : "Étape 4, facultative : commandes vocales"
           }
         }
       }
@@ -27854,6 +28426,28 @@
         }
       }
     },
+    "Stop talking" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hör auf zu sprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja de hablar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrête de parler"
+          }
+        }
+      }
+    },
     "Subscribe" : {
       "localizations" : {
         "de" : {
@@ -28026,6 +28620,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passer à une autre fenêtre de cette app"
+          }
+        }
+      }
+    },
+    "Switch to the next output device?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum nächsten Ausgabegerät wechseln?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cambiar al siguiente dispositivo de salida?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer au périphérique de sortie suivant ?"
           }
         }
       }
@@ -28906,6 +29522,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le curseur VoiceOver et le focus clavier peuvent se retrouver à des endroits différents. VO Maj F4 amène le curseur VoiceOver au focus clavier. VO Commande F4 amène le focus clavier au curseur VoiceOver. Sur un portable, maintenez aussi Fn pour les touches F."
+          }
+        }
+      }
+    },
+    "The VoiceOver cursor is on %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der VoiceOver-Cursor ist auf %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El cursor de VoiceOver está en %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le curseur VoiceOver est sur %@."
           }
         }
       }
@@ -29966,6 +30604,28 @@
         }
       }
     },
+    "The window is %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Fenster ist %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ventana es %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fenêtre s'appelle %@."
+          }
+        }
+      }
+    },
     "There are no headings." : {
       "localizations" : {
         "de" : {
@@ -30138,6 +30798,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réflexion…"
+          }
+        }
+      }
+    },
+    "This Mac has no battery." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Mac hat keine Batterie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta Mac no tiene batería."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce Mac n'a pas de batterie."
           }
         }
       }
@@ -30978,6 +31660,28 @@
         }
       }
     },
+    "Turn on VoiceOver" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver einschalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa VoiceOver"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active VoiceOver"
+          }
+        }
+      }
+    },
     "Turn on keyboard help, to explore keys safely" : {
       "localizations" : {
         "de" : {
@@ -31110,24 +31814,24 @@
         }
       }
     },
-    "Turn this on to open VoiceOver Lessons from anywhere by saying: Launch VoiceOver training. Your Mac asks to allow speech recognition and the microphone. Speech is recognized on your Mac and never sent." : {
+    "Turn this on to control the app by voice from anywhere: say Audio Split, then a command, such as Audio Split, turn on VoiceOver, or Audio Split, what time is it. Launch VoiceOver training opens the lessons. Your Mac asks to allow speech recognition and the microphone. Speech is recognized on your Mac and never sent." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktiviere das, um die VoiceOver-Lektionen von überall zu öffnen, indem du sagst: VoiceOver-Training starten. Dein Mac fragt nach der Erlaubnis für Spracherkennung und Mikrofon. Die Sprache wird auf deinem Mac erkannt und nie gesendet."
+            "value" : "Schalte dies ein, um die App von überall per Sprache zu steuern: Sag Audio Split und dann einen Befehl, zum Beispiel Audio Split, VoiceOver einschalten, oder Audio Split, wie spät ist es. „VoiceOver-Training starten“ öffnet die Lektionen. Dein Mac fragt, ob du die Spracherkennung und das Mikrofon erlauben möchtest. Die Sprache wird auf deinem Mac erkannt und nie gesendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Actívalo para abrir las lecciones de VoiceOver desde cualquier lugar diciendo: Abrir entrenamiento de VoiceOver. Tu Mac te pedirá permitir el reconocimiento de voz y el micrófono. La voz se reconoce en tu Mac y nunca se envía."
+            "value" : "Activa esto para controlar la app con la voz desde cualquier lugar: di Audio Split y luego un comando, como Audio Split, activa VoiceOver, o Audio Split, qué hora es. Abrir entrenamiento de VoiceOver abre las lecciones. Tu Mac pide permitir el reconocimiento de voz y el micrófono. La voz se reconoce en tu Mac y nunca se envía."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activez cette option pour ouvrir les leçons VoiceOver de n'importe où en disant : Lancer la formation VoiceOver. Votre Mac demande d'autoriser la reconnaissance vocale et le micro. La parole est reconnue sur votre Mac et n'est jamais envoyée."
+            "value" : "Activez cette option pour contrôler l'app à la voix depuis n'importe où : dites Audio Split, puis une commande, par exemple Audio Split, active VoiceOver, ou Audio Split, quelle heure est-il. Lancer la formation VoiceOver ouvre les leçons. Votre Mac demande d'autoriser la reconnaissance vocale et le micro. La parole est reconnue sur votre Mac et n'est jamais envoyée."
           }
         }
       }
@@ -31568,6 +32272,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuler"
+          }
+        }
+      }
+    },
+    "Unmute" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stummschaltung aufheben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa el micrófono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réactive le micro"
           }
         }
       }
@@ -33970,6 +34696,72 @@
         }
       }
     },
+    "VoiceOver hasn't said anything yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver hat noch nichts gesagt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver aún no ha dicho nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver n'a encore rien dit."
+          }
+        }
+      }
+    },
+    "VoiceOver is already on." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver ist bereits an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver ya está activado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver est déjà activé."
+          }
+        }
+      }
+    },
+    "VoiceOver is already speaking." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver spricht bereits."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver ya está hablando."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver parle déjà."
+          }
+        }
+      }
+    },
     "VoiceOver is in your left ear, and other sounds are in your right ear." : {
       "localizations" : {
         "de" : {
@@ -34608,6 +35400,72 @@
         }
       }
     },
+    "What can I say?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was kann ich sagen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué puedo decir?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que puis-je dire ?"
+          }
+        }
+      }
+    },
+    "What color is this?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welche Farbe ist das?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿De qué color es esto?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelle est cette couleur ?"
+          }
+        }
+      }
+    },
+    "What did VoiceOver say?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was hat VoiceOver gesagt?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué dijo VoiceOver?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu'a dit VoiceOver ?"
+          }
+        }
+      }
+    },
     "What happened" : {
       "localizations" : {
         "de" : {
@@ -34648,6 +35506,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Que s'est-il passé ?"
+          }
+        }
+      }
+    },
+    "What money is this?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welches Geld ist das?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué dinero es este?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quel est ce billet ?"
           }
         }
       }
@@ -34714,6 +35594,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ce que l’app est autorisée à faire. Chaque bouton ouvre la bonne page de Réglages Système, où vous pouvez activer ou désactiver VoiceOver Audio Split."
+          }
+        }
+      }
+    },
+    "What time is it?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie spät ist es?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué hora es?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelle heure est-il ?"
           }
         }
       }
@@ -34828,6 +35730,50 @@
         }
       }
     },
+    "What's playing?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was läuft gerade?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué está sonando?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu'est-ce qui joue ?"
+          }
+        }
+      }
+    },
+    "What's using my microphone?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wer nutzt mein Mikrofon?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué está usando mi micrófono?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qui utilise mon micro ?"
+          }
+        }
+      }
+    },
     "What's using the camera and microphone" : {
       "localizations" : {
         "de" : {
@@ -34934,6 +35880,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "L'endroit où VoiceOver lit. Il se déplace avec VO et les touches fléchées, et apparaît sous la forme d'un contour foncé."
+          }
+        }
+      }
+    },
+    "Where am I?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wo bin ich?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Dónde estoy?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Où suis-je ?"
           }
         }
       }
@@ -35422,6 +36390,28 @@
         }
       }
     },
+    "You're in %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist in %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estás en %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous êtes dans %@."
+          }
+        }
+      }
+    },
     "You're starting from the beginning." : {
       "localizations" : {
         "de" : {
@@ -35686,6 +36676,50 @@
         }
       }
     },
+    "Your microphone is already muted." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Mikrofon ist bereits stummgeschaltet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu micrófono ya está silenciado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre micro est déjà coupé."
+          }
+        }
+      }
+    },
+    "Your microphone is already on." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Mikrofon ist bereits an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu micrófono ya está activado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre micro est déjà activé."
+          }
+        }
+      }
+    },
     "Your microphone is muted. Unmute it first, then check again." : {
       "localizations" : {
         "de" : {
@@ -35924,6 +36958,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "apostrophe"
+          }
+        }
+      }
+    },
+    "battery" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "batterie|akku|wie voll ist meine batterie|akkustand"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bateria|como esta la bateria|cuanta bateria queda|nivel de bateria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "etat de la batterie|batterie|ma batterie|niveau de batterie"
           }
         }
       }
@@ -36214,6 +37270,28 @@
         }
       }
     },
+    "daily practice" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tägliche übung|täglich üben|übung des tages"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "practica diaria|practica del dia|practicar hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "entrainement du jour|entrainement quotidien|exercice du jour"
+          }
+        }
+      }
+    },
     "dark %@" : {
       "comment" : "A color, such as dark blue",
       "localizations" : {
@@ -36343,6 +37421,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ressenti %lld"
+          }
+        }
+      }
+    },
+    "find|go to" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "finde|gehe zu|bring mich zu|suche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "busca|ve a|llevame a"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trouve|va a|emmene moi a|cherche"
           }
         }
       }
@@ -37250,6 +38350,28 @@
         }
       }
     },
+    "mute my microphone|mute microphone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mikrofon stummschalten|schalte mein mikrofon stumm|mikrofon aus|mikrofon stumm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "silencia mi microfono|silencia el microfono|silenciar microfono|apaga el microfono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "coupe mon micro|coupe le micro|couper le micro|desactive le micro"
+          }
+        }
+      }
+    },
     "navy blue" : {
       "localizations" : {
         "de" : {
@@ -37268,6 +38390,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "bleu marine"
+          }
+        }
+      }
+    },
+    "next lesson" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nächste lektion|weiter zur nächsten lektion|nächste übung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "siguiente leccion|proxima leccion|leccion siguiente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lecon suivante|prochaine lecon|passe a la lecon suivante"
+          }
+        }
+      }
+    },
+    "next output device|switch output" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nächstes ausgabegerät|ausgabe wechseln|ausgabegerät wechseln|anderes ausgabegerät"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "siguiente dispositivo de salida|cambia la salida|cambiar salida|siguiente salida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sortie suivante|peripherique de sortie suivant|change de sortie|changer de sortie"
           }
         }
       }
@@ -37400,6 +38566,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "non utilisée"
+          }
+        }
+      }
+    },
+    "no|cancel|never mind" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nein|abbrechen|vergiss es|lieber nicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no|cancelar|olvidalo|cancela|dejalo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "non|annuler|annule|laisse tomber"
           }
         }
       }
@@ -37668,6 +38856,28 @@
         }
       }
     },
+    "preset" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voreinstellung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "preajuste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "prereglage"
+          }
+        }
+      }
+    },
     "purple" : {
       "localizations" : {
         "de" : {
@@ -37708,6 +38918,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "point d'interrogation"
+          }
+        }
+      }
+    },
+    "quiet everything" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "alles stumm|alles stummschalten|ruhe|alles leise"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "silencia todo|silenciar todo|silencio total"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "silence total|fais silence|coupe tout|tout en silence"
           }
         }
       }
@@ -37756,6 +38988,94 @@
         }
       }
     },
+    "read the window|read the screen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fenster vorlesen|lies das fenster vor|bildschirm vorlesen|lies den bildschirm vor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lee la ventana|lee la pantalla|leer la ventana|leer la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lis la fenetre|lis l ecran|lire la fenetre|lire l ecran"
+          }
+        }
+      }
+    },
+    "read this barcode|barcode" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "barcode lesen|lies diesen barcode|barcode|strichcode"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lee este codigo de barras|codigo de barras|leer codigo de barras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lis ce code barres|lis le code barres|code barres"
+          }
+        }
+      }
+    },
+    "read this label" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "etikett lesen|lies dieses etikett|etikett vorlesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lee esta etiqueta|leer etiqueta|leer esta etiqueta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lis cette etiquette|lis l etiquette|lire l etiquette"
+          }
+        }
+      }
+    },
+    "read this page|scan" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seite vorlesen|lies diese seite vor|scannen|scan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lee esta pagina|escanea|escanear|leer esta pagina"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lis cette page|lis la page|numerise|numeriser"
+          }
+        }
+      }
+    },
     "reading everything from the cursor, reading by line, paragraph, word and letter, and repeating or copying what VoiceOver said." : {
       "localizations" : {
         "de" : {
@@ -37800,6 +39120,28 @@
         }
       }
     },
+    "repeat that|repeat" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wiederhol das|wiederholen|nochmal|noch einmal"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "repite eso|repite|repetir|repitelo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "repete|repete ca|repeter|redis le"
+          }
+        }
+      }
+    },
     "repeated word" : {
       "localizations" : {
         "de" : {
@@ -37818,6 +39160,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "mot répété"
+          }
+        }
+      }
+    },
+    "restart voiceover" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voiceover neu starten|starte voiceover neu|voiceover neustarten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "reinicia voiceover|reiniciar voiceover|reinicia el voiceover"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "redemarre voiceover|redemarrer voiceover|relance voiceover"
           }
         }
       }
@@ -37954,6 +39318,28 @@
         }
       }
     },
+    "sound back" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ton zurück|ton wieder an|ton an"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "recupera el sonido|devuelve el sonido|vuelve el sonido|recuperar sonido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "remets le son|retablis le son|retablir le son|rallume le son"
+          }
+        }
+      }
+    },
     "space" : {
       "localizations" : {
         "de" : {
@@ -37998,6 +39384,94 @@
         }
       }
     },
+    "speak again|start talking" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wieder sprechen|sprich wieder|weitersprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vuelve a hablar|habla de nuevo|empieza a hablar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parle de nouveau|parle a nouveau|reparle|recommence a parler"
+          }
+        }
+      }
+    },
+    "speech left" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sprache links|voiceover links|stimme links"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voz a la izquierda|voiceover a la izquierda|voz izquierda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voix a gauche|voiceover a gauche|parole a gauche"
+          }
+        }
+      }
+    },
+    "speech right" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sprache rechts|voiceover rechts|stimme rechts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voz a la derecha|voiceover a la derecha|voz derecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voix a droite|voiceover a droite|parole a droite"
+          }
+        }
+      }
+    },
+    "split off" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "split aus|split ausschalten|aufteilung aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "desactiva la division|division desactivada|quita la division|sin division"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "desactive la separation|arrete la separation|separation desactivee|plus de separation"
+          }
+        }
+      }
+    },
     "starting a document from a template, writing and styling it, checking spelling, saving it, and exporting it to Word or PDF." : {
       "localizations" : {
         "de" : {
@@ -38016,6 +39490,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "créer un document à partir d'un modèle, l'écrire et le mettre en forme, vérifier l'orthographe, l'enregistrer, et l'exporter en Word ou en PDF."
+          }
+        }
+      }
+    },
+    "stop talking|silence voiceover" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hör auf zu sprechen|sei still|voiceover stumm|ruhe voiceover"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "deja de hablar|silencia voiceover|calla voiceover|callate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "arrete de parler|tais toi|silence voiceover|fais taire voiceover"
+          }
+        }
+      }
+    },
+    "system status" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "systemstatus|status des systems|wie geht es meinem mac"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "estado del sistema|como esta el sistema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "etat du systeme|statut du systeme|etat du mac"
           }
         }
       }
@@ -38152,6 +39670,28 @@
         }
       }
     },
+    "turn on voiceover|start voiceover" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voiceover einschalten|schalte voiceover ein|voiceover an|voiceover starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "activa voiceover|enciende voiceover|activar voiceover"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "active voiceover|allume voiceover|activer voiceover"
+          }
+        }
+      }
+    },
     "turning VoiceOver on and off, what the VO keys are, stopping speech, and exploring keys safely with keyboard help." : {
       "localizations" : {
         "de" : {
@@ -38284,6 +39824,28 @@
         }
       }
     },
+    "unmute|unmute my microphone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stummschaltung aufheben|mikrofon an|mikrofon einschalten|schalte mein mikrofon ein"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "activa el microfono|activa mi microfono|enciende el microfono|quita el silencio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "reactive le micro|reactive mon micro|reactiver le micro|remets le micro"
+          }
+        }
+      }
+    },
     "what VoiceOver's descriptions mean, so you can tell what an item is and what state it's in." : {
       "localizations" : {
         "de" : {
@@ -38302,6 +39864,182 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ce que veulent dire les descriptions de VoiceOver, pour savoir ce qu'est un élément et dans quel état il se trouve."
+          }
+        }
+      }
+    },
+    "what can i say|help" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "was kann ich sagen|hilfe|welche befehle gibt es"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "que puedo decir|ayuda|que comandos hay"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "que puis je dire|qu est ce que je peux dire|aide|quelles commandes"
+          }
+        }
+      }
+    },
+    "what color is this" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "welche farbe ist das|was für eine farbe ist das|farbe erkennen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "de que color es esto|que color es este|que color es"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "quelle est cette couleur|c est quelle couleur|quelle couleur"
+          }
+        }
+      }
+    },
+    "what did voiceover say" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "was hat voiceover gesagt|was sagte voiceover|was war das"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "que dijo voiceover|que dijo|que acaba de decir voiceover"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "qu a dit voiceover|qu est ce que voiceover a dit|que dit voiceover"
+          }
+        }
+      }
+    },
+    "what money is this" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "welches geld ist das|welcher geldschein ist das|wie viel geld ist das"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "que billete es este|que dinero es este|cuanto dinero es"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "quel est ce billet|c est quel billet|combien vaut ce billet"
+          }
+        }
+      }
+    },
+    "what time is it" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wie spät ist es|wie viel uhr ist es|uhrzeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "que hora es|dime la hora|la hora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "quelle heure est il|il est quelle heure|l heure"
+          }
+        }
+      }
+    },
+    "what's playing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "was läuft gerade|was spielt gerade|was läuft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "que esta sonando|que suena|que se esta reproduciendo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "qu est ce qui joue|qu est ce qui passe|lecture en cours"
+          }
+        }
+      }
+    },
+    "what's using my microphone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wer nutzt mein mikrofon|was nutzt mein mikrofon|welche app nutzt das mikrofon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "que esta usando mi microfono|quien usa el microfono|que usa el microfono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "qui utilise mon micro|qu est ce qui utilise mon micro|qui utilise le micro"
+          }
+        }
+      }
+    },
+    "where am i" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wo bin ich|wo bin ich gerade"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "donde estoy|en donde estoy|donde me encuentro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ou suis je|je suis ou|ou est ce que je suis"
           }
         }
       }
@@ -38456,6 +40194,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "jaune"
+          }
+        }
+      }
+    },
+    "yes|okay|confirm" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ja|klar|bestätigen|mach das|okay"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "si|claro|confirmar|de acuerdo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "oui|d accord|confirmer|confirme|vas y"
           }
         }
       }

@@ -10319,6 +10319,28 @@
         }
       }
     },
+    "Email a problem or an idea" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Problem oder eine Idee per E-Mail senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar por correo un problema o una idea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyer un problème ou une idée par e-mail"
+          }
+        }
+      }
+    },
     "Email address %@. Copied to the clipboard." : {
       "localizations" : {
         "de" : {
@@ -24091,28 +24113,6 @@
         }
       }
     },
-    "Report a problem or suggest an idea" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Problem melden oder eine Idee vorschlagen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Informar de un problema o sugerir una idea"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signaler un problème ou suggérer une idée"
-          }
-        }
-      }
-    },
     "Report copied" : {
       "localizations" : {
         "de" : {
@@ -24153,6 +24153,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rapport copié. Dans Assistant d'évaluation, créez un nouveau rapport et collez-le."
+          }
+        }
+      }
+    },
+    "Report it on GitHub (needs a GitHub account)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf GitHub melden (GitHub-Account nötig)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informar en GitHub (necesita una cuenta de GitHub)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signaler sur GitHub (compte GitHub nécessaire)"
           }
         }
       }

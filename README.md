@@ -93,7 +93,7 @@ Commands that change something important ask "Say yes or no" first. While the ap
 
 **Privacy:** nothing is collected or recorded. See the [privacy policy](PRIVACY.md).
 
-**Help and feedback:** [open an issue](https://github.com/amenathomas1997/voiceover-audio-split/issues/new/choose), or see [CONTRIBUTING.md](CONTRIBUTING.md) to help build it. Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+**Help and feedback:** [email amena.thomas@fullcircleat.com](mailto:amena.thomas@fullcircleat.com?subject=VoiceOver%20Audio%20Split%20feedback) (no account needed), or, with a GitHub account, [open an issue](https://github.com/amenathomas1997/voiceover-audio-split/issues/new/choose). See [CONTRIBUTING.md](CONTRIBUTING.md) to help build it. Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## The app (Xcode project, TestFlight)
 

@@ -15,7 +15,7 @@ Text to paste into App Store Connect, and the steps for a public TestFlight beta
 - **Subtitle (up to 30 characters):** Audio control for VoiceOver
 - **Category:** Utilities. Secondary category: Productivity.
 - **Privacy policy URL:** https://github.com/amenathomas1997/voiceover-audio-split/blob/main/PRIVACY.md
-- **Support URL:** https://github.com/amenathomas1997/voiceover-audio-split/issues
+- **Support URL:** https://github.com/amenathomas1997/voiceover-audio-split#readme (public, with the feedback email; opening an issue would need a GitHub account)
 - **Contact email:** amena.thomas@fullcircleat.com
 - **Copyright:** 2026 Full Circle AT LLC
 

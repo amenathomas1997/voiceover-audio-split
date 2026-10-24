@@ -356,7 +356,9 @@ struct SettingsView: View {
                     .font(.caption).foregroundStyle(.secondary)
                 Link("Privacy policy", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split/blob/main/PRIVACY.md")!)
                 Link("Source code on GitHub", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split")!)
-                Link("Report a problem or suggest an idea", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split/issues/new/choose")!)
+                // Email needs no account; GitHub issues need a GitHub account.
+                Link("Email a problem or an idea", destination: URL(string: "mailto:amena.thomas@fullcircleat.com?subject=VoiceOver%20Audio%20Split%20feedback")!)
+                Link("Report it on GitHub (needs a GitHub account)", destination: URL(string: "https://github.com/amenathomas1997/voiceover-audio-split/issues/new/choose")!)
             }
         }
         .formStyle(.grouped)

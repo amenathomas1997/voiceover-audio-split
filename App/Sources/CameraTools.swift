@@ -87,8 +87,8 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         queue.async {
             self.frames = 0
             self.handler = handler
-            self.firstFrame = { [weak self] in
-                self?.noPicture?.cancel()
+            self.firstFrame = {
+                watchdog.cancel()
                 started?()
             }
             session.startRunning()

@@ -234,13 +234,13 @@ enum Zip {
     }
 }
 
+@MainActor
 final class DocumentCheckModel: ObservableObject {
     static let shared = DocumentCheckModel()
     @Published var name = ""
     @Published var findings: [DocumentCheck.Finding] = []
     @Published var checked = false
 
-    @MainActor
     func choose() {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [UTType(filenameExtension: "docx") ?? .data, .pdf]
@@ -248,9 +248,9 @@ final class DocumentCheckModel: ObservableObject {
         NSApp.activate()
         guard panel.runModal() == .OK, let url = panel.url else { return }
         Announcer.say(String(localized: "Checking"))
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             let findings = DocumentCheck.check(url)
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.name = url.lastPathComponent
                 guard let findings else {
                     self.checked = false

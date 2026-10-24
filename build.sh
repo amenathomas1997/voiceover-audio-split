@@ -48,6 +48,16 @@ INSTALLER_ID="${DEVELOPER_ID_INSTALLER:-$(identity "Developer ID Installer" basi
 rm -rf "$PAYLOAD" "$BUILD/app-component.pkg" "$BUILD/app-distribution.xml" "$PKG"
 mkdir -p "$PAYLOAD/Applications"
 
+# xcodebuild needs Xcode itself; the Command Line Tools alone aren't enough.
+if ! xcodebuild -version >/dev/null 2>&1; then
+  echo "This needs Xcode, and your Mac is set to use the Command Line Tools instead." >&2
+  if [[ -d /Applications/Xcode.app ]]; then
+    echo "Switch to Xcode once with:  sudo xcode-select -s /Applications/Xcode.app/Contents/Developer" >&2
+  else
+    echo "Install Xcode from the App Store, open it once, then run this again." >&2
+  fi
+  exit 1
+fi
 echo "Building $APP_NAME…"
 xcodebuild -project "$PROJECT" -scheme VoiceOverAudioSplit -configuration Release \
   -derivedDataPath "$BUILD/app" -destination 'generic/platform=macOS' \

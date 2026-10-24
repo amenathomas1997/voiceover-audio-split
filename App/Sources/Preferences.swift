@@ -319,6 +319,8 @@ final class Preferences: ObservableObject {
     /// Spaced practice: for each lesson key, its box and when it's next due (seconds since 1970).
     @Published var lessonSchedule: [String: [Double]] { didSet { save(lessonSchedule, "lessonSchedule") } }
     @Published var lessonChallengeBest: Int { didSet { save(lessonChallengeBest, "lessonChallengeBest") } }
+    /// VoiceOver lessons: on your own (more detail and feedback) or with a trainer (a LessonMode).
+    @Published var lessonMode: String { didSet { save(lessonMode, "lessonMode") } }
 
     private init() {
         store.register(defaults: [
@@ -394,6 +396,7 @@ final class Preferences: ObservableObject {
         lessonsMissed = store.stringArray(forKey: "lessonsMissed") ?? []
         lessonSchedule = store.dictionary(forKey: "lessonSchedule") as? [String: [Double]] ?? [:]
         lessonChallengeBest = store.integer(forKey: "lessonChallengeBest")
+        lessonMode = store.string(forKey: "lessonMode") ?? LessonMode.onYourOwn.rawValue
         placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }

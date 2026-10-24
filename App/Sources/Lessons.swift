@@ -97,6 +97,120 @@ struct LessonStep: Hashable {
     }
 }
 
+/// What each lesson teaches, its recap, and notes for a trainer: the frame around the
+/// steps that makes a lesson stick. Goals are said at the start, the recap at the end
+/// (on your own), and trainer notes are shown in the window (with a trainer).
+enum LessonGuide {
+    struct Entry {
+        let goals: String
+        let recap: String
+        let trainer: String
+    }
+
+    static func goals(_ id: String) -> String { entries[id]?.goals ?? "" }
+    static func recap(_ id: String) -> String { entries[id]?.recap ?? "" }
+    static func trainer(_ id: String) -> String { entries[id]?.trainer ?? "" }
+
+    static let entries: [String: Entry] = [
+        "start": Entry(
+            goals: String(localized: "turning VoiceOver on and off, what the VO keys are, stopping speech, and exploring keys safely with keyboard help."),
+            recap: String(localized: "VO means Control and Option held together. Command F5 turns VoiceOver on and off, Control stops speech, VO K is keyboard help, and VO H is the help menu."),
+            trainer: String(localized: "Let the learner find Control and Option by touch first: Control is at the bottom left, with Option beside it; on many laptops Fn or the globe key is further left. Encourage free exploring in keyboard help, where nothing happens. If they press too many keys, have them hold the VO keys first, then press the last key slowly.")),
+        "moving": Entry(
+            goals: String(localized: "moving the VoiceOver cursor item by item, going into and out of groups, pressing buttons, and jumping to the top of a window."),
+            recap: String(localized: "VO Right and Left Arrow move by item. VO Shift Down Arrow goes into a group and VO Shift Up Arrow comes out. VO Space presses, and VO Home goes to the top."),
+            trainer: String(localized: "Describe the VoiceOver cursor as a finger pointing at one thing at a time. Groups are the hardest idea: compare them to boxes inside boxes, and have the learner listen for in and out. Let them explore the practice area freely between steps.")),
+        "reading": Entry(
+            goals: String(localized: "reading everything from the cursor, reading by line, paragraph, word and letter, and repeating or copying what VoiceOver said."),
+            recap: String(localized: "VO A reads everything, and Control stops it. VO L, VO P, VO W and VO C read the line, paragraph, word and letter. VO Z repeats, and VO Shift C copies the last phrase."),
+            trainer: String(localized: "Use the practice paragraph. Spelling a word with VO W twice builds confidence. Point out that reading keys never change anything, so they're always safe to try.")),
+        "apps": Entry(
+            goals: String(localized: "the menu bar and menu extras, the Dock, shortcut menus, and switching between apps and windows."),
+            recap: String(localized: "VO M is the menu bar, VO M twice the menu extras, VO D the Dock, and VO Shift M the shortcut menu. Command Tab switches apps, and Command Grave Accent switches windows."),
+            trainer: String(localized: "In the menu bar, have the learner open a menu, listen to a few commands and close it with Escape, so exploring feels safe. Command Tab means holding Command while tapping Tab: practise that hold-and-tap rhythm.")),
+        "finding": Entry(
+            goals: String(localized: "jumping around with the rotor, finding anything by name with the item chooser, and finding text."),
+            recap: String(localized: "VO U opens the rotor: Left and Right Arrow choose a list, Up and Down Arrow an item, and Return goes there. VO I is the item chooser, and VO F finds text."),
+            trainer: String(localized: "The rotor is a big step; it makes more sense on the practice web page in lesson 6. Typing to narrow the rotor or item chooser is the time-saver to stress.")),
+        "web": Entry(
+            goals: String(localized: "jumping through a web page by heading, link, form control and table, and back again, on a practice page."),
+            recap: String(localized: "VO Command H, L, J and T go to the next heading, link, form control and table; add Shift to go back. In a table, VO and the arrow keys move from cell to cell."),
+            trainer: String(localized: "Make sure the learner is inside the practice web page, with VO Shift Down Arrow on it, before the jumps; if a jump finds nothing, that's usually why. Compare headings to newspaper headlines.")),
+        "quicknav": Entry(
+            goals: String(localized: "moving with the arrow keys alone using Quick Nav, and with single letters on web pages."),
+            recap: String(localized: "Left and Right Arrow together turn Quick Nav on and off. VO Q turns single-key Quick Nav on and off; then H, L and T jump by heading, link and table. Turn it off before typing."),
+            trainer: String(localized: "Quick Nav confuses many learners when they try to type. Practise turning it on and off and listening for VoiceOver's announcement. Suggest single-key Quick Nav for reading the web.")),
+        "text": Entry(
+            goals: String(localized: "moving the text cursor by letter, word and line, selecting text, and copying, pasting and undoing."),
+            recap: String(localized: "Option and the arrows move by word, Command and the arrows go to the ends of a line or the text, and Shift selects as you move. Command C copies, X cuts, V pastes and Z undoes."),
+            trainer: String(localized: "Have the learner type a sentence with a mistake on purpose, then find and fix it using Option and the arrows. Listen together to what VoiceOver says while selecting: it says what was selected.")),
+        "help": Entry(
+            goals: String(localized: "bringing the VoiceOver cursor and keyboard focus together, finding out where you are, locking the VO keys, and opening VoiceOver Utility."),
+            recap: String(localized: "VO Shift F4 and VO Command F4 bring the cursor and the focus together. VO F3, F2 and F1 describe the item, window and app. VO Semicolon locks the VO keys, and VO F8 opens VoiceOver Utility."),
+            trainer: String(localized: "Show focus and the VoiceOver cursor separating with a real example: type in a field, move VoiceOver away, then come back with VO Shift F4. Remind laptop users to hold Fn for the F keys.")),
+        "finder": Entry(
+            goals: String(localized: "bringing Finder forward, moving through files, opening and going back, reaching common folders, and moving files to the Trash."),
+            recap: String(localized: "Command Down Arrow opens and Command Up Arrow goes back. Command Shift A, Command Shift D and Option Command L open Applications, the Desktop and Downloads; Command Shift G goes to any folder. Command Delete moves to the Trash."),
+            trainer: String(localized: "Set the Finder window to list view with Command 2 before starting; it reads more predictably than icons. Have the learner find a file they downloaded recently.")),
+        "safari": Entry(
+            goals: String(localized: "the address field, tabs, going back, finding text on a page, and Reader."),
+            recap: String(localized: "Command L is the address field, Command T and Command W open and close tabs, Command Left Bracket goes back, Command F finds, and Command Shift R shows Reader."),
+            trainer: String(localized: "Choose a simple, accessible site for the first visit. Show how VoiceOver starts reading as a page loads, how Control stops it, and how headings get past the menus.")),
+        "dialogs": Entry(
+            goals: String(localized: "moving between controls with Tab, using checkboxes and buttons, and confirming or cancelling dialogs."),
+            recap: String(localized: "Tab and Shift Tab move between controls; turn on Keyboard navigation to reach them all. Space checks a box, Return presses the default button, and Escape or Command Period cancels."),
+            trainer: String(localized: "Turn on Keyboard navigation in System Settings, Keyboard, before this lesson. Practise in a real dialog, such as TextEdit's save dialog, and cancel it.")),
+        "windows": Entry(
+            goals: String(localized: "opening apps with Spotlight; closing, minimizing, hiding and quitting; and force quitting an app that's stuck."),
+            recap: String(localized: "Command Space opens Spotlight. Command W closes, Command M minimizes, Command H hides, Command Q quits, Command Comma opens settings, and Option Command Escape force quits."),
+            trainer: String(localized: "Make closing versus quitting concrete: close a TextEdit window with Command W, notice TextEdit is still open, then quit it with Command Q.")),
+        "mail": Entry(
+            goals: String(localized: "moving through your messages, reading one, and writing, replying to and sending email."),
+            recap: String(localized: "The arrow keys move through messages. Command N starts a message, Tab moves between its fields, Command Shift D sends, and Command R replies."),
+            trainer: String(localized: "Use a practice account, or have the learner email themselves. Reading a message means moving from the list into the message: show this with VO Right Arrow.")),
+        "customize": Entry(
+            goals: String(localized: "changing VoiceOver's speech as you go, changing how much it says, and where to set up everything else."),
+            recap: String(localized: "VO Command Left and Right Arrow choose a speech setting, and VO Command Up and Down Arrow change it. VO V opens the verbosity rotor, and VO F8 opens VoiceOver Utility, with Commanders, Activities and braille."),
+            trainer: String(localized: "Help the learner find a speaking rate a little faster than comfortable; it speeds up everything else. Download a better-quality voice together in VoiceOver Utility, under Speech.")),
+        "speech": Entry(
+            goals: String(localized: "what VoiceOver's descriptions mean, so you can tell what an item is and what state it's in."),
+            recap: String(localized: "VoiceOver says the name, then the kind of item, then its state. Dimmed means unavailable, collapsed means closed, selected means chosen, and row 2 of 40 is your place in a list."),
+            trainer: String(localized: "Use real examples from apps the learner uses. Before they press VO Space, ask them to predict what will happen from what VoiceOver said.")),
+        "textedit": Entry(
+            goals: String(localized: "writing a short document, selecting and styling text, and saving it with a name."),
+            recap: String(localized: "Type, then check your writing with VO A or the arrow keys. Command A selects everything, Command B makes it bold, and Command S saves."),
+            trainer: String(localized: "Pick a short, meaningful text, such as a note to a friend. In the save dialog, check the name was typed before Return is pressed.")),
+        "pages": Entry(
+            goals: String(localized: "starting a document from a template, writing and styling it, checking spelling, saving it, and exporting it to Word or PDF."),
+            recap: String(localized: "Choose Blank in the template chooser. Command Semicolon finds the next misspelling. Command S saves, and File, Export To makes a Word or PDF copy."),
+            trainer: String(localized: "Pages has many areas; keep to the document and the Format sidebar. If the template chooser is confusing, VO I finds Blank by name.")),
+        "numbers": Entry(
+            goals: String(localized: "moving between cells, entering values and formulas, adding rows and columns, and saving a spreadsheet."),
+            recap: String(localized: "The arrow keys move between cells; Return and Tab finish a cell. A formula starts with equals. Option and the arrows add rows and columns, and Command S saves."),
+            trainer: String(localized: "Start with a tiny table, such as three items and their prices. Ask the learner to say each cell's name to build a picture of the rows and columns.")),
+        "keynote": Entry(
+            goals: String(localized: "adding slides, writing on them, playing a slideshow and moving through it, and saving a presentation."),
+            recap: String(localized: "Command Shift N adds a slide. VO Space on a text box starts editing, and Escape stops. Option Command P plays the show, the arrows move through it, and Escape ends it."),
+            trainer: String(localized: "Keep to two or three slides, and practise the slideshow controls, since presenting is usually the goal. Presenter notes are a good next step.")),
+        "settings": Entry(
+            goals: String(localized: "opening System Settings, finding a setting with the sidebar or search, and reaching the VoiceOver and Accessibility settings."),
+            recap: String(localized: "Open System Settings with Spotlight. Move through the sidebar, or type in the search field. Accessibility, then VoiceOver, has VoiceOver's settings."),
+            trainer: String(localized: "Searching is the fastest route: practise finding a few settings, such as Bluetooth and Display.")),
+        "errand": Entry(
+            goals: String(localized: "going to a real website, getting an overview with headings, and reading the part you need."),
+            recap: String(localized: "Command L, type the address, and Return. Get an overview with the rotor's headings list, jump with VO Command H, and read with VO A."),
+            trainer: String(localized: "Afterwards, do a second errand on a site the learner cares about. Talk about how most sites are laid out: menus at the top, then the main content after the first heading.")),
+        "safarideep": Entry(
+            goals: String(localized: "working with tabs; adding, finding, organizing and removing bookmarks; the Reading List and history; and private browsing."),
+            recap: String(localized: "Control Tab moves between tabs and Command Shift T reopens one. Command D bookmarks a page, Control Command 1 shows bookmarks, and Option Command B edits them. Command Shift D adds to the Reading List, and Command Y shows history."),
+            trainer: String(localized: "Bookmark two or three sites the learner uses, then put them in a folder together in Edit Bookmarks. Removing a bookmark and adding it back builds confidence.")),
+        "review": Entry(
+            goals: String(localized: "a mixed review of keys from every lesson, starting with any you've missed."),
+            recap: "",
+            trainer: String(localized: "Use the session report to choose which lesson to go back to.")),
+    ]
+}
+
 /// Names to save practice documents under. Kept the same in every language, so they
 /// can be checked.
 enum LessonNames {
@@ -550,6 +664,57 @@ enum LessonSchedule {
     }
 }
 
+/// How lessons speak. While the lesson window is in front, it uses an accessibility
+/// announcement: VoiceOver queues it with its own speech and shows it on a braille
+/// display. A step's text interrupts; feedback after a real VoiceOver command waits its
+/// turn, so it doesn't cut off what VoiceOver is saying. Elsewhere it uses the usual voice.
+enum LessonVoice {
+    static func say(_ text: String, waitForVoiceOver: Bool = false) {
+        guard NSApp.isActive, NSWorkspace.shared.isVoiceOverEnabled,
+              let window = LessonRunner.shared.window, window.isVisible else { return Announcer.say(text) }
+        NSAccessibility.post(element: window, notification: .announcementRequested, userInfo: [
+            .announcement: text,
+            .priority: (waitForVoiceOver ? NSAccessibilityPriorityLevel.medium : .high).rawValue,
+        ])
+    }
+}
+
+/// Learning with a trainer beside you, or on your own.
+enum LessonMode: String, CaseIterable, Identifiable {
+    /// More explanation, step numbers, exact feedback on mistakes, hints that build up,
+    /// and a recap, so nobody else needs to be there.
+    case onYourOwn
+    /// Shorter: the trainer explains. Hints only on request, notes for the trainer,
+    /// and a report at the end.
+    case withTrainer
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .onYourOwn: String(localized: "On my own: more explanation, detailed feedback and hints")
+        case .withTrainer: String(localized: "With a trainer: shorter prompts, hints when asked, notes and a report for the trainer")
+        }
+    }
+
+    static var current: LessonMode { LessonMode(rawValue: Preferences.shared.lessonMode) ?? .onYourOwn }
+}
+
+/// One line of the session report: how a practice step went.
+struct LessonResult: Identifiable, Hashable {
+    let id = UUID()
+    let task: String
+    let keys: String
+    var tries: Int
+    var skipped = false
+
+    var summary: String {
+        if skipped { return String(localized: "\(task) (\(keys)): skipped") }
+        return tries <= 1 ? String(localized: "\(task) (\(keys)): right first time")
+                          : String(localized: "\(task) (\(keys)): right after \(tries) tries")
+    }
+}
+
 final class LessonRunner: ObservableObject {
     static let shared = LessonRunner()
 
@@ -562,6 +727,8 @@ final class LessonRunner: ObservableObject {
     /// What's being said now, also shown on screen and on braille displays.
     @Published private(set) var text = ""
     @Published private(set) var score = ""
+    /// How each practice step went this time, for the trainer (and the learner).
+    @Published private(set) var report: [LessonResult] = []
 
     // The practice area's controls, so real tasks can see what was done.
     @Published var pressedPlay = false
@@ -583,6 +750,14 @@ final class LessonRunner: ObservableObject {
     private var missionTimer: Timer?
     /// When the one-minute challenge ends.
     private var deadline: Date?
+    /// Steps missed in this quick check, for one more round before the lesson ends.
+    private var missedThisCheck: [(id: String, step: LessonStep)] = []
+    private var inSecondRound = false
+
+    private var mode: LessonMode { LessonMode.current }
+    private var onYourOwn: Bool { mode == .onYourOwn }
+    private var isChallenge: Bool { lesson?.id == Lesson.challenge.id }
+    private var isDrill: Bool { [Lesson.daily.id, Lesson.challenge.id, Lesson.review.id].contains(lesson?.id) }
 
     // MARK: Running
 
@@ -595,6 +770,10 @@ final class LessonRunner: ObservableObject {
         index = 0
         checkRight = 0
         deadline = nil
+        report = []
+        score = ""
+        missedThisCheck = []
+        inSecondRound = false
         if lesson.id == Lesson.daily.id || lesson.id == Lesson.challenge.id {
             let all = Lesson.allPractice
             let chosen: [(id: String, step: LessonStep)]
@@ -635,15 +814,28 @@ final class LessonRunner: ObservableObject {
         Hotkeys.keyObserver = { [weak self] keyCode, flags, event in
             self?.handle(keyCode, flags, letter: KeyCombo.letter(typedBy: event)) ?? false
         }
-        let intro = lesson.id == Lesson.challenge.id
-            ? String(localized: "One-minute challenge. I'll name a task; press its keys as fast as you can. Go after the tone.")
-            : String(localized: "\(lesson.title). Press Return to go on, R to hear something again, and Escape to stop.")
-        say(intro)
+        say(introduction(for: lesson))
         let thisSession = session
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) { [weak self] in
+        // Long introductions need longer before the first step.
+        let wait = min(12, 3 + Double(text.split(separator: " ").count) / 3)
+        DispatchQueue.main.asyncAfter(deadline: .now() + wait) { [weak self] in
             guard self?.session == thisSession else { return }
             self?.present()
         }
+    }
+
+    /// What the lesson is about, and how to control it: in full on your own, briefly with a trainer.
+    private func introduction(for lesson: Lesson) -> String {
+        if isChallenge {
+            return String(localized: "One-minute challenge. I'll name a task; press its keys as fast as you can. Go after the tone.")
+        }
+        let goals = LessonGuide.goals(lesson.id)
+        guard onYourOwn else { return [lesson.title + ".", goals].filter { !$0.isEmpty }.joined(separator: " ") }
+        var parts = [lesson.title + "."]
+        if !goals.isEmpty { parts.append(String(localized: "In this lesson: \(goals)")) }
+        if !isDrill { parts.append(String(localized: "It has \(steps.count) steps.")) }
+        parts.append(String(localized: "Return goes on, R repeats, B goes back, H gives a hint, S skips a step, and Escape stops."))
+        return parts.joined(separator: " ")
     }
 
     func stop() {
@@ -658,28 +850,37 @@ final class LessonRunner: ObservableObject {
     private var current: LessonStep? { index < steps.count ? steps[index] : nil }
     private var currentID: String { index < stepIDs.count ? stepIDs[index] : "" }
 
+    /// "Step 3 of 9." on your own, so you always know where you are.
+    private var whereYouAre: String {
+        guard onYourOwn, !isChallenge else { return "" }
+        return phase == .checking ? String(localized: "Question \(stepNumber) of \(stepCount).")
+                                  : String(localized: "Step \(stepNumber) of \(stepCount).")
+    }
+
     private func present() {
         if let deadline, Date() >= deadline { return finish() }
-        if lesson?.id == Lesson.challenge.id && index == 0 { Tones.play(.status) }
+        if isChallenge && index == 0 { Tones.play(.status) }
         guard let step = current else { return lessonPartDone() }
         stepNumber = index + 1
         wrongTries = 0
         answered = false
+        say([whereYouAre, prompt(for: step)].filter { !$0.isEmpty }.joined(separator: " "))
+        if case .mission(_, let check, _) = step.kind { watch(check) }
+    }
+
+    private func prompt(for step: LessonStep) -> String {
         switch step.kind {
         case .explain(let words):
-            say(words)
+            return onYourOwn && stepNumber == 1 ? words + " " + String(localized: "Press Return when you're ready to go on.") : words
         case .practice(let task, let keys, _, let tip, _):
-            if phase == .checking {
-                say(String(localized: "\(stepNumber). \(task)?"))
-            } else {
-                say([String(localized: "Try it: \(task). Press \(keys)."), tip].filter { !$0.isEmpty }.joined(separator: " "))
-            }
+            if isChallenge { return task }
+            if phase == .checking { return String(localized: "\(task)?") }
+            return [String(localized: "Try it: \(task). Press \(keys)."), onYourOwn ? tip : ""].filter { !$0.isEmpty }.joined(separator: " ")
         case .question(let prompt, let options, _, _):
-            say(Self.spoken(prompt, options))
+            return Self.spoken(prompt, options)
         case .mission(let task, let check, let tip):
             let skip = check == .yourWord ? "" : String(localized: "Press Return here to skip it.")
-            say([task, tip, skip].filter { !$0.isEmpty }.joined(separator: " "))
-            watch(check)
+            return [task, onYourOwn ? tip : "", skip].filter { !$0.isEmpty }.joined(separator: " ")
         }
     }
 
@@ -725,7 +926,9 @@ final class LessonRunner: ObservableObject {
         answered = true
         stopMission()
         Tones.play(.device)
-        say(String(localized: "Done! Well done."))
+        // Probably in another app now: say how to get back.
+        say(onYourOwn ? String(localized: "Done! Well done. Come back to the lessons window with Command Tab, then press Return.")
+                      : String(localized: "Done!"))
         advance(after: 2.5)
     }
 
@@ -745,7 +948,36 @@ final class LessonRunner: ObservableObject {
         }
     }
 
-    /// The lesson's steps are done: on to its quick check, or finished.
+    /// Back one step (B), for hearing an explanation again or trying a key once more.
+    private func goBack() {
+        stopMission()
+        session += 1 // Cancels anything scheduled for the step we're leaving.
+        index = max(0, index - 1)
+        present()
+    }
+
+    /// Skip a step (S): it counts as missed, so it comes back in practice.
+    private func skip() {
+        guard current != nil else { return }
+        stopMission()
+        if case .practice(let task, let keys, _, _, _) = current?.kind {
+            remember(currentID, missed: true)
+            note(task: task, keys: keys, skipped: true)
+            if phase == .checking, let step = current { missedThisCheck.append((currentID, step)) }
+        }
+        answered = true
+        session += 1
+        say(onYourOwn ? String(localized: "Skipped. It will come back in Practice What I Missed.") : String(localized: "Skipped."))
+        let thisSession = session
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            guard let self, self.session == thisSession else { return }
+            self.index += 1
+            self.present()
+        }
+    }
+
+    /// The lesson's steps are done: on to its quick check, then one more round on
+    /// anything missed, then the end.
     private func lessonPartDone() {
         guard let lesson else { return }
         if phase == .explaining && !lesson.practice.isEmpty {
@@ -756,15 +988,35 @@ final class LessonRunner: ObservableObject {
             stepCount = steps.count
             index = 0
             checkRight = 0
-            say(String(localized: "Quick check. I'll say a task without the keys; press them. Press R if you want to hear it again."))
-            let thisSession = session
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) { [weak self] in
-                guard let self, self.session == thisSession else { return }
-                self.present()
-            }
-            return
+            missedThisCheck = []
+            say(onYourOwn
+                ? String(localized: "Now a quick check, to make it stick. I'll name each task without the keys; press them. If you're not sure, press H for a hint, or R to hear the task again.")
+                : String(localized: "Quick check."))
+            return startAfterSpeaking()
+        }
+        // Mastery: what was missed gets one more go, so the lesson ends on success.
+        if phase == .checking && !inSecondRound && !missedThisCheck.isEmpty && !isChallenge {
+            inSecondRound = true
+            let again = missedThisCheck
+            missedThisCheck = []
+            steps = again.map(\.step)
+            stepIDs = again.map(\.id)
+            stepCount = steps.count
+            index = 0
+            say(onYourOwn
+                ? String(localized: "Let's go over the tricky ones once more. Take your time.")
+                : String(localized: "Once more, the ones that were missed."))
+            return startAfterSpeaking()
         }
         finish()
+    }
+
+    private func startAfterSpeaking() {
+        let thisSession = session
+        DispatchQueue.main.asyncAfter(deadline: .now() + (onYourOwn ? 6 : 2.5)) { [weak self] in
+            guard let self, self.session == thisSession else { return }
+            self.present()
+        }
     }
 
     private func finish() {
@@ -773,7 +1025,8 @@ final class LessonRunner: ObservableObject {
         stopMission()
         session += 1
         phase = .done
-        if lesson.id == Lesson.challenge.id {
+        let checked = report.filter { !$0.skipped }.count
+        if isChallenge {
             let best = Preferences.shared.lessonChallengeBest
             score = String(localized: "\(checkRight) right in a minute")
             var message = String(localized: "Time's up! \(score).")
@@ -786,31 +1039,42 @@ final class LessonRunner: ObservableObject {
             Tones.play(.device)
             return say(message)
         }
+        score = String(localized: "\(checkRight) of \(max(checked, checkRight)) right first time")
         if lesson.id == Lesson.daily.id {
-            score = String(localized: "\(checkRight) of \(steps.count) right first time")
             Tones.play(.device)
             let left = LessonSchedule.due().count
             return say(String(localized: "Daily practice done. \(score).") + (left > 0 ? " " + String(localized: "\(left) still due; they'll come back in today's next practice.") : ""))
         }
-        score = String(localized: "\(checkRight) of \(steps.count) right first time")
-        var done = Preferences.shared.lessonsDone
-        if !done.contains(lesson.id) { done.append(lesson.id) }
-        Preferences.shared.lessonsDone = done
+        if !isDrill {
+            var done = Preferences.shared.lessonsDone
+            if !done.contains(lesson.id) { done.append(lesson.id) }
+            Preferences.shared.lessonsDone = done
+        }
         let course = Lesson.course
         let next = course.firstIndex(of: lesson).flatMap { $0 + 1 < course.count ? course[$0 + 1] : nil }
-        let missed = Preferences.shared.lessonsMissed.count
-        var message = String(localized: "Lesson finished. \(score).")
-        if let next { message += " " + String(localized: "Next: \(next.title).") }
-        else { message += " " + String(localized: "That's the whole course. Well done!") }
-        if missed > 0 { message += " " + String(localized: "Practice what I missed has \(missed) keys to go over.") }
+        var parts = [String(localized: "Lesson finished. \(score).")]
+        if onYourOwn {
+            let recap = LessonGuide.recap(lesson.id)
+            if !recap.isEmpty { parts.append(String(localized: "To sum up: \(recap)")) }
+            let share = checked == 0 ? 1 : Double(checkRight) / Double(checked)
+            if share < 0.7 && checked > 0 {
+                parts.append(String(localized: "Some of these are still new to you, which is normal. Do this lesson again tomorrow, or use Practice What I Missed."))
+            } else if checked > 0 {
+                parts.append(String(localized: "You've got the hang of it."))
+            }
+        } else {
+            parts.append(String(localized: "The session report is in the window."))
+        }
+        if let next { parts.append(String(localized: "Next: \(next.title).")) }
+        else if !isDrill { parts.append(String(localized: "That's the whole course. Well done!")) }
         Tones.play(.device)
-        say(message)
+        say(parts.joined(separator: " "))
     }
 
     // MARK: Keys
 
-    /// Return, R and Escape steer the lesson; while practicing, the answer is checked.
-    /// Everything else goes through, so VoiceOver works normally during explanations.
+    /// Return, R, B, H, S and Escape steer the lesson; while practicing, the answer is
+    /// checked. Everything else goes through, so VoiceOver works normally in explanations.
     private func handle(_ keyCode: Int64, _ flags: CGEventFlags, letter: Character?) -> Bool {
         guard NSApp.isActive, window == nil || NSApp.keyWindow === window else { return false }
         let plain = flags.intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift]).isEmpty && !flags.contains(.maskAlphaShift)
@@ -820,8 +1084,19 @@ final class LessonRunner: ObservableObject {
         }
         // Typing in the practice text field: letters go to the field; Return still steers the lesson.
         if plain && keyCode != 36 && NSApp.keyWindow?.firstResponder is NSTextView { return false }
-        if plain && (letter == "r" || (letter == nil && keyCode == 15)) { // R
-            DispatchQueue.main.async { self.repeatCurrent() }
+        // On the practice web page, letters are single-key Quick Nav (H for headings), not lesson keys.
+        let inWebPage = (NSApp.keyWindow?.firstResponder as? NSView).map { view in
+            sequence(first: view, next: { $0.superview }).contains { $0 is WKWebView }
+        } ?? false
+        if plain, let letter, !isChallenge, !inWebPage, ["r", "b", "h", "s"].contains(letter) {
+            DispatchQueue.main.async {
+                switch letter {
+                case "r": self.repeatCurrent()
+                case "b": self.goBack()
+                case "h": self.hint()
+                default: self.skip()
+                }
+            }
             return true
         }
         guard let step = current else { return false }
@@ -839,11 +1114,15 @@ final class LessonRunner: ObservableObject {
                 if choice == answer {
                     self.answered = true
                     Tones.play(.louder)
-                    self.say(String(localized: "Right. \(why)"))
-                    self.advance(after: 4)
+                    self.say(Self.praise() + " " + why)
+                    self.advance(after: self.onYourOwn ? 5 : 3)
                 } else {
+                    self.wrongTries += 1
                     Tones.play(.quieter)
-                    self.say(String(localized: "Not quite. Try another answer.") + " " + Self.spoken("", options))
+                    let picked = options[choice]
+                    self.say(self.onYourOwn
+                             ? String(localized: "Not quite: \(picked) isn't it. Think about it once more, and try another number.") + " " + Self.spoken("", options)
+                             : String(localized: "Not quite. Try another answer."))
                 }
             }
             return true
@@ -855,7 +1134,7 @@ final class LessonRunner: ObservableObject {
                 self.stopMission()
                 if case .mission(_, .yourWord, _) = step.kind {
                     Tones.play(.device)
-                    self.say(String(localized: "Great, well done."))
+                    self.say(Self.praise())
                     self.advance(after: 2)
                 } else {
                     self.say(String(localized: "Skipped."))
@@ -865,27 +1144,27 @@ final class LessonRunner: ObservableObject {
             return true
         case .practice(let task, let keys, let combo, _, let real):
             if plain && keyCode == 36 {
-                DispatchQueue.main.async { self.say(String(localized: "\(task): press \(keys).")) }
+                DispatchQueue.main.async { self.repeatCurrent() }
                 return true
             }
             // Only judge real attempts: something held with the key, or the keys asked for.
             let attempt = KeyCombo.isVO(flags) || flags.contains(.maskCommand) || flags.contains(.maskAlternate)
-                || flags.contains(.maskShift) || combo.matches(keyCode: keyCode, flags: flags, letter: letter) || keyCode == 48
+                || flags.contains(.maskShift) || flags.contains(.maskControl)
+                || combo.matches(keyCode: keyCode, flags: flags, letter: letter) || keyCode == 48
             guard attempt else { return false }
             if combo.matches(keyCode: keyCode, flags: flags, letter: letter) {
-                DispatchQueue.main.async { self.right(real: real && self.phase == .explaining) }
+                DispatchQueue.main.async { self.right(task: task, keys: keys, real: real && self.phase == .explaining) }
                 // Let VoiceOver really do it, where that's safe.
                 return !(real && phase == .explaining)
             }
             let pressed = KeyCombo.describe(keyCode: keyCode, flags: flags, letter: letter)
-            DispatchQueue.main.async { self.wrong(pressed: pressed, task: task, keys: keys, combo: combo) }
+            let why = Self.diagnose(expected: combo, keyCode: keyCode, flags: flags, letter: letter)
+            DispatchQueue.main.async { self.wrong(pressed: pressed, why: why, task: task, keys: keys, combo: combo) }
             return true
         }
     }
 
-    private var isChallenge: Bool { lesson?.id == Lesson.challenge.id }
-
-    private func right(real: Bool) {
+    private func right(task: String, keys: String, real: Bool) {
         // A quick second press of the right keys mustn't skip the next step.
         guard current != nil, !answered else { return }
         answered = true
@@ -893,22 +1172,27 @@ final class LessonRunner: ObservableObject {
             checkRight += 1
             remember(currentID, missed: false)
         }
+        if phase == .checking || isDrill { note(task: task, keys: keys, skipped: false) }
         Tones.play(.louder)
-        if isChallenge {
-            advance(after: 0.3)
-        } else if real {
-            // VoiceOver is speaking the result; give it time.
-            advance(after: 3)
+        if isChallenge { return advance(after: 0.3) }
+        if real {
+            // VoiceOver is saying the result; praise waits its turn after it.
+            say(Self.praise(), waitForVoiceOver: true)
+            advance(after: 3.5)
+        } else if onYourOwn {
+            say(Self.praise() + " " + String(localized: "\(keys): \(task)."))
+            advance(after: 2.5)
         } else {
-            say(String(localized: "Right."))
+            say(Self.praise())
             advance(after: 1.2)
         }
     }
 
-    private func wrong(pressed: String, task: String, keys: String, combo: KeyCombo) {
+    private func wrong(pressed: String, why: String, task: String, keys: String, combo: KeyCombo) {
         guard !answered else { return }
         wrongTries += 1
         remember(currentID, missed: true)
+        if phase == .checking, wrongTries == 1, let step = current { missedThisCheck.append((currentID, step)) }
         Tones.play(.quieter)
         if isChallenge {
             // No second tries against the clock: hear the keys and keep going.
@@ -916,10 +1200,69 @@ final class LessonRunner: ObservableObject {
             say(keys)
             return advance(after: 1.5)
         }
-        var message = String(localized: "That was \(pressed). \(task): press \(keys).")
-        // A second miss: say exactly what to hold and what to press.
-        if wrongTries >= 2 { message += " " + Self.howToPress(combo) }
-        say(message)
+        guard onYourOwn else {
+            // With a trainer: just what happened. The trainer explains, or H gives a hint.
+            return say(String(localized: "Not yet: that was \(pressed)."))
+        }
+        // On your own: what was pressed, exactly what was wrong, then more help each time.
+        var parts = [String(localized: "Not yet. You pressed \(pressed)."), why]
+        switch wrongTries {
+        case 1: parts.append(String(localized: "\(task): press \(keys)."))
+        case 2: parts.append(Self.howToPress(combo))
+        default:
+            parts.append(Self.howToPress(combo))
+            parts.append(String(localized: "Take your time. If it's not working, press S to skip it for now; it will come back later."))
+        }
+        say(parts.filter { !$0.isEmpty }.joined(separator: " "))
+    }
+
+    /// The hint for the current step (H), at any time.
+    private func hint() {
+        guard let step = current else { return }
+        switch step.kind {
+        case .practice(let task, let keys, let combo, let tip, _):
+            say([String(localized: "\(task): press \(keys)."), Self.howToPress(combo), tip].filter { !$0.isEmpty }.joined(separator: " "))
+        case .mission(_, _, let tip):
+            say(tip.isEmpty ? String(localized: "Do the task, then come back here. Press Return to skip it.") : tip)
+        case .question(_, let options, _, _):
+            say(String(localized: "Think about what each answer would mean, then pick the one that fits.") + " " + Self.spoken("", options))
+        case .explain:
+            say(String(localized: "Press Return to go on, or R to hear this again."))
+        }
+    }
+
+    /// What's wrong with a key press, in words: missing or extra keys held, or the wrong key.
+    static func diagnose(expected: KeyCombo, keyCode: Int64, flags: CGEventFlags, letter: Character?) -> String {
+        var problems: [String] = []
+        let heldVO = KeyCombo.isVO(flags)
+        if expected.vo && !heldVO {
+            problems.append(String(localized: "You weren't holding the VO keys, Control and Option."))
+        } else if !expected.vo && heldVO {
+            problems.append(String(localized: "This one doesn't use the VO keys."))
+        }
+        if !expected.vo && !heldVO {
+            if expected.control && !flags.contains(.maskControl) { problems.append(String(localized: "Control is needed too.")) }
+            if !expected.control && flags.contains(.maskControl) { problems.append(String(localized: "Control isn't needed.")) }
+            if expected.option && !flags.contains(.maskAlternate) { problems.append(String(localized: "Option is needed too.")) }
+            if !expected.option && flags.contains(.maskAlternate) { problems.append(String(localized: "Option isn't needed.")) }
+        }
+        if expected.command && !flags.contains(.maskCommand) { problems.append(String(localized: "Command is needed too.")) }
+        if !expected.command && flags.contains(.maskCommand) { problems.append(String(localized: "Command isn't needed.")) }
+        if expected.shift && !flags.contains(.maskShift) { problems.append(String(localized: "Shift is needed too.")) }
+        if !expected.shift && flags.contains(.maskShift) { problems.append(String(localized: "Shift isn't needed.")) }
+        let rightKey = if let want = expected.letter, let letter { letter == want } else { keyCode == expected.code }
+        if !rightKey {
+            let wanted = KeyCombo.name(of: expected.code)
+            let got = letter.map { String($0).uppercased() } ?? KeyCombo.name(of: keyCode)
+            problems.append(String(localized: "The key is \(wanted), not \(got)."))
+        }
+        return problems.joined(separator: " ")
+    }
+
+    /// A little variety in praise.
+    static func praise() -> String {
+        [String(localized: "Right!"), String(localized: "Well done."), String(localized: "That's it."), String(localized: "Correct."),
+         String(localized: "Nice work.")].randomElement()!
     }
 
     /// "Hold Control, Option and Command, then press H."
@@ -941,6 +1284,17 @@ final class LessonRunner: ObservableObject {
         return hint
     }
 
+    /// Adds or updates this step's line in the session report.
+    private func note(task: String, keys: String, skipped: Bool) {
+        let tries = wrongTries + (skipped ? 0 : 1)
+        if inSecondRound, let line = report.firstIndex(where: { $0.task == task }) {
+            report[line].tries += tries
+            report[line].skipped = skipped
+        } else {
+            report.append(LessonResult(task: task, keys: keys, tries: tries, skipped: skipped))
+        }
+    }
+
     private func remember(_ id: String, missed: Bool) {
         guard !id.isEmpty else { return }
         // Keys checked in quick checks, reviews and daily practice go on the practice schedule.
@@ -954,19 +1308,22 @@ final class LessonRunner: ObservableObject {
 
     func repeatCurrent() {
         guard let step = current else { return say(text) }
-        switch step.kind {
-        case .explain(let words): say(words)
-        case .mission(let task, _, let tip): say([task, tip].filter { !$0.isEmpty }.joined(separator: " "))
-        case .question(let prompt, let options, _, _): say(Self.spoken(prompt, options))
-        case .practice(let task, let keys, _, let tip, _):
-            say(phase == .checking ? String(localized: "\(task)? The keys are \(keys).")
-                                   : [String(localized: "\(task): press \(keys)."), tip].filter { !$0.isEmpty }.joined(separator: " "))
+        if case .practice(let task, let keys, _, let tip, _) = step.kind, phase == .checking {
+            // In a check, R repeats the task; the keys come with H.
+            _ = keys; _ = tip
+            return say(String(localized: "\(task)?") + (onYourOwn ? " " + String(localized: "Press H if you'd like a hint.") : ""))
         }
+        say(prompt(for: step))
     }
 
-    private func say(_ words: String) {
+    /// The report, as text to copy for a trainer's notes.
+    var reportText: String {
+        ([lesson?.title ?? "", score] + report.map(\.summary)).filter { !$0.isEmpty }.joined(separator: "\n")
+    }
+
+    private func say(_ words: String, waitForVoiceOver: Bool = false) {
         text = words
-        Announcer.say(words)
+        LessonVoice.say(words, waitForVoiceOver: waitForVoiceOver)
     }
 }
 
@@ -998,7 +1355,21 @@ struct LessonsView: View {
                     Text(String(localized: "A course for learning VoiceOver from the beginning, in four levels. Each lesson explains a skill, then you try the keys, answer questions and do tasks for real. Start with lesson 1, or pick any lesson."))
                         .font(.caption).foregroundStyle(.secondary)
                     Text(String(localized: "\(preferences.lessonsDone.filter { id in Lesson.course.contains { $0.id == id } }.count) of \(Lesson.course.count) lessons done"))
+                    Picker(String(localized: "How are you learning?"), selection: $preferences.lessonMode) {
+                        ForEach(LessonMode.allCases) { Text($0.title).tag($0.rawValue) }
+                    }
                     if !runner.score.isEmpty { Text(runner.text) }
+                }
+                if !runner.report.isEmpty {
+                    Section(String(localized: "Session report: \(runner.lesson?.title ?? "")")) {
+                        Text(runner.score)
+                        ForEach(runner.report) { Text($0.summary) }
+                        Button(String(localized: "Copy Report")) {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString(runner.reportText, forType: .string)
+                            Announcer.say(String(localized: "Report copied"))
+                        }
+                    }
                 }
                 ForEach(Lesson.levels, id: \.title) { level in
                     Section(level.title) {
@@ -1031,8 +1402,17 @@ struct LessonsView: View {
                         Button(String(localized: "Say It Again")) { runner.repeatCurrent() }
                         Button(String(localized: "Stop Lesson")) { runner.stop() }
                     }
-                    Text(String(localized: "Return goes on, R repeats, Escape stops."))
+                    Text(String(localized: "Return goes on, R repeats, B goes back, H gives a hint, S skips, Escape stops."))
                         .font(.caption).foregroundStyle(.secondary)
+                }
+                if LessonMode.current == .withTrainer, let lesson = runner.lesson, !LessonGuide.trainer(lesson.id).isEmpty {
+                    Section(String(localized: "Notes for the trainer")) {
+                        Text(String(localized: "Goals: \(LessonGuide.goals(lesson.id))"))
+                        Text(LessonGuide.trainer(lesson.id))
+                        if !runner.report.isEmpty {
+                            Text(String(localized: "So far: \(runner.report.filter { $0.tries <= 1 && !$0.skipped }.count) of \(runner.report.count) right first time"))
+                        }
+                    }
                 }
             }
 

@@ -23,6 +23,72 @@
         }
       }
     },
+    "%@ (%@): right after %lld tries" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@): nach %lld Versuchen richtig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@): bien tras %lld intentos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@) : bonne réponse après %lld essais"
+          }
+        }
+      }
+    },
+    "%@ (%@): right first time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@): beim ersten Versuch richtig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@): bien a la primera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@) : bonne réponse du premier coup"
+          }
+        }
+      }
+    },
+    "%@ (%@): skipped" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@): übersprungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@): saltado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@) : étape passée"
+          }
+        }
+      }
+    },
     "%@ (script)" : {
       "localizations" : {
         "de" : {
@@ -617,28 +683,6 @@
         }
       }
     },
-    "%@. Press Return to go on, R to hear something again, and Escape to stop." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@. Drücke den Zeilenschalter, um weiterzumachen, R, um etwas noch einmal zu hören, und Escape zum Beenden."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@. Pulsa Retorno para continuar, R para volver a oír algo y Escape para salir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@. Appuyez sur Retour pour continuer, sur R pour réécouter, et sur Échap pour arrêter."
-          }
-        }
-      }
-    },
     "%@. Type each thing I say. Press Escape to stop." : {
       "localizations" : {
         "de" : {
@@ -679,6 +723,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ : %@"
+          }
+        }
+      }
+    },
+    "%@: %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ : %@."
           }
         }
       }
@@ -859,24 +925,24 @@
         }
       }
     },
-    "%@? The keys are %@." : {
+    "%@?" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@? Die Tasten sind %@."
+            "value" : "%@?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿%@? Las teclas son %@."
+            "value" : "¿%@?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ? Les touches sont %@."
+            "value" : "%@ ?"
           }
         }
       }
@@ -1625,28 +1691,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld. %@ : %@"
-          }
-        }
-      }
-    },
-    "%lld. %@?" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld. %@?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld. ¿%@?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld. %@ ?"
           }
         }
       }
@@ -3231,6 +3275,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Après une pause, VoiceOver peut ajouter un conseil, par exemple comment appuyer sur un bouton. Une fois que vous êtes à l'aise, vous pouvez désactiver les conseils dans Utilitaire VoiceOver, sous Verbosité."
+          }
+        }
+      }
+    },
+    "Afterwards, do a second errand on a site the learner cares about. Talk about how most sites are laid out: menus at the top, then the main content after the first heading." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erledige danach gemeinsam eine zweite Aufgabe auf einer Website, die der lernenden Person wichtig ist. Sprich darüber, wie die meisten Websites aufgebaut sind: oben Menüs, dann der Hauptinhalt nach der ersten Überschrift."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después, hagan una segunda tarea en un sitio que le interese a quien aprende. Comenten cómo se organizan la mayoría de los sitios: menús arriba y luego el contenido principal después del primer encabezado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensuite, faites une deuxième course sur un site qui intéresse l'apprenant. Parlez de l'organisation de la plupart des sites : les menus en haut, puis le contenu principal après le premier titre."
           }
         }
       }
@@ -4841,6 +4907,28 @@
         }
       }
     },
+    "Bookmark two or three sites the learner uses, then put them in a folder together in Edit Bookmarks. Removing a bookmark and adding it back builds confidence." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lege Lesezeichen für zwei oder drei Websites an, die die lernende Person nutzt, und lege sie dann in „Lesezeichen bearbeiten“ gemeinsam in einen Ordner. Ein Lesezeichen zu entfernen und wieder hinzuzufügen, gibt Sicherheit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadan a marcadores dos o tres sitios que use quien aprende y luego pónganlos juntos en una carpeta en Editar marcadores. Quitar un marcador y volver a añadirlo da confianza."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez aux signets deux ou trois sites que l'apprenant utilise, puis rangez-les ensemble dans un dossier avec Modifier les signets. Supprimer un signet puis le rajouter donne confiance."
+          }
+        }
+      }
+    },
     "Bookmarks save pages to come back to. On a page, Command D adds a bookmark: a small window asks where to put it, such as Favorites or the Bookmarks Menu, and what to call it. Change them if you like, and press Return to add it." : {
       "localizations" : {
         "de" : {
@@ -5765,6 +5853,28 @@
         }
       }
     },
+    "Choose Blank in the template chooser. Command Semicolon finds the next misspelling. Command S saves, and File, Export To makes a Word or PDF copy." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle in der Vorlagenauswahl „Leer“. Befehl Semikolon findet den nächsten Rechtschreibfehler. Befehl S sichert, und Ablage, Exportieren erstellt eine Kopie als Word oder PDF."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige En blanco en el selector de plantillas. Comando Punto y coma busca la siguiente palabra mal escrita. Comando S guarda, y Archivo, Exportar a crea una copia en Word o PDF."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez Vierge dans le sélecteur de modèles. Commande Point-virgule trouve le mot mal orthographié suivant. Commande S enregistre, et Fichier, Exporter vers crée une copie Word ou PDF."
+          }
+        }
+      }
+    },
     "Choose Radio, Podcasts, Audiobooks or News, then search." : {
       "localizations" : {
         "de" : {
@@ -5849,6 +5959,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choisir un script"
+          }
+        }
+      }
+    },
+    "Choose a simple, accessible site for the first visit. Show how VoiceOver starts reading as a page loads, how Control stops it, and how headings get past the menus." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle für den ersten Besuch eine einfache, barrierefreie Website. Zeige, wie VoiceOver beim Laden einer Seite zu lesen beginnt, wie Control das stoppt und wie man mit Überschriften an den Menüs vorbeikommt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elijan un sitio sencillo y accesible para la primera visita. Muestra cómo VoiceOver empieza a leer cuando se carga una página, cómo Control lo detiene y cómo los encabezados permiten saltar los menús."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez un site simple et accessible pour la première visite. Montrez comment VoiceOver commence à lire quand une page se charge, comment Contrôle l'arrête, et comment les titres permettent de passer les menus."
           }
         }
       }
@@ -6447,6 +6579,28 @@
         }
       }
     },
+    "Command Down Arrow opens and Command Up Arrow goes back. Command Shift A, Command Shift D and Option Command L open Applications, the Desktop and Downloads; Command Shift G goes to any folder. Command Delete moves to the Trash." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehl Pfeil nach unten öffnet, und Befehl Pfeil nach oben geht zurück. Befehl Umschalt A, Befehl Umschalt D und Wahl Befehl L öffnen „Programme“, den Schreibtisch und „Downloads“; Befehl Umschalt G geht zu einem beliebigen Ordner. Befehl Rückschritttaste legt in den Papierkorb."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comando Flecha abajo abre y Comando Flecha arriba vuelve atrás. Comando Mayúsculas A, Comando Mayúsculas D y Opción Comando L abren Aplicaciones, el Escritorio y Descargas; Comando Mayúsculas G va a cualquier carpeta. Comando Eliminar mueve a la Papelera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande Flèche bas ouvre et Commande Flèche haut revient en arrière. Commande Maj A, Commande Maj D et Option Commande L ouvrent Applications, le Bureau et Téléchargements ; Commande Maj G va à n'importe quel dossier. Commande Supprimer place dans la Corbeille."
+          }
+        }
+      }
+    },
     "Command F" : {
       "localizations" : {
         "de" : {
@@ -6557,6 +6711,28 @@
         }
       }
     },
+    "Command L is the address field, Command T and Command W open and close tabs, Command Left Bracket goes back, Command F finds, and Command Shift R shows Reader." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehl L ist das Adressfeld, Befehl T und Befehl W öffnen und schließen Tabs, Befehl eckige Klammer links geht zurück, Befehl F sucht, und Befehl Umschalt R zeigt den Reader."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comando L va al campo de dirección, Comando T y Comando W abren y cierran pestañas, Comando Corchete izquierdo vuelve atrás, Comando F busca y Comando Mayúsculas R muestra Lector."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande L va au champ d'adresse, Commande T et Commande W ouvrent et ferment des onglets, Commande Crochet gauche revient en arrière, Commande F recherche, et Commande Maj R affiche Lecteur."
+          }
+        }
+      }
+    },
     "Command L, type the address, Return. Then Command D, and Return to add the bookmark." : {
       "localizations" : {
         "de" : {
@@ -6575,6 +6751,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Commande L, tapez l'adresse, Retour. Puis Commande D, et Retour pour ajouter le signet."
+          }
+        }
+      }
+    },
+    "Command L, type the address, and Return. Get an overview with the rotor's headings list, jump with VO Command H, and read with VO A." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehl L, tippe die Adresse, Zeilenschalter. Verschaffe dir mit der Überschriftenliste im Rotor einen Überblick, springe mit VO Befehl H und lies mit VO A."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comando L, escribe la dirección y pulsa Retorno. Ten una vista general con la lista de encabezados del rotor, salta con VO Comando H y lee con VO A."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande L, tapez l'adresse, puis Retour. Ayez une vue d'ensemble avec la liste des titres du rotor, sautez avec VO Commande H, et lisez avec VO A."
           }
         }
       }
@@ -6975,6 +7173,28 @@
         }
       }
     },
+    "Command Shift N adds a slide. VO Space on a text box starts editing, and Escape stops. Option Command P plays the show, the arrows move through it, and Escape ends it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehl Umschalt N fügt eine Folie hinzu. VO Leertaste auf einem Textfeld beginnt das Bearbeiten, und Escape beendet es. Wahl Befehl P spielt die Präsentation ab, die Pfeiltasten gehen durch sie hindurch, und Escape beendet sie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comando Mayúsculas N añade una diapositiva. VO Espacio en un cuadro de texto empieza a editar, y Escape termina. Opción Comando P reproduce la presentación, las flechas la recorren y Escape la termina."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande Maj N ajoute une diapositive. VO Espace sur une zone de texte commence la modification, et Échap l'arrête. Option Commande P lit le diaporama, les flèches le parcourent, et Échap le termine."
+          }
+        }
+      }
+    },
     "Command Shift N opens a private window, which doesn't keep history. And if a site won't work well with VoiceOver, Reader (Command Shift R) often helps, as can turning off Quick Nav while filling in forms." : {
       "localizations" : {
         "de" : {
@@ -7059,6 +7279,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Commande Espace"
+          }
+        }
+      }
+    },
+    "Command Space opens Spotlight. Command W closes, Command M minimizes, Command H hides, Command Q quits, Command Comma opens settings, and Option Command Escape force quits." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehl Leertaste öffnet Spotlight. Befehl W schließt, Befehl M legt im Dock ab, Befehl H blendet aus, Befehl Q beendet, Befehl Komma öffnet die Einstellungen, und Wahl Befehl Escape erzwingt das Beenden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comando Espacio abre Spotlight. Comando W cierra, Comando M minimiza, Comando H oculta, Comando Q sale, Comando Coma abre los ajustes y Opción Comando Escape fuerza la salida."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande Espace ouvre Spotlight. Commande W ferme, Commande M place dans le Dock, Commande H masque, Commande Q quitte, Commande Virgule ouvre les réglages, et Option Commande Échap force à quitter."
           }
         }
       }
@@ -7301,6 +7543,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Commande Z"
+          }
+        }
+      }
+    },
+    "Command is needed too." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du brauchst auch Befehl."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "También hace falta Comando."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il faut aussi Commande."
+          }
+        }
+      }
+    },
+    "Command isn't needed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehl brauchst du nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hace falta Comando."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande n'est pas nécessaire."
           }
         }
       }
@@ -7657,6 +7943,28 @@
         }
       }
     },
+    "Control Tab moves between tabs and Command Shift T reopens one. Command D bookmarks a page, Control Command 1 shows bookmarks, and Option Command B edits them. Command Shift D adds to the Reading List, and Command Y shows history." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control Tab wechselt zwischen Tabs, und Befehl Umschalt T öffnet einen wieder. Befehl D fügt ein Lesezeichen für eine Seite hinzu, Control Befehl 1 zeigt die Lesezeichen, und Wahl Befehl B bearbeitet sie. Befehl Umschalt D fügt zur Leseliste hinzu, und Befehl Y zeigt den Verlauf."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control Tab se mueve entre pestañas y Comando Mayúsculas T vuelve a abrir una. Comando D añade una página a marcadores, Control Comando 1 muestra los marcadores y Opción Comando B los edita. Comando Mayúsculas D añade a la Lista de lectura, y Comando Y muestra el Historial."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contrôle Tab passe d'un onglet à l'autre et Commande Maj T en rouvre un. Commande D ajoute une page aux signets, Contrôle Commande 1 affiche les signets, et Option Commande B permet de les modifier. Commande Maj D ajoute à la Liste de lecture, et Commande Y affiche l'historique."
+          }
+        }
+      }
+    },
     "Control and Option are side by side at the bottom left of the keyboard." : {
       "localizations" : {
         "de" : {
@@ -7697,6 +8005,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Contrôle et Option maintenues ensemble, ou Verr. Maj si vous l'avez choisie. La plupart des commandes VoiceOver commencent par elles."
+          }
+        }
+      }
+    },
+    "Control is needed too." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du brauchst auch Control."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "También hace falta Control."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il faut aussi Contrôle."
+          }
+        }
+      }
+    },
+    "Control isn't needed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control brauchst du nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hace falta Control."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contrôle n'est pas nécessaire."
           }
         }
       }
@@ -8093,6 +8445,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copyright 2026 Full Circle AT LLC. Logiciel libre sous licence publique générale GNU version 3."
+          }
+        }
+      }
+    },
+    "Correct." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richtig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correcto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exact."
           }
         }
       }
@@ -8779,6 +9153,28 @@
         }
       }
     },
+    "Describe the VoiceOver cursor as a finger pointing at one thing at a time. Groups are the hardest idea: compare them to boxes inside boxes, and have the learner listen for in and out. Let them explore the practice area freely between steps." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschreibe den VoiceOver-Cursor als Finger, der immer auf genau eine Sache zeigt. Gruppen sind die schwierigste Idee: Vergleiche sie mit Schachteln in Schachteln, und lass die lernende Person auf die Ansagen beim Hinein- und Hinausgehen achten. Lass sie zwischen den Schritten frei den Übungsbereich erkunden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe el cursor de VoiceOver como un dedo que señala una sola cosa a la vez. Los grupos son la idea más difícil: compáralos con cajas dentro de cajas y pide a quien aprende que escuche cuándo VoiceOver dice dentro de y fuera de. Deja que explore libremente el área de práctica entre un paso y otro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décrivez le curseur VoiceOver comme un doigt qui montre une seule chose à la fois. Les groupes sont l'idée la plus difficile : comparez-les à des boîtes dans des boîtes, et demandez à l'apprenant d'écouter quand VoiceOver dit dans et hors de. Laissez-le explorer librement la zone d'entraînement entre les étapes."
+          }
+        }
+      }
+    },
     "Describe the item in the VoiceOver cursor" : {
       "localizations" : {
         "de" : {
@@ -9153,6 +9549,28 @@
         }
       }
     },
+    "Do the task, then come back here. Press Return to skip it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erledige die Aufgabe und komm dann hierher zurück. Drücke den Zeilenschalter, um sie zu überspringen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haz la tarea y luego vuelve aquí. Pulsa Retorno para saltarla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effectuez la tâche, puis revenez ici. Appuyez sur Retour pour la passer."
+          }
+        }
+      }
+    },
     "Doc Reader" : {
       "localizations" : {
         "de" : {
@@ -9285,24 +9703,46 @@
         }
       }
     },
-    "Done! Well done." : {
+    "Done!" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erledigt! Gut gemacht."
+            "value" : "Erledigt!"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Listo! Bien hecho."
+            "value" : "¡Listo!"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminé ! Bravo."
+            "value" : "Terminé !"
+          }
+        }
+      }
+    },
+    "Done! Well done. Come back to the lessons window with Command Tab, then press Return." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erledigt! Gut gemacht. Komm mit Befehl Tab zum Fenster der Lektionen zurück und drücke dann den Zeilenschalter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Listo! Bien hecho. Vuelve a la ventana de las lecciones con Comando Tab y luego pulsa Retorno."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminé ! Bravo. Revenez à la fenêtre des leçons avec Commande Tab, puis appuyez sur Retour."
           }
         }
       }
@@ -11353,6 +11793,28 @@
         }
       }
     },
+    "Goals: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziele: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objetivos: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectifs : %@"
+          }
+        }
+      }
+    },
     "Going further" : {
       "localizations" : {
         "de" : {
@@ -11441,24 +11903,24 @@
         }
       }
     },
-    "Great, well done." : {
+    "Have the learner type a sentence with a mistake on purpose, then find and fix it using Option and the arrows. Listen together to what VoiceOver says while selecting: it says what was selected." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Super, gut gemacht."
+            "value" : "Lass die lernende Person einen Satz mit einem absichtlichen Fehler tippen und den Fehler dann mit Wahl und den Pfeiltasten finden und korrigieren. Hör gemeinsam zu, was VoiceOver beim Auswählen sagt: Es sagt, was ausgewählt wurde."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Genial, bien hecho."
+            "value" : "Pide a quien aprende que escriba una oración con un error a propósito y que luego lo encuentre y lo corrija con Opción y las flechas. Escuchen juntos lo que dice VoiceOver al seleccionar: dice lo que se seleccionó."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Super, bravo."
+            "value" : "Demandez à l'apprenant de taper une phrase avec une erreur volontaire, puis de la trouver et de la corriger avec Option et les flèches. Écoutez ensemble ce que dit VoiceOver pendant la sélection : il énonce ce qui a été sélectionné."
           }
         }
       }
@@ -11525,6 +11987,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Audition et clarté"
+          }
+        }
+      }
+    },
+    "Help the learner find a speaking rate a little faster than comfortable; it speeds up everything else. Download a better-quality voice together in VoiceOver Utility, under Speech." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hilf der lernenden Person, eine Sprechgeschwindigkeit zu finden, die etwas schneller als bequem ist; das beschleunigt alles andere. Lade gemeinsam im VoiceOver-Dienstprogramm unter „Sprache“ eine Stimme in besserer Qualität."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda a quien aprende a encontrar una velocidad de habla un poco más rápida de lo que le resulta cómodo; así todo lo demás va más rápido. Descarguen juntos una voz de mejor calidad en Utilidad VoiceOver, en Habla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aidez l'apprenant à trouver un débit de parole un peu plus rapide que confortable ; cela accélère tout le reste. Téléchargez ensemble une voix de meilleure qualité dans Utilitaire VoiceOver, sous Parole."
           }
         }
       }
@@ -11965,6 +12449,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rangée de repos, main droite : J K L point-virgule"
+          }
+        }
+      }
+    },
+    "How are you learning?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie lernst du?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cómo vas a aprender?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment apprenez-vous ?"
           }
         }
       }
@@ -12519,6 +13025,28 @@
         }
       }
     },
+    "In the menu bar, have the learner open a menu, listen to a few commands and close it with Escape, so exploring feels safe. Command Tab means holding Command while tapping Tab: practise that hold-and-tap rhythm." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lass die lernende Person in der Menüleiste ein Menü öffnen, ein paar Befehle anhören und es mit Escape schließen, damit sich das Erkunden sicher anfühlt. Befehl Tab heißt: Befehl gedrückt halten und dabei Tab antippen. Übe diesen Rhythmus aus Halten und Antippen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En la barra de menús, pide a quien aprende que abra un menú, escuche algunos comandos y lo cierre con Escape, para que explorar se sienta seguro. Comando Tab significa mantener pulsada Comando mientras se pulsa Tab: practiquen ese ritmo de mantener y pulsar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans la barre des menus, demandez à l'apprenant d'ouvrir un menu, d'écouter quelques commandes et de le fermer avec Échap, pour que l'exploration paraisse sans risque. Commande Tab veut dire maintenir Commande tout en appuyant brièvement sur Tab : entraînez-vous à ce rythme maintenir et appuyer."
+          }
+        }
+      }
+    },
     "In the sidebar, choose Accessibility, then VoiceOver. Or type VoiceOver in the search field." : {
       "localizations" : {
         "de" : {
@@ -12581,6 +13109,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dans le champ de texte, essayez pour de vrai les touches de cette leçon : déplacez-vous mot par mot, sélectionnez, copiez et annulez. VO L lit la ligne où vous êtes, et VO F3 décrit le champ."
+          }
+        }
+      }
+    },
+    "In this lesson: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In dieser Lektion: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En esta lección: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans cette leçon : %@"
           }
         }
       }
@@ -12823,6 +13373,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il supprime l'élément"
+          }
+        }
+      }
+    },
+    "It has %lld steps." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie hat %lld Schritte."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiene %lld pasos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elle comporte %lld étapes."
           }
         }
       }
@@ -13285,6 +13857,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conserver l'historique de la parole"
+          }
+        }
+      }
+    },
+    "Keep to two or three slides, and practise the slideshow controls, since presenting is usually the goal. Presenter notes are a good next step." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bleib bei zwei oder drei Folien und übe die Steuerung der Präsentation, denn meistens geht es ums Präsentieren. Moderatornotizen sind ein guter nächster Schritt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limítense a dos o tres diapositivas y practiquen los controles de la presentación, ya que presentar suele ser el objetivo. Las notas del presentador son un buen paso siguiente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limitez-vous à deux ou trois diapositives, et entraînez-vous aux commandes du diaporama, car le but est généralement de présenter. Les notes de l'intervenant sont une bonne étape suivante."
           }
         }
       }
@@ -14147,6 +14741,28 @@
         }
       }
     },
+    "Left and Right Arrow together turn Quick Nav on and off. VO Q turns single-key Quick Nav on and off; then H, L and T jump by heading, link and table. Turn it off before typing." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pfeil nach links und Pfeil nach rechts zusammen schalten die Schnellnavigation ein und aus. VO Q schaltet die Einzeltasten-Schnellnavigation ein und aus; dann springen H, L und T nach Überschrift, Link und Tabelle. Schalte sie vor dem Tippen aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flecha izquierda y Flecha derecha a la vez activan y desactivan la Navegación rápida. VO Q activa y desactiva la Navegación rápida de una tecla; entonces H, L y T saltan por encabezado, enlace y tabla. Desactívala antes de escribir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flèche gauche et Flèche droite ensemble activent et désactivent la Navigation rapide. VO Q active et désactive la Navigation rapide à une touche ; ensuite, H, L et T sautent par titre, lien et tableau. Désactivez-la avant de taper."
+          }
+        }
+      }
+    },
     "Left ear" : {
       "localizations" : {
         "de" : {
@@ -14231,6 +14847,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Leçons"
+          }
+        }
+      }
+    },
+    "Let the learner find Control and Option by touch first: Control is at the bottom left, with Option beside it; on many laptops Fn or the globe key is further left. Encourage free exploring in keyboard help, where nothing happens. If they press too many keys, have them hold the VO keys first, then press the last key slowly." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lass die lernende Person Control und Wahl zuerst ertasten: Control ist unten links, Wahl direkt daneben; auf vielen Laptops liegt Fn oder die Globustaste noch weiter links. Ermutige zum freien Erkunden in der Tastaturhilfe, dort passiert nichts. Werden zu viele Tasten gedrückt, lass zuerst die VO-Tasten halten und dann langsam die letzte Taste drücken."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja que quien aprende encuentre primero Control y Opción al tacto: Control está abajo a la izquierda, con Opción al lado; en muchos portátiles, Fn o la tecla del globo está más a la izquierda. Anima a explorar libremente en la ayuda del teclado, donde no pasa nada. Si pulsa demasiadas teclas, pídele que mantenga pulsadas primero las teclas VO y luego pulse la última tecla despacio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laissez d'abord l'apprenant trouver Contrôle et Option au toucher : Contrôle est en bas à gauche, avec Option juste à côté ; sur beaucoup de portables, Fn ou la touche globe est encore plus à gauche. Encouragez l'exploration libre dans l'aide clavier, où rien ne se passe. S'il appuie sur trop de touches, demandez-lui de maintenir d'abord les touches VO, puis d'appuyer lentement sur la dernière touche."
+          }
+        }
+      }
+    },
+    "Let's go over the tricky ones once more. Take your time." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gehen wir die kniffligen noch einmal durch. Lass dir Zeit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repasemos una vez más las más difíciles. Tómate tu tiempo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revoyons encore une fois les plus difficiles. Prenez votre temps."
           }
         }
       }
@@ -14807,6 +15467,28 @@
         }
       }
     },
+    "Make closing versus quitting concrete: close a TextEdit window with Command W, notice TextEdit is still open, then quit it with Command Q." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach den Unterschied zwischen Schließen und Beenden greifbar: Schließe ein TextEdit-Fenster mit Befehl W, achte darauf, dass TextEdit noch geöffnet ist, und beende es dann mit Befehl Q."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haz concreta la diferencia entre cerrar y salir: cierren una ventana de TextEdit con Comando W, comprueben que TextEdit sigue abierto y luego salgan de él con Comando Q."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rendez concrète la différence entre fermer et quitter : fermez une fenêtre de TextEdit avec Commande W, remarquez que TextEdit est toujours ouvert, puis quittez-le avec Commande Q."
+          }
+        }
+      }
+    },
     "Make each link say where it goes, such as \"2026 price list\", rather than \"click here\" or a web address." : {
       "localizations" : {
         "de" : {
@@ -14825,6 +15507,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faites en sorte que chaque lien indique sa destination, par exemple « tarifs 2026 », plutôt que « cliquez ici » ou une adresse web."
+          }
+        }
+      }
+    },
+    "Make sure the learner is inside the practice web page, with VO Shift Down Arrow on it, before the jumps; if a jump finds nothing, that's usually why. Compare headings to newspaper headlines." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achte darauf, dass die lernende Person vor dem Springen mit VO Umschalt Pfeil nach unten in die Übungswebseite hineingegangen ist; wenn ein Sprung nichts findet, liegt es meistens daran. Vergleiche Überschriften mit Schlagzeilen in der Zeitung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de los saltos, asegúrate de que quien aprende esté dentro de la página web de práctica, tras pulsar VO Mayúsculas Flecha abajo sobre ella; si un salto no encuentra nada, suele ser por eso. Compara los encabezados con los titulares de un periódico."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avant les sauts, vérifiez que l'apprenant est bien dans la page web d'entraînement, avec VO Maj Flèche bas dessus ; si un saut ne trouve rien, c'est généralement pour cela. Comparez les titres aux gros titres d'un journal."
           }
         }
       }
@@ -16303,6 +17007,28 @@
         }
       }
     },
+    "Nice work." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schön gemacht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buen trabajo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beau travail."
+          }
+        }
+      }
+    },
     "No Wikipedia article found for %@" : {
       "localizations" : {
         "de" : {
@@ -17249,6 +17975,94 @@
         }
       }
     },
+    "Not quite: %@ isn't it. Think about it once more, and try another number." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht ganz: %@ ist es nicht. Denk noch einmal nach und versuche eine andere Nummer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No exactamente: no es %@. Piénsalo otra vez y prueba otro número."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas tout à fait : ce n'est pas %@. Réfléchissez encore un peu, et essayez un autre numéro."
+          }
+        }
+      }
+    },
+    "Not yet. You pressed %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht. Du hast %@ gedrückt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía no. Pulsaste %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore. Vous avez appuyé sur %@."
+          }
+        }
+      }
+    },
+    "Not yet: that was %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht: Das war %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía no: eso fue %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore : c'était %@."
+          }
+        }
+      }
+    },
+    "Notes for the trainer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notizen für den Trainer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas para quien enseña"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes pour le formateur"
+          }
+        }
+      }
+    },
     "Nothing else is playing" : {
       "localizations" : {
         "de" : {
@@ -17421,6 +18235,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rien, c'est seulement une étiquette"
+          }
+        }
+      }
+    },
+    "Now a quick check, to make it stick. I'll name each task without the keys; press them. If you're not sure, press H for a hint, or R to hear the task again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt ein Kurztest, damit es hängen bleibt. Ich nenne jede Aufgabe ohne die Tasten; drücke sie. Wenn du unsicher bist, drücke H für einen Hinweis oder R, um die Aufgabe noch einmal zu hören."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora un repaso rápido, para que se te quede. Diré cada tarea sin las teclas; púlsalas tú. Si no estás seguro, pulsa H para una pista, o R para volver a oír la tarea."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenant, une petite vérification, pour bien retenir. Je vais nommer chaque tâche sans les touches ; appuyez dessus. Si vous n'êtes pas sûr, appuyez sur H pour un indice, ou sur R pour réécouter la tâche."
           }
         }
       }
@@ -17975,6 +18811,28 @@
         }
       }
     },
+    "On my own: more explanation, detailed feedback and hints" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allein: mehr Erklärungen, ausführliche Rückmeldungen und Hinweise"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por mi cuenta: más explicaciones, comentarios detallados y pistas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En autonomie : plus d'explications, des retours détaillés et des indices"
+          }
+        }
+      }
+    },
     "On that page you can turn VoiceOver on and off and open VoiceOver Utility. Accessibility also has Zoom, Display options such as bigger text and less transparency, Spoken Content, and Keyboard options." : {
       "localizations" : {
         "de" : {
@@ -18015,6 +18873,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sur la deuxième des 40 lignes, celle qui est choisie"
+          }
+        }
+      }
+    },
+    "Once more, the ones that were missed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch einmal die, die nicht geklappt haben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una vez más, las que fallaste."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encore une fois, celles qui ont été manquées."
           }
         }
       }
@@ -18455,6 +19335,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir Spotlight"
+          }
+        }
+      }
+    },
+    "Open System Settings with Spotlight. Move through the sidebar, or type in the search field. Accessibility, then VoiceOver, has VoiceOver's settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffne die Systemeinstellungen mit Spotlight. Bewege dich durch die Seitenleiste oder tippe in das Suchfeld. Unter „Bedienungshilfen“ und dann „VoiceOver“ findest du die Einstellungen für VoiceOver."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Ajustes del Sistema con Spotlight. Recorre la barra lateral o escribe en el campo de búsqueda. En Accesibilidad y luego VoiceOver están los ajustes de VoiceOver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrez Réglages Système avec Spotlight. Parcourez la barre latérale, ou tapez dans le champ de recherche. Accessibilité, puis VoiceOver, contient les réglages de VoiceOver."
           }
         }
       }
@@ -19383,6 +20285,72 @@
         }
       }
     },
+    "Option and the arrows move by word, Command and the arrows go to the ends of a line or the text, and Shift selects as you move. Command C copies, X cuts, V pastes and Z undoes." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wahl und die Pfeiltasten bewegen wortweise, Befehl und die Pfeiltasten gehen zum Anfang oder Ende einer Zeile oder des Textes, und Umschalt wählt beim Bewegen aus. Befehl C kopiert, X schneidet aus, V setzt ein und Z widerruft."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opción y las flechas se mueven por palabra, Comando y las flechas van a los extremos de una línea o del texto, y Mayúsculas selecciona mientras te mueves. Comando C copia, X corta, V pega y Z deshace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Option et les flèches se déplacent mot par mot, Commande et les flèches vont aux extrémités d'une ligne ou du texte, et Maj sélectionne pendant le déplacement. Commande C copie, X coupe, V colle et Z annule."
+          }
+        }
+      }
+    },
+    "Option is needed too." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du brauchst auch Wahl."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "También hace falta Opción."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il faut aussi Option."
+          }
+        }
+      }
+    },
+    "Option isn't needed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wahl brauchst du nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hace falta Opción."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Option n'est pas nécessaire."
+          }
+        }
+      }
+    },
     "Options" : {
       "localizations" : {
         "de" : {
@@ -19625,6 +20593,28 @@
         }
       }
     },
+    "Pages has many areas; keep to the document and the Format sidebar. If the template chooser is confusing, VO I finds Blank by name." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pages hat viele Bereiche; bleib beim Dokument und bei der Seitenleiste „Format“. Wenn die Vorlagenauswahl verwirrt, findet VO I „Leer“ über den Namen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pages tiene muchas áreas; quédense en el documento y la barra lateral Formato. Si el selector de plantillas resulta confuso, VO I encuentra En blanco por su nombre."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pages comporte beaucoup de zones ; limitez-vous au document et à la barre latérale Format. Si le sélecteur de modèles est déroutant, VO I trouve Vierge par son nom."
+          }
+        }
+      }
+    },
     "Pages is Apple's word processor, for letters, reports and flyers. It's free from the App Store if you don't have it. When you make a new document, Pages shows a template chooser: move through the templates with the arrow keys, choose Blank, and press Return." : {
       "localizations" : {
         "de" : {
@@ -19841,6 +20831,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Numéro de téléphone %@. Copié dans le presse-papiers."
+          }
+        }
+      }
+    },
+    "Pick a short, meaningful text, such as a note to a friend. In the save dialog, check the name was typed before Return is pressed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle einen kurzen Text, der etwas bedeutet, etwa eine Nachricht an eine Freundin oder einen Freund. Prüfe im Sichern-Dialog, ob der Name eingetippt ist, bevor der Zeilenschalter gedrückt wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elijan un texto breve y con sentido, como una nota para un amigo. En el cuadro de diálogo de guardar, comprueba que se escribió el nombre antes de pulsar Retorno."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez un texte court et parlant, comme un mot pour un ami. Dans la zone de dialogue d'enregistrement, vérifiez que le nom a bien été tapé avant d'appuyer sur Retour."
           }
         }
       }
@@ -20263,28 +21275,6 @@
         }
       }
     },
-    "Practice what I missed has %lld keys to go over." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„Verpasstes üben“ hat %lld Tasten zum Wiederholen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Practicar lo que fallé tiene %lld teclas para repasar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "M'entraîner sur ce que j'ai manqué comporte %lld touches à revoir."
-          }
-        }
-      }
-    },
     "Preset %@" : {
       "localizations" : {
         "de" : {
@@ -20483,6 +21473,28 @@
         }
       }
     },
+    "Press H if you'd like a hint." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücke H, wenn du einen Hinweis möchtest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsa H si quieres una pista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur H si vous voulez un indice."
+          }
+        }
+      }
+    },
     "Press Return here to skip it." : {
       "localizations" : {
         "de" : {
@@ -20505,6 +21517,28 @@
         }
       }
     },
+    "Press Return to go on, or R to hear this again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücke den Zeilenschalter, um weiterzumachen, oder R, um das noch einmal zu hören."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsa Retorno para continuar, o R para volver a oír esto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur Retour pour continuer, ou sur R pour réécouter."
+          }
+        }
+      }
+    },
     "Press Return to press it, or Escape to cancel." : {
       "localizations" : {
         "de" : {
@@ -20523,6 +21557,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appuyez sur Retour pour appuyer dessus, ou sur Échap pour annuler."
+          }
+        }
+      }
+    },
+    "Press Return when you're ready to go on." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücke den Zeilenschalter, wenn du bereit bist weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsa Retorno cuando quieras continuar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur Retour quand vous êtes prêt à continuer."
           }
         }
       }
@@ -20945,6 +22001,28 @@
         }
       }
     },
+    "Question %lld of %lld." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frage %lld von %lld."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pregunta %lld de %lld."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Question %lld sur %lld."
+          }
+        }
+      }
+    },
     "Quick Nav" : {
       "localizations" : {
         "de" : {
@@ -20963,6 +22041,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Navigation rapide"
+          }
+        }
+      }
+    },
+    "Quick Nav confuses many learners when they try to type. Practise turning it on and off and listening for VoiceOver's announcement. Suggest single-key Quick Nav for reading the web." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Schnellnavigation verwirrt viele Lernende, wenn sie tippen wollen. Übe, sie ein- und auszuschalten und auf die Ansage von VoiceOver zu achten. Empfiehl zum Lesen im Web die Einzeltasten-Schnellnavigation."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Navegación rápida confunde a muchas personas cuando intentan escribir. Practiquen activarla y desactivarla, y escuchen el aviso de VoiceOver. Sugiere la Navegación rápida de una tecla para leer la web."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Navigation rapide déroute beaucoup d'apprenants quand ils essaient de taper. Entraînez-vous à l'activer et à la désactiver en écoutant l'annonce de VoiceOver. Suggérez la Navigation rapide à une touche pour lire le web."
           }
         }
       }
@@ -21011,24 +22111,24 @@
         }
       }
     },
-    "Quick check. I'll say a task without the keys; press them. Press R if you want to hear it again." : {
+    "Quick check." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kurztest. Ich nenne eine Aufgabe ohne die Tasten; drücke sie. Drücke R, wenn du sie noch einmal hören möchtest."
+            "value" : "Kurztest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprobación rápida. Diré una tarea sin las teclas; púlsalas tú. Pulsa R si quieres volver a oírla."
+            "value" : "Repaso rápido."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Petite vérification. Je vais énoncer une tâche sans les touches ; à vous de les presser. Appuyez sur R si vous voulez la réécouter."
+            "value" : "Petite vérification."
           }
         }
       }
@@ -22441,24 +23541,46 @@
         }
       }
     },
-    "Return goes on, R repeats, Escape stops." : {
+    "Return goes on, R repeats, B goes back, H gives a hint, S skips a step, and Escape stops." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeilenschalter macht weiter, R wiederholt, Escape beendet."
+            "value" : "Zeilenschalter macht weiter, R wiederholt, B geht zurück, H gibt einen Hinweis, S überspringt einen Schritt, und Escape beendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retorno continúa, R repite, Escape sale."
+            "value" : "Retorno continúa, R repite, B vuelve atrás, H da una pista, S salta un paso y Escape sale."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retour pour continuer, R pour répéter, Échap pour arrêter."
+            "value" : "Retour pour continuer, R pour répéter, B pour revenir en arrière, H pour un indice, S pour passer une étape, et Échap pour arrêter."
+          }
+        }
+      }
+    },
+    "Return goes on, R repeats, B goes back, H gives a hint, S skips, Escape stops." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeilenschalter macht weiter, R wiederholt, B geht zurück, H gibt einen Hinweis, S überspringt, Escape beendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retorno continúa, R repite, B vuelve atrás, H da una pista, S salta, Escape sale."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour pour continuer, R pour répéter, B pour revenir, H pour un indice, S pour passer, Échap pour arrêter."
           }
         }
       }
@@ -22683,6 +23805,28 @@
         }
       }
     },
+    "Right!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richtig!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Correcto!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exact !"
+          }
+        }
+      }
+    },
     "Right." : {
       "localizations" : {
         "de" : {
@@ -22701,28 +23845,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Juste."
-          }
-        }
-      }
-    },
-    "Right. %@" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Richtig. %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Correcto. %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exact. %@"
           }
         }
       }
@@ -23960,6 +25082,28 @@
         }
       }
     },
+    "Searching is the fastest route: practise finding a few settings, such as Bluetooth and Display." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchen ist der schnellste Weg: Übe, ein paar Einstellungen zu finden, etwa „Bluetooth“ und „Displays“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar es el camino más rápido: practiquen encontrar algunos ajustes, como Bluetooth y Pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La recherche est le chemin le plus rapide : entraînez-vous à trouver quelques réglages, comme Bluetooth et Moniteurs."
+          }
+        }
+      }
+    },
     "Select all the text" : {
       "localizations" : {
         "de" : {
@@ -24224,6 +25368,28 @@
         }
       }
     },
+    "Session report: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitzungsbericht: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informe de la sesión: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapport de séance : %@"
+          }
+        }
+      }
+    },
     "Set Up VoiceOver Audio Split" : {
       "localizations" : {
         "de" : {
@@ -24242,6 +25408,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Configurer VoiceOver Audio Split"
+          }
+        }
+      }
+    },
+    "Set the Finder window to list view with Command 2 before starting; it reads more predictably than icons. Have the learner find a file they downloaded recently." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stelle das Finder-Fenster vor dem Start mit Befehl 2 auf die Listendarstellung um; sie wird vorhersehbarer vorgelesen als Symbole. Lass die lernende Person eine Datei suchen, die sie vor Kurzem geladen hat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de empezar, pon la ventana de Finder en vista de lista con Comando 2; se lee de forma más predecible que los íconos. Pide a quien aprende que busque un archivo que haya descargado hace poco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avant de commencer, mettez la fenêtre du Finder en présentation par liste avec Commande 2 ; elle se lit de façon plus prévisible que les icônes. Demandez à l'apprenant de trouver un fichier qu'il a téléchargé récemment."
           }
         }
       }
@@ -24444,6 +25632,50 @@
         }
       }
     },
+    "Shift is needed too." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du brauchst auch Umschalt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "También hace falta Mayúsculas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il faut aussi Maj."
+          }
+        }
+      }
+    },
+    "Shift isn't needed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umschalt brauchst du nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hace falta Mayúsculas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maj n'est pas nécessaire."
+          }
+        }
+      }
+    },
     "Shortcut key" : {
       "localizations" : {
         "de" : {
@@ -24550,6 +25782,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Afficher les téléchargements"
+          }
+        }
+      }
+    },
+    "Show focus and the VoiceOver cursor separating with a real example: type in a field, move VoiceOver away, then come back with VO Shift F4. Remind laptop users to hold Fn for the F keys." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeige an einem echten Beispiel, wie Fokus und VoiceOver-Cursor auseinanderlaufen: Tippe in ein Feld, bewege VoiceOver weg und komm dann mit VO Umschalt F4 zurück. Erinnere auf einem Laptop daran, für die F-Tasten Fn gedrückt zu halten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra con un ejemplo real cómo se separan el foco y el cursor de VoiceOver: escriban en un campo, alejen VoiceOver y luego vuelvan con VO Mayúsculas F4. Recuerda a quienes usan un portátil que mantengan pulsada Fn para las teclas F."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montrez avec un exemple concret le focus et le curseur VoiceOver qui se séparent : tapez dans un champ, éloignez VoiceOver, puis revenez avec VO Maj F4. Rappelez aux utilisateurs de portable de maintenir Fn pour les touches F."
           }
         }
       }
@@ -24730,6 +25984,28 @@
         }
       }
     },
+    "Skipped. It will come back in Practice What I Missed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übersprungen. Es kommt in „Verpasstes üben“ wieder."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltado. Volverá en Practicar lo que fallé."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étape passée. Elle reviendra dans M'entraîner sur ce que j'ai manqué."
+          }
+        }
+      }
+    },
     "Slash" : {
       "localizations" : {
         "de" : {
@@ -24748,6 +26024,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Barre oblique"
+          }
+        }
+      }
+    },
+    "So far: %lld of %lld right first time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bisher: %lld von %lld beim ersten Versuch richtig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta ahora: %lld de %lld correctas a la primera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jusqu'ici : %lld sur %lld réussies du premier coup"
           }
         }
       }
@@ -24836,6 +26134,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Certains éléments s'ouvrent pour en montrer davantage. Réduit veut dire fermé et développé veut dire ouvert ; VO Espace passe de l'un à l'autre. Menu local veut dire qu'en appuyant dessus, un menu ou une liste de choix s'affiche."
+          }
+        }
+      }
+    },
+    "Some of these are still new to you, which is normal. Do this lesson again tomorrow, or use Practice What I Missed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einiges davon ist noch neu für dich, das ist normal. Mach diese Lektion morgen noch einmal oder nutze „Verpasstes üben“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunas todavía son nuevas para ti, y es normal. Repite esta lección mañana o usa Practicar lo que fallé."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certaines de ces touches sont encore nouvelles pour vous, c'est normal. Refaites cette leçon demain, ou utilisez M'entraîner sur ce que j'ai manqué."
           }
         }
       }
@@ -25918,6 +27238,28 @@
         }
       }
     },
+    "Start with a tiny table, such as three items and their prices. Ask the learner to say each cell's name to build a picture of the rows and columns." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beginne mit einer winzigen Tabelle, etwa drei Artikeln und ihren Preisen. Bitte die lernende Person, den Namen jeder Zelle zu sagen, damit ein Bild von Zeilen und Spalten entsteht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empiecen con una tabla muy pequeña, como tres productos y sus precios. Pide a quien aprende que diga el nombre de cada celda para formarse una imagen de las filas y las columnas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencez par un tout petit tableau, comme trois articles et leurs prix. Demandez à l'apprenant de dire le nom de chaque cellule pour se représenter les lignes et les colonnes."
+          }
+        }
+      }
+    },
     "Starting VoiceOver" : {
       "localizations" : {
         "de" : {
@@ -25980,6 +27322,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Étape %lld sur %lld"
+          }
+        }
+      }
+    },
+    "Step %lld of %lld." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schritt %lld von %lld."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paso %lld de %lld."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étape %lld sur %lld."
           }
         }
       }
@@ -26644,6 +28008,50 @@
         }
       }
     },
+    "Tab and Shift Tab move between controls; turn on Keyboard navigation to reach them all. Space checks a box, Return presses the default button, and Escape or Command Period cancels." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tab und Umschalt Tab wechseln zwischen Bedienelementen; schalte „Tastaturnavigation“ ein, um alle zu erreichen. Die Leertaste markiert ein Feld, der Zeilenschalter drückt die Standardtaste, und Escape oder Befehl Punkt bricht ab."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tab y Mayúsculas Tab se mueven entre controles; activa Navegación con teclado para llegar a todos. Espacio marca una casilla, Retorno pulsa el botón predeterminado, y Escape o Comando Punto cancela."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tab et Maj Tab passent d'une commande à l'autre ; activez Navigation au clavier pour toutes les atteindre. Espace coche une case, Retour active le bouton par défaut, et Échap ou Commande Point annule."
+          }
+        }
+      }
+    },
+    "Take your time. If it's not working, press S to skip it for now; it will come back later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lass dir Zeit. Wenn es nicht klappt, drücke S, um es vorerst zu überspringen; es kommt später wieder."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tómate tu tiempo. Si no te sale, pulsa S para saltarla por ahora; volverá más adelante."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prenez votre temps. Si ça ne marche pas, appuyez sur S pour passer cette étape pour l'instant ; elle reviendra plus tard."
+          }
+        }
+      }
+    },
     "Talking clock" : {
       "localizations" : {
         "de" : {
@@ -26996,28 +28404,6 @@
         }
       }
     },
-    "That was %@. %@: press %@." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das war %@. %@: Drücke %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eso fue %@. %@: pulsa %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "C'était %@. %@ : appuyez sur %@."
-          }
-        }
-      }
-    },
     "That was %@. Type %@. %@" : {
       "localizations" : {
         "de" : {
@@ -27036,6 +28422,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "C'était %@. Tapez %@. %@"
+          }
+        }
+      }
+    },
+    "That's it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genau."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eso es."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est ça."
           }
         }
       }
@@ -27388,6 +28796,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La réponse n'a pas pu être comprise. Essayez de formuler la demande autrement."
+          }
+        }
+      }
+    },
+    "The arrow keys move between cells; Return and Tab finish a cell. A formula starts with equals. Option and the arrows add rows and columns, and Command S saves." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Pfeiltasten wechseln zwischen Zellen; Zeilenschalter und Tab schließen eine Zelle ab. Eine Formel beginnt mit einem Gleichheitszeichen. Wahl und die Pfeiltasten fügen Zeilen und Spalten hinzu, und Befehl S sichert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las flechas se mueven entre celdas; Retorno y Tab terminan una celda. Una fórmula empieza con igual. Opción y las flechas añaden filas y columnas, y Comando S guarda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les touches fléchées passent d'une cellule à l'autre ; Retour et Tab valident une cellule. Une formule commence par égal. Option et les flèches ajoutent des lignes et des colonnes, et Commande S enregistre."
+          }
+        }
+      }
+    },
+    "The arrow keys move through messages. Command N starts a message, Tab moves between its fields, Command Shift D sends, and Command R replies." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Pfeiltasten gehen durch die E-Mails. Befehl N beginnt eine E-Mail, Tab wechselt zwischen ihren Feldern, Befehl Umschalt D sendet, und Befehl R antwortet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las flechas recorren los mensajes. Comando N empieza un mensaje, Tab se mueve entre sus campos, Comando Mayúsculas D lo envía y Comando R responde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les touches fléchées parcourent les messages. Commande N crée un message, Tab passe d'un champ à l'autre, Commande Maj D envoie, et Commande R répond."
           }
         }
       }
@@ -27832,6 +29284,28 @@
         }
       }
     },
+    "The key is %@, not %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Taste ist %@, nicht %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tecla es %@, no %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La touche est %@, et non %@."
+          }
+        }
+      }
+    },
     "The keys due for practice today." : {
       "localizations" : {
         "de" : {
@@ -28096,6 +29570,28 @@
         }
       }
     },
+    "The rotor is a big step; it makes more sense on the practice web page in lesson 6. Typing to narrow the rotor or item chooser is the time-saver to stress." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Rotor ist ein großer Schritt; auf der Übungswebseite in Lektion 6 ergibt er mehr Sinn. Betone, dass man im Rotor und in der Objektauswahl tippen kann, um die Liste einzugrenzen; das spart viel Zeit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El rotor es un gran paso; tiene más sentido en la página web de práctica de la lección 6. Lo que conviene destacar para ahorrar tiempo es escribir para acotar el rotor o el selector de ítems."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le rotor est une grande étape ; il prend plus de sens sur la page web d'entraînement de la leçon 6. Insistez sur le gain de temps : taper quelques lettres pour filtrer le rotor ou le sélecteur d'éléments."
+          }
+        }
+      }
+    },
     "The rotor is a quick way to jump around. Press VO U. Left and Right Arrow change the list, such as headings, links, form controls or windows. Up and Down Arrow choose an item, and Return goes there. Type a few letters to narrow the list, and press Escape to close it." : {
       "localizations" : {
         "de" : {
@@ -28158,6 +29654,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le dossier des scripts n'est pas disponible"
+          }
+        }
+      }
+    },
+    "The session report is in the window." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Sitzungsbericht steht im Fenster."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El informe de la sesión está en la ventana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le rapport de séance se trouve dans la fenêtre."
           }
         }
       }
@@ -28382,6 +29900,28 @@
         }
       }
     },
+    "Think about what each answer would mean, then pick the one that fits." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überlege, was jede Antwort bedeuten würde, und wähle dann die passende."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piensa qué significaría cada respuesta y luego elige la que encaje."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réfléchissez à ce que signifierait chaque réponse, puis choisissez celle qui convient."
+          }
+        }
+      }
+    },
     "Thinking…" : {
       "localizations" : {
         "de" : {
@@ -28510,6 +30050,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ce micro ne peut pas être coupé d'ici"
+          }
+        }
+      }
+    },
+    "This one doesn't use the VO keys." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier brauchst du die VO-Tasten nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta no usa las teclas VO."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celle-ci n'utilise pas les touches VO."
           }
         }
       }
@@ -28752,6 +30314,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pour mettre du texte en forme, sélectionnez-le d'abord : Commande A sélectionne tout. Ensuite, Commande B le met en gras, Commande I en italique et Commande U le souligne. VoiceOver énonce ce qui est sélectionné."
+          }
+        }
+      }
+    },
+    "To sum up: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zusammengefasst: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En resumen: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En résumé : %@"
           }
         }
       }
@@ -29174,6 +30758,28 @@
         }
       }
     },
+    "Turn on Keyboard navigation in System Settings, Keyboard, before this lesson. Practise in a real dialog, such as TextEdit's save dialog, and cancel it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schalte vor dieser Lektion „Tastaturnavigation“ in den Systemeinstellungen unter „Tastatur“ ein. Übe in einem echten Dialog, etwa dem Sichern-Dialog von TextEdit, und brich ihn dann ab."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de esta lección, activa Navegación con teclado en Ajustes del Sistema, Teclado. Practiquen en un cuadro de diálogo real, como el de guardar de TextEdit, y luego cancélenlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avant cette leçon, activez Navigation au clavier dans Réglages Système, Clavier. Entraînez-vous dans une vraie zone de dialogue, comme celle d'enregistrement de TextEdit, puis annulez-la."
+          }
+        }
+      }
+    },
     "Turn on keyboard help, to explore keys safely" : {
       "localizations" : {
         "de" : {
@@ -29548,6 +31154,28 @@
         }
       }
     },
+    "Type, then check your writing with VO A or the arrow keys. Command A selects everything, Command B makes it bold, and Command S saves." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe und prüfe dann deinen Text mit VO A oder den Pfeiltasten. Befehl A wählt alles aus, Befehl B macht es fett, und Befehl S sichert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribe y luego revisa lo que escribiste con VO A o con las flechas. Comando A selecciona todo, Comando B lo pone en negrita y Comando S guarda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tapez, puis vérifiez ce que vous avez écrit avec VO A ou les touches fléchées. Commande A sélectionne tout, Commande B met en gras, et Commande S enregistre."
+          }
+        }
+      }
+    },
     "Type: %@" : {
       "localizations" : {
         "de" : {
@@ -29900,6 +31528,28 @@
         }
       }
     },
+    "Use a practice account, or have the learner email themselves. Reading a message means moving from the list into the message: show this with VO Right Arrow." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwende ein Übungskonto, oder lass die lernende Person sich selbst eine E-Mail schicken. Um eine E-Mail zu lesen, geht man von der Liste in die E-Mail: Zeige das mit VO Pfeil nach rechts."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usen una cuenta de práctica, o pide a quien aprende que se envíe un correo a sí mismo. Leer un mensaje implica pasar de la lista al mensaje: muéstralo con VO Flecha derecha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisez un compte d'entraînement, ou demandez à l'apprenant de s'envoyer un courriel à lui-même. Pour lire un message, il faut passer de la liste au message : montrez-le avec VO Flèche droite."
+          }
+        }
+      }
+    },
     "Use heading levels in order, so a Heading %lld comes before any Heading %lld." : {
       "localizations" : {
         "de" : {
@@ -29944,6 +31594,28 @@
         }
       }
     },
+    "Use real examples from apps the learner uses. Before they press VO Space, ask them to predict what will happen from what VoiceOver said." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimm echte Beispiele aus Apps, die die lernende Person nutzt. Bevor sie VO Leertaste drückt, lass sie anhand der Ansage von VoiceOver vorhersagen, was passieren wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa ejemplos reales de apps que use quien aprende. Antes de que pulse VO Espacio, pídele que adivine qué pasará a partir de lo que dijo VoiceOver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisez de vrais exemples tirés des apps que l'apprenant utilise. Avant qu'il appuie sur VO Espace, demandez-lui de prédire ce qui va se passer d'après ce que VoiceOver a dit."
+          }
+        }
+      }
+    },
     "Use the VoiceOver keys to jump between headings, links, form controls and the table." : {
       "localizations" : {
         "de" : {
@@ -29962,6 +31634,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utilisez les touches VoiceOver pour passer d'un titre, d'un lien, d'une commande de formulaire ou du tableau à l'autre."
+          }
+        }
+      }
+    },
+    "Use the practice paragraph. Spelling a word with VO W twice builds confidence. Point out that reading keys never change anything, so they're always safe to try." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimm den Übungsabsatz. Ein Wort mit zweimal VO W buchstabieren zu lassen, gibt Sicherheit. Weise darauf hin, dass Lesetasten nie etwas verändern und deshalb immer gefahrlos ausprobiert werden können."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usen el párrafo de práctica. Deletrear una palabra con VO W dos veces da confianza. Señala que las teclas de lectura nunca cambian nada, así que siempre se pueden probar sin riesgo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisez le paragraphe d'entraînement. Épeler un mot avec VO W deux fois donne confiance. Soulignez que les touches de lecture ne modifient jamais rien : on peut toujours les essayer sans risque."
+          }
+        }
+      }
+    },
+    "Use the session report to choose which lesson to go back to." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entscheide anhand des Sitzungsberichts, welche Lektion als Nächstes wiederholt wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa el informe de la sesión para elegir a qué lección volver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servez-vous du rapport de séance pour choisir la leçon à reprendre."
           }
         }
       }
@@ -30076,6 +31792,28 @@
         }
       }
     },
+    "VO A reads everything, and Control stops it. VO L, VO P, VO W and VO C read the line, paragraph, word and letter. VO Z repeats, and VO Shift C copies the last phrase." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO A liest alles vor, und Control stoppt es. VO L, VO P, VO W und VO C lesen die Zeile, den Absatz, das Wort und den Buchstaben. VO Z wiederholt, und VO Umschalt C kopiert die letzte Ansage."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO A lee todo, y Control lo detiene. VO L, VO P, VO W y VO C leen la línea, el párrafo, la palabra y la letra. VO Z repite, y VO Mayúsculas C copia la última frase."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO A lit tout, et Contrôle l'arrête. VO L, VO P, VO W et VO C lisent la ligne, le paragraphe, le mot et la lettre. VO Z répète, et VO Maj C copie la dernière phrase énoncée."
+          }
+        }
+      }
+    },
     "VO C" : {
       "localizations" : {
         "de" : {
@@ -30186,6 +31924,28 @@
         }
       }
     },
+    "VO Command H, L, J and T go to the next heading, link, form control and table; add Shift to go back. In a table, VO and the arrow keys move from cell to cell." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Befehl H, L, J und T gehen zur nächsten Überschrift, zum nächsten Link, Formularelement und zur nächsten Tabelle; mit Umschalt geht es zurück. In einer Tabelle bewegen VO und die Pfeiltasten von Zelle zu Zelle."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Comando H, L, J y T van al siguiente encabezado, enlace, control de formulario y tabla; añade Mayúsculas para volver atrás. En una tabla, VO y las flechas te mueven de celda en celda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Commande H, L, J et T vont au titre, au lien, à la commande de formulaire et au tableau suivants ; ajoutez Maj pour revenir en arrière. Dans un tableau, VO et les touches fléchées passent d'une cellule à l'autre."
+          }
+        }
+      }
+    },
     "VO Command J" : {
       "localizations" : {
         "de" : {
@@ -30270,6 +32030,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "VO Commande L (ajoutez Maj pour le précédent)"
+          }
+        }
+      }
+    },
+    "VO Command Left and Right Arrow choose a speech setting, and VO Command Up and Down Arrow change it. VO V opens the verbosity rotor, and VO F8 opens VoiceOver Utility, with Commanders, Activities and braille." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Befehl Pfeil nach links und Pfeil nach rechts wählen eine Spracheinstellung, und VO Befehl Pfeil nach oben und Pfeil nach unten ändern sie. VO V öffnet den Ausführlichkeitsrotor, und VO F8 öffnet das VoiceOver-Dienstprogramm, mit Commander, Aktivitäten und Braille."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Comando Flecha izquierda y Flecha derecha eligen un ajuste de voz, y VO Comando Flecha arriba y Flecha abajo lo cambian. VO V abre el rotor de verbosidad, y VO F8 abre Utilidad VoiceOver, con los Comandantes, las Actividades y el braille."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Commande Flèche gauche et Flèche droite choisissent un réglage de parole, et VO Commande Flèche haut et Flèche bas le modifient. VO V ouvre le rotor de verbosité, et VO F8 ouvre Utilitaire VoiceOver, avec les Commandeurs, les Activités et le braille."
           }
         }
       }
@@ -30846,6 +32628,28 @@
         }
       }
     },
+    "VO M is the menu bar, VO M twice the menu extras, VO D the Dock, and VO Shift M the shortcut menu. Command Tab switches apps, and Command Grave Accent switches windows." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO M ist die Menüleiste, zweimal VO M die Menüextras, VO D das Dock und VO Umschalt M das Kontextmenü. Befehl Tab wechselt die App, und Befehl Gravis wechselt das Fenster."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO M va a la barra de menús, VO M dos veces a los extras de la barra de menús, VO D al Dock y VO Mayúsculas M abre el menú de función rápida. Comando Tab cambia de app, y Comando Acento grave cambia de ventana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO M va à la barre des menus, VO M deux fois aux menus supplémentaires, VO D au Dock, et VO Maj M ouvre le menu contextuel. Commande Tab change d'app, et Commande Accent grave change de fenêtre."
+          }
+        }
+      }
+    },
     "VO M, twice" : {
       "localizations" : {
         "de" : {
@@ -30930,6 +32734,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "VO Flèche droite"
+          }
+        }
+      }
+    },
+    "VO Right and Left Arrow move by item. VO Shift Down Arrow goes into a group and VO Shift Up Arrow comes out. VO Space presses, and VO Home goes to the top." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Pfeil nach rechts und Pfeil nach links bewegen von Objekt zu Objekt. VO Umschalt Pfeil nach unten geht in eine Gruppe hinein, und VO Umschalt Pfeil nach oben wieder hinaus. VO Leertaste drückt, und VO Pos1 geht nach oben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Flecha derecha y Flecha izquierda se mueven por ítem. VO Mayúsculas Flecha abajo entra en un grupo y VO Mayúsculas Flecha arriba sale. VO Espacio pulsa, y VO Inicio va al principio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Flèche droite et VO Flèche gauche se déplacent d'élément en élément. VO Maj Flèche bas entre dans un groupe et VO Maj Flèche haut en sort. VO Espace active, et VO Début va en haut."
           }
         }
       }
@@ -31044,6 +32870,28 @@
         }
       }
     },
+    "VO Shift F4 and VO Command F4 bring the cursor and the focus together. VO F3, F2 and F1 describe the item, window and app. VO Semicolon locks the VO keys, and VO F8 opens VoiceOver Utility." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Umschalt F4 und VO Befehl F4 bringen Cursor und Fokus zusammen. VO F3, F2 und F1 beschreiben das Objekt, das Fenster und die App. VO Semikolon stellt die VO-Tasten fest, und VO F8 öffnet das VoiceOver-Dienstprogramm."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Mayúsculas F4 y VO Comando F4 juntan el cursor y el foco. VO F3, F2 y F1 describen el ítem, la ventana y la app. VO Punto y coma bloquea las teclas VO, y VO F8 abre Utilidad VoiceOver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO Maj F4 et VO Commande F4 réunissent le curseur et le focus. VO F3, F2 et F1 décrivent l'élément, la fenêtre et l'app. VO Point-virgule verrouille les touches VO, et VO F8 ouvre Utilitaire VoiceOver."
+          }
+        }
+      }
+    },
     "VO Shift M" : {
       "localizations" : {
         "de" : {
@@ -31154,6 +33002,28 @@
         }
       }
     },
+    "VO U opens the rotor: Left and Right Arrow choose a list, Up and Down Arrow an item, and Return goes there. VO I is the item chooser, and VO F finds text." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO U öffnet den Rotor: Pfeil nach links und Pfeil nach rechts wählen eine Liste, Pfeil nach oben und Pfeil nach unten ein Objekt, und der Zeilenschalter springt dorthin. VO I ist die Objektauswahl, und VO F sucht Text."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO U abre el rotor: Flecha izquierda y Flecha derecha eligen una lista, Flecha arriba y Flecha abajo un ítem, y Retorno te lleva allí. VO I abre el selector de ítems, y VO F busca texto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO U ouvre le rotor : Flèche gauche et Flèche droite choisissent une liste, Flèche haut et Flèche bas un élément, et Retour vous y amène. VO I ouvre le sélecteur d'éléments, et VO F trouve du texte."
+          }
+        }
+      }
+    },
     "VO V" : {
       "localizations" : {
         "de" : {
@@ -31238,6 +33108,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Touches VO"
+          }
+        }
+      }
+    },
+    "VO means Control and Option held together. Command F5 turns VoiceOver on and off, Control stops speech, VO K is keyboard help, and VO H is the help menu." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO bedeutet: Control und Wahl zusammen gedrückt halten. Befehl F5 schaltet VoiceOver ein und aus, Control stoppt die Sprachausgabe, VO K ist die Tastaturhilfe, und VO H ist das Hilfemenü."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO significa Control y Opción pulsadas a la vez. Comando F5 activa y desactiva VoiceOver, Control detiene la voz, VO K abre la ayuda del teclado y VO H el menú de ayuda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO veut dire Contrôle et Option maintenues ensemble. Commande F5 active et désactive VoiceOver, Contrôle interrompt la parole, VO K ouvre l'aide clavier, et VO H le menu d'aide."
           }
         }
       }
@@ -31876,6 +33768,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "VoiceOver énonce chaque lettre pendant que vous tapez. Si la Navigation rapide est activée, désactivez-la d'abord."
+          }
+        }
+      }
+    },
+    "VoiceOver says the name, then the kind of item, then its state. Dimmed means unavailable, collapsed means closed, selected means chosen, and row 2 of 40 is your place in a list." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver sagt den Namen, dann die Art des Objekts, dann seinen Zustand. „Abgeblendet“ bedeutet nicht verfügbar, „reduziert“ bedeutet geschlossen, „ausgewählt“ bedeutet gewählt, und „Zeile 2 von 40“ ist deine Position in einer Liste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver dice el nombre, luego el tipo de ítem y luego su estado. Atenuado significa no disponible, contraído significa cerrado, seleccionado significa elegido, y fila 2 de 40 es tu lugar en una lista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver énonce le nom, puis le type d'élément, puis son état. Estompé veut dire indisponible, réduit veut dire fermé, sélectionné veut dire choisi, et ligne 2 sur 40 indique votre place dans une liste."
           }
         }
       }
@@ -32826,6 +34740,28 @@
         }
       }
     },
+    "With a trainer: shorter prompts, hints when asked, notes and a report for the trainer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Trainerin oder Trainer: kürzere Ansagen, Hinweise auf Wunsch, Notizen und ein Bericht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con alguien que me enseña: indicaciones más breves, pistas cuando las pida, y notas e informe para quien enseña"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec un formateur ou une formatrice : consignes plus courtes, indices sur demande, notes et rapport pour le formateur"
+          }
+        }
+      }
+    },
     "Without tags, screen readers can't tell headings, lists and tables apart. Export it again with \"Best for accessibility\" or tagged PDF turned on." : {
       "localizations" : {
         "de" : {
@@ -33112,6 +35048,28 @@
         }
       }
     },
+    "You weren't holding the VO keys, Control and Option." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die VO-Tasten, Control und Wahl, nicht gedrückt gehalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No mantenías pulsadas las teclas VO, Control y Opción."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous ne mainteniez pas les touches VO, Contrôle et Option."
+          }
+        }
+      }
+    },
     "You're too loud and may sound distorted. Move back a little or lower the input volume." : {
       "localizations" : {
         "de" : {
@@ -33152,6 +35110,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Votre voix est trop faible. Rapprochez-vous du micro ou augmentez le volume d'entrée."
+          }
+        }
+      }
+    },
+    "You've got the hang of it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast den Dreh raus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya le tomaste el ritmo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez compris le principe."
           }
         }
       }
@@ -33420,6 +35400,50 @@
         }
       }
     },
+    "a mixed review of keys from every lesson, starting with any you've missed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "eine gemischte Wiederholung der Tasten aus allen Lektionen, beginnend mit denen, die du verpasst hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un repaso variado de teclas de todas las lecciones, empezando por las que fallaste."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "une révision mélangée des touches de toutes les leçons, en commençant par celles que vous avez manquées."
+          }
+        }
+      }
+    },
+    "adding slides, writing on them, playing a slideshow and moving through it, and saving a presentation." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folien hinzufügen und darauf schreiben, eine Präsentation abspielen und durchgehen, und eine Präsentation sichern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "añadir diapositivas, escribir en ellas, reproducir una presentación y recorrerla, y guardar una presentación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ajouter des diapositives, écrire dessus, lire un diaporama et le parcourir, et enregistrer une présentation."
+          }
+        }
+      }
+    },
     "allowed" : {
       "localizations" : {
         "de" : {
@@ -33596,6 +35620,50 @@
         }
       }
     },
+    "bringing Finder forward, moving through files, opening and going back, reaching common folders, and moving files to the Trash." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den Finder in den Vordergrund holen, durch Dateien gehen, öffnen und zurückgehen, wichtige Ordner erreichen und Dateien in den Papierkorb legen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "traer Finder al frente, moverte entre archivos, abrir y volver, llegar a las carpetas habituales y mover archivos a la Papelera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mettre le Finder au premier plan, parcourir les fichiers, ouvrir et revenir en arrière, atteindre les dossiers courants, et placer des fichiers dans la Corbeille."
+          }
+        }
+      }
+    },
+    "bringing the VoiceOver cursor and keyboard focus together, finding out where you are, locking the VO keys, and opening VoiceOver Utility." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver-Cursor und Tastaturfokus zusammenbringen, herausfinden, wo du bist, die VO-Tasten feststellen und das VoiceOver-Dienstprogramm öffnen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "juntar el cursor de VoiceOver y el foco del teclado, saber dónde estás, bloquear las teclas VO y abrir Utilidad VoiceOver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "réunir le curseur VoiceOver et le focus clavier, savoir où vous êtes, verrouiller les touches VO, et ouvrir Utilitaire VoiceOver."
+          }
+        }
+      }
+    },
     "brown" : {
       "localizations" : {
         "de" : {
@@ -33636,6 +35704,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ majuscule"
+          }
+        }
+      }
+    },
+    "changing VoiceOver's speech as you go, changing how much it says, and where to set up everything else." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Sprachausgabe von VoiceOver nebenbei ändern, einstellen, wie viel es sagt, und wo du alles andere einrichtest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cambiar la voz de VoiceOver sobre la marcha, cambiar cuánto dice y dónde configurar todo lo demás."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "modifier la parole de VoiceOver en cours de route, changer la quantité d'informations énoncées, et savoir où régler tout le reste."
           }
         }
       }
@@ -33971,6 +36061,28 @@
         }
       }
     },
+    "going to a real website, getting an overview with headings, and reading the part you need." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "eine echte Website aufrufen, dir mit Überschriften einen Überblick verschaffen und den Teil lesen, den du brauchst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ir a un sitio web real, tener una vista general con los encabezados y leer la parte que necesitas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aller sur un vrai site web, avoir une vue d'ensemble grâce aux titres, et lire la partie dont vous avez besoin."
+          }
+        }
+      }
+    },
     "gray" : {
       "localizations" : {
         "de" : {
@@ -34143,6 +36255,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Index"
+          }
+        }
+      }
+    },
+    "jumping around with the rotor, finding anything by name with the item chooser, and finding text." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mit dem Rotor springen, mit der Objektauswahl alles über den Namen finden und Text suchen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "saltar de un lugar a otro con el rotor, encontrar cualquier cosa por su nombre con el selector de ítems y buscar texto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vous déplacer avec le rotor, trouver n'importe quoi par son nom avec le sélecteur d'éléments, et rechercher du texte."
+          }
+        }
+      }
+    },
+    "jumping through a web page by heading, link, form control and table, and back again, on a practice page." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "auf einer Übungsseite nach Überschrift, Link, Formularelement und Tabelle durch eine Webseite springen, vorwärts und zurück."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "saltar por una página web por encabezados, enlaces, controles de formulario y tablas, y volver atrás, en una página de práctica."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parcourir une page web par titre, lien, commande de formulaire et tableau, et revenir en arrière, sur une page d'entraînement."
           }
         }
       }
@@ -34566,6 +36722,138 @@
         }
       }
     },
+    "moving between cells, entering values and formulas, adding rows and columns, and saving a spreadsheet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zwischen Zellen wechseln, Werte und Formeln eingeben, Zeilen und Spalten hinzufügen und eine Tabelle sichern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moverte entre celdas, introducir valores y fórmulas, añadir filas y columnas, y guardar una hoja de cálculo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passer d'une cellule à l'autre, saisir des valeurs et des formules, ajouter des lignes et des colonnes, et enregistrer une feuille de calcul."
+          }
+        }
+      }
+    },
+    "moving between controls with Tab, using checkboxes and buttons, and confirming or cancelling dialogs." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mit Tab zwischen Bedienelementen wechseln, Markierungsfelder und Tasten verwenden und Dialoge bestätigen oder abbrechen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moverte entre controles con Tab, usar casillas y botones, y confirmar o cancelar cuadros de diálogo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passer d'une commande à l'autre avec Tab, utiliser les cases à cocher et les boutons, et valider ou annuler des zones de dialogue."
+          }
+        }
+      }
+    },
+    "moving the VoiceOver cursor item by item, going into and out of groups, pressing buttons, and jumping to the top of a window." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den VoiceOver-Cursor von Objekt zu Objekt bewegen, in Gruppen hinein- und wieder hinausgehen, Tasten drücken und zum Anfang eines Fensters springen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mover el cursor de VoiceOver ítem por ítem, entrar en grupos y salir de ellos, pulsar botones y saltar al principio de una ventana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "déplacer le curseur VoiceOver d'élément en élément, entrer dans les groupes et en sortir, activer des boutons, et aller en haut d'une fenêtre."
+          }
+        }
+      }
+    },
+    "moving the text cursor by letter, word and line, selecting text, and copying, pasting and undoing." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Einfügemarke buchstaben-, wort- und zeilenweise bewegen, Text auswählen sowie kopieren, einsetzen und widerrufen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mover el cursor de texto por letra, palabra y línea, seleccionar texto, y copiar, pegar y deshacer."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "déplacer le curseur de texte par lettre, mot et ligne, sélectionner du texte, puis copier, coller et annuler."
+          }
+        }
+      }
+    },
+    "moving through your messages, reading one, and writing, replying to and sending email." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "durch deine E-Mails gehen, eine davon lesen sowie E-Mails schreiben, beantworten und senden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moverte entre tus mensajes, leer uno, y escribir, responder y enviar correos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parcourir vos messages, en lire un, et écrire un courriel, y répondre et l'envoyer."
+          }
+        }
+      }
+    },
+    "moving with the arrow keys alone using Quick Nav, and with single letters on web pages." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dich mit der Schnellnavigation nur mit den Pfeiltasten bewegen, und auf Webseiten mit einzelnen Buchstaben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moverte solo con las flechas usando la Navegación rápida, y con letras sueltas en páginas web."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vous déplacer avec les seules touches fléchées grâce à la Navigation rapide, et avec des lettres simples sur les pages web."
+          }
+        }
+      }
+    },
     "navy blue" : {
       "localizations" : {
         "de" : {
@@ -34760,6 +37048,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "olive"
+          }
+        }
+      }
+    },
+    "opening System Settings, finding a setting with the sidebar or search, and reaching the VoiceOver and Accessibility settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Systemeinstellungen öffnen, eine Einstellung über die Seitenleiste oder die Suche finden und zu den Einstellungen für VoiceOver und Bedienungshilfen gelangen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "abrir Ajustes del Sistema, encontrar un ajuste con la barra lateral o la búsqueda, y llegar a los ajustes de VoiceOver y Accesibilidad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ouvrir Réglages Système, trouver un réglage avec la barre latérale ou la recherche, et atteindre les réglages VoiceOver et Accessibilité."
+          }
+        }
+      }
+    },
+    "opening apps with Spotlight; closing, minimizing, hiding and quitting; and force quitting an app that's stuck." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps mit Spotlight öffnen; schließen, im Dock ablegen, ausblenden und beenden; und eine App, die hängt, sofort beenden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "abrir apps con Spotlight; cerrar, minimizar, ocultar y salir; y forzar la salida de una app que no responde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ouvrir des apps avec Spotlight ; fermer, placer dans le Dock, masquer et quitter ; et forcer à quitter une app bloquée."
           }
         }
       }
@@ -35006,6 +37338,28 @@
         }
       }
     },
+    "reading everything from the cursor, reading by line, paragraph, word and letter, and repeating or copying what VoiceOver said." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "alles ab dem Cursor vorlesen, zeilen-, absatz-, wort- und buchstabenweise lesen und wiederholen oder kopieren, was VoiceOver gesagt hat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "leer todo desde el cursor, leer por línea, párrafo, palabra y letra, y repetir o copiar lo que dijo VoiceOver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tout lire à partir du curseur, lire par ligne, paragraphe, mot et lettre, et répéter ou copier ce que VoiceOver a dit."
+          }
+        }
+      }
+    },
     "red" : {
       "localizations" : {
         "de" : {
@@ -35226,6 +37580,28 @@
         }
       }
     },
+    "starting a document from a template, writing and styling it, checking spelling, saving it, and exporting it to Word or PDF." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ein Dokument aus einer Vorlage beginnen, es schreiben und formatieren, die Rechtschreibung prüfen, es sichern und als Word oder PDF exportieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "crear un documento a partir de una plantilla, escribirlo y darle formato, revisar la ortografía, guardarlo y exportarlo a Word o PDF."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "créer un document à partir d'un modèle, l'écrire et le mettre en forme, vérifier l'orthographe, l'enregistrer, et l'exporter en Word ou en PDF."
+          }
+        }
+      }
+    },
     "teal" : {
       "localizations" : {
         "de" : {
@@ -35244,6 +37620,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "bleu canard"
+          }
+        }
+      }
+    },
+    "the address field, tabs, going back, finding text on a page, and Reader." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "das Adressfeld, Tabs, zurückgehen, Text auf einer Seite suchen und der Reader."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el campo de dirección, las pestañas, volver atrás, buscar texto en una página y Lector."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "le champ d'adresse, les onglets, le retour en arrière, la recherche de texte dans une page, et Lecteur."
+          }
+        }
+      }
+    },
+    "the menu bar and menu extras, the Dock, shortcut menus, and switching between apps and windows." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Menüleiste und Menüextras, das Dock, Kontextmenüs und das Wechseln zwischen Apps und Fenstern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la barra de menús y sus extras, el Dock, los menús de función rápida, y cambiar entre apps y ventanas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la barre des menus et les menus supplémentaires, le Dock, les menus contextuels, et le passage d'une app ou d'une fenêtre à l'autre."
           }
         }
       }
@@ -35310,6 +37730,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "rangée du haut"
+          }
+        }
+      }
+    },
+    "turning VoiceOver on and off, what the VO keys are, stopping speech, and exploring keys safely with keyboard help." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver ein- und ausschalten, was die VO-Tasten sind, die Sprachausgabe anhalten und mit der Tastaturhilfe gefahrlos Tasten erkunden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "activar y desactivar VoiceOver, qué son las teclas VO, detener la voz y explorar las teclas sin riesgo con la ayuda del teclado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "activer et désactiver VoiceOver, ce que sont les touches VO, interrompre la parole, et explorer les touches sans risque avec l'aide clavier."
           }
         }
       }
@@ -35424,6 +37866,28 @@
         }
       }
     },
+    "what VoiceOver's descriptions mean, so you can tell what an item is and what state it's in." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "was die Beschreibungen von VoiceOver bedeuten, damit du erkennst, was ein Objekt ist und in welchem Zustand es ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lo que significan las descripciones de VoiceOver, para que sepas qué es un ítem y en qué estado está."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ce que veulent dire les descriptions de VoiceOver, pour savoir ce qu'est un élément et dans quel état il se trouve."
+          }
+        }
+      }
+    },
     "white" : {
       "localizations" : {
         "de" : {
@@ -35486,6 +37950,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "vent %lld miles par heure"
+          }
+        }
+      }
+    },
+    "working with tabs; adding, finding, organizing and removing bookmarks; the Reading List and history; and private browsing." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mit Tabs arbeiten; Lesezeichen hinzufügen, finden, ordnen und entfernen; die Leseliste und der Verlauf; und privates Surfen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trabajar con pestañas; añadir, encontrar, organizar y quitar marcadores; la Lista de lectura y el Historial; y la navegación privada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "utiliser les onglets ; ajouter, retrouver, organiser et supprimer des signets ; la Liste de lecture et l'historique ; et la navigation privée."
+          }
+        }
+      }
+    },
+    "writing a short document, selecting and styling text, and saving it with a name." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ein kurzes Dokument schreiben, Text auswählen und formatieren und es unter einem Namen sichern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "escribir un documento breve, seleccionar texto y darle formato, y guardarlo con un nombre."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "écrire un court document, sélectionner et mettre en forme du texte, et l'enregistrer sous un nom."
           }
         }
       }

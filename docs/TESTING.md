@@ -49,6 +49,7 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] Read a QR code (for example a Wi-Fi code) and a food barcode. Read a medicine bottle while turning it.
 - [ ] Identify a banknote (needs an API key).
 - [ ] VoiceOver practice in learn and quiz mode: right and wrong keys are recognized, and Escape stops.
+- [ ] VoiceOver Lessons, both modes: do lesson 2 on your own (wrong keys are explained exactly, hints build up, and the recap is spoken at the end), then with a trainer (prompts are short, trainer notes are in the window, and a report appears at the end). Announcements aren't cut off by VoiceOver, and show on a braille display if you have one.
 - [ ] VoiceOver Lessons, Going further: do lesson 16 (answer with the number keys), lesson 19 in Numbers (the save task is noticed), and lesson 23 in Safari (the new-tab and close-tab tasks are noticed; bookmark tasks end with Return). Try Daily Practice the next day, and the One-Minute Challenge.
 - [ ] VoiceOver Lessons: do lessons 2, 6 and 10. In lesson 10, the "show your Downloads folder" task is noticed in Finder. After missing a key twice, the hint says which keys to hold. Missed keys appear under Practice What I Missed.
 - [ ] VoiceOver Lessons, earlier check: do lesson 2 and lesson 6. Explanations are clear, wrong keys are named, right keys really work in the practice area and on the practice web page, and the lesson is marked done afterwards. If you use Caps Lock as the VO key, try it with that.

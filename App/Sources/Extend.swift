@@ -142,7 +142,7 @@ enum SettingsTransfer {
         "newsFeeds", "keepAudioAwake", "sitePresets", "announceDownloads", "announceDevices", "announceNetwork",
         "announceBattery", "announceLock", "clockInterval", "userCommands", "beepsWhenSilenced",
         "announceClipboard", "translateTarget", "preferIPhoneCamera", "balance", "lastSide",
-        "announceCamera", "announceMicrophone", "customLabels", "placeMarkers", "typingBest", "typingSound", "lessonsDone", "lessonsMissed", "lessonSchedule", "lessonChallengeBest",
+        "announceCamera", "announceMicrophone", "customLabels", "placeMarkers", "typingBest", "typingSound", "lessonsDone", "lessonsMissed", "lessonSchedule", "lessonChallengeBest", "lessonMode",
     ]
 
     static func exportData() throws -> Data {

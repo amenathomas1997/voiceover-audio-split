@@ -839,3 +839,41 @@ final class GoingFurtherTests: XCTestCase {
         }
     }
 }
+
+final class LessonTeachingTests: XCTestCase {
+    func testMistakesAreExplained() {
+        let heading = KeyCombo(code: 4, command: true) // VO Command H
+        XCTAssertEqual(LessonRunner.diagnose(expected: heading, keyCode: 4, flags: [.maskControl, .maskAlternate, .maskCommand, .maskShift], letter: "h"),
+                       "Shift isn't needed.")
+        XCTAssertEqual(LessonRunner.diagnose(expected: heading, keyCode: 4, flags: [.maskControl, .maskAlternate], letter: "h"),
+                       "Command is needed too.")
+        XCTAssertEqual(LessonRunner.diagnose(expected: heading, keyCode: 5, flags: [.maskControl, .maskAlternate, .maskCommand], letter: "g"),
+                       "The key is H, not G.")
+        XCTAssertEqual(LessonRunner.diagnose(expected: heading, keyCode: 4, flags: [.maskCommand], letter: "h"),
+                       "You weren't holding the VO keys, Control and Option.")
+        let word = KeyCombo(code: 123, vo: false, option: true) // Option Left Arrow
+        XCTAssertEqual(LessonRunner.diagnose(expected: word, keyCode: 123, flags: [.maskControl, .maskAlternate], letter: nil),
+                       "This one doesn't use the VO keys.")
+        XCTAssertEqual(LessonRunner.diagnose(expected: word, keyCode: 123, flags: [.maskCommand], letter: nil),
+                       "Option is needed too. Command isn't needed.")
+    }
+
+    func testEveryLessonHasGoalsRecapAndTrainerNotes() {
+        for lesson in Lesson.all {
+            XCTAssertFalse(LessonGuide.goals(lesson.id).isEmpty, lesson.id)
+            XCTAssertFalse(LessonGuide.recap(lesson.id).isEmpty, lesson.id)
+            XCTAssertFalse(LessonGuide.trainer(lesson.id).isEmpty, lesson.id)
+        }
+    }
+
+    func testReportLines() {
+        XCTAssertEqual(LessonResult(task: "Go to the Dock", keys: "VO D", tries: 1).summary, "Go to the Dock (VO D): right first time")
+        XCTAssertEqual(LessonResult(task: "Go to the Dock", keys: "VO D", tries: 3).summary, "Go to the Dock (VO D): right after 3 tries")
+        XCTAssertEqual(LessonResult(task: "Go to the Dock", keys: "VO D", tries: 0, skipped: true).summary, "Go to the Dock (VO D): skipped")
+    }
+
+    func testModesHaveTitles() {
+        XCTAssertEqual(LessonMode.allCases.count, 2)
+        XCTAssertTrue(LessonMode.allCases.allSatisfy { !$0.title.isEmpty })
+    }
+}

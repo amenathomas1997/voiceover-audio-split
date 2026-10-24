@@ -45,6 +45,24 @@
   - **Going further:** 16. understanding what VoiceOver says (dimmed, selected, collapsed, rows, hints); 17. writing and saving in TextEdit; 18. Pages; 19. Numbers (cells, formulas, rows and columns); 20. Keynote (slides and playing a slideshow); 21. System Settings; 22. a web errand in Safari; 23. Safari in depth: tabs, adding, organizing and removing bookmarks, the Reading List, history, downloads and private windows.
   - **Review:** 24. a mixed review.
 
+  **Two ways to learn,** chosen at the top of the lessons window:
+  - **On my own** gives more detail, so no trainer is needed:
+    - Each lesson starts with what you'll learn and how many steps it has, and every step says where you are ("Step 3 of 9").
+    - A wrong press is explained exactly ("You weren't holding the VO keys", "Shift isn't needed", "The key is H, not G"). Hints build up with each miss, and after three misses it offers to skip.
+    - A right answer is confirmed with the keys and what they do.
+    - The lesson ends with a recap, and advice on whether to repeat it.
+  - **With a trainer** keeps prompts short and gives hints only when asked, so the trainer can explain. The window shows notes for the trainer for each lesson (what to demonstrate and what learners find hard), and a session report at the end, with each key right first time, after several tries, or skipped. The report can be copied.
+
+  In both modes, every lesson follows the same teaching pattern:
+  1. What you'll learn.
+  2. An explanation.
+  3. Guided practice: you're told the keys and press them.
+  4. A quick check without the keys being said.
+  5. One more round on anything missed, so the lesson ends on success.
+  6. A recap.
+
+  Keys during a lesson: Return goes on, R repeats, B goes back a step, H gives a hint, S skips, and Escape stops. While the lesson window is in front, lessons speak through VoiceOver's own announcement queue, which also shows them on a braille display. Praise after a real VoiceOver command waits until VoiceOver has finished speaking.
+
   Each lesson explains a skill in plain words, then has you press the keys. Wrong keys are named, and after two misses it says exactly which keys to hold and which to press. For safe commands, VoiceOver really does them once you're right, in the window's practice area (a paragraph, buttons, a checkbox and a text field) and a practice web page (headings, links, a form and a table). Lessons also ask multiple-choice questions, answered with the number keys. Real tasks ("show your Downloads folder in Finder", "save your Pages document as Practice Letter", "open the VoiceOver settings page", "go to apple.com/accessibility", "open a new tab in Safari") are noticed when you've done them, in any app; Return skips one. A few tasks the app can't see, such as adding and removing a Safari bookmark, end when you press Return. Each lesson ends with a quick check; keys you miss are remembered, the review starts with them, and **Practice What I Missed** drills just those. **Daily Practice** brings keys back on a schedule, like flashcards: soon after a miss, then after 1, 3, 7, 14 and 30 days as you keep getting them right. The **One-Minute Challenge** asks as many keys as you can answer in 60 seconds and keeps your best score. The window also has **Words to know** (VO keys, VoiceOver cursor, keyboard focus, interact, rotor, Quick Nav and more) and **More help**: Apple's VoiceOver User Guide, AppleVis, Apple Accessibility support and VoiceOver Quick Start. Caps Lock works if it's your VO key. Return goes on, R repeats and Escape stops.
 - **VoiceOver practice:** the app names a task, such as "go to the next heading", and you press the VoiceOver keys for it. Learn mode says the keys; quiz mode keeps score. Keys are caught while you practice, so nothing moves.
 - **Typing trainer:** a talking typing tutor, like Talking Typer or TypingClub. Sixteen lessons add a few keys at a time from the home row, then capitals, numbers, punctuation, words and sentences. Each key is named with its finger and row. A right key plays a soft click (or a soft tone, or nothing, as you choose), and a wrong one plays a gentle low sound and says what you pressed and what to type. Each lesson ends with words per minute and accuracy, your best speed is kept, and there's a one-minute speed test. Finger hints are for the US English keyboard, and the practice words are English. Quick Nav can stay on.

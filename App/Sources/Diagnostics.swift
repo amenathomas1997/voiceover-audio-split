@@ -9,7 +9,7 @@ import AppKit
 import OSLog
 
 enum Diagnostics {
-    static func report() -> String {
+    static func report(log: String? = nil) -> String {
         let settings = (try? SettingsTransfer.exportData()).flatMap { String(data: $0, encoding: .utf8) } ?? "unavailable"
         return """
         VoiceOver Audio Split diagnostics report
@@ -21,7 +21,7 @@ enum Diagnostics {
         Keyboard shortcuts allowed: \(Hotkeys.isTrusted ? "yes" : "no")
 
         Recent log (last hour):
-        \(recentLog())
+        \(log ?? recentLog())
 
         Settings (no API key or personal files):
         \(settings)
@@ -47,11 +47,18 @@ enum Diagnostics {
         panel.allowedContentTypes = [.plainText]
         NSApp.activate()
         guard panel.runModal() == .OK, let url = panel.url else { return }
-        do {
-            try report().write(to: url, atomically: true, encoding: .utf8)
-            Announcer.say(String(localized: "Diagnostics saved. Attach \(url.lastPathComponent) to your bug report."))
-        } catch {
-            Announcer.say(String(localized: "Couldn't save the diagnostics report"))
+        Announcer.say(String(localized: "Saving"))
+        // Reading the log can take a moment: not on the main thread.
+        Task.detached(priority: .userInitiated) {
+            let log = recentLog()
+            await MainActor.run {
+                do {
+                    try report(log: log).write(to: url, atomically: true, encoding: .utf8)
+                    Announcer.say(String(localized: "Diagnostics saved. Attach \(url.lastPathComponent) to your bug report."))
+                } catch {
+                    Announcer.say(String(localized: "Couldn't save the diagnostics report"))
+                }
+            }
         }
     }
 }

@@ -19,11 +19,17 @@ enum CodeReader {
     private static let feed = CameraFeed()
     private static var timeout: DispatchWorkItem?
     private static var reminder: DispatchWorkItem?
+    /// Counts runs, so a code found just as one run stops can't stop the next.
+    private static var run = 0
 
     static var isRunning: Bool { feed.isRunning }
 
     static func toggle() {
         if isRunning { return stop(saying: String(localized: "Code reader off")) }
+        timeout?.cancel()
+        reminder?.cancel()
+        run += 1
+        let thisRun = run
         Tones.play(.status)
         Announcer.say(String(localized: "Looking for a code. Hold it about 20 centimeters from the camera and turn it slowly."))
         var frame = 0
@@ -36,8 +42,12 @@ enum CodeReader {
             guard let code = request.results?.first(where: { $0.payloadStringValue?.isEmpty == false }),
                   let payload = code.payloadStringValue else { return }
             found = true
-            DispatchQueue.main.async { handle(payload, symbology: code.symbology) }
-        }, failed: { Announcer.say($0) })
+            DispatchQueue.main.async { if run == thisRun, isRunning { handle(payload, symbology: code.symbology) } }
+        }, failed: { message in
+            timeout?.cancel()
+            reminder?.cancel()
+            Announcer.say(message)
+        })
         let remind = DispatchWorkItem {
             if isRunning { Announcer.say(String(localized: "Still looking. On packages, the barcode is often on the bottom or the back.")) }
         }
@@ -150,6 +160,7 @@ enum LabelReader {
     }
 
     private static func start() {
+        stopWork?.cancel()
         lock.withLock { heard = []; waiting = [] }
         Tones.play(.status)
         Announcer.say(String(localized: "Label reader on. Hold the label about 20 centimeters from the camera and turn the bottle slowly. Run it again to stop."))
@@ -168,7 +179,10 @@ enum LabelReader {
                 return (best.string, observation.boundingBox)
             }
             add(ordered(lines))
-        }, failed: { Announcer.say($0) })
+        }, failed: { message in
+            stopWork?.cancel()
+            Announcer.say(message)
+        })
         let work = DispatchWorkItem { if isRunning { stop() } }
         stopWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 120, execute: work)
@@ -194,7 +208,8 @@ enum LabelReader {
             defer { waiting = [] }
             return waiting.joined(separator: ". ")
         }
-        if let text { DispatchQueue.main.async { Announcer.say(text) } }
+        // A frame read just as it stopped isn't spoken after "Label reader off".
+        if let text { DispatchQueue.main.async { if isRunning { Announcer.say(text) } } }
     }
 
     /// The same line read again, or a slightly longer or shorter reading of it, counts

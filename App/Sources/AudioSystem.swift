@@ -12,7 +12,7 @@ enum AudioSystem {
     /// AirPods automatic switching can take the sound back a second or two after
     /// a switch (for example while a call app is using audio); within this window
     /// the choice is put back, a few times at most.
-    private static var held: (device: AudioDeviceID, until: Date, restores: Int)?
+    private static var held: (device: AudioDeviceID, from: AudioDeviceID, until: Date, restores: Int)?
     private static var watchingOutput = false
 
     /// Switches to the next output device and returns its name.
@@ -23,8 +23,9 @@ enum AudioSystem {
         let current = held.map { $0.until > Date() ? $0.device : defaultOutputDevice() } ?? defaultOutputDevice()
         let index = devices.firstIndex { $0.id == current }.map { ($0 + 1) % devices.count } ?? 0
         let next = devices[index]
+        let from = defaultOutputDevice()
         guard setDefaultOutput(next.id) else { return nil }
-        held = (next.id, Date().addingTimeInterval(20), 0)
+        held = (next.id, from, Date().addingTimeInterval(20), 0)
         watchOutput()
         return next.name
     }
@@ -57,10 +58,12 @@ enum AudioSystem {
             let current = defaultOutputDevice()
             guard current != choice.device, outputDevices().contains(where: { $0.id == choice.device }),
                   outputDevices().contains(where: { $0.id == current }) else { return }
-            // Only undo Bluetooth devices taking the sound back on their own. Speakers or
-            // headphones chosen in Control Center, or plugged in, are the user's choice.
+            // Only undo the Bluetooth device that was switched away from taking the sound back
+            // on its own. Speakers or headphones chosen in Control Center, plugged in, or
+            // newly connected, are the user's choice.
             let transport: UInt32 = readValue(current, kAudioDevicePropertyTransportType, default: UInt32(0))
-            guard transport == kAudioDeviceTransportTypeBluetooth || transport == kAudioDeviceTransportTypeBluetoothLE else {
+            guard current == choice.from,
+                  transport == kAudioDeviceTransportTypeBluetooth || transport == kAudioDeviceTransportTypeBluetoothLE else {
                 held = nil
                 return
             }
@@ -130,6 +133,11 @@ enum AudioSystem {
             var addr = address(selector)
             AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &addr, .main) { _, _ in
                 if isMicMuted { _ = inputDevices().map { setMuted($0, true) } }
+                // A microphone turned down while muted, and unplugged before unmuting, comes back at its volume.
+                else {
+                    let saved = savedVolumes
+                    for device in inputDevices() where saved[deviceUID(device)] != nil { _ = setMuted(device, false) }
+                }
             }
         }
     }

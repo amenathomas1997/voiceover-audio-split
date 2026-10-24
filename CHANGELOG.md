@@ -2,6 +2,25 @@
 
 ## Next
 
+- **Audit fixes:**
+  - Voice commands ignore the app's and VoiceOver's own speech, so reading "VoiceOver Audio Split" or the help no longer sets off a command.
+  - "Launch VoiceOver training" needs a word like launch or open, and doesn't restart an open lesson.
+  - One-word commands such as "time" or "help" work only on their own.
+  - A press asked for by voice is confirmed by a spoken yes, which must come after the question.
+  - Lessons work with Caps Lock switched on, and Caps Lock counts as VO only while it's held.
+  - Escape and letters reach VoiceOver's rotor and menus during lessons; Escape twice stops a lesson.
+  - Keys pressed before a step has been said no longer count as answers.
+  - Quick-check scores and reports no longer count retries or repeated questions as right first time.
+  - The one-minute challenge and the typing speed test end on time.
+  - Practice works with Caps Lock as the VO key and only takes keys while its window is in front.
+  - Automatic presets keep working after a restart, after restoring defaults, and after choosing a preset by hand.
+  - Copy and paste work in text fields.
+  - The talking clock no longer repeats non-stop in the hour the clocks go back.
+  - The document check handles table of contents headings, empty lines between tables, tables in tables, and password-protected PDFs.
+  - Braille files include more symbols and say how many characters were left out.
+  - A mono main device no longer silences one side of a separate speech device; failed audio setups don't retry in a loop.
+  - Smaller fixes to the camera readers, Doc Reader, downloads, podcasts, diagnostics, the tutorial and the installer.
+
 - **Keep audio awake,** so the first words VoiceOver says aren't cut off by sleeping headphones.
 - **Restart VoiceOver** with one key (Right Option + K).
 - **Compare text** to hear every change between two versions (Right Option + E).

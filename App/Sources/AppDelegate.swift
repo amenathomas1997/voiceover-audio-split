@@ -44,12 +44,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         app.run()
     }
 
+    /// A menu-bar app shows no menu bar, but Command C, V, X, A and Z in text fields
+    /// still need an Edit menu to reach them.
+    private static func editMenu() -> NSMenu {
+        let main = NSMenu()
+        let edit = NSMenu(title: String(localized: "Edit"))
+        let items: [(String, Selector, String, NSEvent.ModifierFlags)] = [
+            (String(localized: "Undo"), Selector(("undo:")), "z", .command),
+            (String(localized: "Redo"), Selector(("redo:")), "z", [.command, .shift]),
+            (String(localized: "Cut"), #selector(NSText.cut(_:)), "x", .command),
+            (String(localized: "Copy"), #selector(NSText.copy(_:)), "c", .command),
+            (String(localized: "Paste"), #selector(NSText.paste(_:)), "v", .command),
+            (String(localized: "Select All"), #selector(NSText.selectAll(_:)), "a", .command),
+        ]
+        for (title, action, key, modifiers) in items {
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+            item.keyEquivalentModifierMask = modifiers
+            edit.addItem(item)
+        }
+        let editItem = NSMenuItem(title: edit.title, action: nil, keyEquivalent: "")
+        editItem.submenu = edit
+        main.addItem(NSMenuItem()) // The app menu's place.
+        main.addItem(editItem)
+        return main
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Under unit tests the app only hosts the test bundle: no menu, audio or shortcuts.
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
         #endif
+        NSApp.mainMenu = Self.editMenu()
+        connectAssistant()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "headphones", accessibilityDescription: "VoiceOver Audio Split")
@@ -193,11 +220,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// the model opens the window afterwards, so VoiceOver's cursor stays on the image.
     func showAssistant(describingImage: Bool) {
         let model = AssistantModel.shared
-        model.showWindow = { [weak self] in
+        connectAssistant()
+        if describingImage { model.describeImage() } else { model.showWindow?() }
+    }
+
+    /// Lets the assistant open its window, also when it's started by a shortcut (describe video).
+    private func connectAssistant() {
+        AssistantModel.shared.showWindow = { [weak self] in
             guard let self else { return }
             self.assistantWindow = self.show(self.assistantWindow, title: String(localized: "Assistant"), view: AssistantView())
         }
-        if describingImage { model.describeImage() } else { model.showWindow?() }
     }
 
     func showDocReader() {
@@ -265,6 +297,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func showPractice() {
         let isNew = practiceWindow == nil
         practiceWindow = show(practiceWindow, title: String(localized: "VoiceOver Practice"), view: PracticeView())
+        PracticeModel.shared.window = practiceWindow
         if isNew, let practiceWindow { whenClosed(practiceWindow) { PracticeModel.shared.stop() } }
     }
 

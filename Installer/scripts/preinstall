@@ -5,8 +5,9 @@
 USER_NAME=$(stat -f%Su /dev/console)
 USER_ID=$(id -u "$USER_NAME" 2>/dev/null)
 # /Search also finds network and mobile accounts, not just local ones.
-USER_HOME=$(dscl /Search -read "/Users/$USER_NAME" NFSHomeDirectory 2>/dev/null | awk '{print $2}')
-[[ -z "$USER_HOME" ]] && USER_HOME=$(eval echo "~$USER_NAME")
+# The whole value: a home folder's name can contain spaces, and a long one goes on the next line.
+USER_HOME=$(dscl /Search -read "/Users/$USER_NAME" NFSHomeDirectory 2>/dev/null | sed -e '1s/^NFSHomeDirectory:[[:space:]]*//' -e 's/^[[:space:]]*//' | tr -d '\n')
+[[ -d "$USER_HOME" ]] || USER_HOME=""
 
 pkill -x "VoiceOver Audio Split" 2>/dev/null
 

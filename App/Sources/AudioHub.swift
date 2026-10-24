@@ -132,16 +132,23 @@ final class AudioHub: ObservableObject {
 
     // MARK: Searching
 
+    /// The search or feed being loaded; a new one replaces it.
+    private var loading: Task<Void, Never>?
+
     func search(_ query: String) {
         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard source == .news || !query.isEmpty else { return report(String(localized: "Type something to search for")) }
         report(String(localized: "Searching"))
-        Task { @MainActor in
+        loading?.cancel()
+        loading = Task { @MainActor in
             do {
                 let found = try await find(query, in: source)
+                // A newer search or feed replaced this one.
+                guard !Task.isCancelled else { return }
                 results = found
                 report(found.isEmpty ? String(localized: "Nothing found") : String(localized: "\(found.count) results"))
             } catch {
+                guard !Task.isCancelled else { return }
                 report(String(localized: "Couldn't search. Check your internet connection."))
             }
         }
@@ -213,8 +220,12 @@ final class AudioHub: ObservableObject {
         case .headline(let summary): Announcer.say(item.title + ". " + summary)
         case .feed(let url):
             report(String(localized: "Opening \(item.title)"))
-            Task { @MainActor in
-                let items = (try? await data(url)).map(RSSFeed.parse) ?? []
+            loading?.cancel()
+            loading = Task { @MainActor in
+                let feed = try? await data(url)
+                // A big feed takes a moment to read: not on the main thread.
+                let items = await Task.detached { feed.map(RSSFeed.parse) ?? [] }.value
+                guard !Task.isCancelled else { return }
                 results = items.compactMap { entry in
                     entry.audio.map { HubItem(title: entry.title, detail: item.title, kind: .audio($0)) }
                 }

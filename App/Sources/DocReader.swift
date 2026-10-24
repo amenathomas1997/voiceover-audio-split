@@ -153,7 +153,10 @@ final class DocReaderModel: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     private func jump(_ offset: Int?) {
         guard let offset else { return Announcer.say(String(localized: "No more")) }
         position = offset
-        if speaking && !paused { play(from: offset) } else { highlight = NSRange(location: offset, length: 0) }
+        if speaking && !paused { return play(from: offset) }
+        // Paused: Read goes on from the new place, not from where it was paused.
+        if paused { stop() }
+        highlight = NSRange(location: offset, length: 0)
     }
 
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString range: NSRange,

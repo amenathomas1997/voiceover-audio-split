@@ -11,15 +11,22 @@ import AppKit
 import AVFoundation
 import CoreAudio
 import Speech
+import os
 
 final class VoiceCommand {
     static let shared = VoiceCommand()
 
     private var engine: AVAudioEngine?
     private var recognizer: SFSpeechRecognizer?
-    private var request: SFSpeechAudioBufferRecognitionRequest?
+    /// The audio thread appends to the current request while the main thread replaces it.
+    private let currentRequest = OSAllocatedUnfairLock<SFSpeechAudioBufferRecognitionRequest?>(initialState: nil)
+    private var request: SFSpeechAudioBufferRecognitionRequest? {
+        get { currentRequest.withLock { $0 } }
+        set { currentRequest.withLock { $0 = newValue } }
+    }
     private var task: SFSpeechRecognitionTask?
     private var restartTimer: Timer?
+    private var configurationObserver: Any?
     private var lastHeard = Date.distantPast
     private(set) var isListening = false
     private var wanted = false
@@ -28,8 +35,17 @@ final class VoiceCommand {
     /// A command being said: it's acted on once the speaker pauses.
     private var pendingCommand = ""
     private var pauseTimer: Timer?
-    /// A risky command waiting for yes or no.
-    private var awaitingAnswer: (action: VoiceAction, from: Date, until: Date)?
+    /// The app (or VoiceOver for it) was speaking: what was heard then is dropped.
+    private var heardOwnSpeech = false
+
+    /// A question waiting for yes or no. Answers count only in a recognition task started
+    /// after the question was spoken, so the question itself ("Say yes or no") can't answer it.
+    private struct Question {
+        let perform: () -> Void
+        let until: Date
+        var request: SFSpeechAudioBufferRecognitionRequest?
+    }
+    private var awaitingAnswer: Question?
 
     /// Starts or stops listening to match the setting.
     func update(enabled: Bool) {
@@ -43,11 +59,42 @@ final class VoiceCommand {
         oneShotUntil = Date().addingTimeInterval(8)
         // A tone only: spoken words could be heard as the command.
         Tones.play(.status)
-        if !isListening { requestThenStart(oneShot: true) }
+        if isListening { listen() } else { requestThenStart(oneShot: true) } // A fresh start: older talk doesn't count.
         DispatchQueue.main.asyncAfter(deadline: .now() + 8.5) { [weak self] in
             guard let self, let until = self.oneShotUntil, until <= Date() else { return }
             self.oneShotUntil = nil
-            if !self.wanted { self.stop() }
+            self.stopIfNotWanted()
+        }
+    }
+
+    /// Asks a question out loud and acts on a spoken yes; no, or nothing within 8 seconds, cancels.
+    func askYesNo(_ question: String, perform: @escaping () -> Void) {
+        let words = question + " " + String(localized: "Say yes or no.")
+        awaitingAnswer = Question(perform: perform, until: Date().addingTimeInterval(60), request: nil)
+        Tones.play(.status)
+        Announcer.say(words)
+        if !isListening { requestThenStart(oneShot: true) }
+        // Once the question has been said, listen afresh for the answer.
+        let spoken = Announcer.speakingUntil.timeIntervalSinceNow
+        DispatchQueue.main.asyncAfter(deadline: .now() + max(spoken, 1)) { [weak self] in
+            guard let self, self.awaitingAnswer != nil else { return }
+            self.listen()
+            self.awaitingAnswer?.request = self.request
+            let ask = self.request
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
+                guard self.awaitingAnswer?.request === ask, ask != nil else { return }
+                self.awaitingAnswer = nil
+                Announcer.say(String(localized: "No answer, so I didn't do it."))
+                self.stopIfNotWanted()
+            }
+        }
+    }
+
+    private func stopIfNotWanted() {
+        guard !wanted, awaitingAnswer == nil, (oneShotUntil.map { $0 <= Date() } ?? true) else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self, !self.wanted, self.awaitingAnswer == nil else { return }
+            self.stop()
         }
     }
 
@@ -81,28 +128,42 @@ final class VoiceCommand {
         }
         let engine = AVAudioEngine()
         var device = microphone
-        if let unit = engine.inputNode.audioUnit {
-            AudioUnitSetProperty(unit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0,
-                                 &device, UInt32(MemoryLayout<AudioDeviceID>.size))
+        // If the built-in microphone can't be chosen, don't fall back to a Bluetooth headset's.
+        guard let unit = engine.inputNode.audioUnit,
+              AudioUnitSetProperty(unit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0,
+                                   &device, UInt32(MemoryLayout<AudioDeviceID>.size)) == noErr else {
+            log("Voice command: couldn't choose the built-in microphone.")
+            return Announcer.say(String(localized: "Voice command couldn't use the built-in microphone."))
         }
         let format = engine.inputNode.outputFormat(forBus: 0)
-        guard format.sampleRate > 0, format.channelCount > 0 else { return }
-        engine.inputNode.installTap(onBus: 0, bufferSize: 2048, format: format) { [weak self] buffer, _ in
-            self?.request?.append(buffer)
+        guard format.sampleRate > 0, format.channelCount > 0 else {
+            return Announcer.say(String(localized: "Voice command couldn't use the built-in microphone."))
+        }
+        let current = currentRequest
+        engine.inputNode.installTap(onBus: 0, bufferSize: 2048, format: format) { buffer, _ in
+            current.withLock { $0 }?.append(buffer)
         }
         do {
             try engine.start()
         } catch {
             engine.inputNode.removeTap(onBus: 0)
-            return log("Voice command: microphone couldn't start: \(error)")
+            log("Voice command: microphone couldn't start.")
+            return Announcer.say(String(localized: "Voice command couldn't use the built-in microphone."))
         }
         self.engine = engine
         self.recognizer = recognizer
         isListening = true
+        // A microphone change (closing the lid, plugging something in) stops the engine: start again.
+        configurationObserver = NotificationCenter.default.addObserver(forName: .AVAudioEngineConfigurationChange, object: engine,
+                                                                       queue: .main) { [weak self] _ in
+            guard let self, self.isListening else { return }
+            let keep = (self.wanted, self.oneShotUntil, self.awaitingAnswer)
+            self.stop()
+            (self.oneShotUntil, self.awaitingAnswer) = (keep.1, keep.2)
+            if keep.0 || keep.1 != nil || keep.2 != nil { self.start() }
+        }
         log("Voice command: listening on the device.")
         listen()
-        // A recognition task can only run for a minute or so; start a fresh one regularly.
-        restartTimer = Timer.scheduledTimer(withTimeInterval: 50, repeats: true) { [weak self] _ in self?.listen() }
     }
 
     /// A new recognition task, replacing the last one.
@@ -114,11 +175,15 @@ final class VoiceCommand {
         request.shouldReportPartialResults = true
         request.taskHint = .search
         self.request = request
+        // A task can only run for a minute or so; replace it before then (counted from now,
+        // so a command being said isn't cut in two by an older timer).
+        restartTimer?.invalidate()
+        restartTimer = Timer.scheduledTimer(withTimeInterval: 50, repeats: false) { [weak self] _ in self?.listen() }
         task = recognizer.recognitionTask(with: request) { [weak self] result, error in
             guard let self else { return }
             if let text = result?.bestTranscription.formattedString {
                 let final = result?.isFinal == true
-                DispatchQueue.main.async { if self.request === request { self.process(text, final: final) } }
+                DispatchQueue.main.async { if self.request === request { self.process(text, final: final, from: request) } }
             }
             if error != nil || result?.isFinal == true {
                 // Ended (silence, a limit or an error): carry on listening.
@@ -129,27 +194,32 @@ final class VoiceCommand {
     }
 
     /// Everything heard so far in this recognition task.
-    private func process(_ text: String, final: Bool) {
-        // A yes or no for a risky command, or for a press Do It for Me is waiting on.
+    private func process(_ text: String, final: Bool, from request: SFSpeechAudioBufferRecognitionRequest) {
+        // While the app (or VoiceOver for it) is speaking, the microphone may hear it,
+        // wake word and all. Drop that, and start afresh once it has finished.
+        if Date() < Announcer.speakingUntil {
+            heardOwnSpeech = true
+            return
+        }
+        if heardOwnSpeech {
+            heardOwnSpeech = false
+            return listen()
+        }
         if let waiting = awaitingAnswer, waiting.until > Date() {
-            // The question itself ("Say yes or no") mustn't count as the answer.
-            guard Date() >= waiting.from else { return }
+            guard let asked = waiting.request, asked === request else { return }
+            // A short, clear answer: "yes", "no", "yes please". Not both, not a sentence.
+            guard VoiceCommands.normalize(text).split(separator: " ").count <= 4 else { return }
             let yes = VoiceCommands.says(text, any: VoiceCommands.yes), no = VoiceCommands.says(text, any: VoiceCommands.no)
-            guard yes || no else { return }
+            guard yes != no else { return }
             awaitingAnswer = nil
             if yes {
                 Tones.play(.louder)
-                waiting.action.perform()
+                waiting.perform()
             } else {
                 Announcer.say(String(localized: "Cancelled"))
             }
             listen()
-            if !wanted { DispatchQueue.main.asyncAfter(deadline: .now() + 1) { if !self.wanted { self.stop() } } }
-            return
-        }
-        if DoItModel.shared.pendingPress != nil, VoiceCommands.says(text, any: VoiceCommands.yes) {
-            DoItModel.shared.confirmPress()
-            return listen()
+            return stopIfNotWanted()
         }
         if Self.isLaunchCommand(text) && VoiceCommands.command(after: text) == nil {
             return launchLessons()
@@ -176,36 +246,25 @@ final class VoiceCommand {
         lastHeard = Date()
         defer {
             listen() // Start afresh, so the same words aren't heard again.
-            if !wanted && awaitingAnswer == nil { DispatchQueue.main.asyncAfter(deadline: .now() + 1) { if !self.wanted { self.stop() } } }
+            stopIfNotWanted()
         }
-        log("Voice command: \(command)")
         if Self.isLaunchCommand(command) { return launchLessons() }
         if let request = VoiceCommands.findRequest(in: command), !request.isEmpty {
+            log("Voice command: find")
             Tones.play(.status)
             let model = DoItModel.shared
             model.target = Controller.shared.lastUsedApp
             model.request = request
+            model.fromVoice = true
             return model.run()
         }
         guard let action = VoiceCommands.match(command, in: VoiceCommands.all) else {
             Tones.play(.quieter)
-            return Announcer.say(String(localized: "Sorry, I didn't catch that. Say Audio Split, what can I say."))
+            return Announcer.say(String(localized: "Sorry, I didn't catch that."))
         }
-        if let question = action.confirm {
-            let words = question + " " + String(localized: "Say yes or no.")
-            // Answers count once the question has been said, from a fresh start.
-            let asked = Date().addingTimeInterval(1 + Double(words.split(separator: " ").count) * 0.35)
-            awaitingAnswer = (action, asked, asked.addingTimeInterval(8))
-            Tones.play(.status)
-            Announcer.say(words)
-            DispatchQueue.main.asyncAfter(deadline: .now() + asked.timeIntervalSinceNow) { [weak self] in self?.listen() }
-            DispatchQueue.main.asyncAfter(deadline: .now() + asked.timeIntervalSinceNow + 8.5) { [weak self] in
-                guard let self, self.awaitingAnswer?.action.name == action.name else { return }
-                self.awaitingAnswer = nil
-                if !self.wanted { self.stop() }
-            }
-            return
-        }
+        // Only which command ran is logged, never what was said.
+        log("Voice command: \(action.name)")
+        if let question = action.confirm { return askYesNo(question, perform: action.perform) }
         Tones.play(.status)
         action.perform()
     }
@@ -213,34 +272,46 @@ final class VoiceCommand {
     private func launchLessons() {
         guard Date().timeIntervalSince(lastHeard) > 5 else { return }
         lastHeard = Date()
+        listen()
+        // Already open: don't start the welcome over.
+        if LessonRunner.shared.window?.isVisible == true { return }
         Tones.play(.status)
         NSApp.activate()
         (NSApp.delegate as? AppDelegate)?.showLessons()
-        listen()
     }
 
     func stop() {
         restartTimer?.invalidate()
         restartTimer = nil
+        pauseTimer?.invalidate()
+        pauseTimer = nil
+        pendingCommand = ""
+        oneShotUntil = nil
+        awaitingAnswer = nil
         task?.cancel()
         task = nil
         request = nil
+        if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
+        configurationObserver = nil
         engine?.inputNode.removeTap(onBus: 0)
         engine?.stop()
         engine = nil
         isListening = false
     }
 
-    /// "Launch VoiceOver training", or the same in the Mac's language. VoiceOver plus a
-    /// word for training or lessons is enough, so it still works if a word is misheard.
+    /// "Launch VoiceOver training", or the same in the Mac's language: a word to start, VoiceOver,
+    /// and a word for training or lessons, said as a short phrase. Mentioning "VoiceOver lessons"
+    /// in a sentence, or VoiceOver reading the lessons window's name, doesn't count.
     static func isLaunchCommand(_ text: String) -> Bool {
-        let words = text.lowercased().folding(options: .diacriticInsensitive, locale: nil)
-            .replacingOccurrences(of: "-", with: " ")
-        let squeezed = words.replacingOccurrences(of: " ", with: "")
-        let saysVoiceOver = squeezed.contains("voiceover")
-        let training = ["training", "trainer", "lesson", "lessons", "tutorial",
-                        "entrenamiento", "lecciones", "formation", "lecons", "entrainement", "schulung", "lektionen", "ubung"]
-        return saysVoiceOver && training.contains { words.contains($0) }
+        let words = VoiceCommands.normalize(text.replacingOccurrences(of: "-", with: " "))
+            .replacingOccurrences(of: "voice over", with: "voiceover").split(separator: " ").map(String.init)
+        let recent = Array(words.suffix(7))
+        let starts: Set<String> = ["launch", "open", "start", "begin", "abrir", "abre", "iniciar", "inicia", "empezar", "empieza",
+                                   "lancer", "lance", "ouvrir", "ouvre", "demarrer", "demarre", "starten", "starte", "offnen", "offne", "beginnen"]
+        let training: Set<String> = ["training", "trainer", "lesson", "lessons", "tutorial",
+                                     "entrenamiento", "lecciones", "formation", "lecons", "entrainement", "schulung", "lektionen", "ubung"]
+        guard words.count <= 12, recent.contains(where: starts.contains), recent.contains("voiceover") else { return false }
+        return recent.contains { word in training.contains(word) || training.contains { word.hasSuffix($0) && word.hasPrefix("voiceover") } }
     }
 
     /// The Mac's built-in (or a wired USB) microphone, but never a Bluetooth one.

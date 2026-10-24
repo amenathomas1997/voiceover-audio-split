@@ -58,19 +58,29 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
 
     private let queue = DispatchQueue(label: "VoiceOverAudioSplit.scan")
     private var session: AVCaptureSession?
+    /// Camera queue: the session running now, so results from an earlier one are dropped.
+    private var running: AVCaptureSession?
     private var frames = 0
     private var lastGuidance = Date.distantPast
     private var previousText = ""
 
     // MARK: Camera
 
+    /// Waiting for the camera permission answer: a second press mustn't start a second camera.
+    private var asking = false
+
     func start() {
-        guard !scanning else { return }
+        guard !scanning, !asking else { return }
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized: begin()
         case .notDetermined:
+            asking = true
             AVCaptureDevice.requestAccess(for: .video) { granted in
-                DispatchQueue.main.async { granted ? self.begin() : self.report(String(localized: "Camera access was not allowed")) }
+                DispatchQueue.main.async {
+                    guard self.asking else { return } // Stopped while the question was open.
+                    self.asking = false
+                    granted ? self.begin() : self.report(String(localized: "Camera access was not allowed"))
+                }
             }
         default:
             report(String(localized: "Camera access is off. Turn on VoiceOver Audio Split in System Settings, Privacy and Security, Camera."))
@@ -78,6 +88,7 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
     }
 
     private func begin() {
+        guard session == nil else { return }
         guard let camera = CameraChoice.preferred(),
               let input = try? AVCaptureDeviceInput(device: camera) else { return report(String(localized: "No camera found")) }
         let session = AVCaptureSession()
@@ -96,12 +107,14 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
         queue.async {
             self.frames = 0
             self.previousText = ""
+            self.running = session
             session.startRunning()
         }
     }
 
     /// Stops on the camera queue, after any start still waiting there, so the camera is always left off.
     func stop() {
+        asking = false
         guard let session else { return }
         self.session = nil
         scanning = false
@@ -130,8 +143,10 @@ final class ScanReader: NSObject, ObservableObject, AVCaptureVideoDataOutputSamp
             previousText = found
             return
         }
+        let thisSession = running
         DispatchQueue.main.async {
-            guard self.scanning else { return } // Stopped meanwhile.
+            // Stopped meanwhile, or a newer scan has started.
+            guard self.scanning, thisSession != nil, self.session === thisSession else { return }
             self.stop()
             self.text = found
             self.status = String(localized: "Text found.")

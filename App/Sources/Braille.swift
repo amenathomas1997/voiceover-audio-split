@@ -16,13 +16,23 @@ enum Braille {
         "-": "-", "\u{2013}": ",-", "\u{2014}": ",-", "(": "\"<", ")": "\">", "[": ".<", "]": ".>", "/": "_/",
         "&": "@&", "@": "@a", "#": "_?", "$": "@s", "%": ".0", "*": "\"9", "+": "\"6", "=": "\"7",
         "\u{201C}": "8", "\u{201D}": "0", "\u{2026}": "444",
+        "_": ".-", "<": "@<", ">": "@>", "~": "@9", "^": "@5", "\\": "_*", "|": "_\\", "{": "_<", "}": "_>", "`": "@*",
     ]
+
+    /// Characters that have no braille here, such as letters from other alphabets.
+    static func unsupported(in text: String) -> Int {
+        text.folding(options: [.diacriticInsensitive], locale: Locale(identifier: "en")).filter { character in
+            !(character.isASCII && (character.isLetter || character.isNumber)) && !character.isWhitespace
+                && punctuation[character] == nil && character != "\""
+        }.count
+    }
 
     /// One line of text in Braille ASCII, uncontracted UEB.
     static func translate(_ text: String) -> String {
         var output = ""
+        // Tabs and other spaces separate words too.
         let words = text.folding(options: [.diacriticInsensitive], locale: Locale(identifier: "en"))
-            .split(separator: " ", omittingEmptySubsequences: false)
+            .map { $0.isWhitespace ? " " : $0 }.split(separator: " ", omittingEmptySubsequences: false)
         for (index, word) in words.enumerated() {
             if index > 0 { output += " " }
             output += translate(word: String(word))
@@ -145,7 +155,9 @@ struct BrailleView: View {
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
             try Braille.brf(text, width: width, height: height).write(to: url, atomically: true, encoding: .ascii)
-            Announcer.say(String(localized: "Saved \(url.lastPathComponent)"))
+            let missing = Braille.unsupported(in: text)
+            Announcer.say(String(localized: "Saved \(url.lastPathComponent)")
+                          + (missing > 0 ? " " + String(localized: "\(missing) characters have no braille here and were left out.") : ""))
         } catch {
             Announcer.say(String(localized: "Couldn't save the braille file"))
         }

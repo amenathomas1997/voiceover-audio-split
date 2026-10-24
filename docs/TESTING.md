@@ -44,6 +44,11 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] Label an unlabeled button: the label is spoken when VoiceOver lands on it again, also after restarting the app.
 - [ ] Add a place marker on a web page, move away, then choose Next Place Marker: VoiceOver goes back there.
 - [ ] Do It for Me: "find the search field" moves VoiceOver there. "Press" asks before pressing.
+- [ ] By voice, "Audio Split, press Play" asks "Press it? Say yes or no"; silence for 8 seconds cancels.
+- [ ] With voice commands on and speakers (not headphones), opening Settings doesn't trigger a command when VoiceOver reads "VoiceOver Audio Split Settings".
+- [ ] In a lesson, open the rotor (VO U), type letters and press Escape: the rotor closes and the lesson keeps going. Escape twice stops the lesson.
+- [ ] With Caps Lock switched on for capitals, lesson keys (Return, R, B, H, S) still work.
+- [ ] Copy and paste (Command C, V) work in the Assistant and Settings text fields.
 - [ ] Check a Word document with a picture and no headings, and a scanned PDF: the problems are listed with fixes.
 - [ ] Save some text as braille and open the .brf file on a notetaker or braille display.
 - [ ] Read a QR code (for example a Wi-Fi code) and a food barcode. Read a medicine bottle while turning it.

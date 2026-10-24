@@ -29,11 +29,11 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private let queue = DispatchQueue(label: "VoiceOverAudioSplit.camera-feed")
     // Main thread only.
     private var session: AVCaptureSession?
-    private var device: AVCaptureDevice?
     /// Waiting for the camera permission answer.
     private var asking = false
     private var noPicture: DispatchWorkItem?
     // Camera queue only.
+    private var device: AVCaptureDevice?
     private var frames = 0
     private var handler: ((CVPixelBuffer) -> Void)?
     private var firstFrame: (() -> Void)?
@@ -76,7 +76,6 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         session.addInput(input)
         session.addOutput(output)
         self.session = session
-        self.device = camera
         let watchdog = DispatchWorkItem { [weak self] in
             guard let self, self.session === session else { return }
             self.stop()
@@ -86,6 +85,7 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: watchdog)
         queue.async {
             self.frames = 0
+            self.device = camera
             self.handler = handler
             self.firstFrame = {
                 watchdog.cancel()
@@ -103,6 +103,7 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         queue.async {
             self.handler = nil
             self.firstFrame = nil
+            self.unlockAdjustments()
             session.stopRunning()
         }
     }
@@ -118,6 +119,15 @@ final class CameraFeed: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         if frames == 30 { lockAdjustments() }
         guard frames > 30, let pixels = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         handler?(pixels)
+    }
+
+    /// Back to automatic exposure and color, so the next camera tool gets a normal picture.
+    private func unlockAdjustments() {
+        guard let device, (try? device.lockForConfiguration()) != nil else { return }
+        if device.isExposureModeSupported(.continuousAutoExposure) { device.exposureMode = .continuousAutoExposure }
+        if device.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) { device.whiteBalanceMode = .continuousAutoWhiteBalance }
+        device.unlockForConfiguration()
+        self.device = nil
     }
 
     private func lockAdjustments() {
@@ -259,6 +269,8 @@ enum LightDetector {
     nonisolated(unsafe) private static var frequency: Double = 220
     nonisolated(unsafe) private static var phase: Double = 0
     private static var stopWork: DispatchWorkItem?
+    /// Counts runs, so a delayed start from an earlier one is ignored.
+    private static var run = 0
 
     static var isRunning: Bool { feed.isRunning }
 
@@ -288,8 +300,9 @@ enum LightDetector {
         }, started: {
             // Start the tone once pictures arrive (after any permission question),
             // and after the announcement, so it doesn't talk over it.
+            let thisRun = run
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                guard isRunning, !engine.isRunning else { return }
+                guard run == thisRun, isRunning, !engine.isRunning else { return }
                 try? engine.start()
             }
         }, failed: { message in
@@ -303,6 +316,7 @@ enum LightDetector {
     }
 
     private static func stop(announce: Bool) {
+        run += 1
         stopWork?.cancel()
         feed.stop()
         engine.stop()

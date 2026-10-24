@@ -18,13 +18,15 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 
     /// Runs one check and calls back on the main thread with what to say.
     func run(completion: @escaping (String) -> Void) {
-        guard session == nil else { return }
+        guard session == nil, !asking else { return }
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             start(completion)
         case .notDetermined:
+            asking = true
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
+                    self.asking = false
                     granted ? self.start(completion) : completion(String(localized: "Camera access was not allowed"))
                 }
             }
@@ -33,7 +35,11 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         }
     }
 
+    /// Waiting for the camera permission answer.
+    private var asking = false
+
     private func start(_ completion: @escaping (String) -> Void) {
+        guard session == nil else { return }
         guard let camera = CameraChoice.preferred(),
               let input = try? AVCaptureDeviceInput(device: camera) else {
             return completion(String(localized: "No camera found"))

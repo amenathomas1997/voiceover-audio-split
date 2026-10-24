@@ -142,7 +142,7 @@ final class TypingTrainer: ObservableObject {
     @Published var itemNumber = 0
     @Published var itemCount = 0
     @Published var result = ""
-    @Published var sayEachKey = false
+    @Published var sayEachKey = Preferences.shared.typingSayEachKey { didSet { Preferences.shared.typingSayEachKey = sayEachKey } }
     @Published var speedTest = false
     private var items: [String] = []
     private var correct = 0
@@ -191,7 +191,15 @@ final class TypingTrainer: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
             guard let self, self.running, self.session == thisSession else { return }
             self.started = Date()
-            if self.speedTest { self.deadline = Date().addingTimeInterval(60) }
+            if self.speedTest {
+                // The minute ends on time, even in the middle of a word.
+                let end = Date().addingTimeInterval(60)
+                self.deadline = end
+                DispatchQueue.main.asyncAfter(deadline: .now() + 60) {
+                    guard self.running, self.session == thisSession, self.deadline == end else { return }
+                    self.finish()
+                }
+            }
             self.next()
         }
     }
@@ -240,8 +248,10 @@ final class TypingTrainer: ObservableObject {
             DispatchQueue.main.async { self.stop() }
             return true
         }
-        guard flags.intersection([.maskCommand, .maskControl, .maskAlternate]).isEmpty,
-              let character = characters.first, !current.isEmpty else { return false }
+        // Tab, Delete and the arrows move around the window as usual, and Caps Lock held is VoiceOver's.
+        let moving: Set<Int64> = [48, 51, 117, 123, 124, 125, 126]
+        guard flags.intersection([.maskCommand, .maskControl, .maskAlternate]).isEmpty, !KeyCombo.capsLockHeld,
+              !moving.contains(keyCode), let character = characters.first, !current.isEmpty else { return false }
         DispatchQueue.main.async { self.type(character) }
         return true
     }

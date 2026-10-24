@@ -50,9 +50,14 @@ enum CustomLabels {
 
     private static func check() {
         guard NSWorkspace.shared.isVoiceOverEnabled,
-              let front = NSWorkspace.shared.frontmostApplication?.bundleIdentifier,
-              labels.contains(where: { $0.element.bundleID == front }),
-              let bounds = VoiceOverText.cursorBounds(), bounds != lastBounds else { return }
+              let front = NSWorkspace.shared.frontmostApplication?.bundleIdentifier else { return }
+        guard labels.contains(where: { $0.element.bundleID == front }) else {
+            // Coming back to the labelled control after another app says its label again.
+            lastSpoken = nil
+            lastBounds = nil
+            return
+        }
+        guard let bounds = VoiceOverText.cursorBounds(), bounds != lastBounds else { return }
         lastBounds = bounds
         let match = AX.underVoiceOverCursor().flatMap(ElementSignature.init).flatMap { signature in
             labels.first { $0.element.matches(signature) }

@@ -30,6 +30,8 @@ enum VoiceCommands {
     static func command(after text: String) -> String? {
         let words = normalize(text).replacingOccurrences(of: "audiosplit", with: "audio split")
         guard let range = words.range(of: "audio split", options: .backwards) else { return nil }
+        // "VoiceOver Audio Split" is the app's name, as VoiceOver reads it in window titles.
+        if words[..<range.lowerBound].hasSuffix("voiceover ") || words[..<range.lowerBound].hasSuffix("voice over ") { return nil }
         var rest = String(words[range.upperBound...]).trimmingCharacters(in: .whitespaces)
         if rest.hasPrefix("s ") { rest.removeFirst(2) } // "audio splits"
         return rest
@@ -55,9 +57,13 @@ enum VoiceCommands {
     /// "speech left" isn't taken for "speech".
     static func match(_ command: String, in actions: [VoiceAction]) -> VoiceAction? {
         let padded = " " + normalize(command) + " "
+        let whole = normalize(command)
         var best: (action: VoiceAction, length: Int)?
         for action in actions {
-            for phrase in action.phrases where padded.contains(" " + phrase + " ") && phrase.count > (best?.length ?? 0) {
+            // One-word phrases ("time", "help", "scan") only when they're the whole command,
+            // so "Audio Split is the app I use all the time" does nothing.
+            for phrase in action.phrases where (phrase.contains(" ") ? padded.contains(" " + phrase + " ") : whole == phrase)
+                && phrase.count > (best?.length ?? 0) {
                 best = (action, phrase.count)
             }
         }
@@ -191,7 +197,7 @@ enum VoiceCommands {
             },
             // Quick questions
             VoiceAction(name: String(localized: "What time is it?"),
-                        phrases: phrases("what time is it|the time|what s the time|whats the time|time",
+                        phrases: phrases("what time is it|what s the time|whats the time|tell me the time|time",
                                          String(localized: "what time is it", comment: "Voice command phrases, separated by |"))) {
                 Announcer.say(DateFormatter.localizedString(from: Date(), dateStyle: .full, timeStyle: .short))
             },
@@ -258,7 +264,7 @@ enum VoiceCommands {
 
     static func whatCanISay() -> String {
         let names = all.map(\.name)
-        return String(localized: "Say Audio Split, then a command. For example: \(ListFormatter.localizedString(byJoining: names)). You can also say find, or go to, and the name of a control, and I'll take you there. And Launch VoiceOver training works on its own.")
+        return String(localized: "Say Audio Split, then a command. For example: \(ListFormatter.localizedString(byJoining: names)). You can also say find, or go to, and the name of a control, and I'll take you there; that uses Do It for Me, which sends the control names to Anthropic. And Launch VoiceOver training works on its own.")
     }
 }
 

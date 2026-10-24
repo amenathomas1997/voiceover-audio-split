@@ -24,28 +24,42 @@ struct KeyCombo: Hashable {
 
     /// The letter on this key on a US keyboard, which lessons name; nil for other keys.
     var letter: Character? {
-        guard let name = Key.named(code)?.name, name.count == 1, let first = name.lowercased().first, first.isLetter else { return nil }
-        return first
+        if let name = Key.named(code)?.name, name.count == 1, let first = name.lowercased().first, first.isLetter { return first }
+        // Punctuation sits on different keys on other keyboards; shortcuts follow the character.
+        // (Not with Shift, which changes the character.)
+        let punctuation: [Int64: Character] = [33: "[", 30: "]", 41: ";", 43: ",", 47: ".", 44: "/", 50: "`", 39: "'"]
+        return shift ? nil : punctuation[code]
     }
 
     /// The letter a key press types on the user's own keyboard (A is in a different place on
     /// a French keyboard, Z on a German one). VoiceOver goes by the letter, so lessons do too.
     static func letter(typedBy event: NSEvent?) -> Character? {
         guard let typed = event?.charactersIgnoringModifiers?.lowercased(), typed.count == 1,
-              let first = typed.first, first.isLetter, first.isASCII else { return nil }
+              let first = typed.first, first.isASCII, first.isLetter || first.isPunctuation || first.isSymbol else { return nil }
         return first
     }
 
-    func matches(keyCode: Int64, flags: CGEventFlags, letter typed: Character? = nil) -> Bool {
+    func matches(keyCode: Int64, flags: CGEventFlags, letter typed: Character? = nil,
+                 capsLockHeld held: Bool = KeyCombo.capsLockHeld) -> Bool {
         // Letters by the letter typed; arrows, function keys and the rest by their key, which is the same everywhere.
         let rightKey = if let letter, let typed { typed == letter } else { keyCode == code }
         guard rightKey, flags.contains(.maskShift) == shift, flags.contains(.maskCommand) == command else { return false }
-        if vo { return Self.isVO(flags) }
+        if vo { return Self.isVO(flags, capsLockHeld: held) }
         return flags.contains(.maskControl) == control && flags.contains(.maskAlternate) == option
     }
 
-    static func isVO(_ flags: CGEventFlags) -> Bool {
-        flags.contains([.maskControl, .maskAlternate]) || flags.contains(.maskAlphaShift)
+    /// Control and Option, or Caps Lock held down as the VO key. Caps Lock that's
+    /// switched on (for capitals) doesn't count.
+    static func isVO(_ flags: CGEventFlags, capsLockHeld held: Bool = capsLockHeld) -> Bool {
+        flags.contains([.maskControl, .maskAlternate]) || (flags.contains(.maskAlphaShift) && held)
+    }
+
+    /// Whether Caps Lock is being held down right now, as VoiceOver's key.
+    static var capsLockHeld: Bool { CGEventSource.keyState(.hidSystemState, key: 57) }
+
+    /// No modifier held: Caps Lock switched on still counts as plain.
+    static func isPlain(_ flags: CGEventFlags) -> Bool {
+        flags.intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift]).isEmpty && !capsLockHeld
     }
 
     /// "VO Command Shift H", "Option Left Arrow": what someone pressed, in words.
@@ -266,10 +280,12 @@ enum Mission: Hashable {
         }
     }
 
-    /// Tabs in Safari's front window, or nil if Safari isn't open or can't be asked.
+    /// Tabs in Safari's front window (0 with no window), or nil if Safari isn't open or
+    /// can't be asked. Safari isn't opened just to count.
     static func safariTabCount() -> Int? {
-        AppleScriptRunner.run("tell application id \"com.apple.Safari\" to if (count of windows) > 0 then return count of tabs of front window",
-                              logErrors: false).flatMap { Int($0) }
+        guard !NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.Safari").isEmpty else { return nil }
+        return AppleScriptRunner.run("tell application id \"com.apple.Safari\" to if (count of windows) > 0 then return count of tabs of front window else return 0",
+                                     logErrors: false).flatMap { Int($0) }
     }
 
     /// "Practice", "Practice.rtf" or "Practice — Edited" all mean saved as Practice.
@@ -314,7 +330,7 @@ struct Lesson: Identifiable, Hashable {
     static let all: [Lesson] = [
         Lesson(id: "start", title: String(localized: "1. Getting started: the VO keys"),
                summary: String(localized: "Turning VoiceOver on and off, the VO keys, stopping speech, and keyboard help."), steps: [
-            .say(String(localized: "Welcome. VoiceOver is the screen reader built into your Mac. It reads what's on the screen and lets you do everything from the keyboard. Command F5 turns it on and off. On a Mac with Touch ID, you can also hold Command and press Touch ID three times quickly.")),
+            .say(String(localized: "Welcome. VoiceOver is the screen reader built into your Mac. It reads what's on the screen and lets you do everything from the keyboard. Command F5 turns it on and off; on some laptops, hold Fn as well. On a Mac with Touch ID, you can also hold Command and press Touch ID three times quickly.")),
             .say(String(localized: "Most VoiceOver commands use the VO keys: Control and Option, held down together. In these lessons, VO always means hold Control and Option. If you've set Caps Lock as your VO key in VoiceOver Utility, you can hold Caps Lock instead.")),
             .say(String(localized: "To stop VoiceOver talking, press Control on its own. You can do that at any time, for example during a long passage.")),
             .press(String(localized: "Turn on keyboard help, to explore keys safely"), String(localized: "VO K"), KeyCombo(code: 40),
@@ -380,14 +396,14 @@ struct Lesson: Identifiable, Hashable {
             .press(String(localized: "Go to the next form control"), String(localized: "VO Command J"), KeyCombo(code: 38, command: true), real: true),
             .press(String(localized: "Go to the next table"), String(localized: "VO Command T"), KeyCombo(code: 17, command: true), real: true),
             .press(String(localized: "Go back to the previous heading"), String(localized: "VO Command Shift H"), KeyCombo(code: 4, shift: true, command: true), real: true),
-            .say(String(localized: "Inside a table, hold VO and use the arrow keys to move from cell to cell; VoiceOver reads the column heading as you go. On real websites, the rotor's headings list (VO U) is often the fastest way to get an overview.")),
+            .say(String(localized: "To read a table, first go inside it with VO Shift Down Arrow. Then hold VO and use the arrow keys to move from cell to cell; VoiceOver reads the column heading when you change column. On real websites, the rotor's headings list (VO U) is often the fastest way to get an overview.")),
         ]),
         Lesson(id: "quicknav", title: String(localized: "7. Quick Nav"),
                summary: String(localized: "Moving with the arrow keys alone, and single letters on web pages."), steps: [
             .say(String(localized: "Quick Nav lets you move with the arrow keys alone, without holding VO. Press Left Arrow and Right Arrow together to turn it on or off. With Quick Nav on, Left and Right Arrow move to the previous or next item, and Up and Down Arrow move by the kind of item chosen in the rotor.")),
             .say(String(localized: "Single-key Quick Nav goes further on web pages: H for the next heading, L for the next link, T for the next table, and Shift with the letter to go back. VO Q turns it on or off.")),
             .press(String(localized: "Turn single-key Quick Nav on or off"), String(localized: "VO Q"), KeyCombo(code: 12)),
-            .say(String(localized: "Remember to turn Quick Nav off before typing, or letters move you around instead of typing. When you're in a text field, VoiceOver usually types normally anyway.")),
+            .say(String(localized: "Remember to turn Quick Nav off before typing, or keys may move you around instead of typing. If typing does something unexpected, check whether Quick Nav is on.")),
         ]),
         Lesson(id: "text", title: String(localized: "8. Typing and editing text"),
                summary: String(localized: "Moving the text cursor, selecting, copying, pasting and undoing."), steps: [
@@ -474,7 +490,7 @@ struct Lesson: Identifiable, Hashable {
         Lesson(id: "mail", title: String(localized: "14. Mail"),
                summary: String(localized: "Reading the message list, writing, replying and sending."), steps: [
             .say(String(localized: "Mail is the Mac's email app. In the message list, Up and Down Arrow move between messages, and VoiceOver reads who each is from and its subject. To read a message, move to the message area with VO Right Arrow and read it with VO A.")),
-            .say(String(localized: "Command N starts a new message. In it, Tab moves from the To field to Subject and then to the message itself. Command Shift D sends it. Command R replies to a message, and Command Shift R replies to everyone.")),
+            .say(String(localized: "Command N starts a new message. In it, Tab moves from the To field to Cc, then Subject, then the message itself. Command Shift D sends it. Command R replies to a message, and Command Shift R replies to everyone.")),
             .press(String(localized: "Start a new message"), String(localized: "Command N"), KeyCombo(code: 45, vo: false, command: true)),
             .press(String(localized: "Reply to a message"), String(localized: "Command R"), KeyCombo(code: 15, vo: false, command: true)),
             .press(String(localized: "Send the message"), String(localized: "Command Shift D"), KeyCombo(code: 2, vo: false, shift: true, command: true)),
@@ -491,7 +507,7 @@ struct Lesson: Identifiable, Hashable {
         ]),
         Lesson(id: "speech", title: String(localized: "16. Understanding what VoiceOver says"),
                summary: String(localized: "What VoiceOver's descriptions mean: dimmed, selected, collapsed, rows, hints and more."), steps: [
-            .say(String(localized: "VoiceOver describes each item in a pattern: its name, then what kind of thing it is, then its state, and sometimes a hint after a short pause. For example: Play, button. Or: Subscribe, unchecked, checkbox.")),
+            .say(String(localized: "VoiceOver describes each item in a pattern: its name, then what kind of thing it is, then its state, and sometimes a hint after a short pause. For example, something like: Play, button. Or: Subscribe, checkbox, unchecked. The exact order can vary, but the pieces are always there.")),
             .ask(String(localized: "VoiceOver says: Save, dimmed, button. What does dimmed mean?"),
                  [String(localized: "The button is selected"), String(localized: "The button can't be used right now"), String(localized: "The button is hidden")], answer: 1,
                  why: String(localized: "Dimmed means unavailable: the button is there, but can't be used until something else changes, such as filling in a field.")),
@@ -513,7 +529,7 @@ struct Lesson: Identifiable, Hashable {
             .say(String(localized: "Let's write a real document in TextEdit, the Mac's simple word processor. Open it with Spotlight: Command Space, type TextEdit, and press Return. If it shows a list of files, press Command N for a new document.")),
             .doIt(String(localized: "Open TextEdit, for real."), .frontApp("com.apple.TextEdit"),
                   tip: String(localized: "Come back to the lessons with Command Tab when you hear Done.")),
-            .say(String(localized: "Type a sentence or two. VoiceOver says each word as you finish it. To check what you wrote, press VO A to hear it all, or move through it with the arrow keys.")),
+            .say(String(localized: "Type a sentence or two. VoiceOver says each letter as you type, and each word when you finish it. To check what you wrote, press VO A to hear it all, or move through it with the arrow keys.")),
             .say(String(localized: "To style text, select it first: Command A selects everything. Then Command B makes it bold, Command I italic and Command U underlined. VoiceOver says what's selected.")),
             .press(String(localized: "Select all the text"), String(localized: "Command A"), KeyCombo(code: 0, vo: false, command: true)),
             .press(String(localized: "Make the selected text bold"), String(localized: "Command B"), KeyCombo(code: 11, vo: false, command: true)),
@@ -529,7 +545,7 @@ struct Lesson: Identifiable, Hashable {
             .doIt(String(localized: "Open Pages, for real."), .frontApp("com.apple.iWork.Pages"),
                   tip: String(localized: "Command Space, type Pages, press Return. If you don't have Pages, press Return here to skip.")),
             .say(String(localized: "The document is in the middle of the window, with a toolbar above it and the Format sidebar on the right. Type into the document as in TextEdit. Command B, I and U style selected text, and the Format sidebar's paragraph style pop-up turns a line into a title or heading.")),
-            .say(String(localized: "Pages checks spelling as you type. Command Semicolon moves to the next misspelled word, and then VO Shift M offers suggestions. Command Shift Colon opens the full spelling and grammar window.")),
+            .say(String(localized: "Pages checks spelling as you type. Command Semicolon moves to the next misspelled word, and then VO Shift M offers suggestions. Command Shift Semicolon, also called Command Colon, opens the full spelling and grammar window.")),
             .press(String(localized: "Go to the next misspelled word"), String(localized: "Command Semicolon"), KeyCombo(code: 41, vo: false, command: true)),
             .press(String(localized: "Make the selected text italic"), String(localized: "Command I"), KeyCombo(code: 34, vo: false, command: true)),
             .say(String(localized: "Save with Command S. To share with someone who uses Word, or as a PDF, use the File menu: File, Export To, then Word or PDF. VO M takes you to the menu bar.")),
@@ -542,11 +558,11 @@ struct Lesson: Identifiable, Hashable {
             .say(String(localized: "Numbers is Apple's spreadsheet app, for budgets, lists and anything in rows and columns. Make a new spreadsheet with the Blank template. A spreadsheet is a table: columns have letters, rows have numbers, and each cell has a name such as B2.")),
             .doIt(String(localized: "Open Numbers, for real."), .frontApp("com.apple.iWork.Numbers"),
                   tip: String(localized: "Command Space, type Numbers, press Return. If you don't have Numbers, press Return here to skip.")),
-            .say(String(localized: "Move between cells with the arrow keys; VoiceOver says the cell's name and what's in it. Type to put something in a cell, and press Return to finish and move down, or Tab to move right. Shift Return and Shift Tab go the other way.")),
+            .say(String(localized: "Move between cells with the arrow keys; VoiceOver says the cell's name and what's in it. If it doesn't say cell names, the VoiceOver cursor isn't in the table yet: go inside it with VO Shift Down Arrow. Type to put something in a cell, and press Return to finish and move down, or Tab to move right. Shift Return and Shift Tab go the other way.")),
             .press(String(localized: "Finish a cell and move right"), String(localized: "Tab"), KeyCombo(code: 48, vo: false)),
             .press(String(localized: "Finish a cell and move left"), String(localized: "Shift Tab"), KeyCombo(code: 48, vo: false, shift: true)),
-            .say(String(localized: "A formula starts with an equals sign. To add up three cells, go to a cell under them and type equals SUM, open bracket, B2 colon B4, close bracket, then Return. VoiceOver reads the result.")),
-            .say(String(localized: "Option Down Arrow adds a row below the selected cell, and Option Up Arrow one above. Option Right Arrow adds a column to the right, and Option Left Arrow one to the left. Shift and an arrow key selects more than one cell.")),
+            .say(String(localized: "A formula starts with an equals sign. To add up three cells, go to a cell under them and type equals SUM, open parenthesis, B2 colon B4, close parenthesis, then Return. The selection moves down a cell, so press Up Arrow to hear the result.")),
+            .say(String(localized: "With a cell selected, and not while you're typing in it, Option Down Arrow adds a row below, and Option Up Arrow one above. Option Right Arrow adds a column to the right, and Option Left Arrow one to the left. Shift and an arrow key selects more than one cell.")),
             .press(String(localized: "Add a row below"), String(localized: "Option Down Arrow"), KeyCombo(code: 125, vo: false, option: true)),
             .press(String(localized: "Add a column to the right"), String(localized: "Option Right Arrow"), KeyCombo(code: 124, vo: false, option: true)),
             .doIt(String(localized: "Now for real: put three numbers in a column, add them with a SUM formula, and save the spreadsheet with the name \(LessonNames.numbers)."),
@@ -558,7 +574,7 @@ struct Lesson: Identifiable, Hashable {
             .say(String(localized: "Keynote is Apple's presentation app. Choose a theme when you make a new presentation; the first slide has a title and a subtitle. On the left is the slide navigator, a list of slides, and in the middle is the slide itself.")),
             .doIt(String(localized: "Open Keynote, for real."), .frontApp("com.apple.iWork.Keynote"),
                   tip: String(localized: "Command Space, type Keynote, press Return. If you don't have Keynote, press Return here to skip.")),
-            .say(String(localized: "To write on a slide, move the VoiceOver cursor into the slide, find the title's text box, press VO Space to start editing, and type. Press Escape when you're done with that box. Command Shift N adds a new slide after the current one.")),
+            .say(String(localized: "To write on a slide, move the VoiceOver cursor into the slide, find the title's text box and select it with VO Space, then press Return to edit its text, and type. Press Escape when you're done with that box. If typing does nothing, go inside the text box with VO Shift Down Arrow. Command Shift N adds a new slide after the current one.")),
             .press(String(localized: "Add a new slide"), String(localized: "Command Shift N"), KeyCombo(code: 45, vo: false, shift: true, command: true)),
             .say(String(localized: "In the slide navigator, Up and Down Arrow move between slides, and VoiceOver reads each slide's title. Option Command P plays the slideshow from the current slide. During it, Right Arrow or Space goes to the next slide, Left Arrow goes back, and Escape ends the show.")),
             .press(String(localized: "Play the slideshow"), String(localized: "Option Command P"), KeyCombo(code: 35, vo: false, command: true, option: true)),
@@ -581,7 +597,7 @@ struct Lesson: Identifiable, Hashable {
             .say(String(localized: "Time to use the web for real. In Safari, press Command L, type apple.com/accessibility, and press Return.")),
             .doIt(String(localized: "Go to apple.com/accessibility in Safari, for real."), .safariAt(["apple.com", "accessibility"]),
                   tip: String(localized: "The first time, your Mac may ask to let VoiceOver Audio Split see Safari's address; choose OK.")),
-            .say(String(localized: "Now explore the page. VO Command H jumps from heading to heading, and the rotor, VO U, lists all the headings and links. Find a heading about vision, and read the text under it with VO A.")),
+            .say(String(localized: "Now explore the page. VO Command H jumps from heading to heading, and the rotor, VO U, lists all the headings and links. Find a section that interests you, such as one about vision or hearing, and read the text under its heading with VO A.")),
             .ask(String(localized: "On a long web page, what's usually the quickest way to get an overview?"),
                  [String(localized: "Read everything from the top with VO A"), String(localized: "The headings list in the rotor, with VO U"), String(localized: "Press Tab many times")], answer: 1,
                  why: String(localized: "The headings list shows the page's sections at a glance, and Return takes you to one.")),
@@ -606,7 +622,7 @@ struct Lesson: Identifiable, Hashable {
             .press(String(localized: "Edit bookmarks"), String(localized: "Option Command B"), KeyCombo(code: 11, vo: false, command: true, option: true)),
             .doIt(String(localized: "Now for real: remove the bookmark you just made. Press Return here when it's gone."), .yourWord,
                   tip: String(localized: "In Safari, press Option Command B, find the bookmark, and press Delete.")),
-            .say(String(localized: "The Reading List keeps articles to read later, even offline. Command Shift D adds the current page, and Control Command 2 shows the Reading List. To remove an item, find it in the list and press Delete.")),
+            .say(String(localized: "The Reading List keeps articles to read later; it can also save them for reading offline, if you turn that on in Safari Settings, Advanced. Command Shift D adds the current page, and Control Command 2 shows the Reading List. To remove an item, move to it in the list, open its shortcut menu with VO Shift M, and choose Remove Item.")),
             .press(String(localized: "Add the page to the Reading List"), String(localized: "Command Shift D"), KeyCombo(code: 2, vo: false, shift: true, command: true)),
             .say(String(localized: "Command Y shows your history, with a search field to find a page you visited. Command Left and Right Bracket go back and forward. Option Command L shows downloads. Command Plus and Command Minus make the page bigger or smaller, and Command 0 sets it back.")),
             .press(String(localized: "Show your history"), String(localized: "Command Y"), KeyCombo(code: 16, vo: false, command: true)),
@@ -614,7 +630,7 @@ struct Lesson: Identifiable, Hashable {
             .say(String(localized: "Command Shift N opens a private window, which doesn't keep history. And if a site won't work well with VoiceOver, Reader (Command Shift R) often helps, as can turning off Quick Nav while filling in forms.")),
             .ask(String(localized: "You want to read an article later, even without internet. What do you use?"),
                  [String(localized: "A private window"), String(localized: "The Reading List, with Command Shift D"), String(localized: "History, with Command Y")], answer: 1,
-                 why: String(localized: "The Reading List saves the article to read later, and can keep it for offline reading.")),
+                 why: String(localized: "The Reading List saves the article to read later, and can keep it for offline reading if you turn that on.")),
         ]),
     ]
 
@@ -654,6 +670,16 @@ enum LessonSchedule {
             .sorted { $0.value[1] < $1.value[1] }.map(\.key)
     }
 
+    /// Forgets saved keys that no longer match a step in the course (after lessons change).
+    static func prune() {
+        let valid = Set(Lesson.allPractice.map(\.id))
+        let preferences = Preferences.shared
+        let schedule = preferences.lessonSchedule.filter { valid.contains($0.key) }
+        if schedule.count != preferences.lessonSchedule.count { preferences.lessonSchedule = schedule }
+        let missed = preferences.lessonsMissed.filter(valid.contains)
+        if missed != preferences.lessonsMissed { preferences.lessonsMissed = missed }
+    }
+
     /// The schedule after an answer.
     static func update(_ schedule: [String: [Double]], id: String, right: Bool, now: Date = Date()) -> [String: [Double]] {
         var schedule = schedule
@@ -670,6 +696,7 @@ enum LessonSchedule {
 /// turn, so it doesn't cut off what VoiceOver is saying. Elsewhere it uses the usual voice.
 enum LessonVoice {
     static func say(_ text: String, waitForVoiceOver: Bool = false) {
+        Announcer.markSpeaking(text)
         guard NSApp.isActive, NSWorkspace.shared.isVoiceOverEnabled,
               let window = LessonRunner.shared.window, window.isVisible else { return Announcer.say(text) }
         NSAccessibility.post(element: window, notification: .announcementRequested, userInfo: [
@@ -760,6 +787,13 @@ final class LessonRunner: ObservableObject {
     /// Steps missed in this quick check, for one more round before the lesson ends.
     private var missedThisCheck: [(id: String, step: LessonStep)] = []
     private var inSecondRound = false
+    /// Whether the current step has been said, so keys can answer it.
+    private var presented = false
+    private var lastEscape = Date.distantPast
+    /// A VoiceOver menu or chooser is open, so plain keys are left to VoiceOver.
+    private var voMenuOpen = false
+    /// A mission check (which may ask Safari) is still running.
+    private var checkingMission = false
 
     private var mode: LessonMode { LessonMode.current }
     private var onYourOwn: Bool { mode == .onYourOwn }
@@ -769,12 +803,18 @@ final class LessonRunner: ObservableObject {
     // MARK: Running
 
     func start(_ lesson: Lesson, onlyMissed: Bool = false) {
+        LessonSchedule.prune()
+        if lesson.id == Lesson.daily.id && LessonSchedule.due().isEmpty {
+            return say(String(localized: "Nothing is due today. Do a lesson, or come back tomorrow."))
+        }
         PracticeModel.shared.stop()
         TypingTrainer.shared.stop()
         stopMission()
         self.lesson = lesson
         session += 1
         index = 0
+        stepNumber = 0
+        presented = false
         checkRight = 0
         deadline = nil
         report = []
@@ -787,15 +827,11 @@ final class LessonRunner: ObservableObject {
             if lesson.id == Lesson.daily.id {
                 let due = LessonSchedule.due()
                 chosen = Array(due.compactMap { id in all.first { $0.id == id } }.prefix(20))
-                guard !chosen.isEmpty else {
-                    return say(String(localized: "Nothing is due today. Do a lesson, or come back tomorrow."))
-                }
             } else {
                 // From the lessons you've done, or everything if none yet.
                 let done = Set(Preferences.shared.lessonsDone)
                 let learned = all.filter { done.contains(String($0.id.split(separator: ".").first ?? "")) }
                 chosen = Array((learned.isEmpty ? all : learned).shuffled().prefix(60))
-                deadline = Date().addingTimeInterval(64.5) // 60 seconds after the introduction.
             }
             steps = chosen.map(\.step)
             stepIDs = chosen.map(\.id)
@@ -841,7 +877,7 @@ final class LessonRunner: ObservableObject {
         var parts = [lesson.title + "."]
         if !goals.isEmpty { parts.append(String(localized: "In this lesson: \(goals)")) }
         if !isDrill { parts.append(String(localized: "It has \(steps.count) steps.")) }
-        parts.append(String(localized: "Return goes on, R repeats, B goes back, H gives a hint, S skips a step, and Escape stops."))
+        parts.append(String(localized: "Return goes on, R repeats, B goes back, H gives a hint, S skips a step, and Escape twice stops."))
         return parts.joined(separator: " ")
     }
 
@@ -854,6 +890,7 @@ final class LessonRunner: ObservableObject {
     /// Everything has a key, so it works without finding anything on screen.
     func welcome() {
         guard isBetweenLessons else { return }
+        LessonSchedule.prune()
         PracticeModel.shared.stop()
         TypingTrainer.shared.stop()
         session += 1
@@ -871,8 +908,7 @@ final class LessonRunner: ObservableObject {
 
     private func handleWelcome(_ keyCode: Int64, _ flags: CGEventFlags) -> Bool {
         guard NSApp.isActive, window == nil || NSApp.keyWindow === window else { return false }
-        let plain = flags.intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift]).isEmpty && !flags.contains(.maskAlphaShift)
-        guard plain else { return false }
+        guard KeyCombo.isPlain(flags) else { return false }
         let numbers: [Int64: LessonMode] = [18: .onYourOwn, 83: .onYourOwn, 19: .withTrainer, 84: .withTrainer]
         switch (phase, keyCode) {
         case (.choosingMode, _) where numbers[keyCode] != nil:
@@ -903,15 +939,16 @@ final class LessonRunner: ObservableObject {
         say("\(how) \(progress) " + String(localized: "Press Return to start \(next.title), or Escape to choose another lesson from the list."))
     }
 
-    private func endWelcome() {
+    private func endWelcome(announce: Bool = true) {
         Hotkeys.keyObserver = nil
         session += 1
         phase = .idle
-        say(String(localized: "Choose a lesson from the list. Each one is a button."))
+        if announce { say(String(localized: "Choose a lesson from the list. Each one is a button.")) }
     }
 
     func stop() {
-        if phase == .choosingMode || phase == .ready { return endWelcome() }
+        // Closing the window, or starting another trainer: nothing to choose from any more.
+        if phase == .choosingMode || phase == .ready { return endWelcome(announce: false) }
         guard phase != .idle && phase != .done else { return }
         Hotkeys.keyObserver = nil
         stopMission()
@@ -932,8 +969,19 @@ final class LessonRunner: ObservableObject {
 
     private func present() {
         if let deadline, Date() >= deadline { return finish() }
-        if isChallenge && index == 0 { Tones.play(.status) }
+        if isChallenge && deadline == nil {
+            // The minute starts with the first task, and ends even if nothing is pressed.
+            Tones.play(.status)
+            let end = Date().addingTimeInterval(60)
+            deadline = end
+            DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+                guard let self, self.deadline == end, self.phase == .checking else { return }
+                self.finish()
+            }
+        }
         guard let step = current else { return lessonPartDone() }
+        presented = true
+        voMenuOpen = false
         stepNumber = index + 1
         wrongTries = 0
         answered = false
@@ -974,19 +1022,25 @@ final class LessonRunner: ObservableObject {
         let step = index
         missionStart = nil
         guard mission != .yourWord else { return }
-        if mission == .safariMoreTabs || mission == .safariFewerTabs {
-            DispatchQueue.global(qos: .userInitiated).async {
-                let count = Mission.safariTabCount()
-                DispatchQueue.main.async { if self.session == thisSession, self.index == step { self.missionStart = count } }
-            }
-        }
+        checkingMission = false
         // Done already (for example Finder is in front): notice it after the instructions.
         missionTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             guard let self, self.session == thisSession, self.index == step else { return }
             if mission.needsAccessibility {
+                // One check at a time, so slow AppleScript doesn't pile up behind the announcements.
+                guard !self.checkingMission else { return }
+                self.checkingMission = true
+                let counting = mission == .safariMoreTabs || mission == .safariFewerTabs
                 DispatchQueue.global(qos: .userInitiated).async {
-                    let done = mission.isDone(self)
-                    DispatchQueue.main.async { if done, self.session == thisSession, self.index == step { self.missionDone() } }
+                    // Tab tasks count from the first time Safari can be asked.
+                    let count = counting && self.missionStart == nil ? Mission.safariTabCount() : nil
+                    let done = !counting || self.missionStart != nil ? mission.isDone(self) : false
+                    DispatchQueue.main.async {
+                        self.checkingMission = false
+                        guard self.session == thisSession, self.index == step else { return }
+                        if let count, self.missionStart == nil { self.missionStart = count }
+                        if done { self.missionDone() }
+                    }
                 }
             } else if mission.isDone(self) {
                 self.missionDone()
@@ -1023,6 +1077,8 @@ final class LessonRunner: ObservableObject {
 
     /// Back one step (B), for hearing an explanation again or trying a key once more.
     private func goBack() {
+        // In a check, going back would score a question twice: hear this one again instead.
+        if phase == .checking { return repeatCurrent() }
         stopMission()
         session += 1 // Cancels anything scheduled for the step we're leaving.
         index = max(0, index - 1)
@@ -1031,12 +1087,13 @@ final class LessonRunner: ObservableObject {
 
     /// Skip a step (S): it counts as missed, so it comes back in practice.
     private func skip() {
-        guard current != nil else { return }
+        guard current != nil, !answered else { return }
         stopMission()
         if case .practice(let task, let keys, _, _, _) = current?.kind {
             remember(currentID, missed: true)
-            note(task: task, keys: keys, skipped: true)
-            if phase == .checking, let step = current { missedThisCheck.append((currentID, step)) }
+            if phase == .checking || isDrill { note(task: task, keys: keys, skipped: true) }
+            // A wrong press already put it in the second round.
+            if phase == .checking, wrongTries == 0, let step = current { missedThisCheck.append((currentID, step)) }
         }
         answered = true
         session += 1
@@ -1065,6 +1122,7 @@ final class LessonRunner: ObservableObject {
             say(onYourOwn
                 ? String(localized: "Now a quick check, to make it stick. I'll name each task without the keys; press them. If you're not sure, press H for a hint, or R to hear the task again.")
                 : String(localized: "Quick check."))
+            presented = false
             return startAfterSpeaking()
         }
         // Mastery: what was missed gets one more go, so the lesson ends on success.
@@ -1079,6 +1137,7 @@ final class LessonRunner: ObservableObject {
             say(onYourOwn
                 ? String(localized: "Let's go over the tricky ones once more. Take your time.")
                 : String(localized: "Once more, the ones that were missed."))
+            presented = false
             return startAfterSpeaking()
         }
         finish()
@@ -1118,7 +1177,7 @@ final class LessonRunner: ObservableObject {
             let left = LessonSchedule.due().count
             return say(String(localized: "Daily practice done. \(score).") + (left > 0 ? " " + String(localized: "\(left) still due; they'll come back in today's next practice.") : ""))
         }
-        if !isDrill {
+        if !isDrill || lesson.id == Lesson.review.id {
             var done = Preferences.shared.lessonsDone
             if !done.contains(lesson.id) { done.append(lesson.id) }
             Preferences.shared.lessonsDone = done
@@ -1139,7 +1198,9 @@ final class LessonRunner: ObservableObject {
             parts.append(String(localized: "The session report is in the window."))
         }
         if let next { parts.append(String(localized: "Next: \(next.title).")) }
-        else if !isDrill { parts.append(String(localized: "That's the whole course. Well done!")) }
+        else if Lesson.course.allSatisfy({ Preferences.shared.lessonsDone.contains($0.id) }) {
+            parts.append(String(localized: "That's the whole course. Well done!"))
+        }
         Tones.play(.device)
         say(parts.joined(separator: " "))
     }
@@ -1149,10 +1210,40 @@ final class LessonRunner: ObservableObject {
     /// Return, R, B, H, S and Escape steer the lesson; while practicing, the answer is
     /// checked. Everything else goes through, so VoiceOver works normally in explanations.
     private func handle(_ keyCode: Int64, _ flags: CGEventFlags, letter: Character?) -> Bool {
+        let taken = steer(keyCode, flags, letter: letter)
+        // VoiceOver's rotor, menus, item chooser or find opened: its keys are its own until it closes.
+        if !taken, KeyCombo.isVO(flags), let letter, ["u", "m", "i", "f"].contains(letter) { voMenuOpen = true }
+        return taken
+    }
+
+    private func steer(_ keyCode: Int64, _ flags: CGEventFlags, letter: Character?) -> Bool {
         guard NSApp.isActive, window == nil || NSApp.keyWindow === window else { return false }
-        let plain = flags.intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift]).isEmpty && !flags.contains(.maskAlphaShift)
+        let plain = KeyCombo.isPlain(flags)
+        if voMenuOpen && plain {
+            // Return or Escape closes it; letters narrow it; arrows move in it.
+            if keyCode == 36 || keyCode == Key.escape { voMenuOpen = false }
+            return false
+        }
         if keyCode == Key.escape && plain {
-            DispatchQueue.main.async { self.stop() }
+            // Escape also closes VoiceOver's rotor and menus, so it goes through, and only
+            // a second Escape soon after stops the lesson.
+            if Date().timeIntervalSince(lastEscape) < 1.5 {
+                lastEscape = .distantPast
+                DispatchQueue.main.async { self.stop() }
+                return true
+            }
+            lastEscape = Date()
+            let thisSession = session
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                guard self.session == thisSession, Date().timeIntervalSince(self.lastEscape) < 1.5 else { return }
+                if self.onYourOwn { self.say(String(localized: "Press Escape again to stop the lesson.")) }
+            }
+            return false
+        }
+        // Between a step's introduction and the step itself, keys go through; Return starts it.
+        if !presented {
+            guard plain && keyCode == 36 else { return false }
+            DispatchQueue.main.async { self.session += 1; self.present() }
             return true
         }
         // Typing in the practice text field: letters go to the field; Return still steers the lesson.
@@ -1241,7 +1332,8 @@ final class LessonRunner: ObservableObject {
         // A quick second press of the right keys mustn't skip the next step.
         guard current != nil, !answered else { return }
         answered = true
-        if wrongTries == 0 && phase == .checking {
+        // The second round is another go, not a first try: it doesn't change the score or schedule.
+        if wrongTries == 0 && phase == .checking && !inSecondRound {
             checkRight += 1
             remember(currentID, missed: false)
         }
@@ -1361,7 +1453,8 @@ final class LessonRunner: ObservableObject {
     private func note(task: String, keys: String, skipped: Bool) {
         let tries = wrongTries + (skipped ? 0 : 1)
         if inSecondRound, let line = report.firstIndex(where: { $0.task == task }) {
-            report[line].tries += tries
+            // Skipped the first time counts as a try, so it's not "right first time".
+            report[line].tries += tries + (report[line].skipped ? 1 : 0)
             report[line].skipped = skipped
         } else {
             report.append(LessonResult(task: task, keys: keys, tries: tries, skipped: skipped))
@@ -1475,7 +1568,7 @@ struct LessonsView: View {
                         Button(String(localized: "Say It Again")) { runner.repeatCurrent() }
                         Button(String(localized: "Stop Lesson")) { runner.stop() }
                     }
-                    Text(String(localized: "Return goes on, R repeats, B goes back, H gives a hint, S skips, Escape stops."))
+                    Text(String(localized: "Return goes on, R repeats, B goes back, H gives a hint, S skips, Escape twice stops."))
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 if LessonMode.current == .withTrainer, let lesson = runner.lesson, !LessonGuide.trainer(lesson.id).isEmpty {

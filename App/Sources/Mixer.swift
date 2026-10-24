@@ -59,6 +59,8 @@ enum Mixer {
     nonisolated(unsafe) private static var routedSources = 0
     /// First channel of each left/right output pair.
     nonisolated(unsafe) private static let pairs = allocate(0, 2)
+    /// Whether each pair is really one channel (a mono main device), even with another device after it.
+    nonisolated(unsafe) private static let pairIsMono = allocate(false, 2)
     nonisolated(unsafe) private static var pairCount = 1
 
     nonisolated(unsafe) static var duckingEnabled = false
@@ -166,12 +168,15 @@ enum Mixer {
         for (index, source) in sources.prefix(maxSources).enumerated() {
             var placement: [Int: Route]
             var gain: Float
+            /// Routed to speech's own device, not the main one.
+            var onSpeechDevice = false
             switch source {
             case .speech:
                 speechFlags[index] = true
                 gain = s.speechMuted ? 0 : s.speechGain
                 if separateSpeech, let base = speechDeviceChannel {
                     placement = place(.both, stereo: false, base: base)
+                    onSpeechDevice = true
                 } else if s.split == nil || s.layout == .speechBoth {
                     placement = place(.both, stereo: false)
                 } else {
@@ -186,6 +191,7 @@ enum Mixer {
             case .callsWithSpeech:
                 if separateSpeech, let base = speechDeviceChannel {
                     placement = place(.both, stereo: false, base: base)
+                    onSpeechDevice = true
                 } else if s.split == nil || s.layout == .speechBoth {
                     placement = place(.both, stereo: true)
                 } else {
@@ -210,8 +216,9 @@ enum Mixer {
                     }
                 }
             }
-            if mainChannels == 1 {
+            if mainChannels == 1 && !onSpeechDevice {
                 // One speaker: both ears' routes play on it, at the level of one.
+                // (Channel 1 may then be speech's own device, which this leaves alone.)
                 let left = placement[0], right = placement[1]
                 if let left, let right {
                     placement[0] = Route(fromLeft: (left.fromLeft + right.fromLeft) / 2, fromRight: (left.fromRight + right.fromRight) / 2)
@@ -230,6 +237,8 @@ enum Mixer {
         for i in 0..<maxSources { isSpeech[i] = speechFlags[i]; toneEnabled[i] = toneFlags[i] }
         pairs[0] = 0
         pairs[1] = speechDeviceChannel ?? 0
+        pairIsMono[0] = mainChannels == 1
+        pairIsMono[1] = false
         pairCount = speechDeviceChannel == nil ? 1 : 2
         routedSources = min(sources.count, maxSources)
     }
@@ -364,7 +373,7 @@ enum Mixer {
         let release = 1 - expf(-1 / Float(renderRate * 0.15))
         for p in 0..<pairCount {
             let l = pairs[p], r = pairs[p] + 1
-            if r >= totalChannels, l < totalChannels, let mono = channelBase[l] {
+            if pairIsMono[p] || r >= totalChannels, l < totalChannels, let mono = channelBase[l] {
                 // A one-channel device: still apply the volume limit and the safety clamp.
                 let stride = channelStride[l]
                 var gain = limiterGain[p]

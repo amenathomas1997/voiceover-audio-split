@@ -172,14 +172,15 @@ struct Preset: Codable, Hashable, Identifiable {
     var oneEar: OneEar
     var earBalance: Int
 
+    /// Fixed IDs, so apps and sites set to a default preset keep it after a restart or a restore.
     static let defaults: [Preset] = [
-        Preset(name: String(localized: "Meeting"), split: "left", balance: 6, layout: .opposite, stereoOthers: false, ducking: false,
+        Preset(id: UUID(uuidString: "5E1A0001-0000-4000-8000-000000000001")!, name: String(localized: "Meeting"), split: "left", balance: 6, layout: .opposite, stereoOthers: false, ducking: false,
                duckingAmount: 10, callMode: .bothEars, clarity: true, leveler: true, volumeLimit: false,
                volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
-        Preset(name: String(localized: "Music"), split: "off", balance: 0, layout: .opposite, stereoOthers: true, ducking: true,
+        Preset(id: UUID(uuidString: "5E1A0001-0000-4000-8000-000000000002")!, name: String(localized: "Music"), split: "off", balance: 0, layout: .opposite, stereoOthers: true, ducking: true,
                duckingAmount: 9, callMode: .split, clarity: false, leveler: false, volumeLimit: false,
                volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
-        Preset(name: String(localized: "Focus"), split: "left", balance: 9, layout: .opposite, stereoOthers: false, ducking: true,
+        Preset(id: UUID(uuidString: "5E1A0001-0000-4000-8000-000000000003")!, name: String(localized: "Focus"), split: "left", balance: 9, layout: .opposite, stereoOthers: false, ducking: true,
                duckingAmount: 15, callMode: .split, clarity: true, leveler: true, volumeLimit: false,
                volumeLimitLevel: -6, oneEar: .off, earBalance: 0),
     ]
@@ -321,6 +322,10 @@ final class Preferences: ObservableObject {
     @Published var lessonChallengeBest: Int { didSet { save(lessonChallengeBest, "lessonChallengeBest") } }
     /// VoiceOver lessons: on your own (more detail and feedback) or with a trainer (a LessonMode).
     @Published var lessonMode: String { didSet { save(lessonMode, "lessonMode") } }
+    /// VoiceOver Practice: learn mode (keys said with each task) or quiz mode.
+    @Published var practiceLearnMode: Bool { didSet { save(practiceLearnMode, "practiceLearnMode") } }
+    /// Typing Trainer: say each key typed correctly.
+    @Published var typingSayEachKey: Bool { didSet { save(typingSayEachKey, "typingSayEachKey") } }
     /// Listen for "Launch VoiceOver training" anywhere on the Mac.
     @Published var voiceCommand: Bool { didSet { save(voiceCommand, "voiceCommand") } }
 
@@ -399,11 +404,23 @@ final class Preferences: ObservableObject {
         lessonSchedule = store.dictionary(forKey: "lessonSchedule") as? [String: [Double]] ?? [:]
         lessonChallengeBest = store.integer(forKey: "lessonChallengeBest")
         lessonMode = store.string(forKey: "lessonMode") ?? LessonMode.onYourOwn.rawValue
+        practiceLearnMode = store.object(forKey: "practiceLearnMode") as? Bool ?? true
+        typingSayEachKey = store.bool(forKey: "typingSayEachKey")
         voiceCommand = store.bool(forKey: "voiceCommand")
         placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
         presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
             ?? Preset.defaults
+    }
+
+    /// Apps and sites set to a preset that's gone go back to no preset.
+    func forgetMissingPresets() {
+        let ids = Set(presets.map(\.id.uuidString))
+        let apps = appPresets.filter { ids.contains($0.value) }
+        if apps != appPresets { appPresets = apps }
+        let sites = sitePresets.filter { ids.contains($0.value) }
+        if sites != sitePresets { sitePresets = sites }
+        if !otherAppsPreset.isEmpty && !ids.contains(otherAppsPreset) { otherAppsPreset = "" }
     }
 
     func rule(for bundleID: String) -> AppRule? {

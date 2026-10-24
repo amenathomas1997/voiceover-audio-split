@@ -132,7 +132,7 @@ struct UserCommandsSection: View {
 
 enum SettingsTransfer {
     /// Settings that make sense on another Mac. Left out: permissions and consent
-    /// (like allowing image uploads), setup progress, and this Mac's microphone state.
+    /// (like allowing image uploads), setup progress, and this Mac's microphone use (voice commands).
     static let portableKeys = [
         "layout", "stereoOthers", "ducking", "duckingAmount", "speechDeviceUID", "callMode", "callApps",
         "playTones", "modifier", "balanceStep", "balanceLimit", "clarity", "leveler", "volumeLimit",
@@ -142,7 +142,8 @@ enum SettingsTransfer {
         "newsFeeds", "keepAudioAwake", "sitePresets", "announceDownloads", "announceDevices", "announceNetwork",
         "announceBattery", "announceLock", "clockInterval", "userCommands", "beepsWhenSilenced",
         "announceClipboard", "translateTarget", "preferIPhoneCamera", "balance", "lastSide",
-        "announceCamera", "announceMicrophone", "customLabels", "placeMarkers", "typingBest", "typingSound", "lessonsDone", "lessonsMissed", "lessonSchedule", "lessonChallengeBest", "lessonMode", "voiceCommand",
+        "announceCamera", "announceMicrophone", "customLabels", "placeMarkers", "typingBest", "typingSound", "lessonsDone", "lessonsMissed", "lessonSchedule", "lessonChallengeBest", "lessonMode",
+        "practiceLearnMode", "typingSayEachKey",
     ]
 
     static func exportData() throws -> Data {

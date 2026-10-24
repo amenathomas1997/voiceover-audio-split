@@ -991,6 +991,28 @@
         }
       }
     },
+    "%lld characters have no braille here and were left out." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Zeichen haben hier keine Brailleschrift und wurden weggelassen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld caracteres no tienen braille aquí y se omitieron."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld caractères n'ont pas d'équivalent braille ici et ont été omis."
+          }
+        }
+      }
+    },
     "%lld commands" : {
       "localizations" : {
         "de" : {
@@ -2641,24 +2663,24 @@
         }
       }
     },
-    "A formula starts with an equals sign. To add up three cells, go to a cell under them and type equals SUM, open bracket, B2 colon B4, close bracket, then Return. VoiceOver reads the result." : {
+    "A formula starts with an equals sign. To add up three cells, go to a cell under them and type equals SUM, open parenthesis, B2 colon B4, close parenthesis, then Return. The selection moves down a cell, so press Up Arrow to hear the result." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Formel beginnt mit einem Gleichheitszeichen. Um drei Zellen zu addieren, gehe zu einer Zelle darunter und tippe Gleich, SUMME, Klammer auf, B2 Doppelpunkt B4, Klammer zu, dann den Zeilenschalter. VoiceOver liest das Ergebnis vor."
+            "value" : "Eine Formel beginnt mit einem Gleichheitszeichen. Um drei Zellen zu addieren, gehe zu einer Zelle darunter und tippe Gleich, SUMME, Klammer auf, B2 Doppelpunkt B4, Klammer zu, dann den Zeilenschalter. Die Auswahl geht dabei eine Zelle nach unten, also drücke Pfeil nach oben, um das Ergebnis zu hören."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una fórmula empieza con el signo igual. Para sumar tres celdas, ve a una celda debajo de ellas y escribe igual SUMA, abre paréntesis, B2 dos puntos B4, cierra paréntesis, y luego pulsa Retorno. VoiceOver lee el resultado."
+            "value" : "Una fórmula empieza con el signo igual. Para sumar tres celdas, ve a una celda debajo de ellas y escribe igual SUMA, abre paréntesis, B2 dos puntos B4, cierra paréntesis, y luego pulsa Retorno. La selección baja una celda, así que pulsa Flecha arriba para oír el resultado."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une formule commence par un signe égal. Pour additionner trois cellules, allez dans une cellule en dessous et tapez égal SOMME, parenthèse ouvrante, B2 deux-points B4, parenthèse fermante, puis appuyez sur Retour. VoiceOver lit le résultat."
+            "value" : "Une formule commence par un signe égal. Pour additionner trois cellules, allez dans une cellule en dessous et tapez égal SOMME, parenthèse ouvrante, B2 deux-points B4, parenthèse fermante, puis appuyez sur Retour. La sélection descend d'une cellule : appuyez sur Flèche haut pour entendre le résultat."
           }
         }
       }
@@ -6909,24 +6931,24 @@
         }
       }
     },
-    "Command N starts a new message. In it, Tab moves from the To field to Subject and then to the message itself. Command Shift D sends it. Command R replies to a message, and Command Shift R replies to everyone." : {
+    "Command N starts a new message. In it, Tab moves from the To field to Cc, then Subject, then the message itself. Command Shift D sends it. Command R replies to a message, and Command Shift R replies to everyone." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Befehl N beginnt eine neue E-Mail. Darin geht Tab vom Feld „An“ zu „Betreff“ und dann zum Text der E-Mail. Befehl Umschalt D sendet sie. Befehl R antwortet auf eine E-Mail, und Befehl Umschalt R antwortet allen."
+            "value" : "Befehl N beginnt eine neue E-Mail. Darin geht Tab vom Feld „An“ zu „Kopie“, dann zu „Betreff“ und dann zum Text der E-Mail. Befehl Umschalt D sendet sie. Befehl R antwortet auf eine E-Mail, und Befehl Umschalt R antwortet allen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comando N empieza un mensaje nuevo. En él, Tab pasa del campo Para al Asunto y luego al mensaje en sí. Comando Mayúsculas D lo envía. Comando R responde a un mensaje, y Comando Mayúsculas R responde a todos."
+            "value" : "Comando N empieza un mensaje nuevo. En él, Tab pasa del campo Para a Cc, luego al Asunto y después al mensaje en sí. Comando Mayúsculas D lo envía. Comando R responde a un mensaje, y Comando Mayúsculas R responde a todos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commande N crée un nouveau message. Dans celui-ci, Tab passe du champ À à l'Objet, puis au message lui-même. Commande Maj D l'envoie. Commande R répond à un message, et Commande Maj R répond à tous."
+            "value" : "Commande N crée un nouveau message. Dans celui-ci, Tab passe du champ À au champ Cc, puis à l'Objet, puis au message lui-même. Commande Maj D l'envoie. Commande R répond à un message, et Commande Maj R répond à tous."
           }
         }
       }
@@ -8955,6 +8977,28 @@
         }
       }
     },
+    "Cut" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausschneiden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cortar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couper"
+          }
+        }
+      }
+    },
     "D: next output device. X: mute the microphone. 1 to 9: presets." : {
       "localizations" : {
         "de" : {
@@ -9985,6 +10029,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Équilibre des oreilles : oreille droite %lld décibels plus fort"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bearbeiten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edición"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Édition"
           }
         }
       }
@@ -13377,28 +13443,6 @@
         }
       }
     },
-    "Inside a table, hold VO and use the arrow keys to move from cell to cell; VoiceOver reads the column heading as you go. On real websites, the rotor's headings list (VO U) is often the fastest way to get an overview." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Halte in einer Tabelle VO gedrückt und bewege dich mit den Pfeiltasten von Zelle zu Zelle; VoiceOver liest dabei die Spaltenüberschrift vor. Auf echten Websites ist die Überschriftenliste des Rotors (VO U) oft der schnellste Weg zu einem Überblick."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dentro de una tabla, mantén pulsadas las teclas VO y usa las flechas para moverte de celda en celda; VoiceOver lee el encabezado de columna a medida que avanzas. En sitios web reales, la lista de encabezados del rotor (VO U) suele ser la forma más rápida de tener una vista general."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dans un tableau, maintenez VO et utilisez les touches fléchées pour passer d'une cellule à l'autre ; VoiceOver lit l'en-tête de colonne au fur et à mesure. Sur de vrais sites web, la liste des titres du rotor (VO U) est souvent le moyen le plus rapide d'avoir une vue d'ensemble."
-          }
-        }
-      }
-    },
     "Interact" : {
       "localizations" : {
         "de" : {
@@ -16303,24 +16347,24 @@
         }
       }
     },
-    "Move between cells with the arrow keys; VoiceOver says the cell's name and what's in it. Type to put something in a cell, and press Return to finish and move down, or Tab to move right. Shift Return and Shift Tab go the other way." : {
+    "Move between cells with the arrow keys; VoiceOver says the cell's name and what's in it. If it doesn't say cell names, the VoiceOver cursor isn't in the table yet: go inside it with VO Shift Down Arrow. Type to put something in a cell, and press Return to finish and move down, or Tab to move right. Shift Return and Shift Tab go the other way." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bewege dich mit den Pfeiltasten zwischen den Zellen; VoiceOver sagt den Namen der Zelle und ihren Inhalt. Tippe, um etwas in eine Zelle einzugeben, und drücke den Zeilenschalter, um abzuschließen und nach unten zu gehen, oder Tab, um nach rechts zu gehen. Umschalt Zeilenschalter und Umschalt Tab gehen in die andere Richtung."
+            "value" : "Bewege dich mit den Pfeiltasten zwischen den Zellen; VoiceOver sagt den Namen der Zelle und ihren Inhalt. Wenn keine Zellennamen angesagt werden, ist der VoiceOver-Cursor noch nicht in der Tabelle: Geh mit VO Umschalt Pfeil nach unten hinein. Tippe, um etwas in eine Zelle einzugeben, und drücke den Zeilenschalter, um abzuschließen und nach unten zu gehen, oder Tab, um nach rechts zu gehen. Umschalt Zeilenschalter und Umschalt Tab gehen in die andere Richtung."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muévete entre celdas con las flechas; VoiceOver dice el nombre de la celda y lo que contiene. Escribe para poner algo en una celda, y pulsa Retorno para terminar y bajar, o Tab para ir a la derecha. Mayúsculas Retorno y Mayúsculas Tab van en sentido contrario."
+            "value" : "Muévete entre celdas con las flechas; VoiceOver dice el nombre de la celda y lo que contiene. Si no dice nombres de celdas, el cursor de VoiceOver aún no está en la tabla: entra en ella con VO Mayúsculas Flecha abajo. Escribe para poner algo en una celda, y pulsa Retorno para terminar y bajar, o Tab para ir a la derecha. Mayúsculas Retorno y Mayúsculas Tab van en sentido contrario."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passez d'une cellule à l'autre avec les touches fléchées ; VoiceOver énonce le nom de la cellule et son contenu. Tapez pour remplir une cellule, puis appuyez sur Retour pour valider et descendre, ou sur Tab pour aller à droite. Maj Retour et Maj Tab vont dans l'autre sens."
+            "value" : "Passez d'une cellule à l'autre avec les touches fléchées ; VoiceOver énonce le nom de la cellule et son contenu. S'il n'énonce pas de noms de cellules, le curseur VoiceOver n'est pas encore dans le tableau : entrez-y avec VO Maj Flèche bas. Tapez pour remplir une cellule, puis appuyez sur Retour pour valider et descendre, ou sur Tab pour aller à droite. Maj Retour et Maj Tab vont dans l'autre sens."
           }
         }
       }
@@ -17333,6 +17377,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune réponse n'a été renvoyée."
+          }
+        }
+      }
+    },
+    "No answer, so I didn't do it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Antwort, also habe ich es nicht getan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hubo respuesta, así que no lo hice."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de réponse, je ne l'ai donc pas fait."
           }
         }
       }
@@ -18569,24 +18635,24 @@
         }
       }
     },
-    "Now explore the page. VO Command H jumps from heading to heading, and the rotor, VO U, lists all the headings and links. Find a heading about vision, and read the text under it with VO A." : {
+    "Now explore the page. VO Command H jumps from heading to heading, and the rotor, VO U, lists all the headings and links. Find a section that interests you, such as one about vision or hearing, and read the text under its heading with VO A." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erkunde jetzt die Seite. VO Befehl H springt von Überschrift zu Überschrift, und der Rotor, VO U, listet alle Überschriften und Links auf. Suche eine Überschrift zum Thema Sehen und lies den Text darunter mit VO A."
+            "value" : "Erkunde jetzt die Seite. VO Befehl H springt von Überschrift zu Überschrift, und der Rotor, VO U, listet alle Überschriften und Links auf. Suche einen Abschnitt, der dich interessiert, etwa zum Sehen oder Hören, und lies den Text unter seiner Überschrift mit VO A."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora explora la página. VO Comando H salta de encabezado en encabezado, y el rotor, VO U, enumera todos los encabezados y enlaces. Busca un encabezado sobre la visión y lee el texto que hay debajo con VO A."
+            "value" : "Ahora explora la página. VO Comando H salta de encabezado en encabezado, y el rotor, VO U, enumera todos los encabezados y enlaces. Busca una sección que te interese, como una sobre la visión o la audición, y lee el texto bajo su encabezado con VO A."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Explorez maintenant la page. VO Commande H saute d'un titre à l'autre, et le rotor, VO U, énumère tous les titres et liens. Trouvez un titre sur la vision, et lisez le texte qui le suit avec VO A."
+            "value" : "Explorez maintenant la page. VO Commande H saute d'un titre à l'autre, et le rotor, VO U, énumère tous les titres et liens. Trouvez une section qui vous intéresse, par exemple sur la vision ou l'audition, et lisez le texte sous son titre avec VO A."
           }
         }
       }
@@ -19845,6 +19911,28 @@
         }
       }
     },
+    "Open it with its password and save a copy without one, or ask for an unlocked copy." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffne es mit seinem Passwort und sichere eine Kopie ohne Passwort, oder bitte um eine entsperrte Kopie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ábrelo con su contraseña y guarda una copia sin ella, o pide una copia desbloqueada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrez-le avec son mot de passe et enregistrez-en une copie sans mot de passe, ou demandez une copie déverrouillée."
+          }
+        }
+      }
+    },
     "Open or Play" : {
       "localizations" : {
         "de" : {
@@ -20505,28 +20593,6 @@
         }
       }
     },
-    "Option Down Arrow adds a row below the selected cell, and Option Up Arrow one above. Option Right Arrow adds a column to the right, and Option Left Arrow one to the left. Shift and an arrow key selects more than one cell." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wahl Pfeil nach unten fügt unter der ausgewählten Zelle eine Zeile hinzu, und Wahl Pfeil nach oben eine darüber. Wahl Pfeil nach rechts fügt rechts eine Spalte hinzu, und Wahl Pfeil nach links eine links. Umschalt und eine Pfeiltaste wählen mehr als eine Zelle aus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opción Flecha abajo añade una fila debajo de la celda seleccionada, y Opción Flecha arriba una encima. Opción Flecha derecha añade una columna a la derecha, y Opción Flecha izquierda una a la izquierda. Mayúsculas con una flecha selecciona más de una celda."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Option Flèche bas ajoute une ligne sous la cellule sélectionnée, et Option Flèche haut une ligne au-dessus. Option Flèche droite ajoute une colonne à droite, et Option Flèche gauche une colonne à gauche. Maj avec une touche fléchée sélectionne plusieurs cellules."
-          }
-        }
-      }
-    },
     "Option Left Arrow" : {
       "localizations" : {
         "de" : {
@@ -20857,24 +20923,24 @@
         }
       }
     },
-    "Pages checks spelling as you type. Command Semicolon moves to the next misspelled word, and then VO Shift M offers suggestions. Command Shift Colon opens the full spelling and grammar window." : {
+    "Pages checks spelling as you type. Command Semicolon moves to the next misspelled word, and then VO Shift M offers suggestions. Command Shift Semicolon, also called Command Colon, opens the full spelling and grammar window." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pages prüft die Rechtschreibung beim Tippen. Befehl Semikolon geht zum nächsten falsch geschriebenen Wort, und dann bietet VO Umschalt M Vorschläge an. Befehl Umschalt Doppelpunkt öffnet das vollständige Fenster für Rechtschreibung und Grammatik."
+            "value" : "Pages prüft die Rechtschreibung beim Tippen. Befehl Semikolon geht zum nächsten falsch geschriebenen Wort, und dann bietet VO Umschalt M Vorschläge an. Befehl Umschalt Semikolon, auch Befehl Doppelpunkt genannt, öffnet das vollständige Fenster für Rechtschreibung und Grammatik."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pages revisa la ortografía mientras escribes. Comando Punto y coma va a la siguiente palabra mal escrita, y luego VO Mayúsculas M ofrece sugerencias. Comando Mayúsculas Dos puntos abre la ventana completa de ortografía y gramática."
+            "value" : "Pages revisa la ortografía mientras escribes. Comando Punto y coma va a la siguiente palabra mal escrita, y luego VO Mayúsculas M ofrece sugerencias. Comando Mayúsculas Punto y coma, también llamado Comando Dos puntos, abre la ventana completa de ortografía y gramática."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pages vérifie l'orthographe pendant que vous tapez. Commande Point-virgule va au mot mal orthographié suivant, puis VO Maj M propose des suggestions. Commande Maj Deux-points ouvre la fenêtre complète Orthographe et grammaire."
+            "value" : "Pages vérifie l'orthographe pendant que vous tapez. Commande Point-virgule va au mot mal orthographié suivant, puis VO Maj M propose des suggestions. Commande Maj Point-virgule, aussi appelé Commande Deux-points, ouvre la fenêtre complète Orthographe et grammaire."
           }
         }
       }
@@ -20919,6 +20985,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pages est le traitement de texte d'Apple, pour les lettres, les rapports et les prospectus. Il est gratuit sur l'App Store si vous ne l'avez pas. Quand vous créez un nouveau document, Pages affiche un sélecteur de modèles : parcourez les modèles avec les touches fléchées, choisissez Vierge, puis appuyez sur Retour."
+          }
+        }
+      }
+    },
+    "Paste" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einsetzen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pegar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coller"
           }
         }
       }
@@ -21781,6 +21869,28 @@
         }
       }
     },
+    "Press Escape again to stop the lesson." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücke noch einmal Escape, um die Lektion zu beenden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsa Escape otra vez para detener la lección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez à nouveau sur Échap pour arrêter la leçon."
+          }
+        }
+      }
+    },
     "Press H if you'd like a hint." : {
       "localizations" : {
         "de" : {
@@ -21975,6 +22085,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appuyez deux fois rapidement sur VO M pour les menus supplémentaires : les icônes à droite de la barre des menus, comme le Wi-Fi, le son, la batterie et le casque de cette app. VO D va au Dock, où se trouvent vos apps."
+          }
+        }
+      }
+    },
+    "Press it?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soll ich es drücken?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Lo pulso?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je l'active ?"
           }
         }
       }
@@ -23343,6 +23475,28 @@
         }
       }
     },
+    "Redo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rehacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rétablir"
+          }
+        }
+      }
+    },
     "Refresh Script List" : {
       "localizations" : {
         "de" : {
@@ -23387,24 +23541,24 @@
         }
       }
     },
-    "Remember to turn Quick Nav off before typing, or letters move you around instead of typing. When you're in a text field, VoiceOver usually types normally anyway." : {
+    "Remember to turn Quick Nav off before typing, or keys may move you around instead of typing. If typing does something unexpected, check whether Quick Nav is on." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Denke daran, die Schnellnavigation vor dem Tippen auszuschalten, sonst bewegen dich Buchstaben herum, statt getippt zu werden. In einem Textfeld tippt VoiceOver meist ohnehin normal."
+            "value" : "Denke daran, die Schnellnavigation vor dem Tippen auszuschalten, sonst bewegen dich Tasten vielleicht herum, statt zu tippen. Wenn beim Tippen etwas Unerwartetes passiert, prüfe, ob die Schnellnavigation eingeschaltet ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recuerda desactivar la Navegación rápida antes de escribir, o las letras te moverán en lugar de escribirse. Cuando estás en un campo de texto, VoiceOver normalmente escribe con normalidad de todos modos."
+            "value" : "Recuerda desactivar la Navegación rápida antes de escribir, o las teclas pueden moverte en lugar de escribir. Si al escribir pasa algo inesperado, comprueba si la Navegación rápida está activada."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pensez à désactiver la Navigation rapide avant de taper, sinon les lettres vous déplacent au lieu d'écrire. Quand vous êtes dans un champ de texte, VoiceOver tape généralement normalement de toute façon."
+            "value" : "Pensez à désactiver la Navigation rapide avant de taper, sinon les touches peuvent vous déplacer au lieu d'écrire. Si la saisie fait quelque chose d'inattendu, vérifiez si la Navigation rapide est activée."
           }
         }
       }
@@ -24025,46 +24179,46 @@
         }
       }
     },
-    "Return goes on, R repeats, B goes back, H gives a hint, S skips a step, and Escape stops." : {
+    "Return goes on, R repeats, B goes back, H gives a hint, S skips a step, and Escape twice stops." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeilenschalter macht weiter, R wiederholt, B geht zurück, H gibt einen Hinweis, S überspringt einen Schritt, und Escape beendet."
+            "value" : "Zeilenschalter macht weiter, R wiederholt, B geht zurück, H gibt einen Hinweis, S überspringt einen Schritt, und zweimal Escape beendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retorno continúa, R repite, B vuelve atrás, H da una pista, S salta un paso y Escape sale."
+            "value" : "Retorno continúa, R repite, B vuelve atrás, H da una pista, S salta un paso y Escape dos veces sale."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retour pour continuer, R pour répéter, B pour revenir en arrière, H pour un indice, S pour passer une étape, et Échap pour arrêter."
+            "value" : "Retour pour continuer, R pour répéter, B pour revenir en arrière, H pour un indice, S pour passer une étape, et deux fois Échap pour arrêter."
           }
         }
       }
     },
-    "Return goes on, R repeats, B goes back, H gives a hint, S skips, Escape stops." : {
+    "Return goes on, R repeats, B goes back, H gives a hint, S skips, Escape twice stops." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeilenschalter macht weiter, R wiederholt, B geht zurück, H gibt einen Hinweis, S überspringt, Escape beendet."
+            "value" : "Zeilenschalter macht weiter, R wiederholt, B geht zurück, H gibt einen Hinweis, S überspringt, zweimal Escape beendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retorno continúa, R repite, B vuelve atrás, H da una pista, S salta, Escape sale."
+            "value" : "Retorno continúa, R repite, B vuelve atrás, H da una pista, S salta, Escape dos veces sale."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retour pour continuer, R pour répéter, B pour revenir, H pour un indice, S pour passer, Échap pour arrêter."
+            "value" : "Retour pour continuer, R pour répéter, B pour revenir, H pour un indice, S pour passer, deux fois Échap pour arrêter."
           }
         }
       }
@@ -25015,6 +25169,28 @@
         }
       }
     },
+    "Saving" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gesichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement"
+          }
+        }
+      }
+    },
     "Say Audio Split, then a command, such as: Audio Split, quiet everything. Say Audio Split, what can I say, to hear them all. Launch VoiceOver training works on its own. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens." : {
       "localizations" : {
         "de" : {
@@ -25037,24 +25213,24 @@
         }
       }
     },
-    "Say Audio Split, then a command. For example: %@. You can also say find, or go to, and the name of a control, and I'll take you there. And Launch VoiceOver training works on its own." : {
+    "Say Audio Split, then a command. For example: %@. You can also say find, or go to, and the name of a control, and I'll take you there; that uses Do It for Me, which sends the control names to Anthropic. And Launch VoiceOver training works on its own." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sag Audio Split und dann einen Befehl. Zum Beispiel: %@. Du kannst auch „finde“ oder „gehe zu“ und den Namen eines Bedienelements sagen, und ich bringe dich dorthin. Und „VoiceOver-Training starten“ funktioniert auch allein."
+            "value" : "Sag Audio Split und dann einen Befehl. Zum Beispiel: %@. Du kannst auch „finde“ oder „gehe zu“ und den Namen eines Bedienelements sagen, und ich bringe dich dorthin; dafür wird „Mach es für mich“ verwendet, das die Namen der Bedienelemente an Anthropic sendet. Und „VoiceOver-Training starten“ funktioniert auch allein."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di Audio Split y luego un comando. Por ejemplo: %@. También puedes decir busca, o ve a, y el nombre de un control, y te llevaré allí. Y Abrir entrenamiento de VoiceOver funciona por sí solo."
+            "value" : "Di Audio Split y luego un comando. Por ejemplo: %@. También puedes decir busca, o ve a, y el nombre de un control, y te llevaré allí; eso usa Hazlo por mí, que envía los nombres de los controles a Anthropic. Y Abrir entrenamiento de VoiceOver funciona por sí solo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dites Audio Split, puis une commande. Par exemple : %@. Vous pouvez aussi dire trouve, ou va à, suivi du nom d'un élément, et je vous y emmène. Et Lancer la formation VoiceOver fonctionne seul."
+            "value" : "Dites Audio Split, puis une commande. Par exemple : %@. Vous pouvez aussi dire trouve, ou va à, suivi du nom d'un élément, et je vous y emmène ; cela utilise Fais-le pour moi, qui envoie les noms des éléments à Anthropic. Et Lancer la formation VoiceOver fonctionne seul."
           }
         }
       }
@@ -25650,6 +25826,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La recherche est le chemin le plus rapide : entraînez-vous à trouver quelques réglages, comme Bluetooth et Moniteurs."
+          }
+        }
+      }
+    },
+    "Select All" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles auswählen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleccionar todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout sélectionner"
           }
         }
       }
@@ -26710,24 +26908,24 @@
         }
       }
     },
-    "Sorry, I didn't catch that. Say Audio Split, what can I say." : {
+    "Sorry, I didn't catch that." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entschuldige, das habe ich nicht verstanden. Sag Audio Split, was kann ich sagen."
+            "value" : "Entschuldige, das habe ich nicht verstanden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perdona, no te entendí. Di Audio Split, qué puedo decir."
+            "value" : "Perdona, no te entendí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Désolé, je n'ai pas compris. Dites Audio Split, que puis-je dire."
+            "value" : "Désolé, je n'ai pas compris."
           }
         }
       }
@@ -29438,46 +29636,46 @@
         }
       }
     },
-    "The Reading List keeps articles to read later, even offline. Command Shift D adds the current page, and Control Command 2 shows the Reading List. To remove an item, find it in the list and press Delete." : {
+    "The Reading List keeps articles to read later; it can also save them for reading offline, if you turn that on in Safari Settings, Advanced. Command Shift D adds the current page, and Control Command 2 shows the Reading List. To remove an item, move to it in the list, open its shortcut menu with VO Shift M, and choose Remove Item." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Leseliste hebt Artikel zum späteren Lesen auf, auch offline. Befehl Umschalt D fügt die aktuelle Seite hinzu, und Control Befehl 2 zeigt die Leseliste. Um einen Eintrag zu entfernen, suche ihn in der Liste und drücke die Rückschritttaste."
+            "value" : "Die Leseliste hebt Artikel zum späteren Lesen auf; sie kann sie auch zum Offline-Lesen sichern, wenn du das in den Safari-Einstellungen unter „Erweitert“ einschaltest. Befehl Umschalt D fügt die aktuelle Seite hinzu, und Control Befehl 2 zeigt die Leseliste. Um einen Eintrag zu entfernen, geh in der Liste zu ihm, öffne sein Kontextmenü mit VO Umschalt M und wähle „Objekt entfernen“."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Lista de lectura guarda artículos para leerlos más tarde, incluso sin conexión. Comando Mayúsculas D añade la página actual, y Control Comando 2 muestra la Lista de lectura. Para quitar un ítem, búscalo en la lista y pulsa Eliminar."
+            "value" : "La Lista de lectura guarda artículos para leerlos más tarde; también puede guardarlos para leerlos sin conexión, si lo activas en Ajustes de Safari, Avanzado. Comando Mayúsculas D añade la página actual, y Control Comando 2 muestra la Lista de lectura. Para quitar un ítem, ve a él en la lista, abre su menú de función rápida con VO Mayúsculas M y elige Eliminar ítem."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Liste de lecture garde des articles à lire plus tard, même hors ligne. Commande Maj D ajoute la page actuelle, et Contrôle Commande 2 affiche la Liste de lecture. Pour supprimer un élément, trouvez-le dans la liste et appuyez sur Supprimer."
+            "value" : "La Liste de lecture garde des articles à lire plus tard ; elle peut aussi les enregistrer pour une lecture hors ligne, si vous l'activez dans les Réglages de Safari, Avancées. Commande Maj D ajoute la page actuelle, et Contrôle Commande 2 affiche la Liste de lecture. Pour supprimer un élément, allez-y dans la liste, ouvrez son menu contextuel avec VO Maj M et choisissez Supprimer l'élément."
           }
         }
       }
     },
-    "The Reading List saves the article to read later, and can keep it for offline reading." : {
+    "The Reading List saves the article to read later, and can keep it for offline reading if you turn that on." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Leseliste hebt den Artikel zum späteren Lesen auf und kann ihn auch zum Offline-Lesen speichern."
+            "value" : "Die Leseliste hebt den Artikel zum späteren Lesen auf und kann ihn auch zum Offline-Lesen speichern, wenn du das einschaltest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Lista de lectura guarda el artículo para leerlo más tarde, y puede conservarlo para leerlo sin conexión."
+            "value" : "La Lista de lectura guarda el artículo para leerlo más tarde, y puede conservarlo para leerlo sin conexión si lo activas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Liste de lecture garde l'article pour le lire plus tard, et peut le conserver pour une lecture hors ligne."
+            "value" : "La Liste de lecture garde l'article pour le lire plus tard, et peut le conserver pour une lecture hors ligne si vous l'activez."
           }
         }
       }
@@ -30824,6 +31022,50 @@
         }
       }
     },
+    "This PDF needs a password to open, so it couldn't be checked." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses PDF braucht zum Öffnen ein Passwort und konnte deshalb nicht geprüft werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este PDF necesita una contraseña para abrirse, así que no se pudo revisar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce PDF nécessite un mot de passe pour s'ouvrir ; il n'a donc pas pu être vérifié."
+          }
+        }
+      }
+    },
+    "This command has no key at the moment; choose one in Settings, or skip this step." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Befehl hat im Moment keine Taste; wähle eine in den Einstellungen, oder überspringe diesen Schritt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este comando no tiene tecla por ahora; elige una en Ajustes, o salta este paso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette commande n'a pas de touche pour le moment ; choisissez-en une dans les Réglages, ou passez cette étape."
+          }
+        }
+      }
+    },
     "This is a frame from a video I'm watching. In two or three sentences, describe what is happening right now, and read any text on screen. Don't describe the video player's controls." : {
       "localizations" : {
         "de" : {
@@ -31154,6 +31396,28 @@
         }
       }
     },
+    "To read a table, first go inside it with VO Shift Down Arrow. Then hold VO and use the arrow keys to move from cell to cell; VoiceOver reads the column heading when you change column. On real websites, the rotor's headings list (VO U) is often the fastest way to get an overview." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um eine Tabelle zu lesen, geh zuerst mit VO Umschalt Pfeil nach unten hinein. Halte dann VO gedrückt und bewege dich mit den Pfeiltasten von Zelle zu Zelle; VoiceOver liest die Spaltenüberschrift vor, wenn du die Spalte wechselst. Auf echten Websites ist die Überschriftenliste des Rotors (VO U) oft der schnellste Weg zu einem Überblick."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para leer una tabla, primero entra en ella con VO Mayúsculas Flecha abajo. Luego mantén pulsadas las teclas VO y usa las flechas para moverte de celda en celda; VoiceOver lee el encabezado de columna cuando cambias de columna. En sitios web reales, la lista de encabezados del rotor (VO U) suele ser la forma más rápida de tener una vista general."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour lire un tableau, entrez d'abord dedans avec VO Maj Flèche bas. Puis maintenez VO et utilisez les touches fléchées pour passer d'une cellule à l'autre ; VoiceOver lit l'en-tête de colonne quand vous changez de colonne. Sur de vrais sites web, la liste des titres du rotor (VO U) est souvent le moyen le plus rapide d'avoir une vue d'ensemble."
+          }
+        }
+      }
+    },
     "To stop VoiceOver talking, press Control on its own. You can do that at any time, for example during a long passage." : {
       "localizations" : {
         "de" : {
@@ -31264,24 +31528,24 @@
         }
       }
     },
-    "To write on a slide, move the VoiceOver cursor into the slide, find the title's text box, press VO Space to start editing, and type. Press Escape when you're done with that box. Command Shift N adds a new slide after the current one." : {
+    "To write on a slide, move the VoiceOver cursor into the slide, find the title's text box and select it with VO Space, then press Return to edit its text, and type. Press Escape when you're done with that box. If typing does nothing, go inside the text box with VO Shift Down Arrow. Command Shift N adds a new slide after the current one." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um auf eine Folie zu schreiben, bewege den VoiceOver-Cursor in die Folie, suche das Textfeld für den Titel, drücke VO Leertaste, um mit dem Bearbeiten zu beginnen, und tippe. Drücke Escape, wenn du mit dem Feld fertig bist. Befehl Umschalt N fügt nach der aktuellen Folie eine neue Folie hinzu."
+            "value" : "Um auf eine Folie zu schreiben, bewege den VoiceOver-Cursor in die Folie, suche das Textfeld für den Titel und wähle es mit VO Leertaste aus, drücke dann den Zeilenschalter, um seinen Text zu bearbeiten, und tippe. Drücke Escape, wenn du mit dem Feld fertig bist. Wenn beim Tippen nichts passiert, geh mit VO Umschalt Pfeil nach unten in das Textfeld hinein. Befehl Umschalt N fügt nach der aktuellen Folie eine neue Folie hinzu."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para escribir en una diapositiva, lleva el cursor de VoiceOver a la diapositiva, busca el cuadro de texto del título, pulsa VO Espacio para empezar a editar y escribe. Pulsa Escape cuando termines con ese cuadro. Comando Mayúsculas N añade una diapositiva nueva después de la actual."
+            "value" : "Para escribir en una diapositiva, lleva el cursor de VoiceOver a la diapositiva, busca el cuadro de texto del título y selecciónalo con VO Espacio; luego pulsa Retorno para editar su texto, y escribe. Pulsa Escape cuando termines con ese cuadro. Si al escribir no pasa nada, entra en el cuadro de texto con VO Mayúsculas Flecha abajo. Comando Mayúsculas N añade una diapositiva nueva después de la actual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour écrire sur une diapositive, amenez le curseur VoiceOver dans la diapositive, trouvez la zone de texte du titre, appuyez sur VO Espace pour commencer à la modifier, et tapez. Appuyez sur Échap quand vous avez fini avec cette zone. Commande Maj N ajoute une nouvelle diapositive après la diapositive actuelle."
+            "value" : "Pour écrire sur une diapositive, amenez le curseur VoiceOver dans la diapositive, trouvez la zone de texte du titre et sélectionnez-la avec VO Espace, puis appuyez sur Retour pour modifier son texte, et tapez. Appuyez sur Échap quand vous avez fini avec cette zone. Si la saisie ne fait rien, entrez dans la zone de texte avec VO Maj Flèche bas. Commande Maj N ajoute une nouvelle diapositive après la diapositive actuelle."
           }
         }
       }
@@ -31990,24 +32254,24 @@
         }
       }
     },
-    "Type a sentence or two. VoiceOver says each word as you finish it. To check what you wrote, press VO A to hear it all, or move through it with the arrow keys." : {
+    "Type a sentence or two. VoiceOver says each letter as you type, and each word when you finish it. To check what you wrote, press VO A to hear it all, or move through it with the arrow keys." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe ein, zwei Sätze. VoiceOver sagt jedes Wort an, sobald du es beendet hast. Um zu prüfen, was du geschrieben hast, drücke VO A, um alles zu hören, oder bewege dich mit den Pfeiltasten hindurch."
+            "value" : "Tippe ein, zwei Sätze. VoiceOver sagt beim Tippen jeden Buchstaben an und jedes Wort, sobald du es beendet hast. Um zu prüfen, was du geschrieben hast, drücke VO A, um alles zu hören, oder bewege dich mit den Pfeiltasten hindurch."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escribe una o dos oraciones. VoiceOver dice cada palabra al terminarla. Para revisar lo que escribiste, pulsa VO A para oírlo todo, o recórrelo con las flechas."
+            "value" : "Escribe una o dos oraciones. VoiceOver dice cada letra mientras escribes, y cada palabra al terminarla. Para revisar lo que escribiste, pulsa VO A para oírlo todo, o recórrelo con las flechas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tapez une phrase ou deux. VoiceOver énonce chaque mot dès que vous le terminez. Pour vérifier ce que vous avez écrit, appuyez sur VO A pour tout entendre, ou parcourez le texte avec les touches fléchées."
+            "value" : "Tapez une phrase ou deux. VoiceOver énonce chaque lettre pendant que vous tapez, et chaque mot dès que vous le terminez. Pour vérifier ce que vous avez écrit, appuyez sur VO A pour tout entendre, ou parcourez le texte avec les touches fléchées."
           }
         }
       }
@@ -34190,6 +34454,28 @@
         }
       }
     },
+    "Voice command couldn't use the built-in microphone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Sprachsteuerung konnte das eingebaute Mikrofon nicht verwenden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El comando de voz no pudo usar el micrófono integrado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La commande vocale n'a pas pu utiliser le micro intégré."
+          }
+        }
+      }
+    },
     "Voice command isn't available: this Mac can't recognize speech on the device." : {
       "localizations" : {
         "de" : {
@@ -34586,24 +34872,24 @@
         }
       }
     },
-    "VoiceOver describes each item in a pattern: its name, then what kind of thing it is, then its state, and sometimes a hint after a short pause. For example: Play, button. Or: Subscribe, unchecked, checkbox." : {
+    "VoiceOver describes each item in a pattern: its name, then what kind of thing it is, then its state, and sometimes a hint after a short pause. For example, something like: Play, button. Or: Subscribe, checkbox, unchecked. The exact order can vary, but the pieces are always there." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceOver beschreibt jedes Objekt nach einem Muster: zuerst den Namen, dann die Art des Objekts, dann den Zustand und manchmal nach einer kurzen Pause einen Hinweis. Zum Beispiel: Abspielen, Taste. Oder: Abonnieren, nicht markiert, Markierungsfeld."
+            "value" : "VoiceOver beschreibt jedes Objekt nach einem Muster: zuerst den Namen, dann die Art des Objekts, dann den Zustand und manchmal nach einer kurzen Pause einen Hinweis. Zum Beispiel etwa so: Abspielen, Taste. Oder: Abonnieren, Markierungsfeld, nicht markiert. Die genaue Reihenfolge kann sich unterscheiden, aber die Teile sind immer da."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceOver describe cada ítem siguiendo un patrón: su nombre, luego qué tipo de cosa es, luego su estado y, a veces, una sugerencia tras una breve pausa. Por ejemplo: Reproducir, botón. O: Suscribirse, no marcada, casilla."
+            "value" : "VoiceOver describe cada ítem siguiendo un patrón: su nombre, luego qué tipo de cosa es, luego su estado y, a veces, una sugerencia tras una breve pausa. Por ejemplo, algo como: Reproducir, botón. O: Suscribirse, casilla, no marcada. El orden exacto puede variar, pero las partes siempre están ahí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceOver décrit chaque élément selon un modèle : son nom, puis son type, puis son état, et parfois un conseil après une courte pause. Par exemple : Lire, bouton. Ou : S'abonner, non cochée, case à cocher."
+            "value" : "VoiceOver décrit chaque élément selon un modèle : son nom, puis son type, puis son état, et parfois un conseil après une courte pause. Par exemple, quelque chose comme : Lire, bouton. Ou : S'abonner, case à cocher, non cochée. L'ordre exact peut varier, mais les éléments sont toujours là."
           }
         }
       }
@@ -35312,24 +35598,24 @@
         }
       }
     },
-    "Welcome. VoiceOver is the screen reader built into your Mac. It reads what's on the screen and lets you do everything from the keyboard. Command F5 turns it on and off. On a Mac with Touch ID, you can also hold Command and press Touch ID three times quickly." : {
+    "Welcome. VoiceOver is the screen reader built into your Mac. It reads what's on the screen and lets you do everything from the keyboard. Command F5 turns it on and off; on some laptops, hold Fn as well. On a Mac with Touch ID, you can also hold Command and press Touch ID three times quickly." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Willkommen. VoiceOver ist der Bildschirmleser, der in deinen Mac eingebaut ist. Er liest vor, was auf dem Bildschirm ist, und lässt dich alles mit der Tastatur erledigen. Befehl F5 schaltet ihn ein und aus. Auf einem Mac mit Touch ID kannst du auch Befehl gedrückt halten und dreimal schnell Touch ID drücken."
+            "value" : "Willkommen. VoiceOver ist der Bildschirmleser, der in deinen Mac eingebaut ist. Er liest vor, was auf dem Bildschirm ist, und lässt dich alles mit der Tastatur erledigen. Befehl F5 schaltet ihn ein und aus; auf manchen Laptops halte dazu auch die Fn-Taste gedrückt. Auf einem Mac mit Touch ID kannst du auch Befehl gedrückt halten und dreimal schnell Touch ID drücken."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te damos la bienvenida. VoiceOver es el lector de pantalla integrado en tu Mac. Lee lo que hay en la pantalla y te permite hacerlo todo desde el teclado. Comando F5 lo activa y desactiva. En una Mac con Touch ID, también puedes mantener pulsada Comando y pulsar Touch ID tres veces rápido."
+            "value" : "Te damos la bienvenida. VoiceOver es el lector de pantalla integrado en tu Mac. Lee lo que hay en la pantalla y te permite hacerlo todo desde el teclado. Comando F5 lo activa y desactiva; en algunos portátiles, mantén pulsada también la tecla Fn. En una Mac con Touch ID, también puedes mantener pulsada Comando y pulsar Touch ID tres veces rápido."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bienvenue. VoiceOver est le lecteur d'écran intégré à votre Mac. Il lit ce qui est à l'écran et vous permet de tout faire au clavier. Commande F5 l'active et le désactive. Sur un Mac doté de Touch ID, vous pouvez aussi maintenir Commande et appuyer trois fois rapidement sur Touch ID."
+            "value" : "Bienvenue. VoiceOver est le lecteur d'écran intégré à votre Mac. Il lit ce qui est à l'écran et vous permet de tout faire au clavier. Commande F5 l'active et le désactive ; sur certains portables, maintenez aussi la touche Fn. Sur un Mac doté de Touch ID, vous pouvez aussi maintenir Commande et appuyer trois fois rapidement sur Touch ID."
           }
         }
       }
@@ -36060,6 +36346,28 @@
         }
       }
     },
+    "With a cell selected, and not while you're typing in it, Option Down Arrow adds a row below, and Option Up Arrow one above. Option Right Arrow adds a column to the right, and Option Left Arrow one to the left. Shift and an arrow key selects more than one cell." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn eine Zelle ausgewählt ist und du nicht gerade darin tippst, fügt Wahl Pfeil nach unten eine Zeile darunter hinzu, und Wahl Pfeil nach oben eine darüber. Wahl Pfeil nach rechts fügt rechts eine Spalte hinzu, und Wahl Pfeil nach links eine links. Umschalt und eine Pfeiltaste wählen mehr als eine Zelle aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con una celda seleccionada, y sin estar escribiendo en ella, Opción Flecha abajo añade una fila debajo, y Opción Flecha arriba una encima. Opción Flecha derecha añade una columna a la derecha, y Opción Flecha izquierda una a la izquierda. Mayúsculas con una flecha selecciona más de una celda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec une cellule sélectionnée, et sans être en train d'y taper, Option Flèche bas ajoute une ligne en dessous, et Option Flèche haut une ligne au-dessus. Option Flèche droite ajoute une colonne à droite, et Option Flèche gauche une colonne à gauche. Maj avec une touche fléchée sélectionne plusieurs cellules."
+          }
+        }
+      }
+    },
     "With a trainer: shorter prompts, hints when asked, notes and a report for the trainer" : {
       "localizations" : {
         "de" : {
@@ -36078,6 +36386,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Avec un formateur ou une formatrice : consignes plus courtes, indices sur demande, notes et rapport pour le formateur"
+          }
+        }
+      }
+    },
+    "With your keys, that's %@ and %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit deinen Tasten ist das %1$@ und %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con tus teclas, es %1$@ y %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec vos touches, c'est %1$@ et %2$@."
           }
         }
       }

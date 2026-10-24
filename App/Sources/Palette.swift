@@ -131,6 +131,17 @@ struct TutorialLesson {
     let instruction: String
     let command: Command
     let done: String
+
+    /// The steps name the usual keys; if they've been changed, the keys to use instead.
+    var yourKeys: String? {
+        let modifier = Preferences.shared.modifier
+        let key = KeyMap.key(for: command)
+        guard modifier != .option || key?.code != command.defaultKey else { return nil }
+        guard let key else { return String(localized: "This command has no key at the moment; choose one in Settings, or skip this step.") }
+        return String(localized: "With your keys, that's \(modifier.title) and \(key.name).")
+    }
+
+    var spoken: String { [instruction, yourKeys].compactMap { $0 }.joined(separator: " ") }
 }
 
 final class Tutorial: ObservableObject {
@@ -159,9 +170,14 @@ final class Tutorial: ObservableObject {
 
     var current: TutorialLesson? { active && Self.lessons.indices.contains(index) ? Self.lessons[index] : nil }
 
+    /// Counts starts and stops, so a step's delayed "Well done" from an earlier run is ignored.
+    private var run = 0
+
     func start() {
         index = 0
         active = true
+        run += 1
+        advancing = false
         observer = observer ?? NotificationCenter.default.addObserver(forName: .commandRan, object: nil, queue: .main) {
             [weak self] note in
             if let command = note.object as? Command { self?.commandRan(command) }
@@ -175,6 +191,8 @@ final class Tutorial: ObservableObject {
 
     func stop() {
         active = false
+        run += 1
+        advancing = false
         Announcer.say(String(localized: "Tutorial stopped"))
     }
 
@@ -185,8 +203,9 @@ final class Tutorial: ObservableObject {
         // Let the command's own announcement come first. Pressing the key again meanwhile
         // doesn't skip a step, and a stop or restart cancels it.
         advancing = true
-        let step = index
+        let step = index, thisRun = run
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            guard self.run == thisRun else { return }
             self.advancing = false
             guard self.active, self.index == step else { return }
             self.advance(saying: String(localized: "Well done. \(lesson.done)"))
@@ -205,7 +224,7 @@ final class Tutorial: ObservableObject {
 
     private func speakCurrent(prefix: String? = nil) {
         guard let lesson = current else { return }
-        Announcer.say([prefix, lesson.instruction].compactMap { $0 }.joined(separator: " "))
+        Announcer.say([prefix, lesson.spoken].compactMap { $0 }.joined(separator: " "))
     }
 }
 
@@ -217,7 +236,7 @@ struct TutorialView: View {
             Section {
                 if let lesson = tutorial.current {
                     Text(String(localized: "Step \(tutorial.index + 1) of \(Tutorial.lessons.count)"))
-                    Text(lesson.instruction)
+                    Text(lesson.spoken)
                 } else {
                     Text(String(localized: "Practice the main shortcuts in \(Tutorial.lessons.count) short steps. Each step is spoken; do it, and the tutorial notices and moves on. You can switch to other apps while you practice."))
                 }

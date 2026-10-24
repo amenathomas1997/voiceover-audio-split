@@ -73,6 +73,8 @@ enum Permission: String, CaseIterable, Identifiable {
         case .automation:
             let browsers = ["com.apple.Safari", "com.google.Chrome"].map(Self.automation)
             if browsers.contains(.allowed) { return .allowed }
+            // Neither browser is open, so it can't be asked: unknown, not "not asked yet".
+            if browsers.allSatisfy({ $0 == .unknown }) { return .unknown }
             return browsers.contains(.notAllowed) ? .notAllowed : .notAsked
         }
     }

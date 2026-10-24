@@ -19,7 +19,11 @@ final class DoItModel: ObservableObject {
 
     /// The app that was in front when the window opened: the one to act on.
     var target: NSRunningApplication?
+    /// Asked by voice, with no window open: a press is confirmed by a spoken yes.
+    var fromVoice = false
     private var pendingElement: AXUIElement?
+    /// The app the waiting control belongs to.
+    private var pendingApp: NSRunningApplication?
 
     static let system = """
     You help a blind Mac user who uses the VoiceOver screen reader to find and use controls in an app. You get the \
@@ -43,6 +47,8 @@ final class DoItModel: ObservableObject {
         guard let target, !target.isTerminated else { return note(String(localized: "Open the app first, then choose Do It for Me.")) }
         busy = true
         pendingPress = nil
+        pendingElement = nil
+        pendingApp = nil
         log.append(String(localized: "You: \(request)"))
         Announcer.say(String(localized: "Looking"))
         let pid = target.processIdentifier
@@ -73,12 +79,18 @@ final class DoItModel: ObservableObject {
         guard let element, choice.action != "none" else { return finish(choice.say) }
         if choice.action == "press" {
             pendingElement = element
+            pendingApp = target
             pendingPress = name
             busy = false
             log.append(choice.say)
+            if fromVoice {
+                fromVoice = false
+                return VoiceCommand.shared.askYesNo(choice.say + " " + String(localized: "Press it?")) { [weak self] in self?.confirmPress() }
+            }
             Announcer.say(choice.say + " " + String(localized: "Press Return to press it, or Escape to cancel."))
             return
         }
+        fromVoice = false
         busy = false
         log.append(choice.say)
         moveThere(element, saying: choice.say)
@@ -97,11 +109,12 @@ final class DoItModel: ObservableObject {
     }
 
     func confirmPress() {
-        guard let element = pendingElement else { return }
+        guard let element = pendingElement, let app = pendingApp, !app.isTerminated else { return cancelPress() }
         pendingElement = nil
+        pendingApp = nil
         pendingPress = nil
         NSApp.hide(nil)
-        target?.activate()
+        app.activate()
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
             // A slow app can report "couldn't complete" after the press already happened;
             // only press through VoiceOver when the control has no press action at all.
@@ -117,6 +130,7 @@ final class DoItModel: ObservableObject {
 
     func cancelPress() {
         pendingElement = nil
+        pendingApp = nil
         pendingPress = nil
         Announcer.say(String(localized: "Cancelled"))
     }
@@ -124,6 +138,7 @@ final class DoItModel: ObservableObject {
     @MainActor
     private func finish(_ text: String) {
         busy = false
+        fromVoice = false
         note(text)
     }
 
@@ -147,7 +162,8 @@ final class DoItModel: ObservableObject {
 
     static func controls(in window: AXUIElement) -> [Control] {
         var result: [Control] = []
-        for element in AX.descendants(of: window, limit: 4000) where result.count < 400 {
+        let deadline = Date().addingTimeInterval(8)
+        for element in AX.descendants(of: window, limit: 4000) where result.count < 400 && Date() < deadline {
             let role = AX.string(element, kAXRoleAttribute)
             guard actionable.contains(role) else { continue }
             let text = AX.text(element)

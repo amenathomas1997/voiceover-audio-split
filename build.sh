@@ -45,19 +45,28 @@ identity() {
 APP_ID="${DEVELOPER_ID_APP:-$(identity "Developer ID Application")}"
 INSTALLER_ID="${DEVELOPER_ID_INSTALLER:-$(identity "Developer ID Installer" basic)}"
 
-rm -rf "$PAYLOAD" "$BUILD/app-component.pkg" "$BUILD/app-distribution.xml" "$PKG"
-mkdir -p "$PAYLOAD/Applications"
-
 # xcodebuild needs Xcode itself; the Command Line Tools alone aren't enough.
-if ! xcodebuild -version >/dev/null 2>&1; then
-  echo "This needs Xcode, and your Mac is set to use the Command Line Tools instead." >&2
-  if [[ -d /Applications/Xcode.app ]]; then
-    echo "Switch to Xcode once with:  sudo xcode-select -s /Applications/Xcode.app/Contents/Developer" >&2
+if ! XCODE_ERROR=$(xcodebuild -version 2>&1 >/dev/null); then
+  if [[ "$(xcode-select -p 2>/dev/null)" == *CommandLineTools* ]]; then
+    echo "This needs Xcode, and your Mac is set to use the Command Line Tools instead." >&2
+    XCODE_APP=$(find /Applications "$HOME/Applications" -maxdepth 1 -name 'Xcode*.app' 2>/dev/null | head -1)
+    if [[ -n "$XCODE_APP" ]]; then
+      echo "Switch to Xcode once with:  sudo xcode-select -s \"$XCODE_APP/Contents/Developer\"" >&2
+    else
+      echo "Install Xcode from the App Store, open it once, then run this again." >&2
+    fi
   else
-    echo "Install Xcode from the App Store, open it once, then run this again." >&2
+    echo "Xcode isn't ready to build:" >&2
+    echo "$XCODE_ERROR" >&2
+    echo "If it mentions the license, run:  sudo xcodebuild -license accept" >&2
+    echo "If Xcode was just installed or updated, run:  xcodebuild -runFirstLaunch" >&2
   fi
   exit 1
 fi
+
+rm -rf "$PAYLOAD" "$BUILD/app-component.pkg" "$BUILD/app-distribution.xml" "$PKG"
+mkdir -p "$PAYLOAD/Applications"
+
 echo "Building $APP_NAME…"
 xcodebuild -project "$PROJECT" -scheme VoiceOverAudioSplit -configuration Release \
   -derivedDataPath "$BUILD/app" -destination 'generic/platform=macOS' \

@@ -21,7 +21,12 @@ enum DocumentCheck {
     static func check(_ url: URL) -> [Finding]? {
         switch url.pathExtension.lowercased() {
         case "docx": Zip.entries(of: url, only: ["word/document.xml", "word/styles.xml", "docProps/core.xml"]).map(checkWord)
-        case "pdf": PDFDocument(url: url).map(checkPDF)
+        case "pdf": PDFDocument(url: url).map { pdf in
+            // A locked PDF opens, but its text and tags can't be read.
+            pdf.isLocked ? [Finding(problem: String(localized: "This PDF needs a password to open, so it couldn't be checked."),
+                                    fix: String(localized: "Open it with its password and save a copy without one, or ask for an unlocked copy."))]
+                         : checkPDF(pdf)
+        }
         default: nil
         }
     }
@@ -42,7 +47,8 @@ enum DocumentCheck {
         let paragraphs = matches(#"<w:p(?: [^>]*)?/>|<w:p(?: [^>]*)?>.*?</w:p>"#, in: document)
         let headingStyles = headingLevels(files["word/styles.xml"].flatMap { String(data: $0, encoding: .utf8) } ?? "")
         let levels = paragraphs.compactMap { paragraph -> Int? in
-            if let outline = first(#"<w:outlineLvl w:val="(\d)""#, in: paragraph), let level = Int(outline) { return level + 1 }
+            // Outline level 9 is Word's "body text", not a heading.
+            if let outline = first(#"<w:outlineLvl w:val="(\d)""#, in: paragraph), let level = Int(outline), level < 9 { return level + 1 }
             guard let style = first(#"<w:pStyle w:val="([^"]+)""#, in: paragraph) else { return nil }
             if let level = headingStyles[style] { return level }
             if style == "Title" { return 0 }
@@ -75,7 +81,8 @@ enum DocumentCheck {
                                     fix: String(localized: "In Word, select each picture and choose View Alt Text. Describe it, or mark it as decorative.")))
         }
 
-        let tables = matches(#"<w:tbl>.*?</w:tbl>"#, in: document)
+        let tableRanges = outerTables(in: document)
+        let tables = tableRanges.map { String(document[$0]) }
         let headerless = tables.filter { !$0.contains("<w:tblHeader") }.count
         if headerless > 0 {
             findings.append(Finding(problem: headerless == 1 ? String(localized: "1 table has no header row.") : String(localized: "\(headerless) tables have no header row."),
@@ -83,10 +90,15 @@ enum DocumentCheck {
         }
 
         // Empty table cells hold empty paragraphs too, and page or section breaks have no text.
-        let outsideTables = document.replacingOccurrences(of: #"<w:tbl>.*?</w:tbl>"#, with: "", options: .regularExpression)
+        // Each table counts as a line of text, so the empty paragraph Word needs between two
+        // tables isn't taken for spacing.
+        var outsideTables = document
+        for range in tableRanges.reversed() { outsideTables.replaceSubrange(range, with: "<w:p><w:r><w:t>table</w:t></w:r></w:p>") }
         var blankRun = 0, spacing = 0
         for paragraph in matches(#"<w:p(?: [^>]*)?/>|<w:p(?: [^>]*)?>.*?</w:p>"#, in: outsideTables) {
-            if text(of: paragraph).trimmingCharacters(in: .whitespaces).isEmpty && !paragraph.contains("<w:drawing")
+            // Equations and older pictures have no ordinary text either.
+            let content = ["<w:drawing", "<m:oMath", "<w:pict", "<w:object"].contains { paragraph.contains($0) }
+            if text(of: paragraph).trimmingCharacters(in: .whitespaces).isEmpty && !content
                 && !paragraph.contains("w:type=\"page\"") && !paragraph.contains("<w:sectPr") {
                 blankRun += 1
                 if blankRun == 3 { spacing += 1 }
@@ -118,7 +130,7 @@ enum DocumentCheck {
             else { continue }
             if name == "title" { levels[id] = 0 }
             else if name.hasPrefix("heading "), let level = Int(name.dropFirst(8)) { levels[id] = level }
-            else if let outline = first(#"<w:outlineLvl w:val="(\d)""#, in: style), let level = Int(outline) { levels[id] = level + 1 }
+            else if let outline = first(#"<w:outlineLvl w:val="(\d)""#, in: style), let level = Int(outline), level < 9 { levels[id] = level + 1 }
         }
         return levels
     }
@@ -160,6 +172,24 @@ enum DocumentCheck {
 
     // MARK: Text helpers
 
+    /// Where each table is, counting tables inside tables as part of their outer table.
+    static func outerTables(in document: String) -> [Range<String.Index>] {
+        guard let regex = try? NSRegularExpression(pattern: #"<w:tbl[ >]|</w:tbl>"#) else { return [] }
+        var ranges: [Range<String.Index>] = [], depth = 0, start = document.startIndex
+        for match in regex.matches(in: document, range: NSRange(document.startIndex..., in: document)) {
+            guard let range = Range(match.range, in: document) else { continue }
+            if document[range].hasPrefix("</") {
+                guard depth > 0 else { continue }
+                depth -= 1
+                if depth == 0 { ranges.append(start..<range.upperBound) }
+            } else {
+                if depth == 0 { start = range.lowerBound }
+                depth += 1
+            }
+        }
+        return ranges
+    }
+
     private static func matches(_ pattern: String, in text: String) -> [String] {
         guard let regex = try? NSRegularExpression(pattern: pattern, options: [.dotMatchesLineSeparators]) else { return [] }
         return regex.matches(in: text, range: NSRange(text.startIndex..., in: text)).compactMap { Range($0.range, in: text).map { String(text[$0]) } }
@@ -194,7 +224,8 @@ enum Zip {
     }
 
     static func entries(_ data: Data, only wanted: Set<String>? = nil) -> [String: Data]? {
-        let bytes = [UInt8](data)
+        // Read in place: copying a big document with videos into memory isn't needed.
+        let bytes = data.startIndex == 0 ? data : Data(data)
         func u16(_ i: Int) -> Int { i + 1 < bytes.count ? Int(bytes[i]) | Int(bytes[i + 1]) << 8 : 0 }
         func u32(_ i: Int) -> Int { u16(i) | u16(i + 2) << 16 }
         // The end of central directory record is in the last 64 KB.
@@ -240,6 +271,8 @@ final class DocumentCheckModel: ObservableObject {
     @Published var name = ""
     @Published var findings: [DocumentCheck.Finding] = []
     @Published var checked = false
+    /// Counts checks, so a slow earlier one doesn't replace a newer result.
+    private var generation = 0
 
     func choose() {
         let panel = NSOpenPanel()
@@ -248,9 +281,12 @@ final class DocumentCheckModel: ObservableObject {
         NSApp.activate()
         guard panel.runModal() == .OK, let url = panel.url else { return }
         Announcer.say(String(localized: "Checking"))
+        generation += 1
+        let thisCheck = generation
         Task.detached(priority: .userInitiated) {
             let findings = DocumentCheck.check(url)
             await MainActor.run {
+                guard self.generation == thisCheck else { return }
                 self.name = url.lastPathComponent
                 guard let findings else {
                     self.checked = false

@@ -140,7 +140,10 @@ enum ScreenPicture {
         let scale = await MainActor.run { backingScale(of: display.displayID) }
         configuration.width = Int(area.width * scale)
         configuration.height = Int(area.height * scale)
-        let filter = SCContentFilter(display: display, excludingWindows: [])
+        // Leave this app's own windows out of the picture.
+        let me = ProcessInfo.processInfo.processIdentifier
+        let filter = SCContentFilter(display: display, excludingApplications: content.applications.filter { $0.processID == me },
+                                     exceptingWindows: [])
         let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
         guard let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
             throw Failure(message: String(localized: "Couldn't capture the screen."))
@@ -159,20 +162,26 @@ enum ScreenPicture {
 
     /// A picture made small enough to send: at most 2576 pixels on its long side, as
     /// JPEG. A full 5K screen as PNG is over the API's 5 MB limit for one image.
-    static func forUpload(_ png: Data) -> Data {
-        guard let source = NSBitmapImageRep(data: png)?.cgImage else { return png }
+    /// Returns the type too: if it can't be converted, the PNG is sent as a PNG.
+    static func forUpload(_ png: Data) -> (data: Data, type: String) {
+        guard let jpeg = jpeg(from: png) else { return (png, "image/png") }
+        return (jpeg, "image/jpeg")
+    }
+
+    private static func jpeg(from png: Data) -> Data? {
+        guard let source = NSBitmapImageRep(data: png)?.cgImage else { return nil }
         let longest = CGFloat(max(source.width, source.height))
         let scale = min(1, 2576 / longest)
         let width = Int(CGFloat(source.width) * scale), height = Int(CGFloat(source.height) * scale)
         guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
                                       space: CGColorSpace(name: CGColorSpace.sRGB)!,
-                                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return png }
+                                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
         context.interpolationQuality = .high
         context.setFillColor(.white)
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
-        guard let image = context.makeImage() else { return png }
-        return NSBitmapImageRep(cgImage: image).representation(using: .jpeg, properties: [.compressionFactor: 0.85]) ?? png
+        guard let image = context.makeImage() else { return nil }
+        return NSBitmapImageRep(cgImage: image).representation(using: .jpeg, properties: [.compressionFactor: 0.85])
     }
 
     /// A PNG of the front window of the app in front (leaving out this app's own windows).
@@ -183,8 +192,12 @@ enum ScreenPicture {
         } catch {
             throw Failure(message: String(localized: "Allow screen recording for VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording. Then try again."))
         }
-        let front = await MainActor.run { NSWorkspace.shared.frontmostApplication?.processIdentifier }
         let me = ProcessInfo.processInfo.processIdentifier
+        // If this app's window is in front, the app used before it.
+        let front = await MainActor.run {
+            let app = NSWorkspace.shared.frontmostApplication
+            return app?.processIdentifier == me ? Controller.shared.lastUsedApp?.processIdentifier : app?.processIdentifier
+        }
         let candidates = content.windows.filter { window in
             window.windowLayer == 0 && window.frame.width > 100 && window.frame.height > 100
                 && window.owningApplication?.processID != me
@@ -270,9 +283,11 @@ final class AssistantModel: ObservableObject {
                     turns.append(AssistantTurn(fromUser: true, text: String(localized: "What's happening in the video?")))
                 }
                 if opensWindow { showWindow?() }
+                // Resizing a big screen picture takes a moment: not on the main thread.
+                let upload = await Task.detached { ScreenPicture.forUpload(png) }.value
                 let content: [[String: Any]] = [
-                    ["type": "image", "source": ["type": "base64", "media_type": "image/jpeg",
-                                                 "data": ScreenPicture.forUpload(png).base64EncodedString()]],
+                    ["type": "image", "source": ["type": "base64", "media_type": upload.type,
+                                                 "data": upload.data.base64EncodedString()]],
                     ["type": "text", "text": request],
                 ]
                 await send(content)

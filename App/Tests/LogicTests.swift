@@ -683,9 +683,11 @@ final class AuditFixTests: XCTestCase {
         let rep = try XCTUnwrap(NSBitmapImageRep(data: try XCTUnwrap(image.tiffRepresentation)))
         let png = try XCTUnwrap(rep.representation(using: .png, properties: [:]))
         let upload = ScreenPicture.forUpload(png)
-        let result = try XCTUnwrap(NSBitmapImageRep(data: upload))
+        XCTAssertEqual(upload.type, "image/jpeg")
+        let result = try XCTUnwrap(NSBitmapImageRep(data: upload.data))
         XCTAssertLessThanOrEqual(max(result.pixelsWide, result.pixelsHigh), 2576)
-        XCTAssertLessThan(upload.count, 5_000_000)
+        XCTAssertLessThan(upload.data.count, 5_000_000)
+        XCTAssertEqual(ScreenPicture.forUpload(Data("not a picture".utf8)).type, "image/png", "the type matches what's sent")
     }
 }
 
@@ -693,7 +695,9 @@ final class LessonTests: XCTestCase {
     func testVOKeysWithControlOptionOrCapsLock() {
         let heading = KeyCombo(code: 4, command: true)
         XCTAssertTrue(heading.matches(keyCode: 4, flags: [.maskControl, .maskAlternate, .maskCommand]))
-        XCTAssertTrue(heading.matches(keyCode: 4, flags: [.maskAlphaShift, .maskCommand]), "Caps Lock as the VO key")
+        XCTAssertTrue(heading.matches(keyCode: 4, flags: [.maskAlphaShift, .maskCommand], capsLockHeld: true), "Caps Lock as the VO key")
+        XCTAssertFalse(heading.matches(keyCode: 4, flags: [.maskAlphaShift, .maskCommand], capsLockHeld: false),
+                       "Caps Lock switched on for capitals isn't VO")
         XCTAssertFalse(heading.matches(keyCode: 4, flags: [.maskControl, .maskAlternate]))
         XCTAssertFalse(heading.matches(keyCode: 4, flags: [.maskCommand]))
         let word = KeyCombo(code: 123, vo: false, option: true)
@@ -949,5 +953,94 @@ final class VoiceCommandsTests: XCTestCase {
         let text = VoiceCommands.whatCanISay()
         XCTAssertTrue(text.hasPrefix("Say Audio Split, then a command."))
         XCTAssertTrue(text.contains("Turn on VoiceOver") && text.contains("Quiet everything") && text.contains("Daily practice"))
+    }
+}
+
+final class DeepAuditFixTests: XCTestCase {
+    func testLaunchNeedsAStartWordAndAShortPhrase() {
+        XCTAssertFalse(VoiceCommand.isLaunchCommand("VoiceOver lessons window"), "VoiceOver reading the window's name")
+        XCTAssertFalse(VoiceCommand.isLaunchCommand("I really liked the VoiceOver training we did last week with my trainer and I want to tell you all about it"))
+    }
+
+    func testAppNameIsNotTheWakeWord() {
+        XCTAssertNil(VoiceCommands.command(after: "VoiceOver Audio Split Settings"))
+        XCTAssertNil(VoiceCommands.command(after: "voice over audio split help"))
+        XCTAssertEqual(VoiceCommands.command(after: "Audio Split help"), "help")
+    }
+
+    func testOneWordCommandsOnlyOnTheirOwn() {
+        let all = VoiceCommands.all
+        XCTAssertNotNil(VoiceCommands.match("help", in: all))
+        XCTAssertNil(VoiceCommands.match("is the app I use all the time", in: all))
+        XCTAssertNil(VoiceCommands.match("I need some help with this", in: all))
+    }
+
+    func testClockInTheHourThatRepeats() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "America/New_York"))
+        // 1 November 2026, 01:20 in the second 1 o'clock hour (after the clocks went back).
+        let firstOne = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 11, day: 1, hour: 1, minute: 20)))
+        let secondOne = firstOne.addingTimeInterval(3600)
+        for minutes in [15, 30, 60] {
+            for date in [firstOne, secondOne] {
+                let next = try XCTUnwrap(SystemEvents.nextClockTime(after: date, every: minutes, calendar: calendar))
+                XCTAssertGreaterThan(next, date)
+                XCTAssertLessThanOrEqual(next.timeIntervalSince(date), Double(minutes * 60))
+            }
+        }
+    }
+
+    func testBodyTextOutlineLevelIsNotAHeading() {
+        let document = """
+        <w:document><w:body>
+        <w:p><w:pPr><w:pStyle w:val="TOCHeading"/></w:pPr><w:r><w:t>Contents</w:t></w:r></w:p>
+        <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>Intro</w:t></w:r></w:p>
+        </w:body></w:document>
+        """
+        let styles = """
+        <w:styles><w:style w:styleId="TOCHeading"><w:name w:val="TOC Heading"/><w:pPr><w:outlineLvl w:val="9"/></w:pPr></w:style>
+        <w:style w:styleId="Heading1"><w:name w:val="heading 1"/></w:style></w:styles>
+        """
+        let findings = DocumentCheck.checkWord(["word/document.xml": Data(document.utf8), "word/styles.xml": Data(styles.utf8)]).map(\.problem)
+        XCTAssertFalse(findings.contains { $0.contains("level 10") }, "\(findings)")
+    }
+
+    func testEmptyParagraphsBetweenTablesAreNotSpacing() {
+        let table = "<w:tbl><w:tblPr><w:tblHeader/></w:tblPr><w:tr><w:tc><w:p/></w:tc></w:tr></w:tbl>"
+        let document = "<w:document><w:body>" + String(repeating: table + "<w:p/>", count: 3) + "</w:body></w:document>"
+        let findings = DocumentCheck.checkWord(["word/document.xml": Data(document.utf8)]).map(\.problem)
+        XCTAssertFalse(findings.contains { $0.contains("Blank lines") }, "\(findings)")
+    }
+
+    func testTablesInsideTablesCountOnce() {
+        let document = "<w:tbl><w:tblPr/><w:tr><w:tc><w:tbl><w:tr><w:tc><w:p/></w:tc></w:tr></w:tbl><w:p/></w:tc></w:tr></w:tbl><w:p/><w:tbl></w:tbl>"
+        let ranges = DocumentCheck.outerTables(in: document)
+        XCTAssertEqual(ranges.count, 2)
+        XCTAssertTrue(document[ranges[0]].hasSuffix("</w:tc></w:tr></w:tbl>"))
+    }
+
+    func testMoreBrailleSigns() {
+        XCTAssertEqual(Braille.translate("a_b"), "a.-b")
+        XCTAssertEqual(Braille.translate("a\tb"), "a b")
+        XCTAssertEqual(Braille.translate("x < y"), "x @< y")
+        XCTAssertEqual(Braille.unsupported(in: "plain text, 3.5!"), 0)
+        XCTAssertEqual(Braille.unsupported(in: "ß and Ω"), 2)
+    }
+
+    func testDefaultPresetsKeepTheirIDs() {
+        XCTAssertEqual(Preset.defaults.map(\.id), Preset.defaults.map(\.id))
+        XCTAssertEqual(Set(Preset.defaults.map(\.id)).count, Preset.defaults.count)
+        XCTAssertEqual(Preset.defaults.first?.id.uuidString, "5E1A0001-0000-4000-8000-000000000001")
+    }
+
+    func testZipReadsFromASlice() {
+        // Data that doesn't start at index 0 (a slice) must still be read correctly.
+        let padded = Data([0, 0, 0]) + Data("PK".utf8)
+        XCTAssertNil(Zip.entries(padded.dropFirst(3)))
+    }
+
+    func testPunctuationKeysByCharacter() {
+        let combo = KeyCombo(code: 47, shift: false, command: false)
+        XCTAssertEqual(combo.letter, ".")
     }
 }

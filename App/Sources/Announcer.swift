@@ -15,10 +15,20 @@ enum Announcer {
     nonisolated(unsafe) static var useSystemVoice = false
 
     /// The last thing announced, for "Audio Split, repeat that".
-    private(set) static var lastText = ""
+    nonisolated(unsafe) private(set) static var lastText = ""
+    /// About when the current announcement will have been spoken, so the voice commands
+    /// can ignore the microphone hearing the app's own speech.
+    nonisolated(unsafe) private(set) static var speakingUntil = Date.distantPast
+
+    /// Notes that something is being said aloud, roughly how long it takes.
+    static func markSpeaking(_ text: String) {
+        let seconds = 1.0 + Double(text.split(separator: " ").count) * 0.4
+        speakingUntil = max(speakingUntil, Date().addingTimeInterval(seconds))
+    }
 
     static func say(_ text: String) {
         lastText = text
+        markSpeaking(text)
         queue.async {
             if !useSystemVoice && NSWorkspace.shared.isVoiceOverEnabled && sendToVoiceOver(text) { return }
             DispatchQueue.main.async {

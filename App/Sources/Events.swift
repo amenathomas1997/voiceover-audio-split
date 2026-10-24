@@ -15,6 +15,7 @@ enum SystemEvents {
     private static var started = false
     private static var downloadsWatcher: DispatchSourceFileSystemObject?
     private static var knownDownloads = Set<String>()
+    private static var pendingDownloadsScan: DispatchWorkItem?
     private static var knownDevices = Set<String>()
     private static let networkMonitor = NWPathMonitor()
     private static var networkOnline: Bool?
@@ -53,14 +54,17 @@ enum SystemEvents {
             || lower.hasSuffix(".part") || lower.hasSuffix(".partial")
     }
 
-    private static func finishedDownloads() -> Set<String> {
+    /// The finished files in Downloads. Only files not already known are looked at closely,
+    /// so a big Downloads folder doesn't slow the app down after each download.
+    private static func finishedDownloads(known: Set<String> = []) -> Set<String> {
         guard let folder = downloadsFolder,
               let names = try? FileManager.default.contentsOfDirectory(atPath: folder.path) else { return [] }
         // Firefox makes an empty file with the final name beside "name.part" while downloading.
         let all = Set(names)
         return Set(names.filter { name in
             !isPartial(name) && !all.contains(name + ".part")
-                && ((try? FileManager.default.attributesOfItem(atPath: folder.appendingPathComponent(name).path)[.size] as? Int) ?? 1) != 0
+                && (known.contains(name)
+                    || ((try? FileManager.default.attributesOfItem(atPath: folder.appendingPathComponent(name).path)[.size] as? Int) ?? 1) != 0)
         })
     }
 
@@ -72,14 +76,18 @@ enum SystemEvents {
         let watcher = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: .write, queue: .main)
         watcher.setEventHandler {
             // Browsers rename the partial file when the download completes; wait a moment for it.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                let current = finishedDownloads()
+            // A burst of changes makes one look, not one each.
+            pendingDownloadsScan?.cancel()
+            let scan = DispatchWorkItem {
+                let current = finishedDownloads(known: knownDownloads)
                 let new = current.subtracting(knownDownloads)
                 knownDownloads = current
                 guard Preferences.shared.announceDownloads, !new.isEmpty else { return }
                 Tones.play(.status)
                 Announcer.say(new.count == 1 ? String(localized: "Download finished: \(new.first!)") : String(localized: "\(new.count) downloads finished"))
             }
+            pendingDownloadsScan = scan
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: scan)
         }
         watcher.setCancelHandler { close(descriptor) }
         watcher.resume()
@@ -193,10 +201,11 @@ enum SystemEvents {
 
     /// The next time on an exact boundary of `minutes`, for example 10:30 for every 30 minutes.
     static func nextClockTime(after date: Date, every minutes: Int, calendar: Calendar = .current) -> Date? {
-        let parts = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        guard let minute = parts.minute, let hourStart = calendar.date(from: DateComponents(
-            year: parts.year, month: parts.month, day: parts.day, hour: parts.hour)) else { return nil }
+        // The start of this exact hour: also right in the hour that repeats when the clocks go back.
+        guard let hourStart = calendar.dateInterval(of: .hour, for: date)?.start else { return nil }
+        let minute = Int(date.timeIntervalSince(hourStart) / 60)
         let nextMinute = (minute / minutes + 1) * minutes
-        return calendar.date(byAdding: .minute, value: nextMinute, to: hourStart)
+        guard let next = calendar.date(byAdding: .minute, value: nextMinute, to: hourStart), next > date else { return nil }
+        return next
     }
 }

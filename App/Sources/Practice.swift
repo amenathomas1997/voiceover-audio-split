@@ -41,7 +41,6 @@ struct Drill: Hashable {
     /// by the letter typed, so French and German keyboards work.
     func matches(keyCode: Int64, flags: CGEventFlags, letter: Character? = nil) -> Bool {
         KeyCombo(code: self.keyCode, shift: shift, command: command).matches(keyCode: keyCode, flags: flags, letter: letter)
-            && flags.contains([.maskControl, .maskAlternate])
     }
 }
 
@@ -49,7 +48,7 @@ final class PracticeModel: ObservableObject {
     static let shared = PracticeModel()
 
     @Published var running = false
-    @Published var learnMode = true
+    @Published var learnMode = Preferences.shared.practiceLearnMode { didSet { Preferences.shared.practiceLearnMode = learnMode } }
     @Published var round = 0
     @Published var score = 0
     @Published var current: Drill?
@@ -59,6 +58,8 @@ final class PracticeModel: ObservableObject {
     private var firstTry = true
     /// Counts starts and stops, so a delayed step from an earlier run is ignored.
     private var session = 0
+    /// The practice window: keys are only taken while it's in front.
+    weak var window: NSWindow?
 
     func start() {
         queue = Array(Drill.all.shuffled().prefix(rounds))
@@ -89,7 +90,9 @@ final class PracticeModel: ObservableObject {
         session += 1
         running = false
         current = nil
-        Announcer.say(String(localized: "Practice stopped. \(score) right out of \(round)."))
+        // The task being asked when it stopped wasn't answered.
+        let asked = round - (current == nil ? 0 : 1)
+        Announcer.say(String(localized: "Practice stopped. \(score) right out of \(asked)."))
     }
 
     private func next() {
@@ -118,12 +121,14 @@ final class PracticeModel: ObservableObject {
 
     /// Takes Escape and anything pressed with VO; other keys go through as usual.
     private func handle(_ keyCode: Int64, _ flags: CGEventFlags, letter: Character?) -> Bool {
+        // In another app, VoiceOver works as usual.
+        guard NSApp.isActive, window == nil || NSApp.keyWindow === window else { return false }
         if keyCode == Key.escape {
             DispatchQueue.main.async { self.stop() }
             return true
         }
         // While practice runs, every VO key is taken, also between tasks, so nothing moves.
-        guard flags.contains([.maskControl, .maskAlternate]), running else { return false }
+        guard KeyCombo.isVO(flags), running else { return false }
         DispatchQueue.main.async {
             // Between tasks (or after a quick second press) there's nothing to answer.
             guard self.running, let drill = self.current else { return }

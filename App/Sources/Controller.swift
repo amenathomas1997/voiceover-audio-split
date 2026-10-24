@@ -426,9 +426,9 @@ final class Controller {
     private func applyAutomaticPreset(id presetID: String?, reason: String) {
         guard let presetID, presetID != automaticPresetID,
               let preset = preferences.presets.first(where: { $0.id.uuidString == presetID }) else { return }
-        automaticPresetID = presetID
         log("Automatic preset \(preset.name) for \(reason).")
-        applyPreset(preset)
+        applyPreset(preset, automatic: true)
+        automaticPresetID = presetID
     }
 
     // MARK: - Website presets
@@ -556,7 +556,9 @@ final class Controller {
         applyPreset(preferences.presets[number - 1])
     }
 
-    func applyPreset(_ preset: Preset) {
+    /// Chosen by hand, a preset ends the automatic one, so coming back to that app applies it again.
+    func applyPreset(_ preset: Preset, automatic: Bool = false) {
+        if !automatic { automaticPresetID = nil }
         preferences.layout = preset.layout
         preferences.stereoOthers = preset.stereoOthers
         preferences.ducking = preset.ducking

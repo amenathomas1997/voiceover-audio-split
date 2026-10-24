@@ -196,6 +196,7 @@ final class Splitter {
     init(configuration: SplitConfiguration) { self.configuration = configuration }
 
     func start() {
+        failedPlan = nil
         rebuildIfNeeded()
         let system = AudioObjectID(kAudioObjectSystemObject)
         for selector in [kAudioHardwarePropertyProcessObjectList, kAudioHardwarePropertyDefaultOutputDevice,
@@ -208,14 +209,21 @@ final class Splitter {
     }
 
     private var pendingRebuild: DispatchWorkItem?
+    private var pendingForce = false
+    /// The last setup that couldn't be built.
+    private var failedPlan: Plan?
 
     /// Process and device lists change in bursts (connecting AirPods fires several
     /// changes in a second): wait for them to settle, then rebuild once.
     private func scheduleRebuild(force: Bool = false) {
         pendingRebuild?.cancel()
+        // A forced rebuild (the device changed shape) isn't lost to an ordinary one right after it.
+        pendingForce = pendingForce || force
         let work = DispatchWorkItem { [weak self] in
-            if force { self?.built = nil }
-            self?.rebuildIfNeeded()
+            guard let self else { return }
+            if self.pendingForce { self.built = nil; self.failedPlan = nil }
+            self.pendingForce = false
+            self.rebuildIfNeeded()
         }
         pendingRebuild = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: work)
@@ -271,11 +279,15 @@ final class Splitter {
     private func plan() -> Plan {
         let processes = audioProcesses()
         var apps: [String: Set<AudioObjectID>] = [:]
+        // A process in two apps' taps would be heard twice: the first rule that matches it wins.
+        var claimed = Set<AudioObjectID>()
         // Leave room for the speech, other-sounds and calls taps.
         for bundleID in configuration.appRuleIDs.prefix(Mixer.maxSources - 3) {
             let appPIDs = pids(of: bundleID)
-            let matches = processes.filter { belongs($0, to: bundleID, appPIDs: appPIDs) && !isSpeechProcess($0) }
-            if !matches.isEmpty { apps[bundleID] = Set(matches.map(\.object)) }
+            let matches = Set(processes.filter { belongs($0, to: bundleID, appPIDs: appPIDs) && !isSpeechProcess($0) }.map(\.object))
+                .subtracting(claimed)
+            if !matches.isEmpty { apps[bundleID] = matches }
+            claimed.formUnion(matches)
         }
         let inApps = apps.values.reduce(into: Set<AudioObjectID>()) { $0.formUnion($1) }
 
@@ -305,6 +317,8 @@ final class Splitter {
     func rebuildIfNeeded() {
         let plan = plan()
         if plan == built && aggregate != kAudioObjectUnknown { return }
+        // The same setup just failed: wait for something to change rather than retry in a loop.
+        if plan == failedPlan { return }
         // Our aggregate device can briefly show up as the default; ignore it.
         if plan.output == aggregate { return }
 
@@ -316,10 +330,12 @@ final class Splitter {
         }
         do {
             try build(plan)
+            failedPlan = nil
             log("Audio active: \(plan.apps.count) app(s) with their own settings\(plan.speechDevice != nil ? ", two devices" : "").")
         } catch {
             log("Could not start audio: \(error)")
             teardown()
+            failedPlan = plan
             NotificationCenter.default.post(name: Splitter.failed, object: nil)
         }
     }

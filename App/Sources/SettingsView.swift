@@ -122,6 +122,7 @@ struct SettingsView: View {
                         Button(String(localized: "Use \(preset.name)")) { Controller.shared.applyPreset(preset) }
                         Button(String(localized: "Delete \(preset.name)")) {
                             preferences.presets.removeAll { $0.id == preset.id }
+                            preferences.forgetMissingPresets()
                         }
                     }
                 }
@@ -133,7 +134,10 @@ struct SettingsView: View {
                     }
                     .disabled(newPresetName.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
-                Button(String(localized: "Restore default presets")) { preferences.presets = Preset.defaults }
+                Button(String(localized: "Restore default presets")) {
+                    preferences.presets = Preset.defaults
+                    preferences.forgetMissingPresets()
+                }
             }
 
             Section(String(localized: "Automatic presets")) {

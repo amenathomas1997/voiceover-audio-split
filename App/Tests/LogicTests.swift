@@ -708,15 +708,15 @@ final class LessonTests: XCTestCase {
     }
 
     func testEveryLessonIsComplete() {
-        XCTAssertEqual(Lesson.course.count, 16)
-        XCTAssertEqual(Set(Lesson.course.map(\.id)).count, 16)
+        XCTAssertEqual(Lesson.course.count, 24)
+        XCTAssertEqual(Set(Lesson.course.map(\.id)).count, 24)
+        XCTAssertEqual(Lesson.levels.flatMap(\.lessons).count, 24)
         // Lesson titles are numbered in order.
         for (index, lesson) in Lesson.course.enumerated() {
             XCTAssertTrue(lesson.title.hasPrefix("\(index + 1). "), lesson.title)
         }
         XCTAssertEqual(Set(Lesson.allPractice.map(\.id)).count, Lesson.allPractice.count)
         for lesson in Lesson.all {
-            XCTAssertFalse(lesson.practice.isEmpty, lesson.id)
             guard case .explain = lesson.steps.first?.kind else { return XCTFail("\(lesson.id) starts with an explanation") }
             // A quick check can't have two tasks with the same keys.
             let combos = lesson.practice.compactMap { step -> KeyCombo? in
@@ -759,8 +759,10 @@ final class DeeperLessonTests: XCTestCase {
 
     func testEveryLessonHasSomethingToDo() {
         for lesson in Lesson.all {
-            let tasks = lesson.steps.filter { if case .mission = $0.kind { true } else { false } }
-            XCTAssertFalse(lesson.practice.isEmpty && tasks.isEmpty, lesson.id)
+            let other = lesson.steps.filter {
+                switch $0.kind { case .mission, .question: true; default: false }
+            }
+            XCTAssertFalse(lesson.practice.isEmpty && other.isEmpty, lesson.id)
         }
     }
 }
@@ -779,5 +781,61 @@ final class KeyboardLayoutTests: XCTestCase {
         // VoiceOver practice too: German Z is where Y is on a US keyboard (key code 16).
         let repeatPhrase = Drill.all.first { $0.keyCode == 6 }!
         XCTAssertTrue(repeatPhrase.matches(keyCode: 16, flags: [.maskControl, .maskAlternate], letter: "z"))
+    }
+}
+
+final class GoingFurtherTests: XCTestCase {
+    func testSpacedPractice() {
+        let start = Date(timeIntervalSince1970: 1_000_000)
+        var schedule = LessonSchedule.update([:], id: "web.2", right: true, now: start)
+        XCTAssertEqual(schedule["web.2"], [1, start.timeIntervalSince1970 + 86_400])
+        XCTAssertTrue(LessonSchedule.due(now: start, in: schedule).isEmpty)
+        XCTAssertEqual(LessonSchedule.due(now: start.addingTimeInterval(90_000), in: schedule), ["web.2"])
+        schedule = LessonSchedule.update(schedule, id: "web.2", right: true, now: start)
+        XCTAssertEqual(schedule["web.2"]?.first, 2, "a box up: back in 3 days")
+        schedule = LessonSchedule.update(schedule, id: "web.2", right: false, now: start)
+        XCTAssertEqual(schedule["web.2"], [1, start.timeIntervalSince1970], "a miss is due again straight away")
+        for _ in 0..<10 { schedule = LessonSchedule.update(schedule, id: "web.2", right: true, now: start) }
+        XCTAssertEqual(schedule["web.2"]?.first, 5, "the top box is the last")
+    }
+
+    func testQuestionsHaveARealAnswer() {
+        for lesson in Lesson.all {
+            for step in lesson.steps {
+                guard case .question(let prompt, let options, let answer, let why) = step.kind else { continue }
+                XCTAssertTrue((2...4).contains(options.count), prompt)
+                XCTAssertTrue(options.indices.contains(answer), prompt)
+                XCTAssertFalse(why.isEmpty, prompt)
+            }
+        }
+        XCTAssertEqual(LessonRunner.spoken("Which?", ["Yes", "No"]), "Which? 1: Yes. 2: No. Press the number of your answer.")
+    }
+
+    func testControlKeys() {
+        let nextTab = KeyCombo(code: 48, vo: false, control: true)
+        XCTAssertTrue(nextTab.matches(keyCode: 48, flags: [.maskControl]))
+        XCTAssertFalse(nextTab.matches(keyCode: 48, flags: []))
+        XCTAssertFalse(nextTab.matches(keyCode: 48, flags: [.maskControl, .maskAlternate]), "that's VO Tab")
+        XCTAssertEqual(LessonRunner.howToPress(KeyCombo(code: 18, vo: false, command: true, control: true)),
+                       "Hold Control and Command, keep holding, then press 1.")
+    }
+
+    func testSavedDocumentNames() {
+        XCTAssertTrue(Mission.title("Practice", isSavedAs: "Practice"))
+        XCTAssertTrue(Mission.title("Practice.rtf", isSavedAs: "Practice"))
+        XCTAssertTrue(Mission.title("Practice Budget — Edited", isSavedAs: "Practice Budget"))
+        XCTAssertFalse(Mission.title("Untitled", isSavedAs: "Practice"))
+        XCTAssertFalse(Mission.title("Practice Letter", isSavedAs: "Practice"), "Pages' name isn't TextEdit's")
+    }
+
+    func testIWorkLessonsCheckTheRealApps() {
+        let ids = ["pages": "com.apple.iWork.Pages", "numbers": "com.apple.iWork.Numbers", "keynote": "com.apple.iWork.Keynote"]
+        for (lesson, app) in ids {
+            let steps = Lesson.all.first { $0.id == lesson }!.steps
+            XCTAssertTrue(steps.contains { $0.kind == .mission(task: "", check: .frontApp(app), tip: "") || {
+                if case .mission(_, .frontApp(let id), _) = $0.kind { return id == app } else { return false }
+            }($0) }, lesson)
+            XCTAssertTrue(steps.contains { if case .mission(_, .documentSaved(let id, _), _) = $0.kind { return id == app } else { return false } }, lesson)
+        }
     }
 }

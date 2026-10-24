@@ -1,8 +1,8 @@
 // Updater.swift — Check for Updates: asks GitHub for the newest release of the app,
 // and if it's newer than this copy, downloads its installer, checks that it arrived
 // whole, and opens it in Apple's Installer, which checks Apple's notarization.
-// Nothing is installed without the user choosing to. Copies from TestFlight or the
-// App Store are updated there instead. Only GitHub is contacted, and nothing about
+// Nothing is installed without the user choosing to. Only in the installer build from
+// build.sh: copies from TestFlight or the App Store are updated there instead. Only GitHub is contacted, and nothing about
 // the user is sent.
 
 import AppKit
@@ -79,9 +79,15 @@ enum UpdateCheck {
         return hash.finalize().map { String(format: "%02x", $0) }.joined()
     }
 
-    /// Installed from TestFlight or the App Store, which bring their own updates.
+    /// Installed from TestFlight or the App Store, which bring their own updates. Only the
+    /// installer that build.sh makes (built with DIRECT_DOWNLOAD) can update itself: App Store
+    /// and TestFlight builds never download or install code (App Store guideline 2.5.2).
     static var isStoreCopy: Bool {
+        #if DIRECT_DOWNLOAD
         Bundle.main.appStoreReceiptURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
+        #else
+        true
+        #endif
     }
 
     static var version: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0" }

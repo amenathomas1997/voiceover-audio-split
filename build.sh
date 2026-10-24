@@ -73,7 +73,8 @@ mkdir -p "$PAYLOAD/Applications"
 echo "Building $APP_NAME…"
 xcodebuild -project "$PROJECT" -scheme VoiceOverAudioSplit -configuration Release \
   -derivedDataPath "$BUILD/app" -destination 'generic/platform=macOS' \
-  CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO build -quiet
+  CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO \
+  SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) DIRECT_DOWNLOAD' build -quiet
 cp -R "$BUILD/app/Build/Products/Release/$APP_NAME.app" "$PAYLOAD/Applications/"
 APP="$PAYLOAD/Applications/$APP_NAME.app"
 # Finder information and other extended attributes (common in Documents or iCloud

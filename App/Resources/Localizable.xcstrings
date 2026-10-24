@@ -25477,6 +25477,28 @@
         }
       }
     },
+    "Say Audio Split, then a command, such as: Audio Split, quiet everything. Say Audio Split, what can I say, to hear them all. Launch VoiceOver training works on its own. Speech is recognized on your Mac and never recorded or saved; only Audio Split, find… sends your request to Anthropic, through Do It for Me. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag Audio Split und dann einen Befehl, zum Beispiel: Audio Split, alles stumm. Sag Audio Split, was kann ich sagen, um alle zu hören. „VoiceOver-Training starten“ funktioniert auch allein. Die Sprache wird auf deinem Mac erkannt und nie aufgenommen oder gesichert; nur „Audio Split, finde …“ sendet deine Anfrage über „Mach es für mich“ an Anthropic. Es wird das eingebaute Mikrofon verwendet, damit AirPods ihren vollen Klang behalten, und die Mikrofonanzeige bleibt an, solange zugehört wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di Audio Split y luego un comando, por ejemplo: Audio Split, silencia todo. Di Audio Split, qué puedo decir, para oírlos todos. Abrir entrenamiento de VoiceOver funciona por sí solo. La voz se reconoce en tu Mac y nunca se graba ni se guarda; solo Audio Split, busca… envía tu petición a Anthropic, mediante Hazlo por mí. Usa el micrófono integrado, así que los AirPods conservan todo su sonido, y el indicador del micrófono permanece encendido mientras escucha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dites Audio Split, puis une commande, par exemple : Audio Split, silence total. Dites Audio Split, que puis-je dire, pour toutes les entendre. Lancer la formation VoiceOver fonctionne seul. La parole est reconnue sur votre Mac et n'est jamais enregistrée ni conservée ; seul Audio Split, trouve… envoie votre demande à Anthropic, via Fais-le pour moi. Le micro intégré est utilisé, donc les AirPods gardent tout leur son, et l'indicateur du micro reste allumé pendant l'écoute."
+          }
+        }
+      }
+    },
     "Say Audio Split, then a command, such as: Audio Split, quiet everything. Say Audio Split, what can I say, to hear them all. Launch VoiceOver training works on its own. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens." : {
       "localizations" : {
         "de" : {

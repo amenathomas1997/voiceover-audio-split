@@ -18,6 +18,7 @@ Text to paste into App Store Connect, and the steps for a public TestFlight beta
 - **Support URL:** https://github.com/amenathomas1997/voiceover-audio-split#readme (public, with the feedback email; opening an issue would need a GitHub account)
 - **Contact email:** amena.thomas@fullcircleat.com
 - **Copyright:** 2026 Full Circle AT LLC
+- **License agreement:** choose a custom agreement and paste the text from [LICENSE-AGREEMENT.md](LICENSE-AGREEMENT.md). It keeps the GPL's rights and adds the terms Apple requires.
 - **Promotional text (up to 170 characters):** VoiceOver's speech in one ear, everything else in the other. Plus sound control, reading tools and spoken VoiceOver lessons, all from the keyboard.
 - **Keywords (up to 100 characters):** voiceover,screen reader,blind,low vision,accessibility,audio,split,speech,braille,lessons,hearing
 - **Description:**
@@ -106,13 +107,13 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 > VoiceOver Audio Split is an accessibility tool for blind and low-vision people who use the VoiceOver screen reader. It runs as a menu bar app. Open its menu with Right Option + M; a setup guide opens on first launch.
 >
 > Why each permission is needed:
-> - Accessibility: global keyboard shortcuts with the right Option key, so users can control the app from anywhere without a mouse. Only the app's own shortcut keys are acted on; all other keystrokes pass through untouched and are never stored. The accessibility interface is also used, like VoiceOver uses it, to speak the user's own names for unlabeled controls (custom labels), to return to saved spots on web pages (place markers), and for "Do It for Me", which moves the VoiceOver cursor to a control the user asks for and only presses it after the user confirms. During VoiceOver practice and the typing trainer, which the user starts, key presses are caught so the user can practice them; nothing typed is stored.
+> - Accessibility: global keyboard shortcuts with the right Option key, so users can control the app from anywhere without a mouse. Only the app's own shortcut keys are acted on; all other keystrokes pass through untouched and are never stored. The accessibility interface is also used, like VoiceOver uses it, to speak the user's own names for unlabeled controls (custom labels), to return to saved spots on web pages (place markers), and for "Do It for Me", which moves the VoiceOver cursor to a control the user asks for and only presses it after the user confirms. During VoiceOver Lessons, VoiceOver practice and the typing trainer, which the user starts, key presses are caught only while that window is in front, so the user can practice them; nothing typed is stored.
 > - System audio recording (Core Audio process taps): VoiceOver's speech and other apps' sound are captured separately and played back immediately into different ears. Nothing is recorded or stored.
 > - Apple Events to VoiceOver (com.apple.security.temporary-exception.apple-events for com.apple.VoiceOver): VoiceOver ignores accessibility announcements from background apps, so the app asks VoiceOver to speak its status messages ("Speech left, other sounds right") in the user's own VoiceOver voice. It also reads VoiceOver's last phrase and cursor position for speech history, captions and the focus frame. These are VoiceOver's own documented AppleScript commands. No other app is controlled.
 > - Screen recording: only when the user asks to describe the image under the VoiceOver cursor, read the text in the front window (on-device text recognition, for shared screens in meetings and apps without accessibility), or describe a video frame.
 > - Apple Events to Safari and Chrome (temporary exception): only if the user sets presets for websites; the app asks the browser for the current tab's address to switch the user's audio preset. Addresses are not stored or sent.
 > - Microphone: a five-second microphone check before calls that reports the voice and background noise levels. Nothing is recorded.
-> - Speech Recognition and Microphone (optional, off by default): if the user turns on voice commands in Settings, the app listens for the wake word "Audio Split" followed by a command (such as "quiet everything" or "turn on VoiceOver"), and for "Launch VoiceOver training" to open its lessons, using SFSpeechRecognizer with requiresOnDeviceRecognition, through the built-in microphone. Audio is never recorded, stored or sent.
+> - Speech Recognition and Microphone (optional, off by default): if the user turns on voice commands in Settings, the app listens for the wake word "Audio Split" followed by a command (such as "quiet everything" or "turn on VoiceOver"), and for "Launch VoiceOver training" to open its lessons, using SFSpeechRecognizer with requiresOnDeviceRecognition, through the built-in microphone. Audio is never recorded, stored or sent. The one exception is the user's own request "Audio Split, find…", which goes to Do It for Me (below) as text, with the user's API key. Commands that change something important ask for a spoken yes first.
 > - Downloads folder (read-only): announcing when a download finishes and opening the latest download.
 > - Camera: on-device text reading (Scan and Read), a framing check before video calls, a color identifier, a light detector, a barcode and QR code reader, and a medicine label reader. Pictures are never saved or sent, except that the optional money identifier sends one picture to Anthropic with the user's own API key, after the user has allowed image descriptions. The app also tells blind users when another app turns the camera or microphone on, by checking whether those devices are in use; it never receives what they capture.
 > - Network: optional lookups (Wikipedia, weather, product barcodes in Open Food Facts), with NSAllowsArbitraryLoadsForMedia only so internet radio and podcast audio that is served over plain http can play, the audio hub (radio, podcasts, LibriVox, news), and optional image descriptions with the user's own Anthropic API key.
@@ -120,7 +121,16 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 > - User scripts: the user can add their own AppleScripts to the app's Application Scripts folder (run with NSUserAppleScriptTask) or name a Shortcut (run with the shortcuts:// URL scheme). Nothing runs unless the user adds it.
 > - User-selected files (read and write): opening documents in the large-print Doc Reader, and saving recognized text as a text or Word file where the user chooses.
 >
+> - Anthropic API (optional): image and video descriptions, the assistant, Do It for Me and the money identifier use the user's own Anthropic API key, entered in Settings. Nothing is sent without that key, pictures are sent only after the user allows it once, and each request is made only when the user asks. No account with us is needed; the app has no sign-in.
+> - Updates: this App Store build doesn't download or install code. Updates come only through the App Store.
+>
 > To test without VoiceOver: open the menu with Right Option + M, choose Speech Left, and play any audio. With VoiceOver on (Command + F5), VoiceOver's voice moves to the left ear and the other audio moves to the right ear.
+>
+> Other features to try:
+> - VoiceOver Lessons: menu > Learning > VoiceOver Lessons. A spoken welcome asks whether you're learning on your own (press 1) or with a trainer (press 2); Return starts the first lesson. Escape twice stops a lesson.
+> - Voice commands: Settings > Voice command > turn on "Always listen for “Audio Split” and “Launch VoiceOver training”". Then say "Audio Split, what can I say?" or "Audio Split, what time is it?". It's off by default.
+> - Command palette: Right Option + Return, then type a word such as "battery" and press Return.
+> - Features that need an Anthropic API key (described above) can be skipped; everything else works without one.
 
 ## 7. Installer package (outside the App Store)
 

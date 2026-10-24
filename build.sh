@@ -73,6 +73,9 @@ xcodebuild -project "$PROJECT" -scheme VoiceOverAudioSplit -configuration Releas
   CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO build -quiet
 cp -R "$BUILD/app/Build/Products/Release/$APP_NAME.app" "$PAYLOAD/Applications/"
 APP="$PAYLOAD/Applications/$APP_NAME.app"
+# Finder information and other extended attributes (common in Documents or iCloud
+# folders) make codesign fail with "resource fork, Finder information, or similar detritus".
+xattr -cr "$APP"
 # For example 1.0.202610231930: the version, then the build number, so each build counts as newer.
 VERSION="$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist").$(plutil -extract CFBundleVersion raw "$APP/Contents/Info.plist")"
 

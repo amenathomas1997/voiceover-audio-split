@@ -89,7 +89,7 @@ Commands that change something important ask "Say yes or no" first. While the ap
 
 **Optional AI:** image descriptions, video descriptions, an assistant, Do It for Me and the money identifier use Claude with your own API key. Everything else works without it.
 
-**Get it:** the public beta is on TestFlight. The link will be here when the beta is approved. To install it without TestFlight, build the [installer package](#installer-package-outside-the-app-store). It needs macOS 14.2 or later, and headphones are recommended.
+**Get it:** [download the installer](https://github.com/amenathomas1997/voiceover-audio-split/releases/latest/download/VoiceOver-Audio-Split.pkg), signed and notarized by Apple (see [Installer package](#installer-package-outside-the-app-store)). Or join the beta on TestFlight, by invitation: [email amena.thomas@fullcircleat.com](mailto:amena.thomas@fullcircleat.com?subject=VoiceOver%20Audio%20Split%20TestFlight%20beta&body=Please%20add%20me%20to%20the%20VoiceOver%20Audio%20Split%20beta.%0A%0AThe%20email%20address%20of%20my%20Apple%20Account%20(Apple%20ID)%3A%20) with the email address of your Apple Account (your Apple ID), and you'll get a TestFlight invitation at that address. It needs macOS 14.2 or later, and headphones are recommended.
 
 **Privacy:** nothing is collected or recorded. See the [privacy policy](PRIVACY.md).
 

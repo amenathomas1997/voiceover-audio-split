@@ -1,6 +1,6 @@
 # Releasing VoiceOver Audio Split
 
-Text to paste into App Store Connect, and the steps for a public TestFlight beta and the App Store.
+Text to paste into App Store Connect, and the steps for the TestFlight beta (by email invitation) and the App Store.
 
 ## 1. Before each upload
 
@@ -147,12 +147,16 @@ It builds, signs and notarizes the installer, and creates a GitHub release with 
 
 The app's Info.plist sets `ITSAppUsesNonExemptEncryption` to `NO`. It uses only Apple's standard HTTPS, so no export documentation is needed.
 
-## 9. Public TestFlight link
+## 9. TestFlight testers, by email invitation
 
-1. In App Store Connect, go to TestFlight > External Testing, and add a group, such as "Public beta".
-2. Add the build, and fill in the beta description, what to test, and the review notes above.
-3. Submit it for Beta App Review. This usually takes about a day.
-4. After it's approved, turn on **Public Link** for the group, and use that link in the announcement and on the website.
+There's no public link: people ask to join by email, with the email address of their Apple Account (Apple ID), and you add them. The website and README ask for this.
+
+1. Once: in App Store Connect, go to TestFlight > External Testing, and add a group, such as "Beta testers". Add the build, fill in the beta description, what to test and the review notes above, and submit it for Beta App Review (usually about a day). Later builds of the same version usually don't need a new review.
+2. For each request: in that group, choose Testers, the add button, then Add New Testers, and enter their name and the Apple Account email they sent. TestFlight emails them an invitation.
+3. They install the free TestFlight app from the Mac App Store, open the invitation on their Mac, and choose Accept, then Install.
+4. Reply to let them know the invitation is on its way, and that it comes from TestFlight to the address they gave. If they don't see it, check that the email they sent is the one their Apple Account uses, and look in their junk mail.
+
+An external group can have up to 10,000 testers. Internal testing is only for people on your App Store Connect team.
 
 ## 10. App Store release
 

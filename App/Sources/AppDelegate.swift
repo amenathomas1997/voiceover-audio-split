@@ -113,6 +113,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             log("Check: Downloads folder readable = \(SystemEvents.latestDownload() != nil)")
             log("Check: scripts folder = \(UserCommands.scriptsFolder?.lastPathComponent ?? "unavailable")")
             log("Check: \(Performance.summary())")
+            // Packages named vocheck-*.pkg in Downloads are copied to the temporary Update folder
+            // and checked there, the way a downloaded update is.
+            let updates = FileManager.default.temporaryDirectory.appendingPathComponent("Update")
+            try? FileManager.default.createDirectory(at: updates, withIntermediateDirectories: true)
+            if let downloads = SystemEvents.downloadsFolder {
+                for name in (try? FileManager.default.contentsOfDirectory(atPath: downloads.path)) ?? []
+                where name.hasPrefix("vocheck-") && name.hasSuffix(".pkg") {
+                    try? FileManager.default.removeItem(at: updates.appendingPathComponent(name))
+                    try? FileManager.default.copyItem(at: downloads.appendingPathComponent(name), to: updates.appendingPathComponent(name))
+                }
+            }
+            for package in (try? FileManager.default.contentsOfDirectory(at: updates, includingPropertiesForKeys: nil)) ?? []
+            where package.pathExtension == "pkg" {
+                let report = UpdateCheck.signatureReport(of: package)
+                log("Check: update \(package.lastPathComponent) report = \(report != nil), trusted = \(report.map(UpdateCheck.isTrusted) ?? false)")
+            }
             let web = WKWebView(frame: NSRect(x: 0, y: 0, width: 600, height: 400))
             web.loadHTMLString(PracticeWebPage.html, baseURL: nil)
             for _ in 0..<40 where web.isLoading { try? await Task.sleep(for: .milliseconds(100)) }

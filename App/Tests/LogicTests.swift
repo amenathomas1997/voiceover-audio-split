@@ -1098,3 +1098,33 @@ final class UpdateCheckTests: XCTestCase {
         XCTAssertEqual(try UpdateCheck.sha256(of: file), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
     }
 }
+
+final class UpdateSignatureTests: XCTestCase {
+    private let notarized = """
+    Package "VoiceOver Audio Split.pkg":
+       Status: signed by a developer certificate issued by Apple for distribution
+       Notarization: trusted by the Apple notary service
+       Signed with a trusted timestamp on: 2026-10-24 19:27:33 +0000
+       Certificate Chain:
+        1. Developer ID Installer: Full Circle AT LLC (9G2D7CDZ5D)
+           Expires: 2027-02-01 22:12:15 +0000
+        2. Developer ID Certification Authority
+           Expires: 2027-02-01 22:12:15 +0000
+        3. Apple Root CA
+           Expires: 2035-02-09 21:40:36 +0000
+    """
+
+    func testOurNotarizedInstallerIsTrusted() {
+        XCTAssertTrue(UpdateCheck.isTrusted(signatureReport: notarized))
+    }
+
+    func testOtherSignersAndUnnotarizedPackagesAreNot() {
+        XCTAssertFalse(UpdateCheck.isTrusted(signatureReport: notarized.replacingOccurrences(of: "(9G2D7CDZ5D)", with: "(ABCDE12345)")),
+                       "another team's certificate")
+        XCTAssertFalse(UpdateCheck.isTrusted(signatureReport: notarized.replacingOccurrences(of: "   Notarization: trusted by the Apple notary service\n", with: "")),
+                       "not notarized")
+        XCTAssertFalse(UpdateCheck.isTrusted(signatureReport: notarized.replacingOccurrences(of: "Developer ID Installer", with: "Apple Development")))
+        XCTAssertFalse(UpdateCheck.isTrusted(signatureReport: "Package \"x.pkg\":\n   Status: package is invalid (checksum did not verify)"))
+        XCTAssertFalse(UpdateCheck.isTrusted(signatureReport: ""))
+    }
+}

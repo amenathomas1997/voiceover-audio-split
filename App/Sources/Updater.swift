@@ -1,6 +1,6 @@
 // Updater.swift — Check for Updates: asks GitHub for the newest release of the app,
 // and if it's newer than this copy, downloads its installer, checks that it arrived
-// whole, and opens it in Apple's Installer, which checks Apple's notarization.
+// whole and is signed with our Developer ID and notarized, and opens it in Apple's Installer.
 // Nothing is installed without the user choosing to. Only in the installer build from
 // build.sh: copies from TestFlight or the App Store are updated there instead. Only GitHub is contacted, and nothing about
 // the user is sent.
@@ -77,6 +77,35 @@ enum UpdateCheck {
         var hash = SHA256()
         while let chunk = try handle.read(upToCount: 1 << 20), !chunk.isEmpty { hash.update(data: chunk) }
         return hash.finalize().map { String(format: "%02x", $0) }.joined()
+    }
+
+    /// The team that signs the installer: only its Developer ID Installer is trusted.
+    static let teamID = "9G2D7CDZ5D"
+
+    /// Whether pkgutil's report says the package is signed for distribution with our own
+    /// Developer ID Installer certificate, through Apple's chain, and notarized by Apple.
+    /// The checksum only proves the file arrived whole; this proves who made it.
+    static func isTrusted(signatureReport report: String) -> Bool {
+        let lines = report.split(separator: "\n").map { $0.trimmingCharacters(in: .whitespaces) }
+        guard lines.contains("Status: signed by a developer certificate issued by Apple for distribution"),
+              lines.contains("Notarization: trusted by the Apple notary service"),
+              let signer = lines.first(where: { $0.hasPrefix("1. ") }) else { return false }
+        return signer.hasPrefix("1. Developer ID Installer: ") && signer.hasSuffix("(\(teamID))")
+            && lines.contains("2. Developer ID Certification Authority") && lines.contains("3. Apple Root CA")
+    }
+
+    /// pkgutil's signature report for a package, or nil if it isn't signed or can't be checked.
+    static func signatureReport(of package: URL) -> String? {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/sbin/pkgutil")
+        process.arguments = ["--check-signature", package.path]
+        let output = Pipe()
+        process.standardOutput = output
+        process.standardError = FileHandle.nullDevice
+        do { try process.run() } catch { return nil }
+        let data = output.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
+        return process.terminationStatus == 0 ? String(decoding: data, as: UTF8.self) : nil
     }
 
     /// Installed from TestFlight or the App Store, which bring their own updates. Only the
@@ -203,7 +232,14 @@ final class Updater {
                     log("Update download didn't match its checksum.")
                     return Announcer.say(String(localized: "The update didn't download correctly, so nothing was installed. Try again later."))
                 }
-                log("Update downloaded; opening the installer.")
+                // And it must come from us: our Developer ID, notarized by Apple.
+                let report = await Task.detached { UpdateCheck.signatureReport(of: installer) }.value
+                guard let report, UpdateCheck.isTrusted(signatureReport: report) else {
+                    try? FileManager.default.removeItem(at: folder)
+                    log("Update isn't signed by our Developer ID or isn't notarized; not opened.")
+                    return Announcer.say(String(localized: "The update isn't signed by Full Circle AT and notarized by Apple, so it wasn't installed."))
+                }
+                log("Update downloaded and verified; opening the installer.")
                 Tones.play(.device)
                 Announcer.say(String(localized: "Opening the installer. Follow its steps; VoiceOver Audio Split closes while it installs and opens again afterwards."))
                 let installerApp = URL(fileURLWithPath: "/System/Library/CoreServices/Installer.app")

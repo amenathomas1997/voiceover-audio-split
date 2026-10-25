@@ -25499,28 +25499,6 @@
         }
       }
     },
-    "Say Audio Split, then a command, such as: Audio Split, quiet everything. Say Audio Split, what can I say, to hear them all. Launch VoiceOver training works on its own. Speech is recognized on your Mac and never recorded, saved or sent. It uses the built-in microphone, so AirPods keep their full sound, and the microphone indicator stays on while it listens." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sag Audio Split und dann einen Befehl, zum Beispiel: Audio Split, alles stumm. Sag Audio Split, was kann ich sagen, um alle zu hören. „VoiceOver-Training starten“ funktioniert auch allein. Die Sprache wird auf deinem Mac erkannt und nie aufgenommen, gesichert oder gesendet. Es wird das eingebaute Mikrofon verwendet, damit AirPods ihren vollen Klang behalten, und die Mikrofonanzeige bleibt an, solange zugehört wird."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Di Audio Split y luego un comando, por ejemplo: Audio Split, silencia todo. Di Audio Split, qué puedo decir, para oírlos todos. Abrir entrenamiento de VoiceOver funciona por sí solo. La voz se reconoce en tu Mac y nunca se graba, guarda ni envía. Usa el micrófono integrado, así que los AirPods conservan todo su sonido, y el indicador del micrófono permanece encendido mientras escucha."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dites Audio Split, puis une commande, par exemple : Audio Split, silence total. Dites Audio Split, que puis-je dire, pour toutes les entendre. Lancer la formation VoiceOver fonctionne seul. La parole est reconnue sur votre Mac et n'est jamais enregistrée, conservée ni envoyée. Le micro intégré est utilisé, donc les AirPods gardent tout leur son, et l'indicateur du micro reste allumé pendant l'écoute."
-          }
-        }
-      }
-    },
     "Say Audio Split, then a command. For example: %@. You can also say find, or go to, and the name of a control, and I'll take you there; that uses Do It for Me, which sends the control names to Anthropic. And Launch VoiceOver training works on its own." : {
       "localizations" : {
         "de" : {
@@ -31150,6 +31128,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La mise à jour ne s'est pas téléchargée correctement ; rien n'a donc été installé. Réessayez plus tard."
+          }
+        }
+      }
+    },
+    "The update isn't signed by Full Circle AT and notarized by Apple, so it wasn't installed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Update ist nicht von Full Circle AT signiert und von Apple beglaubigt, deshalb wurde es nicht installiert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La actualización no está firmada por Full Circle AT ni notarizada por Apple, así que no se instaló."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La mise à jour n'est pas signée par Full Circle AT et notariée par Apple ; elle n'a donc pas été installée."
           }
         }
       }
@@ -41113,5 +41113,5 @@
       }
     }
   },
-  "version" : "1.0"
+  "version" : "1.1"
 }

@@ -40,13 +40,30 @@ jobs:
             exit 1
           }
 
+      - name: Check translations
+        run: python3 App/Tools/check_strings.py
+
+      # Keys, tokens and private keys must never be committed.
+      - name: Check for secrets
+        run: |
+          pattern='sk-ant-[A-Za-z0-9_-]{10,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|xox[baprs]-[A-Za-z0-9-]{10,}'
+          if git grep -nIE "$pattern" -- . ':!*.xcstrings'; then
+            echo "::error::Something that looks like a key or token is committed. Remove it, and replace the key."
+            exit 1
+          fi
+          if git ls-files | grep -iE '\.(p12|pem|mobileprovision|cer|env)$'; then
+            echo "::error::A certificate, provisioning profile or .env file is committed."
+            exit 1
+          fi
+
       # Signing needs the team's certificates, which CI doesn't have; release
       # builds for TestFlight are signed and uploaded locally with App/release.sh.
+      # Warnings fail the build, so new ones get fixed straight away.
       - name: Build Debug
         run: >
           xcodebuild -project App/VoiceOverAudioSplit.xcodeproj -scheme VoiceOverAudioSplit
           -configuration Debug -destination 'platform=macOS' -derivedDataPath build/dd
-          CODE_SIGNING_ALLOWED=NO build
+          CODE_SIGNING_ALLOWED=NO SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
 
       - name: Build Release
         run: >

@@ -53,7 +53,7 @@ Like any internet request, these services can see your IP address. Dictionary de
 | System audio recording | Splitting and adjusting sound |
 | Screen recording | Describe image (the item under the VoiceOver cursor), reading the front window's text, and describing a video |
 | Microphone | The microphone check, and the voice command if you turn it on |
-| Speech Recognition | The voice command "Launch VoiceOver training", if you turn it on; recognized on your Mac only |
+| Speech Recognition | Voice commands ("Audio Split" and a command, and "Launch VoiceOver training"), if you turn them on; recognized on your Mac only |
 | Downloads folder (read only) | Saying when a download finishes, and opening the latest download |
 | Camera | Camera framing check, Scan and Read, color identifier, light detector, barcode and QR code reader, medicine label reader, money identifier |
 | Automation (VoiceOver) | Speaking announcements in your VoiceOver voice, speech history, captions, Read Item, the focus frame, restarting VoiceOver, and moving the VoiceOver cursor for place markers and Do It for Me |

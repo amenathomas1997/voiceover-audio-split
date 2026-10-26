@@ -2,6 +2,8 @@
 
 ## Next
 
+## 1.0.2, 25 October 2026
+
 - **Safer updates:** Check for Updates now installs an update only if it's signed with Full Circle AT's Developer ID and notarized by Apple, as well as matching its checksum.
 - **Feedback by email:** Settings, About has "Email a problem or an idea", so no GitHub account is needed. Reporting on GitHub is still there for people who have an account.
 - **Clearer permission messages:** the microphone and speech recognition prompts now describe the "Audio Split" voice commands, and say that only "find" requests are sent, to Anthropic.

@@ -2,6 +2,15 @@
 
 ## Next
 
+- **Call captions:** see what the other people in a Zoom, Teams or FaceTime call say, in large print, recognized on your Mac. "Read the Last Caption" speaks the newest one, and the transcript can be copied.
+- **Meeting helpers:** Am I Muted, Mute or Unmute, Camera On or Off, Raise or Lower Hand, Who's Talking, Read the Chat, new chat messages read as they arrive, and Leave the Meeting (which always asks first), for Zoom, Teams and FaceTime, without leaving where you are.
+- **Hearing profile:** boost the frequencies you hear less well, for each ear, from an audiogram or a quick listening test.
+- **Contracted braille:** braille files can now be contracted (grade 2) Unified English Braille, using liblouis.
+- **Timers and reminders:** "Audio Split, set a timer for 10 minutes", "remind me at 3 pm to call the doctor". They survive a restart.
+- **Clipboard history:** the last 20 things you copied, to hear and copy again (off until you turn it on).
+- **Window switcher:** every open window by name, filtered as you type.
+- **Object finder:** look for a person, a pet, a cup, a door or a word with the camera, with left, ahead and right guidance.
+- **Accessible PDFs:** scan pages, or a picture or PDF file, into a PDF with real text, headings, a title and a language.
 ## 1.0.2, 25 October 2026
 
 - **Safer updates:** Check for Updates now installs an update only if it's signed with Full Circle AT's Developer ID and notarized by Apple, as well as matching its checksum.

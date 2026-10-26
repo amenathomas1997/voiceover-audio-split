@@ -87,6 +87,12 @@ Commands that change something important ask "Say yes or no" first. While the ap
 
 **Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.
 
+**Calls and meetings** (menu > Calls and Meetings): **call captions** show what the other people in a Zoom, Teams or FaceTime call say, in large print, recognized on the Mac and never recorded. **Meeting helpers** work without leaving where you are: Am I Muted, Mute or Unmute, Camera On or Off, Raise or Lower Hand, Who's Talking, Read the Chat, new chat messages read aloud as they arrive, and Leave the Meeting, which always asks first. They find the meeting's buttons by name, which can change when Zoom or Teams update, so please report any that stop working.
+
+**Hearing profile** (menu > Sound and Devices > Hearing and Clarity): boosts the frequencies you hear less well, separately for each ear, for VoiceOver and all other sound. Type in the values from an audiogram, or take the two-minute listening test with headphones. It isn't a medical hearing test or a hearing aid.
+
+**More everyday tools:** **timers and reminders** by voice ("Audio Split, set a timer for 10 minutes", "remind me at 3 pm to call the doctor"), **clipboard history** (the last 20 things you copied; off until you turn it on), a **window switcher** that lists every open window by name, the **object finder** ("Audio Split, look for my cup", or the word on a sign), **accessible PDFs** from scanned pages or picture files, and **contracted braille** (grade 2 UEB, using [liblouis](https://github.com/liblouis/liblouis)).
+
 **Optional AI:** image descriptions, video descriptions, an assistant, Do It for Me and the money identifier use Claude with your own API key. Everything else works without it.
 
 **Get it:** [download the installer](https://github.com/amenathomas1997/voiceover-audio-split/releases/latest/download/VoiceOver-Audio-Split.pkg), signed and notarized by Apple (see [Installer package](#installer-package-outside-the-app-store)). Or join the beta on TestFlight, by invitation: [email amena.thomas@fullcircleat.com](mailto:amena.thomas@fullcircleat.com?subject=VoiceOver%20Audio%20Split%20TestFlight%20beta&body=Please%20add%20me%20to%20the%20VoiceOver%20Audio%20Split%20beta.%0A%0AThe%20email%20address%20of%20my%20Apple%20Account%20(Apple%20ID)%3A%20) with the email address of your Apple Account (your Apple ID), and you'll get a TestFlight invitation at that address. It needs macOS 14.2 or later, and headphones are recommended.

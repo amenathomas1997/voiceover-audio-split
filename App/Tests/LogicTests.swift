@@ -712,9 +712,9 @@ final class LessonTests: XCTestCase {
     }
 
     func testEveryLessonIsComplete() {
-        XCTAssertEqual(Lesson.course.count, 24)
-        XCTAssertEqual(Set(Lesson.course.map(\.id)).count, 24)
-        XCTAssertEqual(Lesson.levels.flatMap(\.lessons).count, 24)
+        XCTAssertEqual(Lesson.course.count, 30)
+        XCTAssertEqual(Set(Lesson.course.map(\.id)).count, 30)
+        XCTAssertEqual(Lesson.levels.flatMap(\.lessons).count, 30)
         // Lesson titles are numbered in order.
         for (index, lesson) in Lesson.course.enumerated() {
             XCTAssertTrue(lesson.title.hasPrefix("\(index + 1). "), lesson.title)

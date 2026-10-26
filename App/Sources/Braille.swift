@@ -1,11 +1,27 @@
-// Braille.swift — turns text into uncontracted (grade 1) Unified English Braille
-// and saves it as a .brf file for embossers and braille notetakers, laid out in
-// pages. BRF uses North American Braille ASCII: one character per braille cell.
-// Contracted braille needs a full rule table (such as liblouis), so it isn't here yet.
+// Braille.swift — turns text into Unified English Braille, uncontracted (grade 1)
+// or contracted (grade 2), and saves it as a .brf file for embossers and braille
+// notetakers, laid out in pages. BRF uses North American Braille ASCII: one
+// character per braille cell. Uncontracted braille is translated here; contracted
+// braille uses liblouis (App/Vendor/liblouis, LGPL) and its UEB tables, which are
+// bundled in Resources/BrailleTables.
 
 import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
+
+/// Uncontracted (grade 1) or contracted (grade 2) braille.
+enum BrailleGrade: String, CaseIterable, Identifiable {
+    case uncontracted, contracted
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .uncontracted: String(localized: "Uncontracted (grade 1)")
+        case .contracted: String(localized: "Contracted (grade 2)")
+        }
+    }
+}
 
 enum Braille {
     /// Braille ASCII characters in order of their dot pattern (dot 1 = 1, dot 2 = 2 … dot 6 = 32).
@@ -20,15 +36,18 @@ enum Braille {
     ]
 
     /// Characters that have no braille here, such as letters from other alphabets.
-    static func unsupported(in text: String) -> Int {
-        text.folding(options: [.diacriticInsensitive], locale: Locale(identifier: "en")).filter { character in
+    static func unsupported(in text: String, grade: BrailleGrade = .uncontracted) -> Int {
+        if grade == .contracted, let count = Louis.unsupported(in: text) { return count }
+        return text.folding(options: [.diacriticInsensitive], locale: Locale(identifier: "en")).filter { character in
             !(character.isASCII && (character.isLetter || character.isNumber)) && !character.isWhitespace
                 && punctuation[character] == nil && character != "\""
         }.count
     }
 
-    /// One line of text in Braille ASCII, uncontracted UEB.
-    static func translate(_ text: String) -> String {
+    /// One line of text in Braille ASCII, uncontracted or contracted UEB.
+    /// Contracted braille falls back to uncontracted if liblouis can't translate it.
+    static func translate(_ text: String, grade: BrailleGrade = .uncontracted) -> String {
+        if grade == .contracted, let braille = Louis.translate(text) { return braille }
         var output = ""
         // Tabs and other spaces separate words too.
         let words = text.folding(options: [.diacriticInsensitive], locale: Locale(identifier: "en"))
@@ -80,10 +99,10 @@ enum Braille {
 
     /// Braille pages for a .brf file: lines of at most `width` cells, `height` lines a
     /// page with the page number at the top right, pages separated by form feeds.
-    static func brf(_ text: String, width: Int = 40, height: Int = 25) -> String {
+    static func brf(_ text: String, grade: BrailleGrade = .uncontracted, width: Int = 40, height: Int = 25) -> String {
         var lines: [String] = []
         for paragraph in text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n") {
-            let braille = translate(paragraph.trimmingCharacters(in: .whitespaces))
+            let braille = translate(paragraph.trimmingCharacters(in: .whitespaces), grade: grade)
             if braille.isEmpty { lines.append(""); continue }
             var line = ""
             for word in braille.split(separator: " ") {
@@ -109,6 +128,12 @@ enum Braille {
         return pages.joined(separator: "\r\n\u{0C}")
     }
 
+    /// Braille ASCII for dot patterns from liblouis (Unicode braille cells); dots 7
+    /// and 8 have no place in a .brf file and are dropped.
+    fileprivate static func ascii(dots: UInt16) -> Character {
+        asciiByDots[Int(dots & 0x3F)]
+    }
+
     /// Braille ASCII as Unicode braille cells, to show on screen and on braille displays.
     static func unicode(_ ascii: String) -> String {
         String(ascii.map { character -> Character in
@@ -120,10 +145,75 @@ enum Braille {
     }
 }
 
+/// Contracted UEB through liblouis. liblouis isn't thread safe, so every call goes
+/// through one serial queue.
+private enum Louis {
+    private static let queue = DispatchQueue(label: "com.fullcircleat.VoiceOverAudioSplit.liblouis")
+
+    /// The bundled tables, by absolute path, so they are found inside the sandbox
+    /// without a search path. liblouis finds included tables next to the first one.
+    /// A comma separates tables in liblouis's table lists, so a path with one can't be used.
+    private static let tables: (contracted: String, uncontracted: String)? = {
+        guard let folder = Bundle.main.url(forResource: "BrailleTables", withExtension: nil)?.path,
+              !folder.contains(",") else { return nil }
+        queue.sync { lou_setLogLevel(LOU_LOG_ERROR) }
+        return (folder + "/en-ueb-g2.ctb", folder + "/en-ueb-g1.ctb")
+    }()
+
+    /// Whether each character can be put in braille, worked out once per character.
+    private static var known: [Character: Bool] = [:]
+
+    /// Dot patterns as Unicode braille, leaving out characters the tables don't know.
+    private static let mode = Int32(ucBrl.rawValue | dotsIO.rawValue | noUndefined.rawValue)
+
+    static func translate(_ text: String) -> String? {
+        guard let table = tables?.contracted else { return nil }
+        // Tabs and other spaces separate words, like in uncontracted braille.
+        let input = Array(String(text.map { $0.isWhitespace ? " " : $0 }).utf16)
+        if input.isEmpty { return "" }
+        return queue.sync { run(table, input) }
+    }
+
+    /// Characters in the text that the tables have no braille for.
+    static func unsupported(in text: String) -> Int? {
+        guard let table = tables?.uncontracted else { return nil }
+        return queue.sync {
+            text.filter { character in
+                if character.isWhitespace { return false }
+                if let isKnown = known[character] { return !isKnown }
+                let isKnown = run(table, Array(String(character).utf16)).map { !$0.isEmpty } ?? false
+                known[character] = isKnown
+                return !isKnown
+            }.count
+        }
+    }
+
+    /// Runs liblouis on the queue, making the output room bigger until everything fits.
+    private static func run(_ table: String, _ input: [UInt16]) -> String? {
+        dispatchPrecondition(condition: .onQueue(queue))
+        var room = input.count * 2 + 64
+        while room <= input.count * 64 + 1024 {
+            var inLength = Int32(input.count)
+            var outLength = Int32(room)
+            var output = [UInt16](repeating: 0, count: room)
+            let ok = lou_translateString(table, input, &inLength, &output, &outLength, nil, nil, mode)
+            guard ok == 1 else { return nil }
+            if inLength >= Int32(input.count) && outLength < Int32(room) {
+                return String(output.prefix(Int(outLength)).map { cell -> Character in
+                    cell & 0xFF00 == 0x2800 ? Braille.ascii(dots: cell) : " "
+                })
+            }
+            room *= 4
+        }
+        return nil
+    }
+}
+
 struct BrailleView: View {
     @State private var text = NSPasteboard.general.string(forType: .string) ?? ""
     @State private var width = 40
     @State private var height = 25
+    @AppStorage("brailleGrade") private var grade: BrailleGrade = .contracted
 
     var body: some View {
         Form {
@@ -131,15 +221,18 @@ struct BrailleView: View {
                 TextEditor(text: $text)
                     .frame(minHeight: 160)
                     .accessibilityLabel(String(localized: "Text to put in braille"))
+                Picker(String(localized: "Braille grade"), selection: $grade) {
+                    ForEach(BrailleGrade.allCases) { Text($0.title).tag($0) }
+                }
                 Stepper(String(localized: "Cells per line: \(width)"), value: $width, in: 20...42)
                 Stepper(String(localized: "Lines per page: \(height)"), value: $height, in: 10...30)
                 Button(String(localized: "Save as Braille File…")) { save() }
                     .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                Text(String(localized: "Uncontracted (grade 1) Unified English Braille, as a .brf file for embossers and notetakers. The text starts as what's on the clipboard."))
+                Text(String(localized: "Unified English Braille, as a .brf file for embossers and notetakers. The text starts as what's on the clipboard."))
                     .font(.caption).foregroundStyle(.secondary)
             }
             Section(String(localized: "Preview")) {
-                Text(Braille.unicode(Braille.translate(String(text.prefix(400)))))
+                Text(Braille.unicode(Braille.translate(String(text.prefix(400)), grade: grade)))
                     .textSelection(.enabled)
             }
         }
@@ -154,8 +247,8 @@ struct BrailleView: View {
         NSApp.activate()
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
-            try Braille.brf(text, width: width, height: height).write(to: url, atomically: true, encoding: .ascii)
-            let missing = Braille.unsupported(in: text)
+            try Braille.brf(text, grade: grade, width: width, height: height).write(to: url, atomically: true, encoding: .ascii)
+            let missing = Braille.unsupported(in: text, grade: grade)
             Announcer.say(String(localized: "Saved \(url.lastPathComponent)")
                           + (missing > 0 ? " " + String(localized: "\(missing) characters have no braille here and were left out.") : ""))
         } catch {

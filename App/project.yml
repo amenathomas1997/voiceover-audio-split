@@ -22,10 +22,23 @@ targets:
     platform: macOS
     sources:
       - Sources
-      - Resources
+      - path: Resources
+        excludes:
+          - BrailleTables
+      # liblouis braille tables, kept as one folder in the app: Resources/BrailleTables.
+      - path: Resources/BrailleTables
+        type: folder
+        buildPhase: resources
+      # liblouis (LGPL-2.1-or-later) for contracted braille: only the library's C
+      # sources. Its warnings are its own, so they are silenced for these files.
+      - path: Vendor/liblouis/liblouis
+        compilerFlags:
+          - "-w"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fullcircleat.VoiceOverAudioSplit
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/BridgingHeader.h
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/Vendor/liblouis/liblouis"
         PRODUCT_NAME: VoiceOver Audio Split
         INFOPLIST_FILE: Resources/Info.plist
         CODE_SIGN_ENTITLEMENTS: Resources/VoiceOverAudioSplit.entitlements

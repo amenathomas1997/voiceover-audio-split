@@ -23,3 +23,12 @@ devices or the use of digital rights management), the licensors of this program
 grant you additional permission to convey the resulting work through that
 service, provided that the Corresponding Source of the work remains available
 to recipients under the terms of the GNU General Public License.
+
+
+Third-party software
+
+Contracted braille uses liblouis 3.39.0 (https://github.com/liblouis/liblouis),
+Copyright (C) the liblouis contributors (App/Vendor/liblouis/AUTHORS), licensed
+under the GNU Lesser General Public License version 2.1 or later: see
+App/Vendor/liblouis/COPYING.LESSER. Its library sources are in
+App/Vendor/liblouis and the braille tables it uses in App/Resources/BrailleTables.

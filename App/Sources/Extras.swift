@@ -40,9 +40,13 @@ enum BeepMode {
 enum ClipboardWatcher {
     private static var timer: Timer?
     private static var lastCount = NSPasteboard.general.changeCount
+    private static var announce = false
 
+    /// Also feeds the clipboard history (ClipboardHistory.swift), so the clipboard is watched by one timer.
     static func update(enabled: Bool) {
-        if enabled && timer == nil {
+        announce = enabled
+        let needed = enabled || ClipboardHistory.shared.isEnabled
+        if needed && timer == nil {
             lastCount = NSPasteboard.general.changeCount
             timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
                 let count = NSPasteboard.general.changeCount
@@ -52,15 +56,20 @@ enum ClipboardWatcher {
                 let types = NSPasteboard.general.types ?? []
                 let concealed = ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType", "com.agilebits.onepassword"]
                 if types.contains(where: { concealed.contains($0.rawValue) }) { return }
+                if let text = NSPasteboard.general.string(forType: .string) { ClipboardHistory.shared.record(text) }
+                guard announce else { return }
                 let description = Clipboard.describe()
                 let shown = description.count > 120 ? String(description.prefix(120)) + "…" : description
                 Announcer.say(String(localized: "Copied: \(shown)"))
             }
-        } else if !enabled {
+        } else if !needed {
             timer?.invalidate()
             timer = nil
         }
     }
+
+    /// After the clipboard history is turned on or off.
+    static func refresh() { update(enabled: announce) }
 }
 
 // MARK: - Audio mouse

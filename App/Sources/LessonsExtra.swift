@@ -519,7 +519,8 @@ final class LessonProgress: ObservableObject {
     @discardableResult
     func switchTo(named name: String) -> Bool {
         let wanted = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let student = students.first(where: { $0.name.localizedCaseInsensitiveCompare(wanted) == .orderedSame }) else { return false }
+        // Spoken names come without accents or punctuation ("Maria" for "María").
+        guard let student = students.first(where: { VoiceCommands.normalize($0.name) == VoiceCommands.normalize(wanted) }) else { return false }
         switchTo(student.id)
         return true
     }

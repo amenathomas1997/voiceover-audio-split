@@ -2,6 +2,9 @@
 
 ## Next
 
+- **Six new lessons** in a fifth level, Everyday apps 2: Messages, Calendar, managing files in Finder, Zoom and Teams, braille displays, and VoiceOver Utility. The course now has 30 lessons.
+- **Lessons by trainers:** write a lesson as a `.voalesson` file and import it (docs/CUSTOM-LESSONS.md).
+- **Students:** keep progress for several learners on one Mac, and export each one's session reports as text or CSV.
 - **Call captions:** see what the other people in a Zoom, Teams or FaceTime call say, in large print, recognized on your Mac. "Read the Last Caption" speaks the newest one, and the transcript can be copied.
 - **Meeting helpers:** Am I Muted, Mute or Unmute, Camera On or Off, Raise or Lower Hand, Who's Talking, Read the Chat, new chat messages read as they arrive, and Leave the Meeting (which always asks first), for Zoom, Teams and FaceTime, without leaving where you are.
 - **Hearing profile:** boost the frequencies you hear less well, for each ear, from an audiogram or a quick listening test.

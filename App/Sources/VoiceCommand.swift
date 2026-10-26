@@ -254,6 +254,13 @@ final class VoiceCommand {
             log("Voice command: reminder")
             return
         }
+        // "Switch student to Maria": whose lesson progress is used.
+        if let name = VoiceCommands.studentName(in: command) {
+            log("Voice command: switch student")
+            return Announcer.say(LessonProgress.shared.switchTo(named: name)
+                ? String(localized: "Now learning: \(LessonProgress.shared.current.name).")
+                : String(localized: "There's no student called \(name). Add students in the lessons window."))
+        }
         // "Look for my cup", "where are my glasses", "look for the word exit": the camera finder.
         if let target = VoiceCommands.objectRequest(in: command) {
             log("Voice command: object finder")

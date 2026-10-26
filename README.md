@@ -12,7 +12,7 @@
 - **Reading and low vision:** a large-print Doc Reader, camera text reading (Scan and Read), captions and a focus frame.
 - **Everyday tools:** barcode, QR code, medicine label and money readers, a color identifier and light detector, a document accessibility check, braille files, and camera and microphone alerts.
 - **Working with apps:** custom labels for unlabeled controls, place markers on web pages, and Do It for Me.
-- **Learning:** VoiceOver Lessons, a 24-lesson course for learning VoiceOver from the beginning, up to Pages, Numbers, Keynote and Safari bookmarks; a tutorial for this app's keys; input help; VoiceOver practice; and a talking typing trainer.
+- **Learning:** VoiceOver Lessons, a 30-lesson course for learning VoiceOver from the beginning, up to Pages, Numbers, Keynote, Safari bookmarks, Messages, Calendar, Finder, Zoom and Teams, braille displays and VoiceOver Utility; trainers can add their own lessons and keep progress for several students; a tutorial for this app's keys; input help; VoiceOver practice; and a talking typing trainer.
 - **Fixes for problems AppleVis users report:**
 - **Keep audio awake** (in Settings or the menu) plays silence, so headphones and Bluetooth devices like AirPods don't sleep between phrases and cut off VoiceOver's first words.
 - **Presets for websites** (in Settings) switch to a preset on a site in Safari or Chrome, which VoiceOver's own activities don't do. While a browser is in front and website presets exist, the app checks the current address every two seconds. The first time, macOS asks to let the app see which site is open.
@@ -39,7 +39,7 @@
 - **Barcode and QR code reader:** reads QR codes (links, Wi-Fi details, phone numbers, text) and copies them, and looks up product barcodes in Open Food Facts.
 - **Medicine label reader:** reads the largest text first, usually the medicine's name, then the rest, and keeps reading new text as you turn the bottle. Everything it read is copied when you stop.
 - **Identify money:** Claude names the banknotes or coins in a camera picture. Needs an API key and image descriptions allowed.
-- **VoiceOver Lessons:** a course for someone new to VoiceOver, in 24 lessons and four levels.
+- **VoiceOver Lessons:** a course for someone new to VoiceOver, in 30 lessons and five levels. Trainers can write their own lessons as `.voalesson` files ([format](docs/CUSTOM-LESSONS.md)), keep progress for several students on one Mac, and export a student's session reports as text or CSV for a counselor.
   - **Basics:** 1. the VO keys and turning VoiceOver on; 2. moving around and pressing things; 3. reading text; 4. menus, the Dock and switching apps; 5. the rotor and item chooser; 6. web pages; 7. Quick Nav; 8. typing and editing text; 9. getting help and staying in control.
   - **Everyday apps:** 10. Finder and files; 11. Safari and websites; 12. dialogs, forms and the keyboard; 13. opening apps and handling windows; 14. Mail; 15. making VoiceOver your own.
   - **Going further:** 16. understanding what VoiceOver says (dimmed, selected, collapsed, rows, hints); 17. writing and saving in TextEdit; 18. Pages; 19. Numbers (cells, formulas, rows and columns); 20. Keynote (slides and playing a slideshow); 21. System Settings; 22. a web errand in Safari; 23. Safari in depth: tabs, adding, organizing and removing bookmarks, the Reading List, history, downloads and private windows.

@@ -617,6 +617,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: learning, String(localized: "Input Help"), command: .inputHelp, checked: InputHelp.isOn) { $0.run(.inputHelp) }
         add(to: learning, String(localized: "VoiceOver Practice…"), command: .practice) { $0.run(.practice) }
         add(to: learning, String(localized: "Typing Trainer…"), command: .typingTrainer) { $0.run(.typingTrainer) }
+        learning.addItem(.separator())
+        add(to: learning, String(localized: "Import a Lesson…"), command: .importLesson) { $0.run(.importLesson) }
+        add(to: learning, String(localized: "Export Student Report…"), command: .exportStudentReport) { $0.run(.exportStudentReport) }
 
         // Everyday tools
         let tools = submenu(in: menu, String(localized: "Everyday Tools"))

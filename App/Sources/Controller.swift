@@ -338,6 +338,10 @@ final class Controller {
         case .objectFinder: app?.showObjectFinder()
         case .scanToPDF: MainActor.assumeIsolated { AccessiblePDF.makeFromCamera() }
         case .fileToPDF: MainActor.assumeIsolated { AccessiblePDF.makeFromFile() }
+        case .importLesson:
+            if let message = CustomLessons.shared.importWithPanel() { Announcer.say(message) }
+        case .exportStudentReport:
+            if let message = LessonProgress.shared.exportWithPanel(csv: false) { Announcer.say(message) }
         case .documentCheck: app?.showDocumentCheck()
         case .brailleExport: app?.showBraille()
         case .codeReader: CodeReader.toggle()

@@ -68,3 +68,12 @@ final class NewVoiceRoutingTests: XCTestCase {
         XCTAssertEqual(VoiceCommands.match("unmute my microphone", in: all)?.name, "Unmute", "the microphone command still wins")
     }
 }
+
+final class StudentVoiceTests: XCTestCase {
+    func testStudentNames() {
+        XCTAssertEqual(VoiceCommands.studentName(in: "switch student to Maria"), "maria")
+        XCTAssertEqual(VoiceCommands.studentName(in: "Change student to José Luis."), "jose luis")
+        XCTAssertNil(VoiceCommands.studentName(in: "switch student to"))
+        XCTAssertNil(VoiceCommands.studentName(in: "switch window"))
+    }
+}

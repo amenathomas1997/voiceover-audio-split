@@ -59,7 +59,7 @@ Text to paste into App Store Connect, and the steps for the TestFlight beta (by 
 > • Place markers to jump back to a spot on a web page.
 >
 > LEARN VOICEOVER
-> • VoiceOver Lessons: 24 spoken lessons from the very beginning, up to Mail, Pages, Numbers, Keynote and Safari bookmarks.
+> • VoiceOver Lessons: 30 spoken lessons from the very beginning, up to Mail, Pages, Numbers, Keynote, Safari, Messages, Calendar, Finder, Zoom and Teams, braille displays and VoiceOver Utility.
 > • Learn on your own, with detailed feedback and hints, or with a trainer, with a session report.
 > • Daily practice that brings keys back on a schedule, and a one-minute challenge.
 > • VoiceOver practice and a talking typing trainer.
@@ -88,7 +88,7 @@ Answer **Data Not Collected**. The app has no accounts, analytics or tracking, a
 >
 > It adds hearing and clarity options, speech on demand and speech history, large-print reading and captions, camera text reading, and an audio hub for radio, podcasts, audiobooks and news. Everyday tools read barcodes, QR codes, medicine labels and money, check documents for accessibility, and save braille files. Custom labels, place markers and camera and microphone alerts help with other apps.
 >
-> VoiceOver Lessons teach VoiceOver from the very beginning in 24 spoken lessons, up to Mail, Pages, Numbers, Keynote and Safari, with a mode for learning on your own and one for learning with a trainer. VoiceOver practice and a talking typing trainer help you build speed. Voice commands work hands-free: say "Audio Split" and a command, recognized on your Mac.
+> VoiceOver Lessons teach VoiceOver from the very beginning in 30 spoken lessons, up to Mail, Pages, Numbers, Keynote, Safari, Zoom and Teams, with a mode for learning on your own and one for learning with a trainer. VoiceOver practice and a talking typing trainer help you build speed. Voice commands work hands-free: say "Audio Split" and a command, recognized on your Mac.
 >
 > Everything works from the keyboard with Right Option and a key, and a setup guide walks you through each permission. Spanish, French and German are included.
 

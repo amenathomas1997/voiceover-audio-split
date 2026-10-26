@@ -23,6 +23,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case meetingReadChat, meetingWhoIsTalking, meetingLeave, meetingChatAnnounce
     case reminders, listReminders, cancelLastReminder, clipboardHistory, windowSwitcher
     case objectFinder, scanToPDF, fileToPDF
+    case importLesson, exportStudentReport
 
     var id: String { rawValue }
 
@@ -100,6 +101,8 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .objectFinder: String(localized: "Find an object with the camera")
         case .scanToPDF: String(localized: "Scan pages to an accessible PDF")
         case .fileToPDF: String(localized: "Make a picture or PDF file accessible")
+        case .importLesson: String(localized: "Import a lesson file")
+        case .exportStudentReport: String(localized: "Export the student's lesson report")
         case .sensorStatus: String(localized: "What's using the camera and microphone")
         case .customLabel: String(localized: "Label the item under the VoiceOver cursor")
         case .placeMarker: String(localized: "Add a place marker on this web page")
@@ -171,7 +174,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
              .meetingMuteStatus, .meetingToggleMute, .meetingToggleVideo, .meetingToggleHand, .meetingOpenChat,
              .meetingReadChat, .meetingWhoIsTalking, .meetingLeave, .meetingChatAnnounce,
              .reminders, .listReminders, .cancelLastReminder, .clipboardHistory, .windowSwitcher,
-             .objectFinder, .scanToPDF, .fileToPDF: nil
+             .objectFinder, .scanToPDF, .fileToPDF, .importLesson, .exportStudentReport: nil
         }
     }
 }

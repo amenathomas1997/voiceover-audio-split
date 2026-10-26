@@ -71,6 +71,16 @@ enum VoiceCommands {
     }
 
     /// "find the search field" → "the search field", for Do It for Me.
+    /// The name in "switch student to Maria" (and Spanish, French, German), or nil.
+    static func studentName(in command: String) -> String? {
+        let words = normalize(command)
+        let starts = ["switch student to ", "switch to student ", "change student to ", "cambiar al estudiante ",
+                      "cambiar a estudiante ", "passer a l eleve ", "changer d eleve pour ", "wechsle zu schuler ", "schuler wechseln zu "]
+        guard let start = starts.first(where: { words.hasPrefix($0) }) else { return nil }
+        let name = String(words.dropFirst(start.count)).trimmingCharacters(in: .whitespaces)
+        return name.isEmpty ? nil : name
+    }
+
     /// Words that start a timer or reminder, in English, Spanish, French and German.
     static func isReminder(_ command: String) -> Bool {
         let words = normalize(command)

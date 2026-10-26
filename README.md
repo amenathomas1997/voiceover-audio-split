@@ -205,7 +205,10 @@ You can change Right Option to Right Command, Right Control or Right Shift in Se
 **Setup guide:** opens on first launch, and later from the menu. It walks through the permissions one at a time and checks each one:
 1. Accessibility, for the shortcuts.
 2. System audio recording, for the split. The guide has a button that turns the split on to trigger the request.
-3. VoiceOver's "Allow VoiceOver to be controlled with AppleScript" setting, with a button that tests announcements.
+3. VoiceOver's "Allow VoiceOver to be controlled with AppleScript" setting. It's in VoiceOver Utility (VO F8), not in System Settings: in the General category, press VO F, type AppleScript and press Return to reach the checkbox, then VO Space to check it. A test button then says exactly what's missing: VoiceOver is off, the Mac hasn't allowed the app to control VoiceOver, or the checkbox is off.
+4. Camera and microphone. macOS only lists an app on those pages of System Settings after the app has asked, so the guide has buttons that ask; choose Allow.
+
+Settings, under Permissions, shows each permission's state. For one the app hasn't asked for yet, the button asks; after that, it opens the right page of System Settings.
 
 **Automatic presets:** in Settings, under Automatic presets, choose a preset for any app, such as Meeting for Zoom. The app switches to it whenever that app comes to the front. You can also choose a preset for all other apps.
 

@@ -9,7 +9,8 @@ struct SetupGuideView: View {
     var onDone: () -> Void
 
     @State private var shortcutsAllowed = Hotkeys.isTrusted
-    @State private var voiceOverResult: Bool?
+    @State private var cameraAsked = false
+    @State private var microphoneAsked = false
     @State private var splitTested = false
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -26,7 +27,8 @@ struct SetupGuideView: View {
                      : String(localized: "Not allowed yet. Open Accessibility settings and turn on VoiceOver Audio Split."))
                 if !shortcutsAllowed {
                     Button(String(localized: "Open Accessibility settings")) {
-                        NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+                        // Asking first puts VoiceOver Audio Split in the list, ready to turn on.
+                        Permission.accessibility.ask { NSWorkspace.shared.open(Permission.accessibility.settingsURL) }
                     }
                 }
             }
@@ -42,18 +44,23 @@ struct SetupGuideView: View {
             }
 
             Section(String(localized: "Step 3: Hear announcements in VoiceOver's voice")) {
-                Text(String(localized: "Open VoiceOver Utility with VoiceOver key and F8. In General, check “Allow VoiceOver to be controlled with AppleScript”. Then test below; if your Mac asks to let VoiceOver Audio Split control VoiceOver, choose OK."))
-                Button(String(localized: "Test announcement")) {
-                    Announcer.testVoiceOver { voiceOverResult = $0 }
-                }
-                if let voiceOverResult {
-                    Text(voiceOverResult
-                         ? String(localized: "Working. VoiceOver spoke the test.")
-                         : String(localized: "VoiceOver did not respond. Check the setting above. Until then, announcements use the Mac's standard voice."))
-                }
+                Text(String(localized: "This needs one checkbox in VoiceOver Utility, which is a separate app from System Settings. Until it's on, announcements use the Mac's standard voice."))
+                VoiceOverAppleScriptSteps()
             }
 
-            Section(String(localized: "Step 4, optional: Voice commands")) {
+            Section(String(localized: "Step 4: Camera and microphone")) {
+                Text(String(localized: "Your Mac only lists VoiceOver Audio Split under Camera and Microphone in System Settings after the app has asked. Ask now, and choose Allow when your Mac asks. They're used for Scan and Read, the camera readers, the microphone check and voice commands."))
+                Button(cameraAsked ? String(localized: "Camera: asked") : String(localized: "Ask for the Camera")) {
+                    Permission.camera.ask { cameraAsked = true }
+                }
+                Button(microphoneAsked ? String(localized: "Microphone: asked") : String(localized: "Ask for the Microphone")) {
+                    Permission.microphone.ask { microphoneAsked = true }
+                }
+                Text(String(localized: "If you chose Don't Allow before, your Mac won't ask again: turn VoiceOver Audio Split on in System Settings, Privacy and Security, Camera or Microphone."))
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
+            Section(String(localized: "Step 5, optional: Voice commands")) {
                 Text(String(localized: "Turn this on to control the app by voice from anywhere: say Audio Split, then a command, such as Audio Split, turn on VoiceOver, or Audio Split, what time is it. Launch VoiceOver training opens the lessons. Your Mac asks to allow speech recognition and the microphone. Speech is recognized on your Mac and never sent."))
                 Toggle(String(localized: "Always listen for \u{201C}Audio Split\u{201D} and \u{201C}Launch VoiceOver training\u{201D}"), isOn: Binding(
                     get: { Preferences.shared.voiceCommand }, set: { Preferences.shared.voiceCommand = $0 }))

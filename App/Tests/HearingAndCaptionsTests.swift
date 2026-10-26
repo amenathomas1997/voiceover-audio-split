@@ -77,3 +77,16 @@ final class StudentVoiceTests: XCTestCase {
         XCTAssertNil(VoiceCommands.studentName(in: "switch window"))
     }
 }
+
+final class PermissionHelpTests: XCTestCase {
+    func testEveryPermissionButSystemAudioCanAsk() {
+        XCTAssertEqual(Permission.allCases.filter { !$0.canAsk }, [.systemAudio], "system audio is asked for by turning the split on")
+    }
+
+    func testVoiceOverSetupSaysWhatsMissing() {
+        XCTAssertTrue(VoiceOverSetup.message(.voiceOverOff).contains("Command F5"))
+        XCTAssertTrue(VoiceOverSetup.message(.notAllowed).contains("Automation"))
+        XCTAssertTrue(VoiceOverSetup.message(.appleScriptOff).contains("VoiceOver Utility"))
+        XCTAssertTrue(VoiceOverSetup.message(.working).hasPrefix("Working"))
+    }
+}

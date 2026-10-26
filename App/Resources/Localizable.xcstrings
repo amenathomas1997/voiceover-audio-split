@@ -2664,6 +2664,28 @@
         }
       }
     },
+    "1. Press Open VoiceOver Utility below, or press VO F8." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. Drücke unten „VoiceOver-Dienstprogramm öffnen“ oder drücke VO F8."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. Pulsa Abrir Utilidad VoiceOver abajo, o pulsa VO F8."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. Appuyez sur Ouvrir Utilitaire VoiceOver ci-dessous, ou appuyez sur VO F8."
+          }
+        }
+      }
+    },
     "10. Finder and files" : {
       "localizations" : {
         "de" : {
@@ -2906,6 +2928,28 @@
         }
       }
     },
+    "2. VoiceOver Utility opens with General chosen in the list of categories." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2. Das VoiceOver-Dienstprogramm öffnet sich mit „Allgemein“ in der Liste der Kategorien ausgewählt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2. Utilidad VoiceOver se abre con General elegido en la lista de categorías."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2. Utilitaire VoiceOver s'ouvre avec Général sélectionné dans la liste des catégories."
+          }
+        }
+      }
+    },
     "20. Keynote: presentations" : {
       "localizations" : {
         "de" : {
@@ -3126,6 +3170,28 @@
         }
       }
     },
+    "3. Press VO F to find text, type AppleScript, and press Return. VoiceOver goes to the checkbox “Allow VoiceOver to be controlled with AppleScript”. Or press Tab until you hear it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3. Drücke VO F, um Text zu suchen, tippe AppleScript und drücke den Zeilenschalter. VoiceOver geht zum Markierungsfeld „VoiceOver die Steuerung mit AppleScript erlauben“. Oder drücke Tab, bis du es hörst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3. Pulsa VO F para buscar texto, escribe AppleScript y pulsa Retorno. VoiceOver va a la casilla “Permitir que VoiceOver se controle con AppleScript”. O pulsa Tab hasta que la oigas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3. Appuyez sur VO F pour rechercher du texte, tapez AppleScript et appuyez sur Retour. VoiceOver va à la case « Autoriser le contrôle de VoiceOver avec AppleScript ». Ou appuyez sur Tab jusqu'à l'entendre."
+          }
+        }
+      }
+    },
     "3. Reading text" : {
       "localizations" : {
         "de" : {
@@ -3170,6 +3236,28 @@
         }
       }
     },
+    "4. If it says unchecked, press VO Space to check it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4. Wenn „nicht markiert“ gesagt wird, drücke VO Leertaste, um es zu markieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4. Si dice no marcada, pulsa VO Espacio para marcarla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4. Si VoiceOver dit non cochée, appuyez sur VO Espace pour la cocher."
+          }
+        }
+      }
+    },
     "4. Menus, the Dock and switching apps" : {
       "localizations" : {
         "de" : {
@@ -3188,6 +3276,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "4. Les menus, le Dock et le changement d'app"
+          }
+        }
+      }
+    },
+    "5. Close VoiceOver Utility with Command Q, and press Test Announcement below." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5. Schließe das VoiceOver-Dienstprogramm mit Befehl Q und drücke unten „Ansage testen“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5. Cierra Utilidad VoiceOver con Comando Q y pulsa Probar anuncio abajo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5. Fermez Utilitaire VoiceOver avec Commande Q, puis appuyez sur Tester l'annonce ci-dessous."
           }
         }
       }
@@ -4688,24 +4798,24 @@
         }
       }
     },
-    "Announcements in your VoiceOver voice, speech history, captions and Read Item. Also turn on “Allow VoiceOver to be controlled with AppleScript” in VoiceOver Utility." : {
+    "Announcements in your VoiceOver voice, speech history, captions and Read Item. VoiceOver must be on. Also turn on the AppleScript setting in VoiceOver Utility: see the steps below." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ansagen mit deiner VoiceOver-Stimme, Sprachverlauf, Untertitel und Objekt vorlesen. Aktiviere außerdem „VoiceOver die Steuerung mit AppleScript erlauben“ im VoiceOver-Dienstprogramm."
+            "value" : "Ansagen in deiner VoiceOver-Stimme, Sprachverlauf, Untertitel und „Objekt vorlesen“. VoiceOver muss eingeschaltet sein. Schalte auch die AppleScript-Einstellung im VoiceOver-Dienstprogramm ein: siehe die Schritte unten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anuncios con tu voz de VoiceOver, historial de voz, subtítulos y Leer elemento. Activa también “Permitir que VoiceOver se controle con AppleScript” en la Utilidad VoiceOver."
+            "value" : "Anuncios con tu voz de VoiceOver, historial de voz, subtítulos y Leer ítem. VoiceOver debe estar activado. Activa también el ajuste de AppleScript en Utilidad VoiceOver: mira los pasos de abajo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annonces avec votre voix VoiceOver, historique de la parole, sous-titres et Lire l’élément. Activez aussi « Autoriser le contrôle de VoiceOver avec AppleScript » dans Utilitaire VoiceOver."
+            "value" : "Annonces avec votre voix VoiceOver, historique de la parole, sous-titres et Lire l'élément. VoiceOver doit être activé. Activez aussi le réglage AppleScript dans Utilitaire VoiceOver : voir les étapes ci-dessous."
           }
         }
       }
@@ -5036,6 +5146,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Posez une question sur l'utilisation de votre Mac ou de VoiceOver, ou appuyez sur le raccourci de description d'image sur une image."
+          }
+        }
+      }
+    },
+    "Ask for %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ anfragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedir %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander : %@"
+          }
+        }
+      }
+    },
+    "Ask for the Camera" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera anfragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedir la cámara"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander la caméra"
+          }
+        }
+      }
+    },
+    "Ask for the Microphone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofon anfragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedir el micrófono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander le micro"
           }
         }
       }
@@ -6972,6 +7148,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Activer ou désactiver la caméra"
+          }
+        }
+      }
+    },
+    "Camera: asked" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera: angefragt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cámara: pedida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caméra : demandée"
           }
         }
       }
@@ -17140,6 +17338,28 @@
         }
       }
     },
+    "If you chose Don't Allow before, your Mac won't ask again: turn VoiceOver Audio Split on in System Settings, Privacy and Security, Camera or Microphone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du vorher „Nicht erlauben“ gewählt hast, fragt dein Mac nicht noch einmal: Schalte VoiceOver Audio Split in „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Kamera“ oder „Mikrofon“ ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si antes elegiste No permitir, tu Mac no volverá a preguntar: activa VoiceOver Audio Split en Ajustes del Sistema, Privacidad y seguridad, Cámara o Micrófono."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si vous avez choisi Ne pas autoriser auparavant, votre Mac ne redemandera pas : activez VoiceOver Audio Split dans Réglages Système, Confidentialité et sécurité, Caméra ou Micro."
+          }
+        }
+      }
+    },
     "If your Mac asked to allow system audio recording, choose Allow. VoiceOver should now be in your left ear. Nothing is recorded or saved." : {
       "localizations" : {
         "de" : {
@@ -21694,6 +21914,28 @@
         }
       }
     },
+    "Microphone: asked" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofon: angefragt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Micrófono: pedido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Micro : demandé"
+          }
+        }
+      }
+    },
     "Minimize the window" : {
       "localizations" : {
         "de" : {
@@ -26178,28 +26420,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir Utilitaire VoiceOver (réglages)"
-          }
-        }
-      }
-    },
-    "Open VoiceOver Utility with VoiceOver key and F8. In General, check “Allow VoiceOver to be controlled with AppleScript”. Then test below; if your Mac asks to let VoiceOver Audio Split control VoiceOver, choose OK." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Öffne das VoiceOver-Dienstprogramm mit der VoiceOver-Taste und F8. Aktiviere unter „Allgemein“ die Option „VoiceOver die Steuerung mit AppleScript erlauben“. Teste es dann unten; wenn dein Mac fragt, ob VoiceOver Audio Split VoiceOver steuern darf, wähle „OK“."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abre Utilidad VoiceOver con la tecla VoiceOver y F8. En General, marca “Permitir que VoiceOver se controle con AppleScript”. Luego haz la prueba de abajo; si tu Mac pide permitir que VoiceOver Audio Split controle VoiceOver, elige OK."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvrez Utilitaire VoiceOver avec la touche VoiceOver et F8. Dans Général, cochez « Autoriser le contrôle de VoiceOver avec AppleScript ». Puis testez ci-dessous ; si votre Mac demande d'autoriser VoiceOver Audio Split à contrôler VoiceOver, choisissez OK."
           }
         }
       }
@@ -33289,24 +33509,24 @@
         }
       }
     },
-    "Scan and Read, the camera readers and the framing check." : {
+    "Scan and Read, the camera readers, the object finder and the framing check." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scannen und Lesen, die Kameraleser und die Bildausschnittprüfung."
+            "value" : "Scannen und Lesen, die Kameraleser, die Objektsuche und die Bildausschnittsprüfung."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escanear y leer, los lectores con cámara y la revisión del encuadre."
+            "value" : "Escanear y leer, los lectores con cámara, el buscador de objetos y la comprobación del encuadre."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Numériser et lire, les lecteurs par caméra et la vérification du cadrage."
+            "value" : "Scanner et lire, les lecteurs avec la caméra, le chercheur d'objets et la vérification du cadrage."
           }
         }
       }
@@ -36611,24 +36831,46 @@
         }
       }
     },
-    "Step 4, optional: Voice commands" : {
+    "Step 4: Camera and microphone" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schritt 4, optional: Sprachbefehle"
+            "value" : "Schritt 4: Kamera und Mikrofon"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Paso 4, opcional: Comandos de voz"
+            "value" : "Paso 4: Cámara y micrófono"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étape 4, facultative : commandes vocales"
+            "value" : "Étape 4 : Caméra et micro"
+          }
+        }
+      }
+    },
+    "Step 5, optional: Voice commands" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schritt 5, optional: Sprachbefehle"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paso 5, opcional: comandos de voz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étape 5, facultative : commandes vocales"
           }
         }
       }
@@ -37645,24 +37887,46 @@
         }
       }
     },
-    "Test announcement" : {
+    "Test Announcement" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Testansage"
+            "value" : "Ansage testen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aviso de prueba"
+            "value" : "Probar anuncio"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tester une annonce"
+            "value" : "Tester l'annonce"
+          }
+        }
+      }
+    },
+    "Testing…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird getestet …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probando…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test en cours…"
           }
         }
       }
@@ -38569,24 +38833,24 @@
         }
       }
     },
-    "The audio split and every sound feature. Nothing is recorded." : {
+    "The audio split, call captions and every sound feature. Nothing is recorded. Your Mac asks the first time you turn the split on." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Audioaufteilung und alle Tonfunktionen. Nichts wird aufgenommen."
+            "value" : "Die Audioaufteilung, die Anruf-Untertitel und alle Tonfunktionen. Nichts wird aufgenommen. Dein Mac fragt, wenn du die Aufteilung zum ersten Mal einschaltest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La división de audio y todas las funciones de sonido. No se graba nada."
+            "value" : "La división del audio, los subtítulos de llamadas y todas las funciones de sonido. No se graba nada. Tu Mac pregunta la primera vez que activas la división."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La séparation audio et toutes les fonctions sonores. Rien n’est enregistré."
+            "value" : "La séparation audio, les sous-titres d'appel et toutes les fonctions sonores. Rien n'est enregistré. Votre Mac demande la première fois que vous activez la séparation."
           }
         }
       }
@@ -38895,6 +39159,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le premier titre est de niveau %lld, et non de niveau 1."
+          }
+        }
+      }
+    },
+    "The first time, your Mac asks whether VoiceOver Audio Split may control VoiceOver. Choose OK. If you chose Don't Allow before, turn it on in System Settings, Privacy and Security, Automation, under VoiceOver Audio Split." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim ersten Mal fragt dein Mac, ob VoiceOver Audio Split VoiceOver steuern darf. Wähle „OK“. Wenn du vorher „Nicht erlauben“ gewählt hast, schalte es in „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Automation“ unter VoiceOver Audio Split ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La primera vez, tu Mac pregunta si VoiceOver Audio Split puede controlar VoiceOver. Elige OK. Si antes elegiste No permitir, actívalo en Ajustes del Sistema, Privacidad y seguridad, Automatización, bajo VoiceOver Audio Split."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La première fois, votre Mac demande si VoiceOver Audio Split peut contrôler VoiceOver. Choisissez OK. Si vous avez choisi Ne pas autoriser auparavant, activez-le dans Réglages Système, Confidentialité et sécurité, Automatisation, sous VoiceOver Audio Split."
           }
         }
       }
@@ -39295,24 +39581,24 @@
         }
       }
     },
-    "The microphone check, and the voice command if you turn it on." : {
+    "The microphone check, and voice commands if you turn them on." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Mikrofontest und der Sprachbefehl, wenn du ihn aktivierst."
+            "value" : "Der Mikrofontest und Sprachbefehle, wenn du sie einschaltest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La prueba de micrófono, y el comando de voz si lo activas."
+            "value" : "La prueba de micrófono y los comandos de voz, si los activas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le test du micro, et la commande vocale si vous l'activez."
+            "value" : "Le test du micro, et les commandes vocales si vous les activez."
           }
         }
       }
@@ -39775,28 +40061,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La mise à jour n'est pas signée par Full Circle AT et notariée par Apple ; elle n'a donc pas été installée."
-          }
-        }
-      }
-    },
-    "The voice command “Launch VoiceOver training”, if you turn it on. Recognized on your Mac." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Sprachbefehl „VoiceOver-Training starten“, wenn du ihn aktivierst. Er wird auf deinem Mac erkannt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El comando de voz “Abrir entrenamiento de VoiceOver”, si lo activas. Se reconoce en tu Mac."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La commande vocale « Lancer la formation VoiceOver », si vous l'activez. Reconnue sur votre Mac."
           }
         }
       }
@@ -40479,6 +40743,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ce micro ne peut pas être coupé d'ici"
+          }
+        }
+      }
+    },
+    "This needs one checkbox in VoiceOver Utility, which is a separate app from System Settings. Until it's on, announcements use the Mac's standard voice." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dafür braucht es ein Markierungsfeld im VoiceOver-Dienstprogramm, einer eigenen App neben den Systemeinstellungen. Solange es aus ist, nutzen Ansagen die Standardstimme des Mac."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hace falta una casilla en Utilidad VoiceOver, que es una app aparte de Ajustes del Sistema. Hasta que esté activada, los anuncios usan la voz estándar de la Mac."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il faut une case dans Utilitaire VoiceOver, une app distincte des Réglages Système. Tant qu'elle n'est pas cochée, les annonces utilisent la voix standard du Mac."
           }
         }
       }
@@ -41975,6 +42261,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Activer et désactiver VoiceOver, les touches VO, interrompre la parole, et l'aide clavier."
+          }
+        }
+      }
+    },
+    "Turning on the AppleScript setting in VoiceOver Utility" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die AppleScript-Einstellung im VoiceOver-Dienstprogramm einschalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activar el ajuste de AppleScript en Utilidad VoiceOver"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activer le réglage AppleScript dans Utilitaire VoiceOver"
           }
         }
       }
@@ -44795,6 +45103,28 @@
         }
       }
     },
+    "Voice commands and call captions, if you use them. Recognized on your Mac." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprachbefehle und Anruf-Untertitel, wenn du sie nutzt. Wird auf deinem Mac erkannt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los comandos de voz y los subtítulos de llamadas, si los usas. Se reconoce en tu Mac."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les commandes vocales et les sous-titres d'appel, si vous les utilisez. Reconnu sur votre Mac."
+          }
+        }
+      }
+    },
     "VoiceOver Audio Split %@" : {
       "localizations" : {
         "de" : {
@@ -45301,24 +45631,24 @@
         }
       }
     },
-    "VoiceOver did not respond. Check the setting above. Until then, announcements use the Mac's standard voice." : {
+    "VoiceOver didn't respond, so the AppleScript setting is probably off. Follow the steps above to check it in VoiceOver Utility." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceOver hat nicht reagiert. Prüfe die Einstellung oben. Bis dahin verwenden Ansagen die Standardstimme des Mac."
+            "value" : "VoiceOver hat nicht reagiert, also ist die AppleScript-Einstellung wahrscheinlich aus. Folge den Schritten oben, um sie im VoiceOver-Dienstprogramm zu markieren."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceOver no respondió. Revisa el ajuste de arriba. Mientras tanto, los avisos usan la voz estándar de la Mac."
+            "value" : "VoiceOver no respondió, así que probablemente el ajuste de AppleScript está desactivado. Sigue los pasos de arriba para marcarlo en Utilidad VoiceOver."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceOver n'a pas répondu. Vérifiez le réglage ci-dessus. En attendant, les annonces utilisent la voix standard du Mac."
+            "value" : "VoiceOver n'a pas répondu ; le réglage AppleScript est donc probablement désactivé. Suivez les étapes ci-dessus pour le cocher dans Utilitaire VoiceOver."
           }
         }
       }
@@ -45473,6 +45803,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "VoiceOver est dans votre oreille gauche, et les autres sons dans votre oreille droite."
+          }
+        }
+      }
+    },
+    "VoiceOver is off. Turn it on with Command F5, then test again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver ist aus. Schalte es mit Befehl F5 ein und teste dann noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver está desactivado. Actívalo con Comando F5 y vuelve a probar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver est désactivé. Activez-le avec Commande F5, puis testez à nouveau."
           }
         }
       }
@@ -46335,24 +46687,24 @@
         }
       }
     },
-    "What the app is allowed to do. Each button opens the right page of System Settings, where you can turn VoiceOver Audio Split on or off." : {
+    "What the app is allowed to do. If it hasn't asked yet, the button asks: your Mac shows a prompt, and you choose Allow. After that, the button opens the right page of System Settings, where VoiceOver Audio Split is in the list and you can turn it on or off." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was die App darf. Jede Taste öffnet die passende Seite der Systemeinstellungen, wo du VoiceOver Audio Split ein- oder ausschalten kannst."
+            "value" : "Was die App darf. Wenn sie noch nicht gefragt hat, fragt die Taste: Dein Mac zeigt eine Abfrage, und du wählst „Erlauben“. Danach öffnet die Taste die richtige Seite der Systemeinstellungen, wo VoiceOver Audio Split in der Liste steht und du es ein- oder ausschalten kannst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que la app tiene permitido. Cada botón abre la página correcta de Ajustes del Sistema, donde puedes activar o desactivar VoiceOver Audio Split."
+            "value" : "Lo que la app puede hacer. Si aún no lo ha pedido, el botón lo pide: tu Mac muestra un aviso y eliges Permitir. Después, el botón abre la página correcta de Ajustes del Sistema, donde VoiceOver Audio Split está en la lista y puedes activarlo o desactivarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que l’app est autorisée à faire. Chaque bouton ouvre la bonne page de Réglages Système, où vous pouvez activer ou désactiver VoiceOver Audio Split."
+            "value" : "Ce que l'app est autorisée à faire. Si elle n'a pas encore demandé, le bouton demande : votre Mac affiche une alerte et vous choisissez Autoriser. Ensuite, le bouton ouvre la bonne page des Réglages Système, où VoiceOver Audio Split figure dans la liste et peut être activé ou désactivé."
           }
         }
       }
@@ -47717,6 +48069,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vos commandes"
+          }
+        }
+      }
+    },
+    "Your Mac doesn't allow VoiceOver Audio Split to control VoiceOver. Open System Settings, Privacy and Security, Automation, and under VoiceOver Audio Split turn on VoiceOver." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Mac erlaubt VoiceOver Audio Split nicht, VoiceOver zu steuern. Öffne „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Automation“ und schalte unter VoiceOver Audio Split „VoiceOver“ ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu Mac no permite que VoiceOver Audio Split controle VoiceOver. Abre Ajustes del Sistema, Privacidad y seguridad, Automatización, y bajo VoiceOver Audio Split activa VoiceOver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre Mac n'autorise pas VoiceOver Audio Split à contrôler VoiceOver. Ouvrez Réglages Système, Confidentialité et sécurité, Automatisation, et sous VoiceOver Audio Split activez VoiceOver."
+          }
+        }
+      }
+    },
+    "Your Mac only lists VoiceOver Audio Split under Camera and Microphone in System Settings after the app has asked. Ask now, and choose Allow when your Mac asks. They're used for Scan and Read, the camera readers, the microphone check and voice commands." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Mac führt VoiceOver Audio Split unter „Kamera“ und „Mikrofon“ in den Systemeinstellungen erst auf, nachdem die App gefragt hat. Frage jetzt an und wähle „Erlauben“, wenn dein Mac fragt. Sie werden für Scannen und Lesen, die Kameraleser, den Mikrofontest und Sprachbefehle verwendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu Mac solo muestra VoiceOver Audio Split en Cámara y Micrófono de Ajustes del Sistema después de que la app lo haya pedido. Pídelo ahora y elige Permitir cuando tu Mac pregunte. Se usan para Escanear y leer, los lectores con cámara, la prueba de micrófono y los comandos de voz."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre Mac n'affiche VoiceOver Audio Split sous Caméra et Micro dans les Réglages Système qu'une fois que l'app a demandé. Demandez maintenant, et choisissez Autoriser quand votre Mac le demande. Ils servent à Scanner et lire, aux lecteurs avec la caméra, au test du micro et aux commandes vocales."
           }
         }
       }

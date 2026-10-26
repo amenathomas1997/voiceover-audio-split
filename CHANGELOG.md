@@ -2,6 +2,7 @@
 
 ## Next
 
+- **Clearer permissions:** for camera, microphone, speech recognition and controlling VoiceOver, the buttons in Settings and the setup guide now ask your Mac directly, because macOS only lists an app on those pages after it has asked. The setup guide explains step by step where VoiceOver Utility's AppleScript checkbox is, and its test says exactly what's missing.
 - **Six new lessons** in a fifth level, Everyday apps 2: Messages, Calendar, managing files in Finder, Zoom and Teams, braille displays, and VoiceOver Utility. The course now has 30 lessons.
 - **Lessons by trainers:** write a lesson as a `.voalesson` file and import it (docs/CUSTOM-LESSONS.md).
 - **Students:** keep progress for several learners on one Mac, and export each one's session reports as text or CSV.

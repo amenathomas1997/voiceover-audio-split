@@ -121,9 +121,11 @@ enum LessonGuide {
         let trainer: String
     }
 
-    static func goals(_ id: String) -> String { entries[id]?.goals ?? "" }
-    static func recap(_ id: String) -> String { entries[id]?.recap ?? "" }
-    static func trainer(_ id: String) -> String { entries[id]?.trainer ?? "" }
+    /// A lesson of the course, or one a trainer imported (a .voalesson file).
+    static func entry(_ id: String) -> Entry? { entries[id] ?? CustomLessons.shared.guide(for: id) }
+    static func goals(_ id: String) -> String { entry(id)?.goals ?? "" }
+    static func recap(_ id: String) -> String { entry(id)?.recap ?? "" }
+    static func trainer(_ id: String) -> String { entry(id)?.trainer ?? "" }
 
     static let entries: [String: Entry] = [
         "start": Entry(
@@ -218,6 +220,30 @@ enum LessonGuide {
             goals: String(localized: "working with tabs; adding, finding, organizing and removing bookmarks; the Reading List and history; and private browsing."),
             recap: String(localized: "Control Tab moves between tabs and Command Shift T reopens one. Command D bookmarks a page, Control Command 1 shows bookmarks, and Option Command B edits them. Command Shift D adds to the Reading List, and Command Y shows history."),
             trainer: String(localized: "Bookmark two or three sites the learner uses, then put them in a folder together in Edit Bookmarks. Removing a bookmark and adding it back builds confidence.")),
+        "messages": Entry(
+            goals: String(localized: "opening Messages, moving between conversations, reading the messages in one, and writing and sending a reply."),
+            recap: String(localized: "Up and Down Arrow, or Control Tab and Control Shift Tab, move between conversations. VO Shift Down Arrow goes into the messages, and VO and the arrows read them. Return sends, Option Return starts a new line, Command N starts a conversation, and Command F searches."),
+            trainer: String(localized: "Have the learner send a message to themselves or to you, so there's a conversation to read. Show the shortcut menu on a message with VO Shift M; replies and tapbacks are there. Point out that Return sends straight away.")),
+        "calendar": Entry(
+            goals: String(localized: "the day, week and month views, moving by day and week, hearing your events, and adding an event."),
+            recap: String(localized: "Command 1, 2, 3 and 4 show a day, a week, a month and a year. Command Right and Left Arrow move by day or week, and Command T goes to today. Go into the calendar with VO Shift Down Arrow to hear events. Command N adds an event."),
+            trainer: String(localized: "Day view reads most clearly; start there. Add one event together, then have the learner find it again the next day in day view. If Calendar has several calendars, check which one new events go into.")),
+        "files": Entry(
+            goals: String(localized: "making and renaming folders, copying and moving files, Get Info, and moving things to the Trash safely."),
+            recap: String(localized: "Command Shift N makes a folder. Return renames. Command C copies, Command V pastes a copy, and Option Command V moves. Command I is Get Info, Command Delete moves to the Trash, and Command Z undoes."),
+            trainer: String(localized: "Use a practice folder and copies of files, never the only copy of something important. List view, Command 2, reads most predictably. The difference between Command V and Option Command V is worth checking together afterwards, by looking in both folders.")),
+        "meetings": Entry(
+            goals: String(localized: "joining a Zoom or Teams meeting, muting and unmuting, the camera, raising your hand, and the chat."),
+            recap: String(localized: "In Zoom: Command J joins, Command Shift A mutes and unmutes, Command Shift V is the camera, Command Shift H the chat, and Option Y raises your hand. In Teams: Command Shift M mutes, Command Shift O is the camera, and Command Shift K raises your hand."),
+            trainer: String(localized: "Use Zoom's test meeting at zoom.us/test, or a practice call with the learner. Headphones keep VoiceOver out of the meeting. Practise muting until it's automatic, and find the chat and Leave buttons with the item chooser, VO I. Shortcuts change between versions: check them in the app's settings.")),
+        "braille": Entry(
+            goals: String(localized: "connecting a braille display, reading with the panning buttons, routing buttons, and where to find your display's commands."),
+            recap: String(localized: "USB displays usually work when plugged in; Bluetooth ones are added in VoiceOver Utility, Braille, Displays. Panning buttons move along the line, and a routing button moves the cursor there or presses the item. Braille settings are in VoiceOver Utility, under Braille."),
+            trainer: String(localized: "Have the display's manual at hand: button names and VoiceOver commands vary by display. Start with uncontracted braille if the learner is new to it. Show how the display follows the VoiceOver cursor as they move with VO and the arrows.")),
+        "utility": Entry(
+            goals: String(localized: "finding your way around VoiceOver Utility, and setting the speaking rate, verbosity, the VO keys and activities."),
+            recap: String(localized: "VO F8 opens VoiceOver Utility. Speech sets the voice and rate, Verbosity how much is said, and General the VO keys, including Caps Lock. Activities change settings by themselves in chosen apps. Changes apply straight away; Command W closes it."),
+            trainer: String(localized: "Change one setting at a time, and try it out before the next. If the learner uses a laptop, Caps Lock as the VO key often helps. Show the File menu's export command, so their settings can be kept or moved to another Mac.")),
         "review": Entry(
             goals: String(localized: "a mixed review of keys from every lesson, starting with any you've missed."),
             recap: "",
@@ -232,11 +258,16 @@ enum LessonNames {
     static let pages = "Practice Letter"
     static let numbers = "Practice Budget"
     static let keynote = "Practice Talk"
+    static let folder = "Practice Folder"
 }
 
 /// Something done for real, checked about once a second.
 enum Mission: Hashable {
     case frontApp(String)
+    /// Any of these apps in front (an app with more than one bundle ID, such as Teams).
+    case frontAppAny([String])
+    /// Finder in front, showing a folder with this name.
+    case finderWindowTitled(String)
     case finderShowing(FinderPlace)
     case pressedPlay, checkedSubscribe, typedInField
     /// A document saved under a name: the app's front window is titled with it.
@@ -255,6 +286,8 @@ enum Mission: Hashable {
     func isDone(_ runner: LessonRunner) -> Bool {
         switch self {
         case .frontApp(let bundleID): return NSWorkspace.shared.frontmostApplication?.bundleIdentifier == bundleID
+        case .frontAppAny(let bundleIDs): return NSWorkspace.shared.frontmostApplication?.bundleIdentifier.map(bundleIDs.contains) ?? false
+        case .finderWindowTitled(let name): return Self.frontWindowTitle(of: "com.apple.finder") == name
         case .pressedPlay: return runner.pressedPlay
         case .checkedSubscribe: return runner.subscribed
         case .typedInField: return runner.notes.trimmingCharacters(in: .whitespacesAndNewlines).count >= 2
@@ -305,7 +338,7 @@ enum Mission: Hashable {
     /// Checks that ask another app (a window title, Safari's address) run off the main thread.
     var needsAccessibility: Bool {
         switch self {
-        case .finderShowing, .documentSaved, .safariAt, .settingsPage, .safariMoreTabs, .safariFewerTabs: true
+        case .finderShowing, .finderWindowTitled, .documentSaved, .safariAt, .settingsPage, .safariMoreTabs, .safariFewerTabs: true
         default: false
         }
     }
@@ -632,11 +665,138 @@ struct Lesson: Identifiable, Hashable {
                  [String(localized: "A private window"), String(localized: "The Reading List, with Command Shift D"), String(localized: "History, with Command Y")], answer: 1,
                  why: String(localized: "The Reading List saves the article to read later, and can keep it for offline reading if you turn that on.")),
         ]),
+        Lesson(id: "messages", title: String(localized: "24. Messages: reading and replying"),
+               summary: String(localized: "Finding a conversation, reading it, and writing and sending a reply."), steps: [
+            .say(String(localized: "Messages is where you send texts and iMessages from your Mac. Open it with Spotlight: Command Space, type Messages, and press Return.")),
+            .doIt(String(localized: "Open Messages, for real."), .frontApp("com.apple.MobileSMS"),
+                  tip: String(localized: "Come back to the lessons with Command Tab when you hear Done.")),
+            .say(String(localized: "On the left is the list of conversations, newest first. Move through it with Up and Down Arrow; VoiceOver reads each name and the start of the last message. Control Tab goes to the next conversation, and Control Shift Tab to the previous one.")),
+            .press(String(localized: "Go to the next conversation"), String(localized: "Control Tab"), KeyCombo(code: 48, vo: false, control: true)),
+            .press(String(localized: "Go to the previous conversation"), String(localized: "Control Shift Tab"), KeyCombo(code: 48, vo: false, shift: true, control: true)),
+            .say(String(localized: "To read a conversation, move the VoiceOver cursor to the messages on the right with VO Right Arrow, and go inside with VO Shift Down Arrow. Then VO Left and Right Arrow move from message to message, and VoiceOver says who sent each one. VO Shift M on a message opens its shortcut menu, with choices such as Reply and Tapback, depending on your version.")),
+            .say(String(localized: "To reply, go to the message field at the bottom; Tab usually gets you there. Type your reply and press Return to send it. Option Return starts a new line without sending. Command N starts a new conversation, and Command F searches your messages.")),
+            .press(String(localized: "Start a new conversation"), String(localized: "Command N"), KeyCombo(code: 45, vo: false, command: true)),
+            .press(String(localized: "Search your messages"), String(localized: "Command F"), KeyCombo(code: 3, vo: false, command: true)),
+            .ask(String(localized: "You've typed a reply. How do you start a new line without sending it?"),
+                 [String(localized: "Press Return"), String(localized: "Press Option Return"), String(localized: "Press Escape")], answer: 1,
+                 why: String(localized: "Return sends the message straight away. Option Return adds a new line, so you can keep writing.")),
+            .doIt(String(localized: "Now for real: send a short message to yourself or a friend, then find it in the conversation and listen to it. Press Return here when you've done it."), .yourWord,
+                  tip: String(localized: "Command N, type a name or number in the To field, then Tab to the message field, type, and press Return.")),
+        ]),
+        Lesson(id: "calendar", title: String(localized: "25. Calendar: days, weeks and events"),
+               summary: String(localized: "Day and week views, moving by day and week, hearing your events, and adding one."), steps: [
+            .say(String(localized: "Calendar keeps your appointments. Open it with Spotlight: Command Space, type Calendar, and press Return.")),
+            .doIt(String(localized: "Open Calendar, for real."), .frontApp("com.apple.iCal"),
+                  tip: String(localized: "Come back to the lessons with Command Tab when you hear Done.")),
+            .say(String(localized: "Calendar can show a day, a week, a month or a year. Command 1 shows a day, Command 2 a week, Command 3 a month, and Command 4 a year. Day view is the easiest to listen to, so start there.")),
+            .press(String(localized: "Show one day"), String(localized: "Command 1"), KeyCombo(code: 18, vo: false, command: true)),
+            .press(String(localized: "Show a week"), String(localized: "Command 2"), KeyCombo(code: 19, vo: false, command: true)),
+            .say(String(localized: "Command Right Arrow moves to the next day, or the next week in week view, and Command Left Arrow goes back. Command T jumps back to today, and Command Shift T lets you type any date.")),
+            .press(String(localized: "Go to the next day or week"), String(localized: "Command Right Arrow"), KeyCombo(code: 124, vo: false, command: true)),
+            .press(String(localized: "Go back to today"), String(localized: "Command T"), KeyCombo(code: 17, vo: false, command: true)),
+            .say(String(localized: "To hear your events, move the VoiceOver cursor to the calendar with VO Right Arrow, and go inside with VO Shift Down Arrow. Then VO and the arrow keys move from event to event, and VoiceOver reads each one's name and time.")),
+            .say(String(localized: "Command N adds a new event. Depending on your version, you type its name, or a whole sentence such as Lunch with Sam tomorrow at noon, and press Return. Its details then open: Tab moves between them, such as the date and time, and Escape closes them.")),
+            .press(String(localized: "Add a new event"), String(localized: "Command N"), KeyCombo(code: 45, vo: false, command: true)),
+            .ask(String(localized: "You're in day view. How do you hear tomorrow's appointments?"),
+                 [String(localized: "Command Right Arrow, then go into the calendar"), String(localized: "Command Q"), String(localized: "Command 4")], answer: 0,
+                 why: String(localized: "Command Right Arrow moves to the next day. Then go into the calendar with VO Shift Down Arrow and move from event to event.")),
+            .doIt(String(localized: "Now for real: add an event called Practice Event for tomorrow, then find it in day view and listen to its time. Press Return here when you've heard it."), .yourWord,
+                  tip: String(localized: "In Calendar, Command N, type Practice Event tomorrow at 10, and press Return. Then Command 1, and Command Right Arrow to go to tomorrow.")),
+        ]),
+        Lesson(id: "files", title: String(localized: "26. Managing files in Finder"),
+               summary: String(localized: "New folders, renaming, copying and moving, Get Info, and the Trash."), steps: [
+            .say(String(localized: "This lesson builds on lesson 10. You'll make a folder, rename things, copy and move files, look at a file's details, and tidy up. In Finder, Command Shift O opens your Documents folder, a good place to practise.")),
+            .doIt(String(localized: "Bring Finder to the front, for real."), .frontApp("com.apple.finder"),
+                  tip: String(localized: "VO D, then VO Space on Finder. Come back to the lessons with Command Tab when you hear Done.")),
+            .say(String(localized: "Command Shift N makes a new folder. It's called untitled folder, and its name is ready to type over: type a name and press Return.")),
+            .press(String(localized: "Make a new folder"), String(localized: "Command Shift N"), KeyCombo(code: 45, vo: false, shift: true, command: true)),
+            .doIt(String(localized: "Now for real: make a new folder called \(LessonNames.folder), then open it with Command Down Arrow."),
+                  .finderWindowTitled(LessonNames.folder),
+                  tip: String(localized: "In Finder, press Command Shift N, type the name, press Return, then press Command Down Arrow.")),
+            .say(String(localized: "To rename a file or folder, select it and press Return: its name becomes a text field. Type the new name and press Return again, or press Escape to keep the old name.")),
+            .ask(String(localized: "You've selected a file. Which key lets you rename it?"),
+                 [String(localized: "Command Down Arrow"), String(localized: "Return"), String(localized: "Space")], answer: 1,
+                 why: String(localized: "Return starts renaming. Command Down Arrow opens the file, and Space shows a Quick Look preview.")),
+            .say(String(localized: "To copy a file, select it, press Command C, go to another folder, and press Command V: now there are two. To move it instead, press Option Command V where you'd press Command V: the file leaves its old place. Command D makes a copy in the same folder.")),
+            .press(String(localized: "Copy the selected item"), String(localized: "Command C"), KeyCombo(code: 8, vo: false, command: true)),
+            .press(String(localized: "Move the copied item here"), String(localized: "Option Command V"), KeyCombo(code: 9, vo: false, command: true, option: true)),
+            .say(String(localized: "Command I opens Get Info: a window with the item's kind, size, where it is, and when it was made. Read it with VO and the arrow keys, and close it with Command W.")),
+            .press(String(localized: "Get Info on the selected item"), String(localized: "Command I"), KeyCombo(code: 34, vo: false, command: true)),
+            .say(String(localized: "Command Delete moves the selected item to the Trash, and Command Z puts it back straight away. Things stay in the Trash until you empty it, so a mistake can be undone until then.")),
+            .press(String(localized: "Move the selected item to the Trash"), String(localized: "Command Delete"), KeyCombo(code: 51, vo: false, command: true)),
+            .doIt(String(localized: "Now for real: copy any file into the \(LessonNames.folder) folder with Command C and Command V, hear its size with Command I, then move the folder to the Trash. Press Return here when you've done it."), .yourWord,
+                  tip: String(localized: "Use copies only, so nothing important ends up in the Trash. Command Up Arrow goes back to the folder above.")),
+        ]),
+        Lesson(id: "meetings", title: String(localized: "27. Video meetings: Zoom and Teams"),
+               summary: String(localized: "Joining a meeting, muting, the camera, raising your hand and the chat."), steps: [
+            .say(String(localized: "Zoom and Microsoft Teams are apps for video meetings, and both work with VoiceOver. This lesson teaches the keys you need most. Wear headphones, so the others don't hear VoiceOver. If you use neither app, you can still learn the keys and skip the tasks.")),
+            .say(String(localized: "To join a Zoom meeting, open the invitation link in an email or calendar event, and Zoom opens by itself. Or, in Zoom's main window, press Command J, type the meeting ID, press Return, and type the passcode if asked. Zoom has a test meeting at zoom.us/test, to try your microphone and speakers.")),
+            .press(String(localized: "Join a Zoom meeting"), String(localized: "Command J"), KeyCombo(code: 38, vo: false, command: true)),
+            .doIt(String(localized: "Open Zoom or Teams, for real."), .frontAppAny(["us.zoom.xos", "com.microsoft.teams2", "com.microsoft.teams"]),
+                  tip: String(localized: "Command Space, type Zoom or Teams, and press Return. If you have neither, press Return here to skip.")),
+            .say(String(localized: "In a Zoom meeting, Command Shift A mutes and unmutes your microphone, and Command Shift V turns your camera on and off. Command Shift H shows or hides the chat, and Option Y raises or lowers your hand. To leave, find the Leave button, or press Command W, then confirm.")),
+            .press(String(localized: "Mute or unmute in Zoom"), String(localized: "Command Shift A"), KeyCombo(code: 0, vo: false, shift: true, command: true)),
+            .press(String(localized: "Turn your camera on or off in Zoom"), String(localized: "Command Shift V"), KeyCombo(code: 9, vo: false, shift: true, command: true)),
+            .press(String(localized: "Show or hide the chat in Zoom"), String(localized: "Command Shift H"), KeyCombo(code: 4, vo: false, shift: true, command: true)),
+            .say(String(localized: "In Microsoft Teams, Command Shift M mutes and unmutes, Command Shift O turns your camera on and off, and Command Shift K raises your hand. The chat is a button in the meeting's toolbar: find it with VO and the arrow keys, or with the item chooser, VO I. Depending on your version, Command Period lists all of Teams' shortcuts.")),
+            .press(String(localized: "Mute or unmute in Teams"), String(localized: "Command Shift M"), KeyCombo(code: 46, vo: false, shift: true, command: true)),
+            .press(String(localized: "Turn your camera on or off in Teams"), String(localized: "Command Shift O"), KeyCombo(code: 31, vo: false, shift: true, command: true)),
+            .say(String(localized: "In the chat, type in the message field and press Return to send. To read what others wrote, move up from the message field with VO and the arrow keys. Shortcuts can change between versions, so if one doesn't work, look in the app's menus with VO M.")),
+            .ask(String(localized: "You're muted in a Zoom meeting and want to speak. What do you press?"),
+                 [String(localized: "Command Shift A, to unmute"), String(localized: "Command Q"), String(localized: "Command Shift H")], answer: 0,
+                 why: String(localized: "Command Shift A mutes and unmutes in Zoom. Command Q would quit Zoom, and Command Shift H shows the chat.")),
+            .doIt(String(localized: "Now for real: join Zoom's test meeting at zoom.us/test, or a practice call in Teams, then mute and unmute yourself. Press Return here when you've done it."), .yourWord,
+                  tip: String(localized: "In Safari, Command L, type zoom.us/test, and press Return. Then follow the steps to join.")),
+        ]),
+        Lesson(id: "braille", title: String(localized: "28. Braille displays"),
+               summary: String(localized: "Connecting a display, panning, routing buttons, and VoiceOver commands from the display."), steps: [
+            .say(String(localized: "A braille display shows what VoiceOver says, in braille, under your fingers. VoiceOver works with many displays, with nothing extra to install. Most connect with a USB cable or with Bluetooth.")),
+            .say(String(localized: "With USB, plug the display in, and VoiceOver usually finds it by itself. With Bluetooth, turn the display on and make it ready to pair, then open VoiceOver Utility with VO F8, choose Braille, then Displays, and use the Add button. The steps can differ a little, depending on your version and your display.")),
+            .press(String(localized: "Open VoiceOver Utility"), String(localized: "VO F8"), KeyCombo(code: 100)),
+            .say(String(localized: "A display shows one line at a time, often 14, 40 or 80 cells long. When there's more, the panning buttons move along it, left and right. Where they are depends on the display: often at the ends or along the front. Panning moves what you feel, not the VoiceOver cursor.")),
+            .ask(String(localized: "The line on your display is cut off. How do you read the rest?"),
+                 [String(localized: "Press a panning button to move along the line"), String(localized: "Restart VoiceOver"), String(localized: "Turn the display off and on")], answer: 0,
+                 why: String(localized: "The panning buttons move the display along the line, so you can read the rest.")),
+            .say(String(localized: "Above each cell is a small button, called a routing button or cursor routing key. In text, pressing one moves the text cursor to that letter. On a button or link, it usually presses it, just as VO Space does. It's a quick way to act on what you're reading.")),
+            .ask(String(localized: "You're reading a link on your display. What does a routing button above it usually do?"),
+                 [String(localized: "Opens the link, like VO Space"), String(localized: "Deletes the link"), String(localized: "Turns the display off")], answer: 0,
+                 why: String(localized: "A routing button presses the item under it, just as VO Space does; in text, it moves the cursor there.")),
+            .say(String(localized: "Displays with a braille keyboard let you type in braille, and give VoiceOver commands as chords: Space held with dots. The chords and buttons vary from display to display, so check your display's manual and Apple's VoiceOver guide, linked at the bottom of this window. In VoiceOver Utility, Braille has the settings, such as contracted or uncontracted braille.")),
+            .ask(String(localized: "Where do you choose contracted or uncontracted braille?"),
+                 [String(localized: "VoiceOver Utility, under Braille"), String(localized: "Finder"), String(localized: "Safari Settings")], answer: 0,
+                 why: String(localized: "VoiceOver Utility's Braille category has the braille settings, including contracted and uncontracted braille.")),
+            .doIt(String(localized: "Now for real: open VoiceOver Utility."), .frontApp("com.apple.VoiceOverUtility"),
+                  tip: String(localized: "Press VO F8. Come back to the lessons with Command Tab when you hear Done.")),
+            .doIt(String(localized: "In VoiceOver Utility, find Braille in the list of categories and listen to its settings. If you have a display, connect it. Press Return here when you've done it."), .yourWord,
+                  tip: String(localized: "Up and Down Arrow move through the categories; VO Right Arrow goes to the settings.")),
+        ]),
+        Lesson(id: "utility", title: String(localized: "29. VoiceOver Utility: settings your way"),
+               summary: String(localized: "Finding your way around VoiceOver Utility: speech rate, verbosity, the VO keys and activities."), steps: [
+            .say(String(localized: "VoiceOver Utility has all of VoiceOver's settings, and VO F8 opens it from anywhere. On the left is a list of categories, such as General, Speech, Verbosity, Braille, Commanders and Activities. Move through it with Up and Down Arrow; each category's settings are on the right.")),
+            .press(String(localized: "Open VoiceOver Utility"), String(localized: "VO F8"), KeyCombo(code: 100)),
+            .doIt(String(localized: "Open VoiceOver Utility, for real."), .frontApp("com.apple.VoiceOverUtility"),
+                  tip: String(localized: "Press VO F8; add Fn on a laptop. Come back to the lessons with Command Tab when you hear Done.")),
+            .say(String(localized: "To change a setting, move from the categories to the settings with VO Right Arrow. Some categories have tabs at the top, such as Voice in Speech: choose one with VO Space. Pop-up menus and checkboxes work with VO Space too. For a slider, go inside it with VO Shift Down Arrow, change it with VO and the arrow keys, and come out with VO Shift Up Arrow.")),
+            .say(String(localized: "Speech, then Voice, sets the voice and the speaking rate. A rate a little faster than comfortable soon feels normal. Changes work straight away: there's no Save button. Verbosity sets how much VoiceOver says, and whether it reads punctuation and hints. VO V changes verbosity on the go, without opening the utility.")),
+            .press(String(localized: "Open the verbosity rotor"), String(localized: "VO V"), KeyCombo(code: 9)),
+            .say(String(localized: "General has the VoiceOver modifier: the keys you hold for VO. Depending on your version, you can choose Caps Lock, or Caps Lock as well as Control and Option. Then you hold just Caps Lock for VO commands, which many laptop users find easier.")),
+            .ask(String(localized: "You'd like to hold just one key for VO. Where do you set that?"),
+                 [String(localized: "VoiceOver Utility, General"), String(localized: "The rotor"), String(localized: "The Dock")], answer: 0,
+                 why: String(localized: "In VoiceOver Utility, General, you can choose Caps Lock as the VoiceOver modifier.")),
+            .say(String(localized: "Activities are sets of settings that switch on by themselves in chosen apps or websites: for example, a faster rate in Mail, or less punctuation in Safari. In Activities, use the Add button, give the activity a name, choose its apps, then change its settings.")),
+            .ask(String(localized: "You want VoiceOver to speak faster only in Mail. What do you use?"),
+                 [String(localized: "Quick Nav"), String(localized: "An activity, in VoiceOver Utility"), String(localized: "The item chooser")], answer: 1,
+                 why: String(localized: "An activity changes VoiceOver's settings by itself in the apps you choose, such as Mail.")),
+            .say(String(localized: "VoiceOver Utility's File menu can export your settings to a file, to keep them safe or use them on another Mac. Command W closes VoiceOver Utility.")),
+            .press(String(localized: "Close the window"), String(localized: "Command W"), KeyCombo(code: 13, vo: false, command: true)),
+            .doIt(String(localized: "Now for real: in VoiceOver Utility, choose Speech and change the speaking rate a little, then close VoiceOver Utility. Press Return here when you've done it."), .yourWord,
+                  tip: String(localized: "VO F8, Down Arrow to Speech, VO Right Arrow to the settings, then find the Rate slider.")),
+        ]),
     ]
 
     /// The last lesson: a mixed review of everything, without the keys being said,
     /// starting with the keys you've missed before.
-    static let review = Lesson(id: "review", title: String(localized: "24. Review: everything so far"),
+    static let review = Lesson(id: "review", title: String(localized: "30. Review: everything so far"),
                                summary: String(localized: "A mixed quiz from all the lessons, starting with what you've missed."), steps: [])
     static var course: [Lesson] { all + [review] }
     /// Keys due again, spaced out like flashcards: known keys come back less often.
@@ -650,12 +810,15 @@ struct Lesson: Identifiable, Hashable {
     static var levels: [(title: String, lessons: [Lesson])] {
         [(String(localized: "Basics"), Array(all.prefix(9))),
          (String(localized: "Everyday apps"), Array(all.dropFirst(9).prefix(6))),
-         (String(localized: "Going further"), Array(all.dropFirst(15))),
+         (String(localized: "Going further"), Array(all.dropFirst(15).prefix(8))),
+         (String(localized: "Everyday apps 2"), Array(all.dropFirst(23))),
          (String(localized: "Review"), [review])]
     }
 
     /// Every practice step in the course, by ID.
-    static var allPractice: [(id: String, step: LessonStep)] { all.flatMap(\.practiceWithIDs) }
+    static var allPractice: [(id: String, step: LessonStep)] {
+        all.flatMap(\.practiceWithIDs) + CustomLessons.shared.lessons.flatMap(\.lesson.practiceWithIDs)
+    }
 }
 
 /// Spaced practice, like flashcards in boxes: a key answered right first time moves up a
@@ -665,7 +828,7 @@ enum LessonSchedule {
     static let days = [1.0, 3, 7, 14, 30]
 
     /// IDs due now, most overdue first.
-    static func due(now: Date = Date(), in schedule: [String: [Double]] = Preferences.shared.lessonSchedule) -> [String] {
+    static func due(now: Date = Date(), in schedule: [String: [Double]] = LessonProgress.shared.schedule) -> [String] {
         schedule.filter { $0.value.count == 2 && $0.value[1] <= now.timeIntervalSince1970 }
             .sorted { $0.value[1] < $1.value[1] }.map(\.key)
     }
@@ -673,11 +836,11 @@ enum LessonSchedule {
     /// Forgets saved keys that no longer match a step in the course (after lessons change).
     static func prune() {
         let valid = Set(Lesson.allPractice.map(\.id))
-        let preferences = Preferences.shared
-        let schedule = preferences.lessonSchedule.filter { valid.contains($0.key) }
-        if schedule.count != preferences.lessonSchedule.count { preferences.lessonSchedule = schedule }
-        let missed = preferences.lessonsMissed.filter(valid.contains)
-        if missed != preferences.lessonsMissed { preferences.lessonsMissed = missed }
+        let progress = LessonProgress.shared
+        let schedule = progress.schedule.filter { valid.contains($0.key) }
+        if schedule.count != progress.schedule.count { progress.schedule = schedule }
+        let missed = progress.missed.filter(valid.contains)
+        if missed != progress.missed { progress.missed = missed }
     }
 
     /// The schedule after an answer.
@@ -829,7 +992,7 @@ final class LessonRunner: ObservableObject {
                 chosen = Array(due.compactMap { id in all.first { $0.id == id } }.prefix(20))
             } else {
                 // From the lessons you've done, or everything if none yet.
-                let done = Set(Preferences.shared.lessonsDone)
+                let done = Set(LessonProgress.shared.done)
                 let learned = all.filter { done.contains(String($0.id.split(separator: ".").first ?? "")) }
                 chosen = Array((learned.isEmpty ? all : learned).shuffled().prefix(60))
             }
@@ -837,7 +1000,7 @@ final class LessonRunner: ObservableObject {
             stepIDs = chosen.map(\.id)
             phase = .checking
         } else if lesson.id == Lesson.review.id {
-            let missed = Set(Preferences.shared.lessonsMissed)
+            let missed = Set(LessonProgress.shared.missed)
             let all = Lesson.allPractice
             let pick = onlyMissed ? all.filter { missed.contains($0.id) }.shuffled()
                                   : (all.filter { missed.contains($0.id) }.shuffled() + all.filter { !missed.contains($0.id) }.shuffled())
@@ -884,7 +1047,7 @@ final class LessonRunner: ObservableObject {
     // MARK: Welcome
 
     /// The lesson to suggest: the first one not done yet, or the review.
-    var nextLesson: Lesson { Lesson.course.first { !Preferences.shared.lessonsDone.contains($0.id) } ?? Lesson.review }
+    var nextLesson: Lesson { Lesson.course.first { !LessonProgress.shared.done.contains($0.id) } ?? Lesson.review }
 
     /// Spoken when the lessons window opens: how are you learning, then the next lesson.
     /// Everything has a key, so it works without finding anything on screen.
@@ -933,7 +1096,7 @@ final class LessonRunner: ObservableObject {
         phase = .ready
         let how = mode == .onYourOwn ? String(localized: "Learning on your own.") : String(localized: "Learning with a trainer.")
         let next = nextLesson
-        let done = Preferences.shared.lessonsDone.filter { id in Lesson.course.contains { $0.id == id } }.count
+        let done = LessonProgress.shared.done.filter { id in Lesson.course.contains { $0.id == id } }.count
         let progress = done == 0 ? String(localized: "You're starting from the beginning.")
                                  : String(localized: "You've done \(done) of \(Lesson.course.count) lessons.")
         say("\(how) \(progress) " + String(localized: "Press Return to start \(next.title), or Escape to choose another lesson from the list."))
@@ -1159,28 +1322,30 @@ final class LessonRunner: ObservableObject {
         phase = .done
         let checked = report.filter { !$0.skipped }.count
         if isChallenge {
-            let best = Preferences.shared.lessonChallengeBest
+            let best = LessonProgress.shared.challengeBest
             score = String(localized: "\(checkRight) right in a minute")
             var message = String(localized: "Time's up! \(score).")
             if checkRight > best {
-                Preferences.shared.lessonChallengeBest = checkRight
+                LessonProgress.shared.challengeBest = checkRight
                 message += " " + String(localized: "That's your best yet.")
             } else {
                 message += " " + String(localized: "Your best is \(best).")
             }
             Tones.play(.device)
+            recordSession()
             return say(message)
         }
         score = String(localized: "\(checkRight) of \(max(checked, checkRight)) right first time")
+        recordSession()
         if lesson.id == Lesson.daily.id {
             Tones.play(.device)
             let left = LessonSchedule.due().count
             return say(String(localized: "Daily practice done. \(score).") + (left > 0 ? " " + String(localized: "\(left) still due; they'll come back in today's next practice.") : ""))
         }
         if !isDrill || lesson.id == Lesson.review.id {
-            var done = Preferences.shared.lessonsDone
+            var done = LessonProgress.shared.done
             if !done.contains(lesson.id) { done.append(lesson.id) }
-            Preferences.shared.lessonsDone = done
+            LessonProgress.shared.done = done
         }
         let course = Lesson.course
         let next = course.firstIndex(of: lesson).flatMap { $0 + 1 < course.count ? course[$0 + 1] : nil }
@@ -1198,7 +1363,7 @@ final class LessonRunner: ObservableObject {
             parts.append(String(localized: "The session report is in the window."))
         }
         if let next { parts.append(String(localized: "Next: \(next.title).")) }
-        else if Lesson.course.allSatisfy({ Preferences.shared.lessonsDone.contains($0.id) }) {
+        else if Lesson.course.allSatisfy({ LessonProgress.shared.done.contains($0.id) }) {
             parts.append(String(localized: "That's the whole course. Well done!"))
         }
         Tones.play(.device)
@@ -1465,11 +1630,11 @@ final class LessonRunner: ObservableObject {
         guard !id.isEmpty else { return }
         // Keys checked in quick checks, reviews and daily practice go on the practice schedule.
         if phase == .checking {
-            Preferences.shared.lessonSchedule = LessonSchedule.update(Preferences.shared.lessonSchedule, id: id, right: !missed)
+            LessonProgress.shared.schedule = LessonSchedule.update(LessonProgress.shared.schedule, id: id, right: !missed)
         }
-        var list = Preferences.shared.lessonsMissed
+        var list = LessonProgress.shared.missed
         if missed { if !list.contains(id) { list.append(id) } } else { list.removeAll { $0 == id } }
-        if list != Preferences.shared.lessonsMissed { Preferences.shared.lessonsMissed = list }
+        if list != LessonProgress.shared.missed { LessonProgress.shared.missed = list }
     }
 
     func repeatCurrent() {
@@ -1480,6 +1645,13 @@ final class LessonRunner: ObservableObject {
             return say(String(localized: "\(task)?") + (onYourOwn ? " " + String(localized: "Press H if you'd like a hint.") : ""))
         }
         say(prompt(for: step))
+    }
+
+    /// Keeps this session in the current student's reports, for their trainer or counselor.
+    private func recordSession() {
+        guard let lesson else { return }
+        LessonProgress.shared.record(lessonID: lesson.id, lesson: lesson.title, score: score,
+                                     mode: mode.rawValue, lines: report.map(\.summary))
     }
 
     /// The report, as text to copy for a trainer's notes.
@@ -1513,19 +1685,21 @@ enum Glossary {
 struct LessonsView: View {
     @ObservedObject var runner = LessonRunner.shared
     @ObservedObject var preferences = Preferences.shared
+    @ObservedObject var progress = LessonProgress.shared
 
     var body: some View {
         Form {
             if runner.isBetweenLessons {
                 Section(String(localized: "VoiceOver Lessons")) {
-                    Text(String(localized: "A course for learning VoiceOver from the beginning, in four levels. Each lesson explains a skill, then you try the keys, answer questions and do tasks for real. Start with lesson 1, or pick any lesson."))
+                    Text(String(localized: "A course for learning VoiceOver from the beginning, in five levels. Each lesson explains a skill, then you try the keys, answer questions and do tasks for real. Start with lesson 1, or pick any lesson."))
                         .font(.caption).foregroundStyle(.secondary)
-                    Text(String(localized: "\(preferences.lessonsDone.filter { id in Lesson.course.contains { $0.id == id } }.count) of \(Lesson.course.count) lessons done"))
+                    Text(String(localized: "\(progress.done.filter { id in Lesson.course.contains { $0.id == id } }.count) of \(Lesson.course.count) lessons done"))
                     Picker(String(localized: "How are you learning?"), selection: $preferences.lessonMode) {
                         ForEach(LessonMode.allCases) { Text($0.title).tag($0.rawValue) }
                     }
                     if !runner.score.isEmpty { Text(runner.text) }
                 }
+                StudentsSection()
                 if !runner.report.isEmpty {
                     Section(String(localized: "Session report: \(runner.lesson?.title ?? "")")) {
                         Text(runner.score)
@@ -1540,21 +1714,22 @@ struct LessonsView: View {
                 ForEach(Lesson.levels, id: \.title) { level in
                     Section(level.title) {
                         ForEach(level.lessons) { lesson in
-                            let done = preferences.lessonsDone.contains(lesson.id)
+                            let done = progress.done.contains(lesson.id)
                             Button(done ? String(localized: "\(lesson.title), done") : lesson.title) { runner.start(lesson) }
                                 .accessibilityHint(lesson.summary)
                         }
                     }
                 }
+                CustomLessonsSection()
                 Section(String(localized: "Keep practicing")) {
-                    let due = LessonSchedule.due(in: preferences.lessonSchedule).count
+                    let due = LessonSchedule.due(in: progress.schedule).count
                     Button(String(localized: "Daily Practice (\(due) due)")) { runner.start(Lesson.daily) }
                         .accessibilityHint(String(localized: "Keys come back for practice on a schedule: soon after a miss, and less often once you know them."))
-                    Button(preferences.lessonChallengeBest > 0
-                           ? String(localized: "One-Minute Challenge (best \(preferences.lessonChallengeBest))")
+                    Button(progress.challengeBest > 0
+                           ? String(localized: "One-Minute Challenge (best \(progress.challengeBest))")
                            : String(localized: "One-Minute Challenge")) { runner.start(Lesson.challenge) }
-                    if !preferences.lessonsMissed.isEmpty {
-                        Button(String(localized: "Practice What I Missed (\(preferences.lessonsMissed.count))")) {
+                    if !progress.missed.isEmpty {
+                        Button(String(localized: "Practice What I Missed (\(progress.missed.count))")) {
                             runner.start(Lesson.review, onlyMissed: true)
                         }
                     }

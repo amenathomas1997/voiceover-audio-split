@@ -249,6 +249,16 @@ final class VoiceCommand {
             stopIfNotWanted()
         }
         if Self.isLaunchCommand(command) { return launchLessons() }
+        // "Set a timer for 10 minutes", "remind me at 3 to call the doctor".
+        if VoiceCommands.isReminder(command), Reminders.shared.handle(command) {
+            log("Voice command: reminder")
+            return
+        }
+        // "Look for my cup", "where are my glasses", "look for the word exit": the camera finder.
+        if let target = VoiceCommands.objectRequest(in: command) {
+            log("Voice command: object finder")
+            return ObjectFinder.start(target: target)
+        }
         if let request = VoiceCommands.findRequest(in: command), !request.isEmpty {
             log("Voice command: find")
             Tones.play(.status)

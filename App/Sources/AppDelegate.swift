@@ -33,6 +33,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var documentCheckWindow: NSWindow?
     private var brailleWindow: NSWindow?
     private var hearingWindow: NSWindow?
+    private var remindersWindow: NSWindow?
+    private var clipboardWindow: NSWindow?
+    private var switcherWindow: NSWindow?
+    private var objectFinderWindow: NSWindow?
     private var practiceWindow: NSWindow?
     private var typingWindow: NSWindow?
     private var lessonsWindow: NSWindow?
@@ -99,6 +103,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         Hotkeys.start()
         if !preferences.finishedSetup { showSetupGuide() }
         Updater.shared.startAutomaticChecks()
+        Reminders.shared.start()
+        MeetingHelpers.start()
         #if DEBUG
         if CommandLine.arguments.contains("--self-test") { selfTest() }
         #endif
@@ -317,6 +323,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         documentCheckWindow = show(documentCheckWindow, title: String(localized: "Document Accessibility Check"), view: DocumentCheckView())
     }
 
+    func showReminders() {
+        remindersWindow = show(remindersWindow, title: String(localized: "Timers and Reminders"), view: RemindersView())
+    }
+
+    func showClipboardHistory() {
+        clipboardWindow = show(clipboardWindow, title: String(localized: "Clipboard History"), view: ClipboardHistoryView())
+    }
+
+    func showWindowSwitcher() {
+        switcherWindow = show(switcherWindow, title: String(localized: "Switch to a Window"), view: WindowSwitcherView { [weak self] in
+            self?.switcherWindow?.close()
+            NSApp.hide(nil)
+        })
+    }
+
+    func showObjectFinder() {
+        objectFinderWindow = show(objectFinderWindow, title: String(localized: "Find an Object"), view: ObjectFinderView())
+    }
+
+    /// Leaving a meeting asks first, by voice when voice commands are listening, or in a dialog.
+    @MainActor
+    func confirmLeaveMeeting() {
+        let question = MeetingHelpers.leaveNeedsConfirmation
+        if VoiceCommand.shared.isListening {
+            return VoiceCommand.shared.askYesNo(question) { MeetingHelpers.leave(confirmed: true) }
+        }
+        NSApp.activate()
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.addButton(withTitle: String(localized: "Leave"))
+        alert.addButton(withTitle: String(localized: "Stay"))
+        if alert.runModal() == .alertFirstButtonReturn { MeetingHelpers.leave(confirmed: true) }
+    }
+
     func showHearingProfile() {
         hearingWindow = show(hearingWindow, title: String(localized: "Hearing Profile"), view: HearingProfileView())
     }
@@ -512,6 +552,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         reading.addItem(.separator())
         add(to: reading, String(localized: "Check a Document's Accessibility…"), command: .documentCheck) { $0.run(.documentCheck) }
         add(to: reading, String(localized: "Save as Braille…"), command: .brailleExport) { $0.run(.brailleExport) }
+        add(to: reading, String(localized: "Make a Picture or PDF Accessible…"), command: .fileToPDF) { $0.run(.fileToPDF) }
         reading.addItem(.separator())
         add(to: reading, String(localized: "Focus Frame"), command: .focusFrame, checked: FocusFrame.isShowing) { $0.toggleFocusFrame() }
 
@@ -523,6 +564,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: camera, String(localized: "Identify a Color"), command: .colorIdentifier) { $0.run(.colorIdentifier) }
         add(to: camera, String(localized: "Light Detector"), command: .lightDetector, checked: LightDetector.isRunning) { $0.run(.lightDetector) }
         add(to: camera, String(localized: "Check Camera Framing"), command: .camera) { $0.checkCamera() }
+        camera.addItem(.separator())
+        add(to: camera, String(localized: "Find an Object…"), command: .objectFinder) { $0.run(.objectFinder) }
+        add(to: camera, String(localized: "Scan Pages to an Accessible PDF…"), command: .scanToPDF) { $0.run(.scanToPDF) }
 
         // Calls and meetings
         let calls = submenu(in: menu, String(localized: "Calls and Meetings"))
@@ -530,6 +574,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: calls, String(localized: "Call Captions"), command: .callCaptions, checked: captionsOn) { $0.run(.callCaptions) }
         add(to: calls, String(localized: "Read the Last Caption"), command: .readLastCaption) { $0.run(.readLastCaption) }
         add(to: calls, String(localized: "Copy the Call Transcript"), command: .copyCallTranscript) { $0.run(.copyCallTranscript) }
+        calls.addItem(.separator())
+        add(to: calls, String(localized: "Am I Muted?"), command: .meetingMuteStatus) { $0.run(.meetingMuteStatus) }
+        add(to: calls, String(localized: "Mute or Unmute"), command: .meetingToggleMute) { $0.run(.meetingToggleMute) }
+        add(to: calls, String(localized: "Camera On or Off"), command: .meetingToggleVideo) { $0.run(.meetingToggleVideo) }
+        add(to: calls, String(localized: "Raise or Lower Hand"), command: .meetingToggleHand) { $0.run(.meetingToggleHand) }
+        add(to: calls, String(localized: "Who's Talking?"), command: .meetingWhoIsTalking) { $0.run(.meetingWhoIsTalking) }
+        add(to: calls, String(localized: "Open the Chat"), command: .meetingOpenChat) { $0.run(.meetingOpenChat) }
+        add(to: calls, String(localized: "Read the Latest Chat Messages"), command: .meetingReadChat) { $0.run(.meetingReadChat) }
+        add(to: calls, String(localized: "Read New Chat Messages as They Arrive"), command: .meetingChatAnnounce,
+            checked: MeetingHelpers.chatAnnounceEnabled) { $0.run(.meetingChatAnnounce) }
+        add(to: calls, String(localized: "Leave the Meeting…"), command: .meetingLeave) { $0.run(.meetingLeave) }
 
         // Assistant and research
         let assistant = submenu(in: menu, String(localized: "Assistant and Research"))
@@ -567,6 +622,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let tools = submenu(in: menu, String(localized: "Everyday Tools"))
         add(to: tools, String(localized: "Open Latest Download"), command: .openDownload) { $0.run(.openDownload) }
         add(to: tools, String(localized: "Audio Mouse"), command: .audioMouse, checked: AudioMouse.isOn) { $0.run(.audioMouse) }
+        add(to: tools, String(localized: "Timers and Reminders…"), command: .reminders) { $0.run(.reminders) }
+        add(to: tools, String(localized: "Clipboard History…"), command: .clipboardHistory) { $0.run(.clipboardHistory) }
+        add(to: tools, String(localized: "Switch to a Window…"), command: .windowSwitcher) { $0.run(.windowSwitcher) }
 
         if !preferences.userCommands.isEmpty {
             let yours = submenu(in: menu, String(localized: "Your Commands"))

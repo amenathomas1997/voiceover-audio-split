@@ -42,3 +42,29 @@ final class CallCaptionsTests: XCTestCase {
         XCTAssertEqual(VoiceCommands.match("hearing test", in: all)?.name, "Hearing profile")
     }
 }
+
+final class NewVoiceRoutingTests: XCTestCase {
+    func testObjectRequestsDontTakeDoItForMe() {
+        XCTAssertEqual(VoiceCommands.objectRequest(in: "look for my cup"), "look for my cup")
+        XCTAssertEqual(VoiceCommands.objectRequest(in: "Where are my glasses?"), "where are my glasses")
+        XCTAssertNotNil(VoiceCommands.objectRequest(in: "look for the word exit"))
+        XCTAssertNil(VoiceCommands.objectRequest(in: "find the search field"), "find stays with Do It for Me")
+        XCTAssertNil(VoiceCommands.objectRequest(in: "look for"))
+    }
+
+    func testRemindersAreRecognized() {
+        XCTAssertTrue(VoiceCommands.isReminder("set a timer for 10 minutes"))
+        XCTAssertTrue(VoiceCommands.isReminder("remind me at 3 to call the doctor"))
+        XCTAssertTrue(VoiceCommands.isReminder("pon un temporizador de 5 minutos"))
+        XCTAssertFalse(VoiceCommands.isReminder("what time is it"))
+    }
+
+    func testMeetingAndToolPhrases() {
+        let all = VoiceCommands.all
+        XCTAssertEqual(VoiceCommands.match("am i muted", in: all)?.name, "Am I muted?")
+        XCTAssertEqual(VoiceCommands.match("raise my hand", in: all)?.name, "Raise my hand")
+        XCTAssertNotNil(VoiceCommands.match("leave the meeting", in: all)?.confirm, "leaving asks first")
+        XCTAssertEqual(VoiceCommands.match("switch window", in: all)?.name, "Switch window")
+        XCTAssertEqual(VoiceCommands.match("unmute my microphone", in: all)?.name, "Unmute", "the microphone command still wins")
+    }
+}

@@ -321,6 +321,23 @@ final class Controller {
         case .callCaptions: MainActor.assumeIsolated { CallCaptions.shared.toggle() }
         case .readLastCaption: MainActor.assumeIsolated { CallCaptions.shared.readLast() }
         case .copyCallTranscript: MainActor.assumeIsolated { CallCaptions.shared.copyTranscript() }
+        case .meetingMuteStatus: MeetingHelpers.sayMuteStatus()
+        case .meetingToggleMute: MeetingHelpers.toggleMute()
+        case .meetingToggleVideo: MeetingHelpers.toggleVideo()
+        case .meetingToggleHand: MeetingHelpers.toggleHand()
+        case .meetingOpenChat: MeetingHelpers.openChat()
+        case .meetingReadChat: MeetingHelpers.readChat()
+        case .meetingWhoIsTalking: MeetingHelpers.sayWhoIsTalking()
+        case .meetingLeave: MainActor.assumeIsolated { app?.confirmLeaveMeeting() }
+        case .meetingChatAnnounce: MeetingHelpers.toggleChatAnnouncements()
+        case .reminders: app?.showReminders()
+        case .listReminders: Reminders.shared.speakList()
+        case .cancelLastReminder: Reminders.shared.cancelLast()
+        case .clipboardHistory: app?.showClipboardHistory()
+        case .windowSwitcher: app?.showWindowSwitcher()
+        case .objectFinder: app?.showObjectFinder()
+        case .scanToPDF: MainActor.assumeIsolated { AccessiblePDF.makeFromCamera() }
+        case .fileToPDF: MainActor.assumeIsolated { AccessiblePDF.makeFromFile() }
         case .documentCheck: app?.showDocumentCheck()
         case .brailleExport: app?.showBraille()
         case .codeReader: CodeReader.toggle()

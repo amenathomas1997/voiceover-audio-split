@@ -19,6 +19,10 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case documentCheck, brailleExport, codeReader, labelReader, moneyReader, practice, typingTrainer, voiceOverLessons
     case listenForCommand, checkForUpdates
     case hearingProfile, callCaptions, readLastCaption, copyCallTranscript
+    case meetingMuteStatus, meetingToggleMute, meetingToggleVideo, meetingToggleHand, meetingOpenChat
+    case meetingReadChat, meetingWhoIsTalking, meetingLeave, meetingChatAnnounce
+    case reminders, listReminders, cancelLastReminder, clipboardHistory, windowSwitcher
+    case objectFinder, scanToPDF, fileToPDF
 
     var id: String { rawValue }
 
@@ -79,6 +83,23 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .callCaptions: String(localized: "Call captions: see what people in a call say")
         case .readLastCaption: String(localized: "Read the last call caption")
         case .copyCallTranscript: String(localized: "Copy the call transcript")
+        case .meetingMuteStatus: String(localized: "Meeting: am I muted?")
+        case .meetingToggleMute: String(localized: "Meeting: mute or unmute")
+        case .meetingToggleVideo: String(localized: "Meeting: camera on or off")
+        case .meetingToggleHand: String(localized: "Meeting: raise or lower hand")
+        case .meetingOpenChat: String(localized: "Meeting: open the chat")
+        case .meetingReadChat: String(localized: "Meeting: read the latest chat messages")
+        case .meetingWhoIsTalking: String(localized: "Meeting: who's talking?")
+        case .meetingLeave: String(localized: "Meeting: leave the meeting")
+        case .meetingChatAnnounce: String(localized: "Meeting: read new chat messages as they arrive")
+        case .reminders: String(localized: "Timers and reminders")
+        case .listReminders: String(localized: "List timers and reminders")
+        case .cancelLastReminder: String(localized: "Cancel the last timer or reminder")
+        case .clipboardHistory: String(localized: "Clipboard history")
+        case .windowSwitcher: String(localized: "Switch to a window")
+        case .objectFinder: String(localized: "Find an object with the camera")
+        case .scanToPDF: String(localized: "Scan pages to an accessible PDF")
+        case .fileToPDF: String(localized: "Make a picture or PDF file accessible")
         case .sensorStatus: String(localized: "What's using the camera and microphone")
         case .customLabel: String(localized: "Label the item under the VoiceOver cursor")
         case .placeMarker: String(localized: "Add a place marker on this web page")
@@ -146,7 +167,11 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .tutorial, .audioMouse, .beepMode, .exportSettings, .importSettings, .diagnostics, .performance,
              .sensorStatus, .customLabel, .placeMarker, .nextPlaceMarker, .doItForMe, .documentCheck,
              .brailleExport, .codeReader, .labelReader, .moneyReader, .practice, .typingTrainer, .voiceOverLessons, .listenForCommand, .checkForUpdates,
-             .hearingProfile, .callCaptions, .readLastCaption, .copyCallTranscript: nil
+             .hearingProfile, .callCaptions, .readLastCaption, .copyCallTranscript,
+             .meetingMuteStatus, .meetingToggleMute, .meetingToggleVideo, .meetingToggleHand, .meetingOpenChat,
+             .meetingReadChat, .meetingWhoIsTalking, .meetingLeave, .meetingChatAnnounce,
+             .reminders, .listReminders, .cancelLastReminder, .clipboardHistory, .windowSwitcher,
+             .objectFinder, .scanToPDF, .fileToPDF: nil
         }
     }
 }

@@ -71,6 +71,26 @@ enum VoiceCommands {
     }
 
     /// "find the search field" → "the search field", for Do It for Me.
+    /// Words that start a timer or reminder, in English, Spanish, French and German.
+    static func isReminder(_ command: String) -> Bool {
+        let words = normalize(command)
+        return ["timer", "remind", "reminder", "temporizador", "recuerdame", "recordatorio", "minuteur", "rappelle",
+                "rappel", "erinnere", "erinnerung", "wecker"].contains { words.contains($0) }
+    }
+
+    /// What to look for with the camera, from "look for my keys", "where are my glasses" and
+    /// the same in Spanish, French and German; nil for anything else.
+    static func objectRequest(in command: String) -> String? {
+        let words = normalize(command)
+        let starts = ["look for ", "where are my ", "where is my ", "where s my ", "busca mi ", "busca mis ", "donde esta mi ",
+                      "donde estan mis ", "cherche mon ", "cherche ma ", "cherche mes ", "ou est mon ", "ou est ma ",
+                      "ou sont mes ", "suche mein ", "suche meine ", "suche meinen ", "wo ist mein ", "wo ist meine ", "wo sind meine "]
+        guard let start = starts.first(where: { words.hasPrefix($0) }) else { return nil }
+        let rest = String(words.dropFirst(start.count)).trimmingCharacters(in: .whitespaces)
+        // The finder takes the whole phrase, so "look for the word exit" keeps "word".
+        return rest.isEmpty ? nil : words
+    }
+
     static func findRequest(in command: String) -> String? {
         let starts = phrases("find|go to|move to|take me to",
                              String(localized: "find|go to", comment: "Voice command words that start a Do It for Me request, separated by |"))
@@ -195,7 +215,43 @@ enum VoiceCommands {
                         confirm: String(localized: "Switch to the next output device?")) {
                 controller.nextOutputDevice()
             },
-            // Calls
+            // Calls and meetings
+            VoiceAction(name: String(localized: "Am I muted?"),
+                        phrases: phrases("am i muted|am i on mute|mute status|is my mic on",
+                                         String(localized: "am i muted|mute status", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.sayMuteStatus()
+            },
+            VoiceAction(name: String(localized: "Mute me in the meeting"),
+                        phrases: phrases("mute me|unmute me|toggle mute|mute the meeting|unmute the meeting",
+                                         String(localized: "mute me|unmute me", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.toggleMute()
+            },
+            VoiceAction(name: String(localized: "Camera on or off"),
+                        phrases: phrases("toggle video|camera on|camera off|turn my camera on|turn my camera off|video on|video off",
+                                         String(localized: "camera on|camera off", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.toggleVideo()
+            },
+            VoiceAction(name: String(localized: "Raise my hand"),
+                        phrases: phrases("raise my hand|lower my hand|raise hand|lower hand",
+                                         String(localized: "raise my hand|lower my hand", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.toggleHand()
+            },
+            VoiceAction(name: String(localized: "Who's talking?"),
+                        phrases: phrases("who s talking|whos talking|who is talking|who is speaking|who s speaking",
+                                         String(localized: "who is talking|who is speaking", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.sayWhoIsTalking()
+            },
+            VoiceAction(name: String(localized: "Read the chat"),
+                        phrases: phrases("read the chat|read meeting chat|read the meeting chat|any new messages in the chat",
+                                         String(localized: "read the chat", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.readChat()
+            },
+            VoiceAction(name: String(localized: "Leave the meeting"),
+                        phrases: phrases("leave the meeting|leave meeting|hang up|end the call",
+                                         String(localized: "leave the meeting|hang up", comment: "Voice command phrases, separated by |")),
+                        confirm: MeetingHelpers.leaveNeedsConfirmation) {
+                MeetingHelpers.leave(confirmed: true)
+            },
             VoiceAction(name: String(localized: "Call captions"),
                         phrases: phrases("call captions|caption the call|captions for the call|turn on call captions|turn off call captions",
                                          String(localized: "call captions|caption the call", comment: "Voice command phrases, separated by |"))) {
@@ -210,6 +266,32 @@ enum VoiceCommands {
                         phrases: phrases("hearing profile|my hearing profile|hearing test",
                                          String(localized: "hearing profile|hearing test", comment: "Voice command phrases, separated by |"))) {
                 app?.showHearingProfile()
+            },
+            // Everyday tools
+            VoiceAction(name: String(localized: "My timers and reminders"),
+                        phrases: phrases("what timers are set|list reminders|my reminders|list timers|my timers",
+                                         String(localized: "my reminders|my timers", comment: "Voice command phrases, separated by |"))) {
+                Reminders.shared.speakList()
+            },
+            VoiceAction(name: String(localized: "Cancel the timer"),
+                        phrases: phrases("cancel the timer|cancel the last reminder|cancel the reminder|stop the timer",
+                                         String(localized: "cancel the timer|cancel the reminder", comment: "Voice command phrases, separated by |"))) {
+                Reminders.shared.cancelLast()
+            },
+            VoiceAction(name: String(localized: "Previous clipboard item"),
+                        phrases: phrases("previous clipboard|last clipboard item|clipboard history",
+                                         String(localized: "previous clipboard|clipboard history", comment: "Voice command phrases, separated by |"))) {
+                ClipboardHistory.shared.speak(2)
+            },
+            VoiceAction(name: String(localized: "Switch window"),
+                        phrases: phrases("switch window|switch windows|find a window|list windows",
+                                         String(localized: "switch window|list windows", comment: "Voice command phrases, separated by |"))) {
+                app?.showWindowSwitcher()
+            },
+            VoiceAction(name: String(localized: "Stop looking"),
+                        phrases: phrases("stop looking|stop finding|stop the object finder",
+                                         String(localized: "stop looking", comment: "Voice command phrases, separated by |"))) {
+                ObjectFinder.stop()
             },
             // Quick questions
             VoiceAction(name: String(localized: "What time is it?"),

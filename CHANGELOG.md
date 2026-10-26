@@ -2,6 +2,10 @@
 
 ## Next
 
+- **Safer updates:** Check for Updates now installs an update only if it's signed with Full Circle AT's Developer ID and notarized by Apple, as well as matching its checksum.
+- **Feedback by email:** Settings, About has "Email a problem or an idea", so no GitHub account is needed. Reporting on GitHub is still there for people who have an account.
+- **Clearer permission messages:** the microphone and speech recognition prompts now describe the "Audio Split" voice commands, and say that only "find" requests are sent, to Anthropic.
+
 ## 1.0.1, 24 October 2026
 
 - **Check for updates:** the app looks on GitHub once a day for a newer version, or when you choose Check for Updates in the menu, the command palette, Settings, or say "Audio Split, check for updates". It asks before downloading, checks the download, then opens Apple's Installer. Copies from TestFlight or the App Store update there instead.

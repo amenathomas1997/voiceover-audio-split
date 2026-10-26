@@ -106,7 +106,7 @@ final class CallCaptions: ObservableObject {
     // MARK: Capturing call sound
 
     /// The audio processes of the call apps set in Settings.
-    static func callProcesses(prefixes: [String]) -> Set<AudioObjectID> {
+    nonisolated static func callProcesses(prefixes: [String]) -> Set<AudioObjectID> {
         let callPIDs = Set(NSWorkspace.shared.runningApplications.filter { app in
             prefixes.contains { app.bundleIdentifier?.hasPrefix($0) == true }
         }.map(\.processIdentifier))

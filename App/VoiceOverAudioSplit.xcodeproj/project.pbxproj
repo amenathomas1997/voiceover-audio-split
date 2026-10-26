@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		016A7C9AB1441DDEAB4245A8 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D172FE1FD9DE805D1234180C /* Localizable.xcstrings */; };
+		029B9C3C70C777063C0625EA /* HearingAndCaptionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BDE36BD45602ABB03D1F50 /* HearingAndCaptionsTests.swift */; };
 		0A1FD19BF9780FD08F310972 /* Mixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712B0A64C8C45245EEDA2DCD /* Mixer.swift */; };
 		0CCCA5E6742794CEF6F95139 /* Research.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5F49B50C694A5495B0BA9B /* Research.swift */; };
 		0D5638C13BD495FC58BF8276 /* logging.c in Sources */ = {isa = PBXBuildFile; fileRef = 8311B80ACB0A7D19364E1CEF /* logging.c */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -90,6 +91,7 @@
 		0CB68A11755ECA695C614CED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		12C566C892F028DB4224A4B4 /* LowVision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowVision.swift; sourceTree = "<group>"; };
 		138FF38F0FC6D5C48B46A045 /* internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		13BDE36BD45602ABB03D1F50 /* HearingAndCaptionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearingAndCaptionsTests.swift; sourceTree = "<group>"; };
 		143EEC48CDDA1B2D057D775C /* Announcer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Announcer.swift; sourceTree = "<group>"; };
 		165F1A73BF2EF3A425305B99 /* Readers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Readers.swift; sourceTree = "<group>"; };
 		1CF3299924E24F7F6C46A876 /* SystemStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemStatus.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				2B337487B15203F3A63CBCA8 /* BrailleGrade2Tests.swift */,
+				13BDE36BD45602ABB03D1F50 /* HearingAndCaptionsTests.swift */,
 				57E60AE325830BBA9CD22B23 /* LogicTests.swift */,
 			);
 			path = Tests;
@@ -379,6 +382,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				54B2617C61FE5A00ACD0360D /* BrailleGrade2Tests.swift in Sources */,
+				029B9C3C70C777063C0625EA /* HearingAndCaptionsTests.swift in Sources */,
 				997555B7B4206628D4863F44 /* LogicTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

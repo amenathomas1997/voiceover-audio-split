@@ -18,6 +18,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case sensorStatus, customLabel, placeMarker, nextPlaceMarker, doItForMe
     case documentCheck, brailleExport, codeReader, labelReader, moneyReader, practice, typingTrainer, voiceOverLessons
     case listenForCommand, checkForUpdates
+    case hearingProfile, callCaptions, readLastCaption, copyCallTranscript
 
     var id: String { rawValue }
 
@@ -74,6 +75,10 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .diagnostics: String(localized: "Save a diagnostics report")
         case .performance: String(localized: "App performance")
         case .checkForUpdates: String(localized: "Check for updates")
+        case .hearingProfile: String(localized: "Hearing profile")
+        case .callCaptions: String(localized: "Call captions: see what people in a call say")
+        case .readLastCaption: String(localized: "Read the last call caption")
+        case .copyCallTranscript: String(localized: "Copy the call transcript")
         case .sensorStatus: String(localized: "What's using the camera and microphone")
         case .customLabel: String(localized: "Label the item under the VoiceOver cursor")
         case .placeMarker: String(localized: "Add a place marker on this web page")
@@ -140,7 +145,8 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .translate: 39
         case .tutorial, .audioMouse, .beepMode, .exportSettings, .importSettings, .diagnostics, .performance,
              .sensorStatus, .customLabel, .placeMarker, .nextPlaceMarker, .doItForMe, .documentCheck,
-             .brailleExport, .codeReader, .labelReader, .moneyReader, .practice, .typingTrainer, .voiceOverLessons, .listenForCommand, .checkForUpdates: nil
+             .brailleExport, .codeReader, .labelReader, .moneyReader, .practice, .typingTrainer, .voiceOverLessons, .listenForCommand, .checkForUpdates,
+             .hearingProfile, .callCaptions, .readLastCaption, .copyCallTranscript: nil
         }
     }
 }

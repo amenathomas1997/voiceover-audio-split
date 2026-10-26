@@ -32,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var doItWindow: NSWindow?
     private var documentCheckWindow: NSWindow?
     private var brailleWindow: NSWindow?
+    private var hearingWindow: NSWindow?
     private var practiceWindow: NSWindow?
     private var typingWindow: NSWindow?
     private var lessonsWindow: NSWindow?
@@ -316,6 +317,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         documentCheckWindow = show(documentCheckWindow, title: String(localized: "Document Accessibility Check"), view: DocumentCheckView())
     }
 
+    func showHearingProfile() {
+        hearingWindow = show(hearingWindow, title: String(localized: "Hearing Profile"), view: HearingProfileView())
+    }
+
     func showBraille() {
         brailleWindow = show(brailleWindow, title: String(localized: "Save as Braille"), view: BrailleView())
     }
@@ -457,6 +462,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         toggle(in: hearingMenu, String(localized: "Speech Clarity Boost"), \.clarity, on: String(localized: "Speech clarity on"), off: String(localized: "Speech clarity off"))
         toggle(in: hearingMenu, String(localized: "Even Out Loud Media"), \.leveler, on: String(localized: "Loud media evened out"), off: String(localized: "Media leveling off"))
         toggle(in: hearingMenu, String(localized: "Volume Limit"), \.volumeLimit, on: String(localized: "Volume limit on"), off: String(localized: "Volume limit off"))
+        add(to: hearingMenu, String(localized: "Hearing Profile…"), command: .hearingProfile, checked: preferences.hearingProfileOn) { $0.run(.hearingProfile) }
         hearingMenu.addItem(.separator())
         for choice in OneEar.allCases {
             add(to: hearingMenu, choice == .off ? String(localized: "Normal Stereo") : choice.title, checked: preferences.oneEar == choice) {
@@ -517,6 +523,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: camera, String(localized: "Identify a Color"), command: .colorIdentifier) { $0.run(.colorIdentifier) }
         add(to: camera, String(localized: "Light Detector"), command: .lightDetector, checked: LightDetector.isRunning) { $0.run(.lightDetector) }
         add(to: camera, String(localized: "Check Camera Framing"), command: .camera) { $0.checkCamera() }
+
+        // Calls and meetings
+        let calls = submenu(in: menu, String(localized: "Calls and Meetings"))
+        let captionsOn = MainActor.assumeIsolated { CallCaptions.shared.isRunning }
+        add(to: calls, String(localized: "Call Captions"), command: .callCaptions, checked: captionsOn) { $0.run(.callCaptions) }
+        add(to: calls, String(localized: "Read the Last Caption"), command: .readLastCaption) { $0.run(.readLastCaption) }
+        add(to: calls, String(localized: "Copy the Call Transcript"), command: .copyCallTranscript) { $0.run(.copyCallTranscript) }
 
         // Assistant and research
         let assistant = submenu(in: menu, String(localized: "Assistant and Research"))

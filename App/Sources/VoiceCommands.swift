@@ -195,6 +195,22 @@ enum VoiceCommands {
                         confirm: String(localized: "Switch to the next output device?")) {
                 controller.nextOutputDevice()
             },
+            // Calls
+            VoiceAction(name: String(localized: "Call captions"),
+                        phrases: phrases("call captions|caption the call|captions for the call|turn on call captions|turn off call captions",
+                                         String(localized: "call captions|caption the call", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { CallCaptions.shared.toggle() }
+            },
+            VoiceAction(name: String(localized: "What did they say?"),
+                        phrases: phrases("what did they say|last caption|read the caption|read the last caption",
+                                         String(localized: "what did they say|last caption", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { CallCaptions.shared.readLast() }
+            },
+            VoiceAction(name: String(localized: "Hearing profile"),
+                        phrases: phrases("hearing profile|my hearing profile|hearing test",
+                                         String(localized: "hearing profile|hearing test", comment: "Voice command phrases, separated by |"))) {
+                app?.showHearingProfile()
+            },
             // Quick questions
             VoiceAction(name: String(localized: "What time is it?"),
                         phrases: phrases("what time is it|what s the time|whats the time|tell me the time|time",

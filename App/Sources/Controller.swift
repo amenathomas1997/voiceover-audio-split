@@ -317,6 +317,10 @@ final class Controller {
         case .placeMarker: PlaceMarkers.add()
         case .nextPlaceMarker: PlaceMarkers.next()
         case .doItForMe: app?.showDoItForMe()
+        case .hearingProfile: app?.showHearingProfile()
+        case .callCaptions: MainActor.assumeIsolated { CallCaptions.shared.toggle() }
+        case .readLastCaption: MainActor.assumeIsolated { CallCaptions.shared.readLast() }
+        case .copyCallTranscript: MainActor.assumeIsolated { CallCaptions.shared.copyTranscript() }
         case .documentCheck: app?.showDocumentCheck()
         case .brailleExport: app?.showBraille()
         case .codeReader: CodeReader.toggle()

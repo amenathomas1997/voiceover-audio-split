@@ -221,7 +221,16 @@ final class ClipboardHistoryTests: XCTestCase {
     }
 
     private func makeHistory() -> ClipboardHistory {
-        ClipboardHistory(defaults: defaults, announce: { [unowned self] in spoken.append($0) })
+        let history = ClipboardHistory(defaults: defaults, announce: { [unowned self] in spoken.append($0) })
+        history.isEnabled = true
+        return history
+    }
+
+    func testHistoryIsOffUntilTurnedOn() {
+        let history = ClipboardHistory(defaults: defaults, announce: { _ in })
+        XCTAssertFalse(history.isEnabled, "copied text can be private")
+        history.record("secret")
+        XCTAssertTrue(history.items.isEmpty)
     }
 
     func testNewestFirstWithoutDuplicates() {

@@ -32,7 +32,8 @@ final class ClipboardHistory: ObservableObject {
     }
 
     var isEnabled: Bool {
-        get { defaults.object(forKey: Self.enabledKey) as? Bool ?? true }
+        // Off until turned on: copied text can be private.
+        get { defaults.object(forKey: Self.enabledKey) as? Bool ?? false }
         set {
             objectWillChange.send()
             defaults.set(newValue, forKey: Self.enabledKey)

@@ -87,6 +87,8 @@ Commands that change something important ask "Say yes or no" first. While the ap
 
 **Audio hub:** internet radio, podcasts, LibriVox audiobooks and news.
 
+**Safe sound changes:** after a change that could stop you hearing your Mac, such as the output device, one-ear mode, the volume limit or the hearing profile, a window asks "Keep this sound setting?". Press Return to keep it, or Escape to go back. If you do nothing for a minute, it goes back by itself, so a change that took your sound away undoes itself. Everyday keys like speech louder, and presets that switch automatically, don't ask. You can turn it off in Settings, under Where sounds go.
+
 **Calls and meetings** (menu > Calls and Meetings): **call captions** show what the other people in a Zoom, Teams or FaceTime call say, in large print, recognized on the Mac and never recorded. **Meeting helpers** work without leaving where you are: Am I Muted, Mute or Unmute, Camera On or Off, Raise or Lower Hand, Who's Talking, Read the Chat, new chat messages read aloud as they arrive, and Leave the Meeting, which always asks first. They find the meeting's buttons by name, which can change when Zoom or Teams update, so please report any that stop working.
 
 **Hearing profile** (menu > Sound and Devices > Hearing and Clarity): boosts the frequencies you hear less well, separately for each ear, for VoiceOver and all other sound. Type in the values from an audiogram, or take the two-minute listening test with headphones. It isn't a medical hearing test or a hearing aid.

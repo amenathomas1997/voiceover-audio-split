@@ -33,6 +33,9 @@ struct SettingsView: View {
                 Text(String(localized: "Choose another device, such as AirPods, to hear VoiceOver privately while other sounds play on the current output."))
                     .font(.caption).foregroundStyle(.secondary)
                 Button(String(localized: "Refresh device list")) { devices = outputDevices() }
+                Toggle(String(localized: "Ask before keeping sound changes"), isOn: $preferences.confirmSoundChanges)
+                Text(String(localized: "After a change that could stop you hearing your Mac, such as the output device, one-ear mode, the volume limit or the hearing profile, the app asks whether to keep it. If you don't answer within a minute, it goes back by itself."))
+                    .font(.caption).foregroundStyle(.secondary)
             }
 
             Section(String(localized: "Volume")) {

@@ -30,6 +30,9 @@ enum AudioSystem {
         return next.name
     }
 
+    /// The output device in use now.
+    static var currentOutputDevice: AudioDeviceID { defaultOutputDevice() }
+
     /// Stops holding the chosen output device.
     static func releaseHold() {
         held = nil

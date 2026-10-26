@@ -86,6 +86,8 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 
 ## New in this version
 
+- [ ] Keep this sound setting: switch the output device (Right Option + D) and do nothing. The window asks, says it goes back in 60 seconds, warns at 15 seconds, then switches back by itself. Try again and press Return: it's kept. Change one-ear mode in Settings and press Escape: it goes back.
+
 - [ ] Call captions (menu > Calls and Meetings): in a Zoom, Teams or FaceTime call, what others say appears in the large-print strip within a second or two. Your own sound isn't changed. "Read the Last Caption" speaks the newest line; "Copy the Call Transcript" copies them all.
 - [ ] Meeting helpers, in a real Zoom and a real Teams meeting: Am I Muted gives the right answer; Mute or Unmute, Camera On or Off and Raise or Lower Hand work and say the new state; Who's Talking and Read the Chat say something sensible or that they can't tell; Leave the Meeting asks first. Please report the exact button names if any of these don't work: they're matched by name.
 - [ ] Hearing profile: the listening test plays tones in the correct ear, and Return records each one; with the profile on, the boosted frequencies sound clearer and nothing distorts.

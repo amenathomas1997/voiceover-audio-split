@@ -79,6 +79,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        // Changes a sound setting and does nothing: logs that it asked, then went back.
+        if CommandLine.arguments.contains("--check-sound-safety") {
+            SoundSafety.seconds = 5
+            let preferences = Preferences.shared
+            preferences.confirmSoundChanges = true
+            let before = preferences.oneEar
+            preferences.oneEar = before == .left ? .right : .left
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                let window = NSApp.windows.contains { $0.title == String(localized: "Keep This Sound Setting?") && $0.isVisible }
+                log("Check: sound safety asking = \(SoundSafety.shared.isWaiting), window shown = \(window)")
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
+                log("Check: sound safety went back = \(preferences.oneEar == before), still waiting = \(SoundSafety.shared.isWaiting)")
+                NSApp.terminate(nil)
+            }
+            return
+        }
         // Run with VOAS_CAPTION_PIDS set to a process playing speech: logs the captions it hears.
         if CommandLine.arguments.contains("--check-captions") {
             CallCaptions.shared.start()

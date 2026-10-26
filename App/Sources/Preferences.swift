@@ -229,16 +229,16 @@ final class Preferences: ObservableObject {
     /// Called after any change, so the Controller can apply it.
     var onChange: (() -> Void)?
 
-    @Published var layout: Layout { didSet { save(layout.rawValue, "layout") } }
+    @Published var layout: Layout { didSet { save(layout.rawValue, "layout"); guardSound("layout", String(localized: "the layout")) { [oldValue] in self.layout = oldValue } } }
     /// Keep other sounds in stereo instead of mixing them to mono.
-    @Published var stereoOthers: Bool { didSet { save(stereoOthers, "stereoOthers") } }
+    @Published var stereoOthers: Bool { didSet { save(stereoOthers, "stereoOthers"); guardSound("stereoOthers", String(localized: "stereo for other sounds")) { [oldValue] in self.stereoOthers = oldValue } } }
     /// Lower other sounds while VoiceOver is speaking.
-    @Published var ducking: Bool { didSet { save(ducking, "ducking") } }
+    @Published var ducking: Bool { didSet { save(ducking, "ducking"); guardSound("ducking", String(localized: "lowering other sounds while VoiceOver speaks")) { [oldValue] in self.ducking = oldValue } } }
     /// How much to lower other sounds while VoiceOver speaks, in decibels.
-    @Published var duckingAmount: Int { didSet { save(duckingAmount, "duckingAmount") } }
+    @Published var duckingAmount: Int { didSet { save(duckingAmount, "duckingAmount"); guardSound("duckingAmount", String(localized: "how much other sounds are lowered")) { [oldValue] in self.duckingAmount = oldValue } } }
     /// Output device UID for speech, or "" to use the same device as other sounds.
-    @Published var speechDeviceUID: String { didSet { save(speechDeviceUID, "speechDeviceUID") } }
-    @Published var callMode: CallMode { didSet { save(callMode.rawValue, "callMode") } }
+    @Published var speechDeviceUID: String { didSet { save(speechDeviceUID, "speechDeviceUID"); guardSound("speechDeviceUID", String(localized: "the speech device")) { [oldValue] in self.speechDeviceUID = oldValue } } }
+    @Published var callMode: CallMode { didSet { save(callMode.rawValue, "callMode"); guardSound("callMode", String(localized: "call audio")) { [oldValue] in self.callMode = oldValue } } }
     @Published var callApps: [CallApp] { didSet { save(try? JSONEncoder().encode(callApps), "callApps") } }
     @Published var playTones: Bool { didSet { save(playTones, "playTones") } }
     @Published var modifier: ShortcutModifier { didSet { save(modifier.rawValue, "modifier") } }
@@ -253,12 +253,12 @@ final class Preferences: ObservableObject {
     /// Even out sudden loud moments in other sounds.
     @Published var leveler: Bool { didSet { save(leveler, "leveler") } }
     /// Keep the overall output below a set level.
-    @Published var volumeLimit: Bool { didSet { save(volumeLimit, "volumeLimit") } }
+    @Published var volumeLimit: Bool { didSet { save(volumeLimit, "volumeLimit"); guardSound("volumeLimit", String(localized: "the volume limit")) { [oldValue] in self.volumeLimit = oldValue } } }
     /// The limit, in decibels below full scale (for example -6).
-    @Published var volumeLimitLevel: Int { didSet { save(volumeLimitLevel, "volumeLimitLevel") } }
-    @Published var oneEar: OneEar { didSet { save(oneEar.rawValue, "oneEar") } }
+    @Published var volumeLimitLevel: Int { didSet { save(volumeLimitLevel, "volumeLimitLevel"); guardSound("volumeLimitLevel", String(localized: "the volume limit")) { [oldValue] in self.volumeLimitLevel = oldValue } } }
+    @Published var oneEar: OneEar { didSet { save(oneEar.rawValue, "oneEar"); guardSound("oneEar", String(localized: "one-ear mode")) { [oldValue] in self.oneEar = oldValue } } }
     /// Decibels: positive makes the right ear louder, negative the left.
-    @Published var earBalance: Int { didSet { save(earBalance, "earBalance") } }
+    @Published var earBalance: Int { didSet { save(earBalance, "earBalance"); guardSound("earBalance", String(localized: "ear balance")) { [oldValue] in self.earBalance = oldValue } } }
     @Published var appRules: [AppRule] { didSet { save(try? JSONEncoder().encode(appRules), "appRules") } }
     @Published var presets: [Preset] { didSet { save(try? JSONEncoder().encode(presets), "presets") } }
     /// Keys changed from their defaults in Settings, by command ID.
@@ -330,11 +330,13 @@ final class Preferences: ObservableObject {
     @Published var voiceCommand: Bool { didSet { save(voiceCommand, "voiceCommand") } }
     /// Look for a new version on GitHub once a day (not for TestFlight or App Store copies).
     @Published var checkForUpdates: Bool { didSet { save(checkForUpdates, "checkForUpdates") } }
+    /// Ask "Keep this sound setting?" after a risky sound change, and go back after a minute.
+    @Published var confirmSoundChanges: Bool { didSet { save(confirmSoundChanges, "confirmSoundChanges") } }
     /// Hearing profile: shape each ear's sound to a hearing loss.
-    @Published var hearingProfileOn: Bool { didSet { save(hearingProfileOn, "hearingProfileOn") } }
+    @Published var hearingProfileOn: Bool { didSet { save(hearingProfileOn, "hearingProfileOn"); guardSound("hearingProfileOn", String(localized: "the hearing profile")) { [oldValue] in self.hearingProfileOn = oldValue } } }
     /// Hearing loss in dB at each of HearingProfile.frequencies, for the left and right ear.
-    @Published var hearingLeft: [Double] { didSet { save(hearingLeft, "hearingLeft") } }
-    @Published var hearingRight: [Double] { didSet { save(hearingRight, "hearingRight") } }
+    @Published var hearingLeft: [Double] { didSet { save(hearingLeft, "hearingLeft"); guardSound("hearingLeft", String(localized: "the hearing profile")) { [oldValue] in self.hearingLeft = oldValue } } }
+    @Published var hearingRight: [Double] { didSet { save(hearingRight, "hearingRight"); guardSound("hearingRight", String(localized: "the hearing profile")) { [oldValue] in self.hearingRight = oldValue } } }
     /// A version the user chose to skip ("1.1" plus its build), so it isn't offered again by itself.
     var skippedUpdate: String { didSet { save(skippedUpdate, "skippedUpdate") } }
     /// When updates were last checked, in seconds since 1970.
@@ -419,6 +421,7 @@ final class Preferences: ObservableObject {
         typingSayEachKey = store.bool(forKey: "typingSayEachKey")
         voiceCommand = store.bool(forKey: "voiceCommand")
         checkForUpdates = store.object(forKey: "checkForUpdates") as? Bool ?? true
+        confirmSoundChanges = store.object(forKey: "confirmSoundChanges") as? Bool ?? true
         hearingProfileOn = store.bool(forKey: "hearingProfileOn")
         hearingLeft = HearingProfile.valid(store.array(forKey: "hearingLeft") as? [Double])
         hearingRight = HearingProfile.valid(store.array(forKey: "hearingRight") as? [Double])
@@ -455,6 +458,11 @@ final class Preferences: ObservableObject {
 
     /// Saves a setting. Several changes in a row (applying a preset) are
     /// reported to the Controller once.
+    /// A change that could leave the user unable to hear: ask whether to keep it.
+    private func guardSound(_ key: String, _ name: String, restore: @escaping () -> Void) {
+        SoundSafety.shared.note(key, name, restore: restore)
+    }
+
     private func save(_ value: Any?, _ key: String) {
         store.set(value, forKey: key)
         guard !changePending else { return }

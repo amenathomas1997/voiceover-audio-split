@@ -225,6 +225,19 @@ enum VoiceCommands {
                         confirm: String(localized: "Switch to the next output device?")) {
                 controller.nextOutputDevice()
             },
+            // Keeping or undoing a sound change
+            VoiceAction(name: String(localized: "Keep the sound setting"),
+                        phrases: phrases("keep it|keep the setting|keep the sound setting|keep this setting",
+                                         String(localized: "keep it|keep the setting", comment: "Voice command phrases, separated by |"))) {
+                SoundSafety.shared.isWaiting ? SoundSafety.shared.keep()
+                    : Announcer.say(String(localized: "There's no sound change waiting to be kept."))
+            },
+            VoiceAction(name: String(localized: "Go back to the old sound setting"),
+                        phrases: phrases("go back|undo that|undo the sound change|put it back",
+                                         String(localized: "go back|undo that", comment: "Voice command phrases, separated by |"))) {
+                SoundSafety.shared.isWaiting ? SoundSafety.shared.undo()
+                    : Announcer.say(String(localized: "There's no sound change to undo."))
+            },
             // Calls and meetings
             VoiceAction(name: String(localized: "Am I muted?"),
                         phrases: phrases("am i muted|am i on mute|mute status|is my mic on",

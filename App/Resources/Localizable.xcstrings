@@ -4314,6 +4314,28 @@
         }
       }
     },
+    "After a change that could stop you hearing your Mac, such as the output device, one-ear mode, the volume limit or the hearing profile, the app asks whether to keep it. If you don't answer within a minute, it goes back by itself." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach einer Änderung, durch die du deinen Mac vielleicht nicht mehr hörst, etwa beim Ausgabegerät, beim Ein-Ohr-Modus, bei der Lautstärkegrenze oder beim Hörprofil, fragt die App, ob sie beibehalten werden soll. Wenn du nicht innerhalb einer Minute antwortest, wird sie von selbst rückgängig gemacht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después de un cambio que podría impedirte oír tu Mac, como el dispositivo de salida, el modo de un oído, el límite de volumen o el perfil auditivo, la app pregunta si quieres conservarlo. Si no respondes en un minuto, vuelve atrás sola."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Après un changement qui pourrait vous empêcher d'entendre votre Mac, comme l'appareil de sortie, le mode une oreille, la limite de volume ou le profil auditif, l'app demande s'il faut le garder. Si vous ne répondez pas dans la minute, elle revient en arrière d'elle-même."
+          }
+        }
+      }
+    },
     "After a pause, VoiceOver may add a hint, such as how to press a button. Once you know your way around, you can turn hints off in VoiceOver Utility, under Verbosity." : {
       "localizations" : {
         "de" : {
@@ -5146,6 +5168,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Posez une question sur l'utilisation de votre Mac ou de VoiceOver, ou appuyez sur le raccourci de description d'image sur une image."
+          }
+        }
+      }
+    },
+    "Ask before keeping sound changes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vor dem Beibehalten von Tonänderungen fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar antes de conservar cambios de sonido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander avant de garder les changements de son"
           }
         }
       }
@@ -15446,6 +15490,28 @@
         }
       }
     },
+    "Go Back" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver atrás"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revenir en arrière"
+          }
+        }
+      }
+    },
     "Go back a page" : {
       "localizations" : {
         "de" : {
@@ -15486,6 +15552,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Revenir au dossier qui le contient"
+          }
+        }
+      }
+    },
+    "Go back to the old sound setting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zur alten Toneinstellung zurück"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver al ajuste de sonido anterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revenir à l'ancien réglage du son"
           }
         }
       }
@@ -15992,6 +16080,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Objectifs : %@"
+          }
+        }
+      }
+    },
+    "Going back in 15 seconds, unless you press Return to keep it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In 15 Sekunden wird es rückgängig gemacht, außer du drückst den Zeilenschalter, um es zu behalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve atrás en 15 segundos, a menos que pulses Retorno para conservarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour en arrière dans 15 secondes, sauf si vous appuyez sur Retour pour le garder."
           }
         }
       }
@@ -18658,6 +18768,28 @@
         }
       }
     },
+    "Keep" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder"
+          }
+        }
+      }
+    },
     "Keep Audio Awake (Prevents Clipped Words)" : {
       "localizations" : {
         "de" : {
@@ -18676,6 +18808,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Garder l'audio actif (évite les mots coupés)"
+          }
+        }
+      }
+    },
+    "Keep This Sound Setting?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Toneinstellung behalten?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Conservar este ajuste de sonido?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder ce réglage du son ?"
           }
         }
       }
@@ -18874,6 +19028,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conserver l'historique de la parole"
+          }
+        }
+      }
+    },
+    "Keep the sound setting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toneinstellung behalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservar el ajuste de sonido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder le réglage du son"
+          }
+        }
+      }
+    },
+    "Keep this sound setting? If you do nothing, it goes back in %lld seconds." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Toneinstellung behalten? Wenn du nichts tust, wird sie in %lld Sekunden rückgängig gemacht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Conservar este ajuste de sonido? Si no haces nada, vuelve atrás en %lld segundos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder ce réglage du son ? Si vous ne faites rien, il revient en arrière dans %lld secondes."
           }
         }
       }
@@ -35401,6 +35599,50 @@
         }
       }
     },
+    "Sound setting kept." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toneinstellung beibehalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuste de sonido conservado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglage du son gardé."
+          }
+        }
+      }
+    },
+    "Sound setting undone. Everything is back as it was." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toneinstellung rückgängig gemacht. Alles ist wieder wie vorher."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuste de sonido deshecho. Todo volvió a como estaba."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglage du son annulé. Tout est revenu comme avant."
+          }
+        }
+      }
+    },
     "Source" : {
       "localizations" : {
         "de" : {
@@ -40325,6 +40567,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une page web d'entraînement se trouve en bas de cette fenêtre. Amenez-y le curseur VoiceOver avec VO Flèche droite, puis entrez-y avec VO Maj Flèche bas. Une fois dedans, appuyez sur Retour pour continuer."
+          }
+        }
+      }
+    },
+    "There's no sound change to undo." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es gibt keine Tonänderung, die rückgängig gemacht werden kann."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ningún cambio de sonido para deshacer."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il n'y a aucun changement de son à annuler."
+          }
+        }
+      }
+    },
+    "There's no sound change waiting to be kept." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es wartet keine Tonänderung darauf, beibehalten zu werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ningún cambio de sonido esperando a conservarse."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun changement de son n'attend d'être gardé."
           }
         }
       }
@@ -47545,6 +47831,50 @@
         }
       }
     },
+    "You changed %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %@ geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiaste %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez changé %@."
+          }
+        }
+      }
+    },
+    "You changed %@. Keep this sound setting? Press Return to keep it, or Escape to go back. If you do nothing, it goes back in %lld seconds." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %1$@ geändert. Diese Toneinstellung behalten? Drücke den Zeilenschalter, um sie zu behalten, oder Escape, um zurückzugehen. Wenn du nichts tust, wird sie in %2$lld Sekunden rückgängig gemacht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiaste %1$@. ¿Conservar este ajuste de sonido? Pulsa Retorno para conservarlo, o Escape para volver atrás. Si no haces nada, vuelve atrás en %2$lld segundos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez changé %1$@. Garder ce réglage du son ? Appuyez sur Retour pour le garder, ou sur Échap pour revenir en arrière. Si vous ne faites rien, il revient en arrière dans %2$lld secondes."
+          }
+        }
+      }
+    },
     "You have the latest version, %@." : {
       "localizations" : {
         "de" : {
@@ -49527,6 +49857,28 @@
         }
       }
     },
+    "call audio" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den Anrufton"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el audio de llamadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "le son des appels"
+          }
+        }
+      }
+    },
     "call captions|caption the call" : {
       "comment" : "Voice command phrases, separated by |",
       "localizations" : {
@@ -49907,6 +50259,28 @@
         }
       }
     },
+    "ear balance" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Ohrbalance"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el balance entre oídos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "l'équilibre des oreilles"
+          }
+        }
+      }
+    },
     "exclamation mark" : {
       "localizations" : {
         "de" : {
@@ -50128,6 +50502,29 @@
         }
       }
     },
+    "go back|undo that" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zuruck|ruckgangig machen|mach das ruckgangig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vuelve atras|deshaz eso|deshacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "reviens en arriere|annule ca|annuler"
+          }
+        }
+      }
+    },
     "going to a real website, getting an overview with headings, and reading the part you need." : {
       "localizations" : {
         "de" : {
@@ -50305,6 +50702,28 @@
         }
       }
     },
+    "how much other sounds are lowered" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wie stark andere Töne leiser werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cuánto se bajan los otros sonidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la baisse des autres sons"
+          }
+        }
+      }
+    },
     "hyphen" : {
       "localizations" : {
         "de" : {
@@ -50437,6 +50856,29 @@
         }
       }
     },
+    "keep it|keep the setting" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "behalten|einstellung behalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "conservalo|conservar el ajuste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "garde le|garder le reglage"
+          }
+        }
+      }
+    },
     "leave the meeting|hang up" : {
       "comment" : "Voice command phrases, separated by |",
       "localizations" : {
@@ -50545,6 +50987,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "gris clair"
+          }
+        }
+      }
+    },
+    "lowering other sounds while VoiceOver speaks" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "das Leiserstellen anderer Töne, während VoiceOver spricht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bajar los otros sonidos mientras habla VoiceOver"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la baisse des autres sons pendant que VoiceOver parle"
           }
         }
       }
@@ -51453,6 +51917,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "en autonomie"
+          }
+        }
+      }
+    },
+    "one-ear mode" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den Ein-Ohr-Modus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el modo de un oído"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "le mode une oreille"
           }
         }
       }
@@ -52485,6 +52971,28 @@
         }
       }
     },
+    "stereo for other sounds" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stereo für andere Töne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el estéreo de otros sonidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la stéréo des autres sons"
+          }
+        }
+      }
+    },
     "stop looking" : {
       "comment" : "Voice command phrases, separated by |",
       "localizations" : {
@@ -52643,6 +53151,28 @@
         }
       }
     },
+    "the hearing profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "das Hörprofil"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el perfil auditivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "le profil auditif"
+          }
+        }
+      }
+    },
     "the keys '%@' are already practiced in step %lld. Each practice step in a lesson needs different keys, so the quick check can tell them apart." : {
       "localizations" : {
         "de" : {
@@ -52665,6 +53195,28 @@
         }
       }
     },
+    "the layout" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Anordnung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la distribución"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la disposition"
+          }
+        }
+      }
+    },
     "the menu bar and menu extras, the Dock, shortcut menus, and switching between apps and windows." : {
       "localizations" : {
         "de" : {
@@ -52683,6 +53235,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "la barre des menus et les menus supplémentaires, le Dock, les menus contextuels, et le passage d'une app ou d'une fenêtre à l'autre."
+          }
+        }
+      }
+    },
+    "the output device" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "das Ausgabegerät"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el dispositivo de salida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "l'appareil de sortie"
+          }
+        }
+      }
+    },
+    "the speech device" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "das Sprachgerät"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el dispositivo de voz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "l'appareil pour la parole"
+          }
+        }
+      }
+    },
+    "the volume limit" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Lautstärkegrenze"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el límite de volumen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la limite de volume"
           }
         }
       }

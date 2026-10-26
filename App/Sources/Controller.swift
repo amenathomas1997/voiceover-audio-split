@@ -458,7 +458,8 @@ final class Controller {
         guard let presetID, presetID != automaticPresetID,
               let preset = preferences.presets.first(where: { $0.id.uuidString == presetID }) else { return }
         log("Automatic preset \(preset.name) for \(reason).")
-        applyPreset(preset, automatic: true)
+        // Switching with the app in front is expected: it doesn't ask to keep the sound.
+        SoundSafety.shared.withoutAsking { applyPreset(preset, automatic: true) }
         automaticPresetID = presetID
     }
 
@@ -556,7 +557,12 @@ final class Controller {
     // MARK: - Devices and microphone
 
     func nextOutputDevice() {
+        let before = AudioSystem.currentOutputDevice
         guard let name = AudioSystem.nextOutputDevice() else { return Announcer.say(String(localized: "Could not switch output")) }
+        SoundSafety.shared.note("outputDevice", String(localized: "the output device")) {
+            AudioSystem.releaseHold()
+            AudioSystem.setDefaultOutput(before)
+        }
         log("Output switched to \(name).")
         Tones.play(.device)
         Announcer.say(String(localized: "Output: \(name)"))

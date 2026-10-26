@@ -90,3 +90,60 @@ final class PermissionHelpTests: XCTestCase {
         XCTAssertTrue(VoiceOverSetup.message(.working).hasPrefix("Working"))
     }
 }
+
+final class SoundSafetyTests: XCTestCase {
+    override func setUp() {
+        SoundSafety.shared.discard()
+        SoundSafety.shared.runsInTests = true
+    }
+
+    override func tearDown() {
+        SoundSafety.shared.runsInTests = false
+        SoundSafety.shared.discard()
+    }
+
+    func testGoingBackRestoresEverySettingFromBeforeTheChanges() {
+        let preferences = Preferences.shared
+        let savedEar = preferences.oneEar, savedLimit = preferences.volumeLimitLevel, savedConfirm = preferences.confirmSoundChanges
+        defer {
+            SoundSafety.shared.runsInTests = false
+            preferences.oneEar = savedEar
+            preferences.volumeLimitLevel = savedLimit
+            preferences.confirmSoundChanges = savedConfirm
+        }
+        preferences.confirmSoundChanges = true
+        preferences.oneEar = .off
+        preferences.volumeLimitLevel = -6
+        SoundSafety.shared.keep() // Start clean.
+        preferences.oneEar = .left
+        preferences.oneEar = .right // Changed twice: going back returns to the first value.
+        preferences.volumeLimitLevel = -20
+        XCTAssertTrue(SoundSafety.shared.isWaiting)
+        XCTAssertEqual(SoundSafety.shared.changes, ["one-ear mode", "the volume limit"])
+        SoundSafety.shared.undo()
+        XCTAssertEqual(preferences.oneEar, .off)
+        XCTAssertEqual(preferences.volumeLimitLevel, -6)
+        XCTAssertFalse(SoundSafety.shared.isWaiting, "going back doesn't ask about itself")
+    }
+
+    func testKeepingKeepsAndAutomaticChangesDontAsk() {
+        let preferences = Preferences.shared
+        let savedBalance = preferences.earBalance
+        defer { preferences.earBalance = savedBalance }
+        preferences.earBalance = 3
+        SoundSafety.shared.keep()
+        XCTAssertEqual(preferences.earBalance, 3)
+        XCTAssertFalse(SoundSafety.shared.isWaiting)
+        SoundSafety.shared.withoutAsking { preferences.earBalance = 5 }
+        XCTAssertFalse(SoundSafety.shared.isWaiting, "automatic presets don't ask")
+    }
+
+    func testTurnedOffNeverAsks() {
+        let preferences = Preferences.shared
+        let saved = (preferences.confirmSoundChanges, preferences.layout)
+        defer { preferences.confirmSoundChanges = saved.0; preferences.layout = saved.1 }
+        preferences.confirmSoundChanges = false
+        preferences.layout = preferences.layout == .opposite ? .speechBoth : .opposite
+        XCTAssertFalse(SoundSafety.shared.isWaiting)
+    }
+}

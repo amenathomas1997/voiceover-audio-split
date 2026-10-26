@@ -67,6 +67,10 @@ struct SettingsView: View {
                 Stepper(earBalanceTitle, value: $preferences.earBalance, in: -12...12)
                 Text(String(localized: "Makes one ear louder than the other, for people who hear less on one side."))
                     .font(.caption).foregroundStyle(.secondary)
+                Toggle(String(localized: "Use my hearing profile"), isOn: $preferences.hearingProfileOn)
+                Button(String(localized: "Set Up My Hearing Profile…")) { (NSApp.delegate as? AppDelegate)?.showHearingProfile() }
+                Text(String(localized: "Boosts the frequencies you hear less well, for each ear, from an audiogram or a quick listening test."))
+                    .font(.caption).foregroundStyle(.secondary)
             }
 
             Section(String(localized: "Apps")) {
@@ -248,6 +252,22 @@ struct SettingsView: View {
                     .disabled(appToAdd.isEmpty)
                 }
                 Button(String(localized: "Restore default call apps")) { preferences.callApps = CallApp.defaults }
+                Toggle(String(localized: "Read new meeting chat messages as they arrive"), isOn: Binding(
+                    get: { MeetingHelpers.chatAnnounceEnabled }, set: { MeetingHelpers.chatAnnounceEnabled = $0 }))
+                Text(String(localized: "Call captions and the meeting commands, such as Am I Muted and Raise My Hand, are in the menu under Calls and Meetings. Captions are recognized on your Mac and never recorded or sent."))
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
+            Section(String(localized: "Everyday tools")) {
+                Toggle(String(localized: "Keep a clipboard history"), isOn: Binding(
+                    get: { ClipboardHistory.shared.isEnabled }, set: { ClipboardHistory.shared.isEnabled = $0 }))
+                Text(String(localized: "Keeps the last 20 things you copy, in memory only, so you can hear and copy them again. Passwords copied from password managers are left out."))
+                    .font(.caption).foregroundStyle(.secondary)
+                Toggle(String(localized: "Show a notification for timers and reminders"), isOn: Binding(
+                    get: { UserDefaults.standard.object(forKey: Reminders.notificationsKey) as? Bool ?? true },
+                    set: { UserDefaults.standard.set($0, forKey: Reminders.notificationsKey) }))
+                Text(String(localized: "Timers and reminders are always spoken. A notification also stays on screen until you dismiss it."))
+                    .font(.caption).foregroundStyle(.secondary)
             }
 
             Section(String(localized: "Keyboard and sounds")) {

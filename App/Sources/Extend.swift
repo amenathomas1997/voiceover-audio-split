@@ -145,6 +145,7 @@ enum SettingsTransfer {
         "announceCamera", "announceMicrophone", "customLabels", "placeMarkers", "typingBest", "typingSound", "lessonsDone", "lessonsMissed", "lessonSchedule", "lessonChallengeBest", "lessonMode",
         "practiceLearnMode", "typingSayEachKey", "checkForUpdates",
         "hearingProfileOn", "hearingLeft", "hearingRight",
+        "meetingChatAnnounce", "clipboardHistory", "reminderNotifications", "brailleGrade", "objectFinderCameraFacesYou",
     ]
 
     static func exportData() throws -> Data {

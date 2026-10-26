@@ -84,6 +84,19 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 - [ ] Right Option + I describes an image, and follow-up questions work.
 - [ ] Right Option + Left Bracket describes a video without leaving it.
 
+## New in this version
+
+- [ ] Call captions (menu > Calls and Meetings): in a Zoom, Teams or FaceTime call, what others say appears in the large-print strip within a second or two. Your own sound isn't changed. "Read the Last Caption" speaks the newest line; "Copy the Call Transcript" copies them all.
+- [ ] Meeting helpers, in a real Zoom and a real Teams meeting: Am I Muted gives the right answer; Mute or Unmute, Camera On or Off and Raise or Lower Hand work and say the new state; Who's Talking and Read the Chat say something sensible or that they can't tell; Leave the Meeting asks first. Please report the exact button names if any of these don't work: they're matched by name.
+- [ ] Hearing profile: the listening test plays tones in the correct ear, and Return records each one; with the profile on, the boosted frequencies sound clearer and nothing distorts.
+- [ ] Contracted braille: Save as Braille with "Contracted (grade 2)" makes a .brf file that reads correctly on an embosser or notetaker.
+- [ ] "Audio Split, set a timer for 1 minute": after a minute you hear the tones and the reminder, also after the Mac slept. "Remind me at (time) to (something)" works.
+- [ ] Clipboard history (turn it on in Settings, Everyday tools): copy three things, open Clipboard History, and copy the oldest back.
+- [ ] Switch to a Window: the list names every open window; typing filters it; Return brings that window to the front.
+- [ ] Object finder: "Audio Split, look for a cup" (or a person) gives left, ahead or right as you move the camera. "Look for the word exit" finds printed text.
+- [ ] Scan Pages to an Accessible PDF, and Make a Picture or PDF Accessible: the saved PDF opens in Preview with selectable text, and Check a Document's Accessibility finds no problems.
+- [ ] VoiceOver Lessons: the six new lessons (Messages, Calendar, Finder, Zoom and Teams, braille displays, VoiceOver Utility) teach keys that work on your Mac. Import a Lesson accepts the sample lesson file; add a second student, finish a lesson, and export the report.
+
 ## Performance
 
 - [ ] After a few hours with the split on, "App performance" in the command palette reports a small processor share, ideally under 5 percent. Include the number in your feedback.

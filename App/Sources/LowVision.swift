@@ -9,7 +9,7 @@ import AppKit
 import SwiftUI
 
 /// A borderless window that floats above everything on every Space and lets clicks through.
-private func overlayWindow(_ frame: NSRect) -> NSPanel {
+func overlayWindow(_ frame: NSRect) -> NSPanel {
     let panel = NSPanel(contentRect: frame, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
     panel.level = .screenSaver
     panel.isOpaque = false

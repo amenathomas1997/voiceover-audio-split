@@ -74,6 +74,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        // Run with VOAS_CAPTION_PIDS set to a process playing speech: logs the captions it hears.
+        if CommandLine.arguments.contains("--check-captions") {
+            CallCaptions.shared.start()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
+                log("Check: captions = \((CallCaptions.shared.lines + [CallCaptions.shared.partial]).joined(separator: " | "))")
+                CallCaptions.shared.stop()
+            }
+            return
+        }
         #endif
         NSApp.mainMenu = Self.editMenu()
         connectAssistant()

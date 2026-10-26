@@ -12,6 +12,7 @@
 //
 // After mixing, each output pair (left and right of the main device, and of the
 // speech device if used) goes through: one-ear mix, ear balance, volume limit.
+// A hearing profile then shapes each ear's frequencies (all sound, after the mix).
 // Before mixing, speech can get a clarity boost, and other sounds are lowered
 // while VoiceOver speaks (ducking) and evened out when loud (leveler).
 
@@ -73,6 +74,15 @@ enum Mixer {
     nonisolated(unsafe) static var oneEar = -1
     nonisolated(unsafe) static var earGainLeft: Float = 1
     nonisolated(unsafe) static var earGainRight: Float = 1
+    /// Hearing profile: a boost at each audiogram frequency, per ear. Two banks of filters
+    /// (bank, pair, ear, band): the main thread fills the unused bank, then switches to it,
+    /// so the audio thread never reads half-changed coefficients.
+    nonisolated(unsafe) static var hearingEnabled = false
+    nonisolated(unsafe) private static var hearingBank = 0
+    nonisolated(unsafe) private static let hearingFilters = (0..<(2 * 2 * 2 * HearingProfile.frequencies.count)).map { _ in Biquad() }
+    /// The boosts in use, in dB, per ear and band, so a sample-rate change can rebuild them.
+    private static var hearingGains: (left: [Double], right: [Double]) = ([], [])
+    private static var hearingRate: Double = 0
     /// Set by the audio thread when VoiceOver's speech is heard (even while silenced);
     /// cleared by whoever reads it. Used for beeps mode.
     nonisolated(unsafe) static var speechActivity = false
@@ -120,10 +130,43 @@ enum Mixer {
             renderRate = sampleRate
             highPass.setHighPass(frequency: 150, sampleRate: sampleRate)
             presence.setPeaking(frequency: 3000, gainDB: 6, q: 1, sampleRate: sampleRate)
+            setHearing(left: hearingGains.left, right: hearingGains.right)
         }
     }
 
     private enum Ear { case left, right, both }
+
+    /// Sets the hearing profile's boosts (dB per band, for each ear). Main thread only.
+    static func setHearing(left: [Double], right: [Double]) {
+        // Unchanged: keep the filters (and their state), so other settings changes don't click.
+        if hearingGains.left == left && hearingGains.right == right && hearingRate == sampleRate { return }
+        hearingGains = (left, right)
+        hearingRate = sampleRate
+        let bands = HearingProfile.frequencies.count
+        let next = 1 - hearingBank
+        for pair in 0..<2 {
+            for (ear, gains) in [left, right].enumerated() {
+                for (band, frequency) in HearingProfile.frequencies.enumerated() {
+                    let gain = band < gains.count ? gains[band] : 0
+                    // Keep each band under the Nyquist frequency of slow devices (AirPods in a call).
+                    let safe = min(frequency, sampleRate * 0.45)
+                    hearingFilters[((next * 2 + pair) * 2 + ear) * bands + band]
+                        .setPeaking(frequency: safe, gainDB: gain, q: 1.2, sampleRate: sampleRate)
+                }
+            }
+        }
+        hearingBank = next
+    }
+
+    /// One sample through one ear's hearing filters (audio thread).
+    @inline(__always)
+    private static func hearing(_ sample: Float, bank: Int, pair: Int, ear: Int) -> Float {
+        let bands = HearingProfile.frequencies.count
+        let start = ((bank * 2 + pair) * 2 + ear) * bands
+        var x = sample
+        for band in 0..<bands { x = hearingFilters[start + band].process(x) }
+        return x
+    }
 
     private static func recompute() {
         let s = state
@@ -371,6 +414,7 @@ enum Mixer {
 
         // Per ear pair: one-ear mix, ear balance, volume limit, and a hard safety clamp.
         let release = 1 - expf(-1 / Float(renderRate * 0.15))
+        let hearingOn = hearingEnabled, bank = hearingBank
         for p in 0..<pairCount {
             let l = pairs[p], r = pairs[p] + 1
             if pairIsMono[p] || r >= totalChannels, l < totalChannels, let mono = channelBase[l] {
@@ -379,6 +423,7 @@ enum Mixer {
                 var gain = limiterGain[p]
                 for f in 0..<frames {
                     var a = mono[f * stride] * max(earGainLeft, earGainRight)
+                    if hearingOn { a = hearing(a, bank: bank, pair: p, ear: 0) }
                     if limiterEnabled {
                         let target = abs(a) > limiterCeiling ? limiterCeiling / abs(a) : 1
                         gain = min(target, gain + (1 - gain) * release)
@@ -401,6 +446,10 @@ enum Mixer {
                 }
                 a *= earGainLeft
                 b *= earGainRight
+                if hearingOn {
+                    a = hearing(a, bank: bank, pair: p, ear: 0)
+                    b = hearing(b, bank: bank, pair: p, ear: 1)
+                }
                 if limiterEnabled {
                     let level = max(abs(a), abs(b))
                     let target = level > limiterCeiling ? limiterCeiling / level : 1

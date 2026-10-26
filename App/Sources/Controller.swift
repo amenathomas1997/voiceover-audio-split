@@ -106,6 +106,11 @@ final class Controller {
         let ear = Float(preferences.earBalance)
         Mixer.earGainLeft = ear > 0 ? powf(10, -ear / 20) : 1
         Mixer.earGainRight = ear < 0 ? powf(10, ear / 20) : 1
+        Mixer.hearingEnabled = preferences.hearingProfileOn
+        if preferences.hearingProfileOn {
+            Mixer.setHearing(left: HearingProfile.gains(for: preferences.hearingLeft),
+                             right: HearingProfile.gains(for: preferences.hearingRight))
+        }
         Hotkeys.modifier = preferences.modifier
         KeyMap.update(custom: preferences.customKeys, userCommands: preferences.userCommands)
         Announcer.useSystemVoice = speechSilenced

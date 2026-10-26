@@ -330,6 +330,11 @@ final class Preferences: ObservableObject {
     @Published var voiceCommand: Bool { didSet { save(voiceCommand, "voiceCommand") } }
     /// Look for a new version on GitHub once a day (not for TestFlight or App Store copies).
     @Published var checkForUpdates: Bool { didSet { save(checkForUpdates, "checkForUpdates") } }
+    /// Hearing profile: shape each ear's sound to a hearing loss.
+    @Published var hearingProfileOn: Bool { didSet { save(hearingProfileOn, "hearingProfileOn") } }
+    /// Hearing loss in dB at each of HearingProfile.frequencies, for the left and right ear.
+    @Published var hearingLeft: [Double] { didSet { save(hearingLeft, "hearingLeft") } }
+    @Published var hearingRight: [Double] { didSet { save(hearingRight, "hearingRight") } }
     /// A version the user chose to skip ("1.1" plus its build), so it isn't offered again by itself.
     var skippedUpdate: String { didSet { save(skippedUpdate, "skippedUpdate") } }
     /// When updates were last checked, in seconds since 1970.
@@ -414,6 +419,9 @@ final class Preferences: ObservableObject {
         typingSayEachKey = store.bool(forKey: "typingSayEachKey")
         voiceCommand = store.bool(forKey: "voiceCommand")
         checkForUpdates = store.object(forKey: "checkForUpdates") as? Bool ?? true
+        hearingProfileOn = store.bool(forKey: "hearingProfileOn")
+        hearingLeft = HearingProfile.valid(store.array(forKey: "hearingLeft") as? [Double])
+        hearingRight = HearingProfile.valid(store.array(forKey: "hearingRight") as? [Double])
         skippedUpdate = store.string(forKey: "skippedUpdate") ?? ""
         lastUpdateCheck = store.double(forKey: "lastUpdateCheck")
         placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []

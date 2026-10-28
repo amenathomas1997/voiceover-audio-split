@@ -120,6 +120,8 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 > - Continuity Camera: the camera tools can use a nearby iPhone (NSCameraUseContinuityCameraDeviceType).
 > - User scripts: the user can add their own AppleScripts to the app's Application Scripts folder (run with NSUserAppleScriptTask) or name a Shortcut (run with the shortcuts:// URL scheme). Nothing runs unless the user adds it.
 > - User-selected files (read and write): opening documents in the large-print Doc Reader, and saving recognized text as a text or Word file where the user chooses.
+> - Movies folder (com.apple.security.assets.movies.read-write): Record the Screen saves the user's own screen recordings, which the user starts and stops, in Movies, VoiceOver Audio Split Recordings, where they can find them. The app reads nothing else there.
+> - On-device AI: with Apple Intelligence, image descriptions, the assistant and Do It for Me use Apple's on-device Foundation Models framework; nothing is sent. "Describe images automatically", off by default, describes the picture under the VoiceOver cursor with the on-device model only.
 > - Anthropic API (optional): image and video descriptions, the assistant, Do It for Me and the money identifier use the user's own Anthropic API key, entered in Settings. Nothing is sent without that key, pictures are sent only after the user allows it once, and each request is made only when the user asks. No account with us is needed; the app has no sign-in.
 > - Updates: this App Store build doesn't download or install code. Updates come only through the App Store.
 >

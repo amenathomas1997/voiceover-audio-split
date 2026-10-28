@@ -24,9 +24,11 @@
 		2CEE7D82566DA7C7A6364698 /* Splitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51294BFC7A2A2C6B104F15D /* Splitter.swift */; };
 		2EE11FFF9F33F75F019A4076 /* DocumentCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CBD1A894976E0AE7B73EDB7 /* DocumentCheck.swift */; };
 		2F59BA0C5C49BBECB7F17971 /* Labels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5180FC427B94C760EDAAA4FD /* Labels.swift */; };
+		3272B2BF2DC2015E483F095B /* AutoDescribe.swift in Sources */ = {isa = PBXBuildFile; fileRef = A313189C956DAA97F93B38F8 /* AutoDescribe.swift */; };
 		3BDE91278AEBE6414BA5BAD6 /* SystemStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CF3299924E24F7F6C46A876 /* SystemStatus.swift */; };
 		3CC805809ABFF018748764F3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 760BD6D213BAE3CF4CB72D2B /* SettingsView.swift */; };
 		3F688EF3FAC6ABADD6E68D6E /* Tones.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53E734B886BBD455AE3C73C /* Tones.swift */; };
+		3FEDEA0A4818B3F57EB564A2 /* OnDeviceAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37C15332A9E6EFAC2B8F1EF /* OnDeviceAI.swift */; };
 		44C8230BBD362E49923931A3 /* Timers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C254E12144E2A8EB417323D /* Timers.swift */; };
 		460C20151914D3E5BDCB61E0 /* VoiceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D93A789E8C3E97D04624C9 /* VoiceCommand.swift */; };
 		4D01AD2D2EDF83DD8E3B1DE4 /* AXTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444B37868A677F10581E1B92 /* AXTools.swift */; };
@@ -79,6 +81,7 @@
 		E23ABF60C137767A1BD60600 /* LowVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C566C892F028DB4224A4B4 /* LowVision.swift */; };
 		E3D6E7F43E13E6E24D2FFCF5 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ED521B579066681EE7B99 /* Palette.swift */; };
 		F49226EA59B0EE891F767169 /* SoundSafety.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E653A429F5FB39F468ED4E8 /* SoundSafety.swift */; };
+		F4C69804FF5C7174F3773D81 /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8621B9F5911CFAEBD5F78449 /* ScreenRecorder.swift */; };
 		F813154EB01E6D59C3E4B688 /* PermissionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3044A35D44699F8B35861E8 /* PermissionsSection.swift */; };
 		F8DB580EF8EC07BDFA2520ED /* AccessiblePDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366EF47528C505224B97A27D /* AccessiblePDF.swift */; };
 		F94E5AC1D4BF590DEA50F88D /* lou_translateString.c in Sources */ = {isa = PBXBuildFile; fileRef = 93973F619FCA512E09CC7499 /* lou_translateString.c */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -150,6 +153,7 @@
 		82D75DB9606C17C21FCC54CC /* Hotkeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hotkeys.swift; sourceTree = "<group>"; };
 		8311B80ACB0A7D19364E1CEF /* logging.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = logging.c; sourceTree = "<group>"; };
 		83622B4B6011C1F14CAF9584 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8621B9F5911CFAEBD5F78449 /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
 		86869C904A7EDF0B72C0C829 /* DoItForMe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoItForMe.swift; sourceTree = "<group>"; };
 		8AF5566ED95C3A033E1F1067 /* ObjectFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectFinder.swift; sourceTree = "<group>"; };
 		8B0319CE8C826762A1D1CDD2 /* Diagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
@@ -157,6 +161,7 @@
 		93973F619FCA512E09CC7499 /* lou_translateString.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lou_translateString.c; sourceTree = "<group>"; };
 		9743335D5D6442AD1AAE8B11 /* LessonsExtra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsExtra.swift; sourceTree = "<group>"; };
 		9C254E12144E2A8EB417323D /* Timers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timers.swift; sourceTree = "<group>"; };
+		A313189C956DAA97F93B38F8 /* AutoDescribe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoDescribe.swift; sourceTree = "<group>"; };
 		A51294BFC7A2A2C6B104F15D /* Splitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Splitter.swift; sourceTree = "<group>"; };
 		B023FC949563E9D8606496D2 /* ScanReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanReader.swift; sourceTree = "<group>"; };
 		B30592014E2ED93CBCAA2F43 /* AudioHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioHub.swift; sourceTree = "<group>"; };
@@ -172,6 +177,7 @@
 		CC87B6B853059399CDAD0BFE /* VoiceOverAudioSplit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VoiceOverAudioSplit.entitlements; sourceTree = "<group>"; };
 		D172FE1FD9DE805D1234180C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		D29ED521B579066681EE7B99 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
+		D37C15332A9E6EFAC2B8F1EF /* OnDeviceAI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceAI.swift; sourceTree = "<group>"; };
 		D77A939022365857F90AE2E9 /* MicCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicCheck.swift; sourceTree = "<group>"; };
 		DE9C752C304C17A2D36E1B09 /* LessonsExtraTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsExtraTests.swift; sourceTree = "<group>"; };
 		E3044A35D44699F8B35861E8 /* PermissionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsSection.swift; sourceTree = "<group>"; };
@@ -197,6 +203,7 @@
 				F0D2A28E9F8F878C5DD8C75F /* Assistant.swift */,
 				B30592014E2ED93CBCAA2F43 /* AudioHub.swift */,
 				69090700658BA70CED135F66 /* AudioSystem.swift */,
+				A313189C956DAA97F93B38F8 /* AutoDescribe.swift */,
 				444B37868A677F10581E1B92 /* AXTools.swift */,
 				4F42EEFA664F74971023329C /* Braille.swift */,
 				C582188861437AAA8323B9E8 /* BridgingHeader.h */,
@@ -227,6 +234,7 @@
 				32A059563D24885B108AC9EE /* ObjCExceptions.h */,
 				3E1F2330AD717F0DF009CB47 /* ObjCExceptions.m */,
 				8AF5566ED95C3A033E1F1067 /* ObjectFinder.swift */,
+				D37C15332A9E6EFAC2B8F1EF /* OnDeviceAI.swift */,
 				D29ED521B579066681EE7B99 /* Palette.swift */,
 				E3044A35D44699F8B35861E8 /* PermissionsSection.swift */,
 				41718968341F2C831BA48924 /* Practice.swift */,
@@ -235,6 +243,7 @@
 				459BE65ADD9D9716FA7A905C /* Rescue.swift */,
 				EA5F49B50C694A5495B0BA9B /* Research.swift */,
 				B023FC949563E9D8606496D2 /* ScanReader.swift */,
+				8621B9F5911CFAEBD5F78449 /* ScreenRecorder.swift */,
 				2670C89F5B31B2CC0FDC9910 /* ScreenText.swift */,
 				045EBC71E6D4C5157A4512CF /* Sensors.swift */,
 				760BD6D213BAE3CF4CB72D2B /* SettingsView.swift */,
@@ -443,6 +452,7 @@
 				9AC70A1C5A82A20FC3AFF60C /* Assistant.swift in Sources */,
 				98638D39F683A0A4C09F0B5F /* AudioHub.swift in Sources */,
 				5EA74E064F5E1B977A27E763 /* AudioSystem.swift in Sources */,
+				3272B2BF2DC2015E483F095B /* AutoDescribe.swift in Sources */,
 				8A20E1C1625252FD24FD7A42 /* Braille.swift in Sources */,
 				8D0B7133FCC18F28A002EFA6 /* CallCaptions.swift in Sources */,
 				87A566D1EFAFDC03E21035D9 /* CameraTools.swift in Sources */,
@@ -470,6 +480,7 @@
 				0A1FD19BF9780FD08F310972 /* Mixer.swift in Sources */,
 				9696CCB08B5B54EFC236BF08 /* ObjCExceptions.m in Sources */,
 				7FBE742304A757F0319BC388 /* ObjectFinder.swift in Sources */,
+				3FEDEA0A4818B3F57EB564A2 /* OnDeviceAI.swift in Sources */,
 				E3D6E7F43E13E6E24D2FFCF5 /* Palette.swift in Sources */,
 				F813154EB01E6D59C3E4B688 /* PermissionsSection.swift in Sources */,
 				4D308CBB80FC0103B6D01871 /* Practice.swift in Sources */,
@@ -478,6 +489,7 @@
 				7B189AAE9350AEAEFA6ED592 /* Rescue.swift in Sources */,
 				0CCCA5E6742794CEF6F95139 /* Research.swift in Sources */,
 				5797A7C3A848C4750940DBA7 /* ScanReader.swift in Sources */,
+				F4C69804FF5C7174F3773D81 /* ScreenRecorder.swift in Sources */,
 				FBD3C4162ABE42BD600FCE42 /* ScreenText.swift in Sources */,
 				9582A74F33113C066AE88D58 /* Sensors.swift in Sources */,
 				3CC805809ABFF018748764F3 /* SettingsView.swift in Sources */,
@@ -590,7 +602,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610281000;
+				CURRENT_PROJECT_VERSION = 202610281200;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -611,7 +623,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -697,7 +709,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202610281000;
+				CURRENT_PROJECT_VERSION = 202610281200;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -712,7 +724,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

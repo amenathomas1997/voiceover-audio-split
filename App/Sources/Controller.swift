@@ -106,6 +106,7 @@ final class Controller {
         let ear = Float(preferences.earBalance)
         Mixer.earGainLeft = ear > 0 ? powf(10, -ear / 20) : 1
         Mixer.earGainRight = ear < 0 ? powf(10, ear / 20) : 1
+        AutoDescribe.update(enabled: preferences.autoDescribeImages)
         Mixer.hearingEnabled = preferences.hearingProfileOn
         if preferences.hearingProfileOn {
             Mixer.setHearing(left: HearingProfile.gains(for: preferences.hearingLeft),
@@ -338,6 +339,8 @@ final class Controller {
         case .objectFinder: app?.showObjectFinder()
         case .scanToPDF: MainActor.assumeIsolated { AccessiblePDF.makeFromCamera() }
         case .fileToPDF: MainActor.assumeIsolated { AccessiblePDF.makeFromFile() }
+        case .autoDescribeImages: toggleAutoDescribe()
+        case .screenRecording: MainActor.assumeIsolated { ScreenRecorder.shared.toggle() }
         case .importLesson:
             if let message = MainActor.assumeIsolated({ CustomLessons.shared.importWithPanel() }) { Announcer.say(message) }
         case .exportStudentReport:
@@ -381,6 +384,15 @@ final class Controller {
     func sayClipboard() {
         Tones.play(.status)
         Announcer.say(Clipboard.describe())
+    }
+
+    func toggleAutoDescribe() {
+        guard OnDeviceAI.canSeeImages else { return Announcer.say(OnDeviceAI.status) }
+        preferences.autoDescribeImages.toggle()
+        Tones.play(.status)
+        Announcer.say(preferences.autoDescribeImages
+                      ? String(localized: "Images are described automatically when VoiceOver rests on them.")
+                      : String(localized: "Automatic image descriptions off."))
     }
 
     func toggleCaptions() {

@@ -290,6 +290,22 @@ enum VoiceCommands {
                                          String(localized: "hearing profile|hearing test", comment: "Voice command phrases, separated by |"))) {
                 app?.showHearingProfile()
             },
+            // Camera, recording and pictures
+            VoiceAction(name: String(localized: "Can you see me?"),
+                        phrases: phrases("can you see me|is my face centered|am i in the frame|check my camera|check the camera|am i centered",
+                                         String(localized: "can you see me|is my face centered", comment: "Voice command phrases, separated by |"))) {
+                controller.checkCamera()
+            },
+            VoiceAction(name: String(localized: "Record the screen"),
+                        phrases: phrases("record the screen|start recording|stop recording|screen recording",
+                                         String(localized: "record the screen|stop recording", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ScreenRecorder.shared.toggle() }
+            },
+            VoiceAction(name: String(localized: "Describe images automatically"),
+                        phrases: phrases("describe images automatically|automatic image descriptions|auto describe",
+                                         String(localized: "describe images automatically", comment: "Voice command phrases, separated by |"))) {
+                controller.toggleAutoDescribe()
+            },
             // Everyday tools
             VoiceAction(name: String(localized: "My timers and reminders"),
                         phrases: phrases("what timers are set|list reminders|my reminders|list timers|my timers",

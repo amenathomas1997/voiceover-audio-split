@@ -332,6 +332,12 @@ final class Preferences: ObservableObject {
     @Published var checkForUpdates: Bool { didSet { save(checkForUpdates, "checkForUpdates") } }
     /// Ask "Keep this sound setting?" after a risky sound change, and go back after a minute.
     @Published var confirmSoundChanges: Bool { didSet { save(confirmSoundChanges, "confirmSoundChanges") } }
+    /// Which AI the assistant features use: an AIProvider (on this Mac by default).
+    @Published var aiProvider: String { didSet { save(aiProvider, "aiProvider") } }
+    /// Describe a picture by itself when the VoiceOver cursor rests on it, on the Mac only.
+    @Published var autoDescribeImages: Bool { didSet { save(autoDescribeImages, "autoDescribeImages") } }
+    /// Include the microphone in screen recordings.
+    @Published var recordMicrophone: Bool { didSet { save(recordMicrophone, "recordMicrophone") } }
     /// Hearing profile: shape each ear's sound to a hearing loss.
     @Published var hearingProfileOn: Bool { didSet { save(hearingProfileOn, "hearingProfileOn"); guardSound("hearingProfileOn", String(localized: "the hearing profile")) { [oldValue] in self.hearingProfileOn = oldValue } } }
     /// Hearing loss in dB at each of HearingProfile.frequencies, for the left and right ear.
@@ -422,6 +428,9 @@ final class Preferences: ObservableObject {
         voiceCommand = store.bool(forKey: "voiceCommand")
         checkForUpdates = store.object(forKey: "checkForUpdates") as? Bool ?? true
         confirmSoundChanges = store.object(forKey: "confirmSoundChanges") as? Bool ?? true
+        aiProvider = store.string(forKey: "aiProvider") ?? AIProvider.onDevice.rawValue
+        autoDescribeImages = store.bool(forKey: "autoDescribeImages")
+        recordMicrophone = store.object(forKey: "recordMicrophone") as? Bool ?? true
         hearingProfileOn = store.bool(forKey: "hearingProfileOn")
         hearingLeft = HearingProfile.valid(store.array(forKey: "hearingLeft") as? [Double])
         hearingRight = HearingProfile.valid(store.array(forKey: "hearingRight") as? [Double])

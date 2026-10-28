@@ -159,3 +159,61 @@ final class ExceptionCatchingTests: XCTestCase {
         XCTAssertTrue(VOACatchException({ _ = 1 + 1 }, nil))
     }
 }
+
+final class OnDeviceAITests: XCTestCase {
+    func testClaudeMessagesBecomeOnePromptWithPictures() throws {
+        let image = NSImage(size: NSSize(width: 4, height: 4), flipped: false) { rect in NSColor.red.setFill(); rect.fill(); return true }
+        let png = try XCTUnwrap(image.tiffRepresentation.flatMap(NSBitmapImageRep.init(data:))?.representation(using: .png, properties: [:]))
+        let messages: [[String: Any]] = [
+            ["role": "user", "content": [["type": "image", "source": ["type": "base64", "media_type": "image/png", "data": png.base64EncodedString()]],
+                                         ["type": "text", "text": "Describe this."]]],
+            ["role": "assistant", "content": [["type": "text", "text": "A red square."]]],
+            ["role": "user", "content": "What color is it?"],
+        ]
+        let parts = OnDeviceAI.parts(of: messages)
+        XCTAssertEqual(parts.count, 4)
+        guard case .image = parts[0] else { return XCTFail("the picture comes first") }
+        guard case .text(let answer) = parts[2], case .text(let last) = parts[3] else { return XCTFail("texts") }
+        XCTAssertTrue(answer.hasSuffix("A red square.") && answer != "A red square.", "earlier turns are labelled")
+        XCTAssertEqual(last, "What color is it?", "the newest message as it is")
+    }
+
+    func testLongRequestsAreTrimmedKeepingTheNewest() {
+        let old = String(repeating: "a", count: 8000), new = String(repeating: "b", count: 5000)
+        let kept = OnDeviceAI.trimmed([.text(old), .text(new)])
+        let total = kept.reduce(0) { sum, part in if case .text(let t) = part { sum + t.count } else { sum } }
+        XCTAssertLessThanOrEqual(total, OnDeviceAI.maxCharacters + 2)
+        guard case .text(let last) = kept.last else { return XCTFail() }
+        XCTAssertEqual(last, new, "the newest text is kept whole")
+    }
+
+    func testTheModelIsToldTheRealVoiceOverKeys() {
+        XCTAssertTrue(OnDeviceAI.voiceOverKeys.contains("VO U opens the rotor"))
+        XCTAssertTrue(OnDeviceAI.voiceOverKeys.contains("don't guess"))
+    }
+
+    func testAutoDescribeSkipsIconsAndRemembersPictures() {
+        XCTAssertFalse(AutoDescribe.isPictureSized(CGSize(width: 32, height: 32)))
+        XCTAssertFalse(AutoDescribe.isPictureSized(CGSize(width: 300, height: 40)))
+        XCTAssertTrue(AutoDescribe.isPictureSized(CGSize(width: 200, height: 150)))
+        let frame = CGRect(x: 10.4, y: 20, width: 200, height: 150)
+        XCTAssertEqual(AutoDescribe.key(pid: 7, frame: frame, name: "Beach"), AutoDescribe.key(pid: 7, frame: frame.offsetBy(dx: 0.3, dy: 0), name: "Beach"))
+        XCTAssertNotEqual(AutoDescribe.key(pid: 7, frame: frame, name: "Beach"), AutoDescribe.key(pid: 7, frame: frame, name: "Dog"))
+    }
+
+    func testRecordingNamesSortByTime() {
+        let morning = ScreenRecorder.fileName(at: Date(timeIntervalSince1970: 1_800_000_000))
+        let later = ScreenRecorder.fileName(at: Date(timeIntervalSince1970: 1_800_003_600))
+        XCTAssertTrue(morning.hasPrefix("Recording ") && morning.hasSuffix(".mov"))
+        XCTAssertLessThan(morning, later)
+        XCTAssertTrue(ScreenRecorder.folder.path.hasSuffix("Movies/VoiceOver Audio Split Recordings"))
+        XCTAssertFalse(ScreenRecorder.folder.path.contains("/Containers/"), "the real Movies folder, not the app's own")
+    }
+
+    func testNewVoicePhrases() {
+        let all = VoiceCommands.all
+        XCTAssertEqual(VoiceCommands.match("can you see me", in: all)?.name, "Can you see me?")
+        XCTAssertEqual(VoiceCommands.match("start recording", in: all)?.name, "Record the screen")
+        XCTAssertEqual(VoiceCommands.match("describe images automatically", in: all)?.name, "Describe images automatically")
+    }
+}

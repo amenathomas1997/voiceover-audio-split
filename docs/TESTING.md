@@ -86,6 +86,11 @@ Say for each step: **works**, **doesn't work** (what you heard instead), or **no
 
 ## New in this version
 
+- [ ] AI on this Mac (macOS 27 with Apple Intelligence): with no API key, Describe Image Under VoiceOver Cursor and Ask the Assistant answer, with no upload consent asked. Settings, Use AI, switches between this Mac and Claude.
+- [ ] Describe images automatically (Settings, or the Assistant menu): in Photos, move through photos with VoiceOver; about a second after landing on each one, you hear a short description. Icons aren't described. Coming back to a photo repeats its description straight away.
+- [ ] Record the Screen (give it a key in Command keys): start, do something with VoiceOver speaking, stop. The movie in Movies, VoiceOver Audio Split Recordings has the picture, the Mac's sound with VoiceOver, and your voice if the microphone is included.
+- [ ] "Audio Split, can you see me?" checks the camera framing and says whether your face is centered.
+
 - [ ] Keep this sound setting: switch the output device (Right Option + D) and do nothing. The window asks, says it goes back in 60 seconds, warns at 15 seconds, then switches back by itself. Try again and press Return: it's kept. Change one-ear mode in Settings and press Escape: it goes back.
 
 - [ ] Call captions (menu > Calls and Meetings): in a Zoom, Teams or FaceTime call, what others say appears in the large-print strip within a second or two. Your own sound isn't changed. "Read the Last Caption" speaks the newest line; "Copy the Call Transcript" copies them all.

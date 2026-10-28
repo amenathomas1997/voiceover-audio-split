@@ -57,8 +57,10 @@ enum Claude {
     /// Sends the conversation and returns the assistant's full content blocks
     /// (to append to the conversation unchanged) and its spoken text.
     static func send(_ messages: [[String: Any]], system: String = Claude.system) async throws -> (content: [Any], text: String) {
+        // The AI on this Mac, when chosen (or when there's no key): nothing leaves the Mac.
+        if AI.usesOnDevice { return try await OnDeviceAI.send(messages, system: system) }
         guard let key = APIKey.current, !key.isEmpty else {
-            throw Failure(message: String(localized: "Add your Anthropic API key in Settings first."))
+            throw Failure(message: AI.notReadyMessage)
         }
         var request = URLRequest(url: URL(string: "https://api.anthropic.com/v1/messages")!)
         request.httpMethod = "POST"
@@ -257,7 +259,9 @@ final class AssistantModel: ObservableObject {
     func describeImage(_ target: ImageTarget = .voiceOverCursor) {
         // One request at a time, so a second press can't mix two conversations.
         guard !busy else { return Announcer.say(String(localized: "Still working on the last request")) }
-        guard Preferences.shared.allowImageUpload else {
+        guard AI.isReady else { return Announcer.say(AI.notReadyMessage) }
+        // On the Mac, nothing is sent, so there's nothing to allow.
+        guard Preferences.shared.allowImageUpload || AI.usesOnDevice else {
             waitingForImageConsent = true
             showWindow?()
             Announcer.say(String(localized: "Describing images sends a picture of your screen to Anthropic. Choose Allow in the window to continue."))
@@ -340,7 +344,7 @@ struct AssistantView: View {
 
     var body: some View {
         Form {
-            if APIKey.current == nil {
+            if APIKey.current == nil && !AI.usesOnDevice {
                 Section(String(localized: "Anthropic API key")) {
                     Text(String(localized: "The assistant and image descriptions use Claude. Paste an API key from console.anthropic.com. It is stored in your Mac's Keychain. Requests are billed to that account."))
                     SecureField(String(localized: "API key"), text: $key)

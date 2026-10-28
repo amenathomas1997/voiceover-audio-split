@@ -4270,24 +4270,24 @@
         }
       }
     },
-    "Add your Anthropic API key in Settings first." : {
+    "Add your Anthropic API key in Settings first. The AI on your Mac needs macOS 27 or later." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Füge zuerst in den Einstellungen deinen Anthropic-API-Schlüssel hinzu."
+            "value" : "Füge zuerst deinen Anthropic-API-Schlüssel in den Einstellungen hinzu. Die KI auf deinem Mac braucht macOS 27 oder neuer."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primero añade tu clave de API de Anthropic en Ajustes."
+            "value" : "Primero agrega tu clave de API de Anthropic en Ajustes. La IA de tu Mac necesita macOS 27 o posterior."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoutez d'abord votre clé API Anthropic dans les réglages."
+            "value" : "Ajoutez d'abord votre clé d'API Anthropic dans les Réglages. L'IA de votre Mac nécessite macOS 27 ou une version ultérieure."
           }
         }
       }
@@ -4310,6 +4310,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajouter des diapositives, écrire dessus, lire le diaporama, et enregistrer."
+          }
+        }
+      }
+    },
+    "After VoiceOver rests on a picture for a second, the AI on this Mac describes it, so you can go through photos quickly. Pictures are never sent anywhere for this. Needs screen recording permission." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn VoiceOver eine Sekunde auf einem Bild bleibt, beschreibt es die KI auf diesem Mac, damit du schnell durch deine Fotos gehen kannst. Bilder werden dafür nie irgendwohin gesendet. Braucht die Berechtigung für Bildschirmaufnahmen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando VoiceOver se queda un segundo en una imagen, la IA de esta Mac la describe, para que puedas recorrer tus fotos rápido. Para esto, las imágenes nunca se envían a ningún sitio. Necesita el permiso de grabación de pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand VoiceOver reste une seconde sur une image, l'IA de ce Mac la décrit, pour parcourir vos photos rapidement. Pour cela, les images ne sont jamais envoyées nulle part. Nécessite l'autorisation d'enregistrement de l'écran."
           }
         }
       }
@@ -5766,6 +5788,28 @@
         }
       }
     },
+    "Automatic image descriptions off." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatische Bildbeschreibungen aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descripciones automáticas de imágenes desactivadas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descriptions automatiques des images désactivées."
+          }
+        }
+      }
+    },
     "Automatic presets" : {
       "localizations" : {
         "de" : {
@@ -7218,6 +7262,28 @@
         }
       }
     },
+    "Can you see me?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siehst du mich?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Me ves?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Est-ce que tu me vois ?"
+          }
+        }
+      }
+    },
     "Can't read %@" : {
       "localizations" : {
         "de" : {
@@ -8578,6 +8644,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ville pour la météo"
+          }
+        }
+      }
+    },
+    "Claude, with your Anthropic API key" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude, mit deinem Anthropic-API-Schlüssel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude, con tu clave de API de Anthropic"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude, avec votre clé d'API Anthropic"
           }
         }
       }
@@ -12608,6 +12696,28 @@
         }
       }
     },
+    "Describe Images Automatically" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilder automatisch beschreiben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describir imágenes automáticamente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décrire les images automatiquement"
+          }
+        }
+      }
+    },
     "Describe What's Happening in Video" : {
       "localizations" : {
         "de" : {
@@ -12648,6 +12758,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Décrire l'image sous le curseur VoiceOver"
+          }
+        }
+      }
+    },
+    "Describe images automatically" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilder automatisch beschreiben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describir imágenes automáticamente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décrire les images automatiquement"
+          }
+        }
+      }
+    },
+    "Describe images automatically when VoiceOver lands on them" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilder automatisch beschreiben, wenn VoiceOver auf ihnen landet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describir imágenes automáticamente cuando VoiceOver llega a ellas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décrire les images automatiquement quand VoiceOver arrive dessus"
           }
         }
       }
@@ -17492,6 +17646,28 @@
         }
       }
     },
+    "Images are described automatically when VoiceOver rests on them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilder werden automatisch beschrieben, wenn VoiceOver auf ihnen bleibt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las imágenes se describen automáticamente cuando VoiceOver se queda en ellas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les images sont décrites automatiquement quand VoiceOver reste dessus."
+          }
+        }
+      }
+    },
     "Import Settings…" : {
       "localizations" : {
         "de" : {
@@ -18170,6 +18346,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dans cette leçon : %@"
+          }
+        }
+      }
+    },
+    "Include my microphone in screen recordings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mein Mikrofon in Bildschirmaufnahmen einschließen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluir mi micrófono en las grabaciones de pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inclure mon micro dans les enregistrements de l'écran"
           }
         }
       }
@@ -25984,6 +26182,28 @@
         }
       }
     },
+    "On this Mac (private and free)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf diesem Mac (privat und kostenlos)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En esta Mac (privado y gratis)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur ce Mac (privé et gratuit)"
+          }
+        }
+      }
+    },
     "Once a day, the app asks GitHub whether a newer version is out; nothing about you is sent. If there is one, it asks before downloading. The installer is checked, then opens in Apple's Installer." : {
       "localizations" : {
         "de" : {
@@ -26882,6 +27102,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir le dossier Téléchargements"
+          }
+        }
+      }
+    },
+    "Open the Recordings Folder" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordner mit Aufnahmen öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir la carpeta de grabaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir le dossier des enregistrements"
           }
         }
       }
@@ -30952,6 +31194,182 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lecture de la fenêtre"
+          }
+        }
+      }
+    },
+    "Record the Screen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm aufnehmen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabar la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer l'écran"
+          }
+        }
+      }
+    },
+    "Record the Screen, in Everyday Tools, starts and stops with one command; give it a key in Command keys. Recordings, with the Mac's sound and VoiceOver, are saved in Movies, VoiceOver Audio Split Recordings, and never sent anywhere." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Bildschirm aufnehmen“ unter „Alltagswerkzeuge“ startet und stoppt mit einem Befehl; gib ihm unter „Befehlstasten“ eine Taste. Aufnahmen mit dem Ton des Mac und VoiceOver werden unter „Filme“ > „VoiceOver Audio Split Recordings“ gesichert und nie irgendwohin gesendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabar la pantalla, en Herramientas diarias, empieza y termina con un solo comando; asígnale una tecla en Teclas de comandos. Las grabaciones, con el sonido de la Mac y VoiceOver, se guardan en Películas, VoiceOver Audio Split Recordings, y nunca se envían a ningún sitio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer l'écran, dans Outils du quotidien, démarre et s'arrête avec une seule commande ; attribuez-lui une touche dans Touches de commande. Les enregistrements, avec le son du Mac et VoiceOver, sont enregistrés dans Films, VoiceOver Audio Split Recordings, et ne sont jamais envoyés nulle part."
+          }
+        }
+      }
+    },
+    "Record the screen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm aufnehmen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabar la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer l'écran"
+          }
+        }
+      }
+    },
+    "Recording couldn't start. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording, then try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Aufnahme konnte nicht starten. Erlaube VoiceOver Audio Split in „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Bildschirm- & System-Audioaufnahme“ und versuche es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La grabación no pudo empezar. Permite VoiceOver Audio Split en Ajustes del Sistema, Privacidad y seguridad, Grabación de pantalla y audio del sistema, y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'enregistrement n'a pas pu démarrer. Autorisez VoiceOver Audio Split dans Réglages Système, Confidentialité et sécurité, Enregistrement de l'écran et de l'audio du système, puis réessayez."
+          }
+        }
+      }
+    },
+    "Recording saved as %@, in Movies, VoiceOver Audio Split Recordings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufnahme als %@ gesichert, unter „Filme“ > „VoiceOver Audio Split Recordings“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabación guardada como %@, en Películas, VoiceOver Audio Split Recordings."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement sauvegardé sous %@, dans Films, VoiceOver Audio Split Recordings."
+          }
+        }
+      }
+    },
+    "Recording the screen needs macOS 15 or later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Bildschirmaufnahme braucht macOS 15 oder neuer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabar la pantalla necesita macOS 15 o posterior."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'enregistrement de l'écran nécessite macOS 15 ou une version ultérieure."
+          }
+        }
+      }
+    },
+    "Recording the screen needs permission. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Bildschirmaufnahme braucht eine Berechtigung. Erlaube VoiceOver Audio Split in „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Bildschirm- & System-Audioaufnahme“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabar la pantalla necesita permiso. Permite VoiceOver Audio Split en Ajustes del Sistema, Privacidad y seguridad, Grabación de pantalla y audio del sistema."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'enregistrement de l'écran nécessite une autorisation. Autorisez VoiceOver Audio Split dans Réglages Système, Confidentialité et sécurité, Enregistrement de l'écran et de l'audio du système."
+          }
+        }
+      }
+    },
+    "Recording. Use the same command again to stop." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufnahme läuft. Nutze denselben Befehl noch einmal zum Stoppen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabando. Usa el mismo comando otra vez para detener."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement en cours. Utilisez la même commande pour arrêter."
           }
         }
       }
@@ -36809,6 +37227,28 @@
         }
       }
     },
+    "Start or stop recording the screen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirmaufnahme starten oder stoppen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar o detener la grabación de pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrer ou arrêter l'enregistrement de l'écran"
+          }
+        }
+      }
+    },
     "Start the Listening Test" : {
       "localizations" : {
         "de" : {
@@ -37245,6 +37685,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arrêter l'entraînement"
+          }
+        }
+      }
+    },
+    "Stop Recording the Screen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirmaufnahme stoppen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener la grabación de pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêter l'enregistrement de l'écran"
           }
         }
       }
@@ -38613,6 +39075,28 @@
         }
       }
     },
+    "That's too long for the AI on this Mac. Try a shorter question." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist zu lang für die KI auf diesem Mac. Versuche eine kürzere Frage."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es demasiado largo para la IA de esta Mac. Prueba con una pregunta más corta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est trop long pour l'IA de ce Mac. Essayez une question plus courte."
+          }
+        }
+      }
+    },
     "That's your best for this lesson." : {
       "localizations" : {
         "de" : {
@@ -38653,6 +39137,182 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "C'est votre meilleur score jusqu'ici."
+          }
+        }
+      }
+    },
+    "The AI on this Mac can't describe pictures on this version of macOS." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die KI auf diesem Mac kann auf dieser macOS-Version keine Bilder beschreiben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La IA de esta Mac no puede describir imágenes en esta versión de macOS."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'IA de ce Mac ne peut pas décrire d'images avec cette version de macOS."
+          }
+        }
+      }
+    },
+    "The AI on this Mac couldn't answer. Try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die KI auf diesem Mac konnte nicht antworten. Versuche es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La IA de esta Mac no pudo responder. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'IA de ce Mac n'a pas pu répondre. Réessayez."
+          }
+        }
+      }
+    },
+    "The AI on this Mac describes images and videos, answers questions, finds controls and identifies money without sending anything anywhere, and needs no key. Claude can give longer, more detailed answers." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die KI auf diesem Mac beschreibt Bilder und Videos, beantwortet Fragen, findet Bedienelemente und erkennt Geld, ohne etwas irgendwohin zu senden, und braucht keinen Schlüssel. Claude kann längere, ausführlichere Antworten geben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La IA de esta Mac describe imágenes y videos, responde preguntas, encuentra controles e identifica dinero sin enviar nada a ningún sitio, y no necesita clave. Claude puede dar respuestas más largas y detalladas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'IA de ce Mac décrit les images et les vidéos, répond aux questions, trouve les commandes et identifie l'argent sans rien envoyer nulle part, et ne nécessite aucune clé. Claude peut donner des réponses plus longues et plus détaillées."
+          }
+        }
+      }
+    },
+    "The AI on this Mac is ready." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die KI auf diesem Mac ist bereit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La IA de esta Mac está lista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'IA de ce Mac est prête."
+          }
+        }
+      }
+    },
+    "The AI on this Mac is still downloading. Try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die KI auf diesem Mac wird noch geladen. Versuche es später noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La IA de esta Mac todavía se está descargando. Inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'IA de ce Mac est encore en cours de téléchargement. Réessayez plus tard."
+          }
+        }
+      }
+    },
+    "The AI on this Mac isn't available right now." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die KI auf diesem Mac ist gerade nicht verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La IA de esta Mac no está disponible ahora mismo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'IA de ce Mac n'est pas disponible pour le moment."
+          }
+        }
+      }
+    },
+    "The AI on this Mac needs macOS 27 or later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die KI auf diesem Mac braucht macOS 27 oder neuer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La IA de esta Mac necesita macOS 27 o posterior."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'IA de ce Mac nécessite macOS 27 ou une version ultérieure."
+          }
+        }
+      }
+    },
+    "The AI on this Mac reads the names of the controls in that app's front window; nothing is sent anywhere. Nothing is pressed without your confirmation." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die KI auf diesem Mac liest die Namen der Bedienelemente im vorderen Fenster dieser App; nichts wird irgendwohin gesendet. Nichts wird ohne deine Bestätigung gedrückt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La IA de esta Mac lee los nombres de los controles de la ventana principal de esa app; no se envía nada a ningún sitio. No se pulsa nada sin tu confirmación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'IA de ce Mac lit les noms des commandes de la fenêtre au premier plan de cette app ; rien n'est envoyé nulle part. Rien n'est activé sans votre confirmation."
           }
         }
       }
@@ -39955,6 +40615,28 @@
         }
       }
     },
+    "The recording stopped with a problem, and may not have been saved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Aufnahme wurde wegen eines Problems beendet und wurde vielleicht nicht gesichert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La grabación se detuvo con un problema y puede que no se haya guardado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'enregistrement s'est arrêté à cause d'un problème et n'a peut-être pas été sauvegardé."
+          }
+        }
+      }
+    },
     "The request failed." : {
       "localizations" : {
         "de" : {
@@ -40303,6 +40985,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La mise à jour n'est pas signée par Full Circle AT et notariée par Apple ; elle n'a donc pas été installée."
+          }
+        }
+      }
+    },
+    "The user said:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Benutzer sagte:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El usuario dijo:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'utilisateur a dit :"
           }
         }
       }
@@ -40743,6 +41447,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réflexion…"
+          }
+        }
+      }
+    },
+    "This Mac can't run Apple Intelligence, so the AI on this Mac isn't available." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Mac kann Apple Intelligence nicht ausführen, deshalb ist die KI auf diesem Mac nicht verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta Mac no puede usar Apple Intelligence, así que la IA de esta Mac no está disponible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce Mac ne peut pas exécuter Apple Intelligence ; l'IA de ce Mac n'est donc pas disponible."
           }
         }
       }
@@ -42265,6 +42991,50 @@
         }
       }
     },
+    "Turn on Apple Intelligence in System Settings to use the AI on this Mac." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schalte Apple Intelligence in den Systemeinstellungen ein, um die KI auf diesem Mac zu nutzen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa Apple Intelligence en Ajustes del Sistema para usar la IA de esta Mac."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activez Apple Intelligence dans les Réglages Système pour utiliser l'IA de ce Mac."
+          }
+        }
+      }
+    },
+    "Turn on Apple Intelligence in System Settings to use the AI on your Mac, or add an Anthropic API key in Settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schalte Apple Intelligence in den Systemeinstellungen ein, um die KI auf deinem Mac zu nutzen, oder füge in den Einstellungen einen Anthropic-API-Schlüssel hinzu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa Apple Intelligence en Ajustes del Sistema para usar la IA de tu Mac, o agrega una clave de API de Anthropic en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activez Apple Intelligence dans les Réglages Système pour utiliser l'IA de votre Mac, ou ajoutez une clé d'API Anthropic dans les Réglages."
+          }
+        }
+      }
+    },
     "Turn on Keyboard navigation in System Settings, Keyboard, before this lesson. Practise in a real dialog, such as TextEdit's save dialog, and cancel it." : {
       "localizations" : {
         "de" : {
@@ -43317,6 +44087,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utiliser %@"
+          }
+        }
+      }
+    },
+    "Use AI" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KI verwenden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar IA"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser l'IA"
           }
         }
       }
@@ -47831,6 +48623,28 @@
         }
       }
     },
+    "You answered:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast geantwortet:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Respondiste:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez répondu :"
+          }
+        }
+      }
+    },
     "You can change how VoiceOver sounds without leaving what you're doing. Hold VO and Command and press Right or Left Arrow to choose a speech setting, such as rate, pitch or volume. Then VO Command Up or Down Arrow changes it." : {
       "localizations" : {
         "de" : {
@@ -49947,6 +50761,29 @@
         }
       }
     },
+    "can you see me|is my face centered" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "siehst du mich|ist mein gesicht in der mitte|bin ich mittig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "me ves|mi cara esta centrada|estoy centrado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "est ce que tu me vois|mon visage est il centre|suis je centre"
+          }
+        }
+      }
+    },
     "cancel the timer|cancel the reminder" : {
       "comment" : "Voice command phrases, separated by |",
       "localizations" : {
@@ -50211,6 +51048,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "gris foncé"
+          }
+        }
+      }
+    },
+    "describe images automatically" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bilder automatisch beschreiben|automatische bildbeschreibung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "describir imagenes automaticamente|descripcion automatica de imagenes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "decrire les images automatiquement|description automatique des images"
           }
         }
       }
@@ -52520,6 +53380,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tout lire à partir du curseur, lire par ligne, paragraphe, mot et lettre, et répéter ou copier ce que VoiceOver a dit."
+          }
+        }
+      }
+    },
+    "record the screen|stop recording" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bildschirm aufnehmen|aufnahme stoppen|aufnahme starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "grabar la pantalla|detener la grabacion|empezar a grabar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "enregistrer l ecran|arreter l enregistrement|commencer l enregistrement"
           }
         }
       }

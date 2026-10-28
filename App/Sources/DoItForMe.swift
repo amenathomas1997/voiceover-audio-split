@@ -204,7 +204,9 @@ struct DoItForMeView: View {
                     .onSubmit { model.run() }
                 Button(String(localized: "Do It")) { model.run() }
                     .disabled(model.busy || model.request.trimmingCharacters(in: .whitespaces).isEmpty)
-                Text(String(localized: "The names of the controls in that app's front window are sent to Anthropic. Nothing is pressed without your confirmation."))
+                Text(AI.usesOnDevice
+                     ? String(localized: "The AI on this Mac reads the names of the controls in that app's front window; nothing is sent anywhere. Nothing is pressed without your confirmation.")
+                     : String(localized: "The names of the controls in that app's front window are sent to Anthropic. Nothing is pressed without your confirmation."))
                     .font(.caption).foregroundStyle(.secondary)
             }
             if let name = model.pendingPress {

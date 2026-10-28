@@ -248,10 +248,10 @@ enum MoneyReader {
 
     static func identify() {
         guard !feed.isRunning else { return }
-        guard Preferences.shared.allowImageUpload else {
+        guard AI.isReady else { return Announcer.say(AI.notReadyMessage) }
+        guard Preferences.shared.allowImageUpload || AI.usesOnDevice else {
             return Announcer.say(String(localized: "Identifying money sends a camera picture to Anthropic. Allow image descriptions first: describe any image once and choose Allow."))
         }
-        guard APIKey.current != nil else { return Announcer.say(String(localized: "Add your Anthropic API key in Settings first.")) }
         Tones.play(.status)
         Announcer.say(String(localized: "Hold the banknote flat, about 20 centimeters from the camera."))
         var frames = 0

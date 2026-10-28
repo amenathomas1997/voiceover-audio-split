@@ -79,6 +79,47 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        // The AI on this Mac: a question, a picture, and Do It for Me's control choice.
+        if CommandLine.arguments.contains("--check-ai") {
+            Task { @MainActor in
+                log("Check: on-device AI available = \(OnDeviceAI.isAvailable), sees images = \(OnDeviceAI.canSeeImages), used = \(AI.usesOnDevice)")
+                let question = try? await Claude.send([["role": "user", "content": "How do I open the rotor with VoiceOver?"]])
+                log("Check: AI answer = \(question?.text.prefix(200) ?? "failed")")
+                let image = NSImage(size: NSSize(width: 600, height: 300), flipped: false) { rect in
+                    NSColor.systemYellow.setFill(); rect.fill()
+                    ("EXIT" as NSString).draw(at: NSPoint(x: 200, y: 100), withAttributes: [.font: NSFont.boldSystemFont(ofSize: 96)])
+                    return true
+                }
+                if let png = image.tiffRepresentation.flatMap(NSBitmapImageRep.init(data:))?.representation(using: .png, properties: [:]) {
+                    let picture = try? await Claude.send([["role": "user", "content": [
+                        ["type": "image", "source": ["type": "base64", "media_type": "image/png", "data": png.base64EncodedString()]],
+                        ["type": "text", "text": "Describe this."]]]])
+                    log("Check: AI picture = \(picture?.text.prefix(200) ?? "failed")")
+                }
+                let choice = try? await Claude.send([["role": "user", "content": "Request: the search field\n\nControls:\n[0] button: Back\n[1] search field: Search\n[2] link: Help"]],
+                                                    system: DoItModel.system)
+                log("Check: AI control choice = \(choice?.text.prefix(200) ?? "failed")")
+                NSApp.terminate(nil)
+            }
+            return
+        }
+        // Records the screen for a few seconds: logs where it was saved.
+        if CommandLine.arguments.contains("--check-recording") {
+            Task { @MainActor in
+                Preferences.shared.recordMicrophone = false // No microphone prompt during the check.
+                ScreenRecorder.shared.start()
+                try? await Task.sleep(for: .seconds(5))
+                log("Check: recording = \(ScreenRecorder.shared.isRecording)")
+                ScreenRecorder.shared.stop()
+                try? await Task.sleep(for: .seconds(3))
+                let files = (try? FileManager.default.contentsOfDirectory(at: ScreenRecorder.folder, includingPropertiesForKeys: [.fileSizeKey])) ?? []
+                let newest = files.max { $0.lastPathComponent < $1.lastPathComponent }
+                let size = (try? newest?.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+                log("Check: recording saved = \(newest?.lastPathComponent ?? "none"), \(size) bytes")
+                NSApp.terminate(nil)
+            }
+            return
+        }
         // Starts voice commands as at launch with them on: logs whether listening started.
         if CommandLine.arguments.contains("--check-voice") {
             VoiceCommand.shared.update(enabled: true)
@@ -617,6 +658,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let assistant = submenu(in: menu, String(localized: "Assistant and Research"))
         add(to: assistant, String(localized: "Describe Image Under VoiceOver Cursor"), command: .describeImage) { $0.run(.describeImage) }
         add(to: assistant, String(localized: "Describe What's Happening in Video"), command: .describeVideo) { $0.run(.describeVideo) }
+        add(to: assistant, String(localized: "Describe Images Automatically"), command: .autoDescribeImages,
+            checked: preferences.autoDescribeImages) { $0.run(.autoDescribeImages) }
         add(to: assistant, String(localized: "Ask the Assistant…"), command: .assistant) { $0.run(.assistant) }
         add(to: assistant, String(localized: "Do It for Me…"), command: .doItForMe) { $0.run(.doItForMe) }
         add(to: assistant, String(localized: "Research It…"), command: .research) { $0.run(.research) }
@@ -655,6 +698,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: tools, String(localized: "Timers and Reminders…"), command: .reminders) { $0.run(.reminders) }
         add(to: tools, String(localized: "Clipboard History…"), command: .clipboardHistory) { $0.run(.clipboardHistory) }
         add(to: tools, String(localized: "Switch to a Window…"), command: .windowSwitcher) { $0.run(.windowSwitcher) }
+        let recording = MainActor.assumeIsolated { ScreenRecorder.shared.isRecording }
+        add(to: tools, recording ? String(localized: "Stop Recording the Screen") : String(localized: "Record the Screen"),
+            command: .screenRecording, checked: recording) { $0.run(.screenRecording) }
+        add(to: tools, String(localized: "Open the Recordings Folder")) { _ in MainActor.assumeIsolated { ScreenRecorder.shared.openFolder() } }
 
         if !preferences.userCommands.isEmpty {
             let yours = submenu(in: menu, String(localized: "Your Commands"))

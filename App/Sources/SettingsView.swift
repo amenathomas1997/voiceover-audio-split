@@ -271,6 +271,9 @@ struct SettingsView: View {
                     set: { UserDefaults.standard.set($0, forKey: Reminders.notificationsKey) }))
                 Text(String(localized: "Timers and reminders are always spoken. A notification also stays on screen until you dismiss it."))
                     .font(.caption).foregroundStyle(.secondary)
+                Toggle(String(localized: "Include my microphone in screen recordings"), isOn: $preferences.recordMicrophone)
+                Text(String(localized: "Record the Screen, in Everyday Tools, starts and stops with one command; give it a key in Command keys. Recordings, with the Mac's sound and VoiceOver, are saved in Movies, VoiceOver Audio Split Recordings, and never sent anywhere."))
+                    .font(.caption).foregroundStyle(.secondary)
             }
 
             Section(String(localized: "Keyboard and sounds")) {
@@ -331,6 +334,15 @@ struct SettingsView: View {
             }
 
             Section(String(localized: "Assistant and image descriptions")) {
+                Picker(String(localized: "Use AI"), selection: $preferences.aiProvider) {
+                    ForEach(AIProvider.allCases) { Text($0.title).tag($0.rawValue) }
+                }
+                Text(OnDeviceAI.status + " " + String(localized: "The AI on this Mac describes images and videos, answers questions, finds controls and identifies money without sending anything anywhere, and needs no key. Claude can give longer, more detailed answers."))
+                    .font(.caption).foregroundStyle(.secondary)
+                Toggle(String(localized: "Describe images automatically when VoiceOver lands on them"), isOn: $preferences.autoDescribeImages)
+                    .disabled(!OnDeviceAI.canSeeImages)
+                Text(String(localized: "After VoiceOver rests on a picture for a second, the AI on this Mac describes it, so you can go through photos quickly. Pictures are never sent anywhere for this. Needs screen recording permission."))
+                    .font(.caption).foregroundStyle(.secondary)
                 Text(hasAPIKey ? String(localized: "An Anthropic API key is saved in your Keychain.") :
                         String(localized: "The assistant and image descriptions use Claude. Paste an API key from console.anthropic.com. Requests are billed to that account."))
                 SecureField(hasAPIKey ? String(localized: "Replace API key") : String(localized: "API key"), text: $apiKey)

@@ -144,7 +144,7 @@ enum SettingsTransfer {
         "announceClipboard", "translateTarget", "preferIPhoneCamera", "balance", "lastSide",
         "announceCamera", "announceMicrophone", "customLabels", "placeMarkers", "typingBest", "typingSound", "lessonsDone", "lessonsMissed", "lessonSchedule", "lessonChallengeBest", "lessonMode",
         "practiceLearnMode", "typingSayEachKey", "checkForUpdates",
-        "hearingProfileOn", "hearingLeft", "hearingRight", "confirmSoundChanges",
+        "hearingProfileOn", "hearingLeft", "hearingRight", "confirmSoundChanges", "aiProvider", "autoDescribeImages", "recordMicrophone",
         "meetingChatAnnounce", "clipboardHistory", "reminderNotifications", "brailleGrade", "objectFinderCameraFacesYou",
     ]
 

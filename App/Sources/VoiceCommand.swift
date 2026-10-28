@@ -135,20 +135,20 @@ final class VoiceCommand {
             log("Voice command: couldn't choose the built-in microphone.")
             return Announcer.say(String(localized: "Voice command couldn't use the built-in microphone."))
         }
-        let format = engine.inputNode.outputFormat(forBus: 0)
-        guard format.sampleRate > 0, format.channelCount > 0 else {
-            return Announcer.say(String(localized: "Voice command couldn't use the built-in microphone."))
+        guard Self.installTap(on: engine, appendingTo: currentRequest) else {
+            log("Voice command: the microphone's format wasn't accepted.")
+            return failedToListen()
         }
-        let current = currentRequest
-        engine.inputNode.installTap(onBus: 0, bufferSize: 2048, format: format) { buffer, _ in
-            current.withLock { $0 }?.append(buffer)
-        }
-        do {
-            try engine.start()
-        } catch {
-            engine.inputNode.removeTap(onBus: 0)
+        var startError: NSError?
+        var started = false
+        // Starting can also throw an Objective-C exception; that mustn't close the app.
+        let caught = VOACatchException({
+            do { try engine.start(); started = true } catch { started = false }
+        }, &startError)
+        guard caught, started else {
+            _ = VOACatchException({ engine.inputNode.removeTap(onBus: 0) }, nil)
             log("Voice command: microphone couldn't start.")
-            return Announcer.say(String(localized: "Voice command couldn't use the built-in microphone."))
+            return failedToListen()
         }
         self.engine = engine
         self.recognizer = recognizer
@@ -164,6 +164,36 @@ final class VoiceCommand {
         }
         log("Voice command: listening on the device.")
         listen()
+    }
+
+    /// Listens to the input with a format it accepts. Some Macs (and newer macOS versions)
+    /// reject the format the input reports right after its device is changed, by throwing an
+    /// Objective-C exception that would end the app: catch it, and try the formats in turn.
+    private static func installTap(on engine: AVAudioEngine,
+                                   appendingTo current: OSAllocatedUnfairLock<SFSpeechAudioBufferRecognitionRequest?>) -> Bool {
+        let input = engine.inputNode
+        let block: AVAudioNodeTapBlock = { buffer, _ in current.withLock { $0 }?.append(buffer) }
+        let hardware = input.inputFormat(forBus: 0)
+        var candidates: [AVAudioFormat?] = [nil] // The input's own current format.
+        if hardware.sampleRate > 0, hardware.channelCount > 0 { candidates.append(hardware) }
+        let output = input.outputFormat(forBus: 0)
+        if output.sampleRate > 0, output.channelCount > 0 { candidates.append(output) }
+        for format in candidates {
+            var error: NSError?
+            if VOACatchException({ input.installTap(onBus: 0, bufferSize: 2048, format: format, block: block) }, &error) {
+                return true
+            }
+            log("Voice command: tap format rejected: \(error?.localizedDescription ?? "unknown").")
+            _ = VOACatchException({ input.removeTap(onBus: 0) }, nil)
+        }
+        return false
+    }
+
+    /// Listening couldn't start: voice commands stay off this time, and say so once.
+    private func failedToListen() {
+        engine = nil
+        isListening = false
+        Announcer.say(String(localized: "Voice commands couldn't start the microphone, so they're off for now. The rest of the app works as usual. Try turning voice commands on again in Settings."))
     }
 
     /// A new recognition task, replacing the last one.

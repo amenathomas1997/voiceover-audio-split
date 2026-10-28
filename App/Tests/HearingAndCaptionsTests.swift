@@ -147,3 +147,15 @@ final class SoundSafetyTests: XCTestCase {
         XCTAssertFalse(SoundSafety.shared.isWaiting)
     }
 }
+
+final class ExceptionCatchingTests: XCTestCase {
+    func testObjectiveCExceptionsBecomeErrors() {
+        var error: NSError?
+        let ok = VOACatchException({
+            NSException(name: .invalidArgumentException, reason: "required condition is false: format", userInfo: nil).raise()
+        }, &error)
+        XCTAssertFalse(ok)
+        XCTAssertEqual(error?.localizedDescription, "required condition is false: format")
+        XCTAssertTrue(VOACatchException({ _ = 1 + 1 }, nil))
+    }
+}

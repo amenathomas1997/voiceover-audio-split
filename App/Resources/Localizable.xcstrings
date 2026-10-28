@@ -45411,6 +45411,28 @@
         }
       }
     },
+    "Voice commands couldn't start the microphone, so they're off for now. The rest of the app works as usual. Try turning voice commands on again in Settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Sprachbefehle konnten das Mikrofon nicht starten und sind deshalb vorerst aus. Der Rest der App funktioniert wie gewohnt. Versuche, die Sprachbefehle in den Einstellungen wieder einzuschalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los comandos de voz no pudieron iniciar el micrófono, así que están desactivados por ahora. El resto de la app funciona como siempre. Prueba a activar de nuevo los comandos de voz en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les commandes vocales n'ont pas pu démarrer le micro ; elles sont donc désactivées pour l'instant. Le reste de l'app fonctionne normalement. Essayez de réactiver les commandes vocales dans les Réglages."
+          }
+        }
+      }
+    },
     "VoiceOver Audio Split %@" : {
       "localizations" : {
         "de" : {

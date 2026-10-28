@@ -79,6 +79,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        // Starts voice commands as at launch with them on: logs whether listening started.
+        if CommandLine.arguments.contains("--check-voice") {
+            VoiceCommand.shared.update(enabled: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+                log("Check: voice commands listening = \(VoiceCommand.shared.isListening)")
+                VoiceCommand.shared.update(enabled: false)
+                NSApp.terminate(nil)
+            }
+            return
+        }
         // Changes a sound setting and does nothing: logs that it asked, then went back.
         if CommandLine.arguments.contains("--check-sound-safety") {
             SoundSafety.seconds = 5

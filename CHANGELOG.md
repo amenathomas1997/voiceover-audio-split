@@ -2,6 +2,7 @@
 
 ## Next
 
+- **Fixed: the app closed as soon as it opened on some Macs with voice commands on** (seen on a MacBook Air with macOS 27). Connecting to the microphone could fail with an error the app didn't catch. Now, if the microphone can't be used, voice commands stay off and say why, and the rest of the app works. The microphone check is protected the same way.
 - **Keep this sound setting?** After a change that could stop you hearing your Mac (the output device, one-ear mode, ear balance, the volume limit, the hearing profile, the layout, call audio, ducking, the speech device, or a preset chosen by hand), a window asks whether to keep it. Return keeps it; Escape, closing the window, or doing nothing for 60 seconds puts everything back. "Audio Split, keep it" and "Audio Split, go back" work too. Everyday keys and automatic presets don't ask. Turn it off in Settings, under Where sounds go.
 - **Clearer permissions:** for camera, microphone, speech recognition and controlling VoiceOver, the buttons in Settings and the setup guide now ask your Mac directly, because macOS only lists an app on those pages after it has asked. The setup guide explains step by step where VoiceOver Utility's AppleScript checkbox is, and its test says exactly what's missing.
 - **Six new lessons** in a fifth level, Everyday apps 2: Messages, Calendar, managing files in Finder, Zoom and Teams, braille displays, and VoiceOver Utility. The course now has 30 lessons.

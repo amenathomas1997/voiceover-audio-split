@@ -50,7 +50,7 @@ enum MicCheck {
         var levels: [Float] = []
         var peak: Float = 0
         let lock = NSLock()
-        input.installTap(onBus: 0, bufferSize: 2048, format: format) { buffer, _ in
+        let block: AVAudioNodeTapBlock = { buffer, _ in
             guard let samples = buffer.floatChannelData?[0] else { return }
             var sum: Float = 0, bufferPeak: Float = 0
             for i in 0..<Int(buffer.frameLength) {
@@ -63,11 +63,19 @@ enum MicCheck {
             peak = max(peak, bufferPeak)
             lock.unlock()
         }
+        // The input can reject a format by throwing an Objective-C exception, which would
+        // close the app: catch it, and try the input's own format if the first one is refused.
+        let installed = VOACatchException({ input.installTap(onBus: 0, bufferSize: 2048, format: format, block: block) }, nil)
+            || VOACatchException({ input.installTap(onBus: 0, bufferSize: 2048, format: nil, block: block) }, nil)
+        guard installed else {
+            running = false
+            return Announcer.say(String(localized: "The microphone couldn't start"))
+        }
         Tones.play(.status)
-        do {
-            try engine.start()
-        } catch {
-            input.removeTap(onBus: 0)
+        var started = false
+        let caught = VOACatchException({ started = (try? engine.start()) != nil }, nil)
+        guard caught, started else {
+            _ = VOACatchException({ input.removeTap(onBus: 0) }, nil)
             running = false
             return Announcer.say(String(localized: "The microphone couldn't start"))
         }

@@ -15,6 +15,7 @@ final class ScreenRecorder: ObservableObject {
     @Published private(set) var isRecording = false
     private var session: AnyObject?
     private var starting = false
+    private var stopping = false
 
     /// Movies, VoiceOver Audio Split Recordings, in the user's real home folder (the
     /// app's own container has a Movies folder of its own, which nobody would find).
@@ -65,9 +66,26 @@ final class ScreenRecorder: ObservableObject {
 
     func stop() {
         guard isRecording else { return }
+        // Pressing the key again while the movie is being finished mustn't stop it twice:
+        // the second stop would fail, and report a good recording as a bad one.
+        guard !stopping else { return Announcer.say(String(localized: "Still saving the recording.")) }
+        stopping = true
+        Announcer.say(String(localized: "Stopping the recording."))
         if #available(macOS 15.0, *), let recording = session as? RecordingSession {
             Task { await recording.stop() }
         }
+    }
+
+    /// Quitting while recording: finish the movie first (up to a few seconds), or the
+    /// file is left unplayable.
+    func stopForQuit() {
+        guard isRecording, #available(macOS 15.0, *), let recording = session as? RecordingSession else { return }
+        let done = DispatchSemaphore(value: 0)
+        Task.detached {
+            await recording.stop()
+            done.signal()
+        }
+        _ = done.wait(timeout: .now() + 4)
     }
 
     func openFolder() {
@@ -78,6 +96,7 @@ final class ScreenRecorder: ObservableObject {
     private func finished(_ saved: Result<URL, Error>) {
         session = nil
         isRecording = false
+        stopping = false
         switch saved {
         case .success(let url):
             log("Screen recording saved.")
@@ -151,6 +170,8 @@ private final class RecordingSession: NSObject, SCStreamDelegate, SCRecordingOut
         } catch {
             report(.failure(error))
         }
+        // Wait for the file to be finished, so a caller that's about to quit can.
+        for _ in 0..<200 where !reported { try? await Task.sleep(for: .milliseconds(50)) }
     }
 
     private func report(_ result: Result<URL, Error>) {

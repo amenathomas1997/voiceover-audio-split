@@ -41,6 +41,7 @@ final class VoiceCommand {
     /// A question waiting for yes or no. Answers count only in a recognition task started
     /// after the question was spoken, so the question itself ("Say yes or no") can't answer it.
     private struct Question {
+        let id = UUID()
         let perform: () -> Void
         let until: Date
         var request: SFSpeechAudioBufferRecognitionRequest?
@@ -77,12 +78,15 @@ final class VoiceCommand {
         // Once the question has been said, listen afresh for the answer.
         let spoken = Announcer.speakingUntil.timeIntervalSinceNow
         DispatchQueue.main.asyncAfter(deadline: .now() + max(spoken, 1)) { [weak self] in
-            guard let self, self.awaitingAnswer != nil else { return }
+            guard let self, let asked = self.awaitingAnswer else { return }
+            // The question itself may have been heard: that's over now, so the fresh
+            // request below must not be thrown away as the app's own speech.
+            self.heardOwnSpeech = false
             self.listen()
             self.awaitingAnswer?.request = self.request
-            let ask = self.request
+            // Eight seconds for an answer, whether or not the microphone came up.
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                guard self.awaitingAnswer?.request === ask, ask != nil else { return }
+                guard self.awaitingAnswer?.id == asked.id else { return }
                 self.awaitingAnswer = nil
                 Announcer.say(String(localized: "No answer, so I didn't do it."))
                 self.stopIfNotWanted()
@@ -161,6 +165,8 @@ final class VoiceCommand {
             self.stop()
             (self.oneShotUntil, self.awaitingAnswer) = (keep.1, keep.2)
             if keep.0 || keep.1 != nil || keep.2 != nil { self.start() }
+            // A question still waiting is answered on the new request.
+            if self.awaitingAnswer?.request != nil { self.awaitingAnswer?.request = self.request }
         }
         log("Voice command: listening on the device.")
         listen()

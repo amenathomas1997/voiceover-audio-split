@@ -63,6 +63,7 @@ final class HearingTest: ObservableObject {
     private var level = -80.0
     private var results: [Int: [Double: Double]] = [:]
     private var timer: Timer?
+    private var run = 0
     /// Read on the audio thread: what to play now.
     nonisolated(unsafe) private static var tone: (frequency: Double, amplitude: Float, ear: Int) = (1000, 0, 0)
 
@@ -77,7 +78,14 @@ final class HearingTest: ObservableObject {
             return Announcer.say(String(localized: "The listening test couldn't play sound."))
         }
         Announcer.say(String(localized: "Listening test. Put on headphones and turn the volume to a comfortable level. You'll hear tones in one ear at a time, getting louder. Press Return as soon as you hear each one. Press Escape to stop."))
-        DispatchQueue.main.asyncAfter(deadline: .now() + 9) { [weak self] in self?.next() }
+        // Only this run's first tone: a test stopped and started again within 9 seconds
+        // would otherwise get two, and skip a frequency.
+        run += 1
+        let run = run
+        DispatchQueue.main.asyncAfter(deadline: .now() + 9) { [weak self] in
+            guard let self, self.running, self.run == run, self.current == nil else { return }
+            self.next()
+        }
     }
 
     func heard() {

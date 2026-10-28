@@ -19,6 +19,8 @@ enum AutoDescribe {
     nonisolated(unsafe) private static var cache: [String: String] = [:]
     nonisolated(unsafe) private static var cacheOrder: [String] = []
     nonisolated(unsafe) private static var permissionWarned = false
+    /// The description being worked on, cancelled when the cursor moves on.
+    nonisolated(unsafe) private static var work: Task<Void, Never>?
 
     /// How long the cursor rests on a picture before it's described.
     static let delay: TimeInterval = 1
@@ -56,22 +58,27 @@ enum AutoDescribe {
               let picture = picture(at: element) else {
             candidate = nil
             described = nil
+            cancelWork()
             return
         }
         let now = Date()
         guard let current = candidate, current.key == picture.key else {
             candidate = (picture.key, now)
+            cancelWork()
             return
         }
         guard now.timeIntervalSince(current.since) >= delay, described != picture.key else { return }
         described = picture.key
         if let known = cache[picture.key] { return say(known) }
         let key = picture.key
-        Task {
+        work = Task {
             do {
                 let png = try await ScreenPicture.underVoiceOverCursor()
-                guard let image = cgImage(png) else { return }
+                // The picture is taken where the cursor is now: if it has moved on since
+                // the check, this isn't the picture the key names.
+                guard !Task.isCancelled, stillOn(key), let image = cgImage(png) else { return }
                 let text = try await OnDeviceAI.respond([.text(prompt), .image(image)], instructions: Claude.system)
+                guard !Task.isCancelled else { return }
                 queue.async {
                     remember(text, for: key)
                     // Said only if the cursor is still on that picture.
@@ -112,6 +119,16 @@ enum AutoDescribe {
         guard let image, let frame = AX.frame(image) ?? AX.frame(element), isPictureSized(frame.size) else { return nil }
         let name = AX.text(image)
         return (key(pid: pid, frame: frame, name: name), frame)
+    }
+
+    private static func cancelWork() {
+        work?.cancel()
+        work = nil
+    }
+
+    /// Whether the cursor is still on the picture a key names.
+    private static func stillOn(_ key: String) -> Bool {
+        queue.sync { candidate?.key == key }
     }
 
     private static func remember(_ text: String, for key: String) {

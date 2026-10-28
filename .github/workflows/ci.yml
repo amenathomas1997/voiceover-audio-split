@@ -65,6 +65,10 @@ jobs:
           -configuration Debug -destination 'platform=macOS' -derivedDataPath build/dd
           CODE_SIGNING_ALLOWED=NO SWIFT_TREAT_WARNINGS_AS_ERRORS=YES build
 
+      # A new string with no catalog entry would ship in English only.
+      - name: Check every string is in the catalog
+        run: python3 App/Tools/check_catalog_complete.py build/dd
+
       - name: Build Release
         run: >
           xcodebuild -project App/VoiceOverAudioSplit.xcodeproj -scheme VoiceOverAudioSplit

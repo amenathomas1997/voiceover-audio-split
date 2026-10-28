@@ -58,12 +58,18 @@
       }
     },
     "NSAudioCaptureUsageDescription" : {
-      "extractionState" : "stale",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "VoiceOver Audio Split leitet die VoiceOver-Sprache auf ein Ohr und alle anderen Töne auf das andere. Nichts wird aufgenommen oder gespeichert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VoiceOver Audio Split moves VoiceOver speech to one ear and all other sounds to the other ear. Nothing is recorded or saved."
           }
         },
         "es" : {

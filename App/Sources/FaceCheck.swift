@@ -82,7 +82,9 @@ final class FaceCheck: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         // Skip the first second or so while the camera adjusts its exposure.
         guard frames == 30, let pixels = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let message = Self.describe(pixels)
-        running?.stopRunning()
+        // Stopping blocks until the session has stopped, and this is the queue it delivers
+        // on: stop it from elsewhere.
+        if let running { DispatchQueue.global(qos: .userInitiated).async { running.stopRunning() } }
         running = nil
         let completion = self.completion
         self.completion = nil

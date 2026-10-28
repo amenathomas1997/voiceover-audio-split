@@ -44,6 +44,9 @@ enum Braille {
         }.count
     }
 
+    /// Whether contracted braille is available (the bundled tables were found).
+    static var canContract: Bool { Louis.isAvailable }
+
     /// One line of text in Braille ASCII, uncontracted or contracted UEB.
     /// Contracted braille falls back to uncontracted if liblouis can't translate it.
     static func translate(_ text: String, grade: BrailleGrade = .uncontracted) -> String {
@@ -160,6 +163,8 @@ private enum Louis {
         return (folder + "/en-ueb-g2.ctb", folder + "/en-ueb-g1.ctb")
     }()
 
+    static var isAvailable: Bool { tables != nil }
+
     /// Whether each character can be put in braille, worked out once per character.
     private static var known: [Character: Bool] = [:]
 
@@ -210,10 +215,20 @@ private enum Louis {
 }
 
 struct BrailleView: View {
-    @State private var text = NSPasteboard.general.string(forType: .string) ?? ""
+    @State private var text = BrailleView.clipboardText()
     @State private var width = 40
     @State private var height = 25
+    @State private var preview = ""
+    @State private var saving = false
     @AppStorage("brailleGrade") private var grade: BrailleGrade = .contracted
+
+    /// What's on the clipboard, unless it was marked as not to be shown (a password manager's copy).
+    static func clipboardText() -> String {
+        let board = NSPasteboard.general
+        let concealed = ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType"].map { NSPasteboard.PasteboardType($0) }
+        if board.types?.contains(where: concealed.contains) == true { return "" }
+        return board.string(forType: .string) ?? ""
+    }
 
     var body: some View {
         Form {
@@ -227,17 +242,25 @@ struct BrailleView: View {
                 Stepper(String(localized: "Cells per line: \(width)"), value: $width, in: 20...42)
                 Stepper(String(localized: "Lines per page: \(height)"), value: $height, in: 10...30)
                 Button(String(localized: "Save as Braille File…")) { save() }
-                    .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(saving || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 Text(String(localized: "Unified English Braille, as a .brf file for embossers and notetakers. The text starts as what's on the clipboard."))
                     .font(.caption).foregroundStyle(.secondary)
             }
             Section(String(localized: "Preview")) {
-                Text(Braille.unicode(Braille.translate(String(text.prefix(400)), grade: grade)))
+                Text(preview)
                     .textSelection(.enabled)
             }
         }
         .formStyle(.grouped)
         .frame(width: 520, height: 520)
+        // Translating (and loading the tables the first time) happens off the main thread,
+        // which also carries the keyboard shortcuts: typing stays smooth.
+        .task(id: "\(grade.rawValue)|\(text.prefix(400))") {
+            let sample = String(text.prefix(400)), grade = grade
+            try? await Task.sleep(for: .milliseconds(250))
+            guard !Task.isCancelled else { return }
+            preview = await Task.detached { Braille.unicode(Braille.translate(sample, grade: grade)) }.value
+        }
     }
 
     private func save() {
@@ -246,13 +269,24 @@ struct BrailleView: View {
         panel.allowedContentTypes = [UTType(filenameExtension: "brf") ?? .plainText]
         NSApp.activate()
         guard panel.runModal() == .OK, let url = panel.url else { return }
-        do {
-            try Braille.brf(text, grade: grade, width: width, height: height).write(to: url, atomically: true, encoding: .ascii)
+        let (text, grade, width, height) = (text, grade, width, height)
+        saving = true
+        Task.detached {
+            let result = Result { try Braille.brf(text, grade: grade, width: width, height: height).write(to: url, atomically: true, encoding: .ascii) }
             let missing = Braille.unsupported(in: text, grade: grade)
-            Announcer.say(String(localized: "Saved \(url.lastPathComponent)")
-                          + (missing > 0 ? " " + String(localized: "\(missing) characters have no braille here and were left out.") : ""))
-        } catch {
-            Announcer.say(String(localized: "Couldn't save the braille file"))
+            let uncontracted = grade == .contracted && !Braille.canContract
+            await MainActor.run {
+                saving = false
+                switch result {
+                case .success:
+                    var said = String(localized: "Saved \(url.lastPathComponent)")
+                    if uncontracted { said += " " + String(localized: "Contracted braille isn't available on this Mac, so the file is uncontracted.") }
+                    if missing > 0 { said += " " + String(localized: "\(missing) characters have no braille here and were left out.") }
+                    Announcer.say(said)
+                case .failure:
+                    Announcer.say(String(localized: "Couldn't save the braille file"))
+                }
+            }
         }
     }
 }

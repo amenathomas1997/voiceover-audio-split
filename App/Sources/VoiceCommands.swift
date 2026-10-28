@@ -105,6 +105,8 @@ enum VoiceCommands {
         let starts = phrases("find|go to|move to|take me to",
                              String(localized: "find|go to", comment: "Voice command words that start a Do It for Me request, separated by |"))
         let text = normalize(command)
+        // "Find a window" is a command of its own, not a search in the front app.
+        guard !all.contains(where: { $0.phrases.contains(text) }) else { return nil }
         for start in starts.sorted(by: { $0.count > $1.count }) where text.hasPrefix(start + " ") {
             return String(text.dropFirst(start.count + 1))
         }

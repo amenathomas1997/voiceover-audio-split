@@ -202,6 +202,8 @@ final class RemindersModelTests: XCTestCase {
         XCTAssertEqual(Reminders.spoken(600), "10 minutes")
         XCTAssertEqual(Reminders.spoken(5400), "1 hour, 30 minutes")
         XCTAssertEqual(Reminders.spoken(45), "45 seconds")
+        // "A minute and a half" is said as it was set, not rounded to two minutes.
+        XCTAssertEqual(Reminders.spoken(90), "1 minute, 30 seconds")
     }
 }
 

@@ -78,7 +78,7 @@ final class Controller {
     private var engineNeeded: Bool {
         activeSide != nil || quietAll || speechSilenced || preferences.clarity || preferences.leveler || preferences.volumeLimit
             || preferences.oneEar != .off || preferences.earBalance != 0 || !preferences.appRules.isEmpty
-            || (preferences.ducking && activeSide != nil)
+            || preferences.hearingProfileOn || (preferences.ducking && activeSide != nil)
     }
 
     private func configuration() -> SplitConfiguration {
@@ -619,6 +619,20 @@ final class Controller {
         preferences.volumeLimitLevel = preset.volumeLimitLevel
         preferences.oneEar = preset.oneEar
         preferences.earBalance = preset.earBalance
+        // The split and the balance aren't preferences, so "Keep this sound setting?" is
+        // told about them here; going back then restores the whole preset, not part of it.
+        if balance != clamp(preset.balance) {
+            SoundSafety.shared.note("balance", String(localized: "the balance")) { [balance] in
+                self.balance = balance
+                self.update()
+            }
+        }
+        if activeSide != Side(rawValue: preset.split) {
+            SoundSafety.shared.note("split", String(localized: "the split")) { [activeSide] in
+                self.activeSide = activeSide
+                self.update()
+            }
+        }
         balance = clamp(preset.balance)
         activeSide = Side(rawValue: preset.split)
         if let side = activeSide { lastSide = side }

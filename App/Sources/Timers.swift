@@ -472,7 +472,7 @@ final class Reminders: ObservableObject {
     private var started = false
     private var askedForNotifications = false
 
-    init(defaults: UserDefaults = .standard, now: @escaping () -> Date = Date.init, calendar: Calendar = .current,
+    init(defaults: UserDefaults = .standard, now: @escaping () -> Date = Date.init, calendar: Calendar = .autoupdatingCurrent,
          announce: @escaping (String) -> Void = Announcer.say, sound: @escaping (Tone) -> Void = Tones.play,
          deliver: ((_ due: [Reminder], _ missed: [Reminder]) -> Void)? = nil) {
         self.defaults = defaults
@@ -705,7 +705,8 @@ final class Reminders: ObservableObject {
         formatter.unitsStyle = .full
         formatter.maximumUnitCount = 2
         formatter.allowedUnits = seconds < 60 ? [.second] : seconds < 3600 ? [.minute, .second] : [.day, .hour, .minute]
-        let rounded = seconds < 60 ? seconds.rounded() : (seconds / 60).rounded() * 60
+        // Under an hour, the seconds count ("1 minute, 30 seconds"); above it, whole minutes.
+        let rounded = seconds < 3600 ? seconds.rounded() : (seconds / 60).rounded() * 60
         return formatter.string(from: max(seconds < 60 ? 1 : 60, rounded)) ?? ""
     }
 

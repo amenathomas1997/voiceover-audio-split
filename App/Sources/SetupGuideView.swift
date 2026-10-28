@@ -78,7 +78,7 @@ struct SetupGuideView: View {
                 Text(String(localized: "S: silence VoiceOver. R: read the item under the VoiceOver cursor. H: speech history."))
                 Text(String(localized: "C: hear the clipboard. F: check camera framing for video calls."))
                 Text(String(localized: "L: layer. After it, press any of these keys on its own. Slash lists them; Escape cancels."))
-                Text(String(localized: "I: describe the image under the VoiceOver cursor. A: ask the assistant. These need an Anthropic API key in Settings."))
+                Text(String(localized: "I: describe the image under the VoiceOver cursor. A: ask the assistant. These use the AI on this Mac (macOS 27 with Apple Intelligence), or Claude with your Anthropic API key in Settings."))
                 Text(String(localized: "T: analyze clipboard text. G: Research It. B: system status."))
                 Text(String(localized: "O: Doc Reader. N: Scan and Read. U: large-print captions. Y: focus frame. P: audio hub. J: play or pause the audio hub."))
                 Text(String(localized: "K: restart VoiceOver. E: compare text, once with the original copied and again with the new version. V: find a VoiceOver command. Comma: report a bug to Apple."))

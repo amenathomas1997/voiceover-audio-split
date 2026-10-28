@@ -28,6 +28,7 @@ final class SoundSafety: ObservableObject {
     private var settle: DispatchWorkItem?
     private var timer: Timer?
     private var panel: NSPanel?
+    private var closeObserver: NSObjectProtocol?
     /// Unit tests change settings all the time; the check only runs in them when a test asks.
     var runsInTests = false
     private let inTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
@@ -82,8 +83,11 @@ final class SoundSafety: ObservableObject {
         timer = nil
         restores = []
         changes = []
-        panel?.orderOut(nil)
-        panel = nil
+        if let closeObserver { NotificationCenter.default.removeObserver(closeObserver) }
+        closeObserver = nil
+        let panel = panel
+        self.panel = nil
+        panel?.close()
     }
 
     private func ask() {
@@ -114,10 +118,10 @@ final class SoundSafety: ObservableObject {
         NSApp.activate()
         panel.makeKeyAndOrderFront(nil)
         self.panel = panel
-        // Closing the window counts as going back, the safe choice.
-        NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: panel, queue: .main) { [weak self] _ in
+        // Closing the window counts as going back, the safe choice. (finish() closes it
+        // itself after removing this observer, so keep and undo don't come back here.)
+        closeObserver = NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: panel, queue: .main) { [weak self] _ in
             guard let self, self.panel === panel else { return }
-            self.panel = nil
             self.undo()
         }
     }

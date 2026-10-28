@@ -7394,6 +7394,35 @@
         }
       }
     },
+    "Cancel the Last Reminder" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzte Erinnerung abbrechen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancel the Last Reminder"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar el último recordatorio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler le dernier rappel"
+          }
+        }
+      }
+    },
     "Cancel the last timer or reminder" : {
       "localizations" : {
         "de" : {
@@ -11108,6 +11137,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abrégé (niveau 2)"
+          }
+        }
+      }
+    },
+    "Contracted braille isn't available on this Mac, so the file is uncontracted." : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurzschrift ist auf diesem Mac nicht verfügbar, daher ist die Datei in Vollschrift."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contracted braille isn't available on this Mac, so the file is uncontracted."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El braille contraído no está disponible en este Mac, así que el archivo está sin contraer."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le braille abrégé n’est pas disponible sur ce Mac, le fichier est donc en braille intégral."
           }
         }
       }
@@ -17426,24 +17484,31 @@
         }
       }
     },
-    "I: describe the image under the VoiceOver cursor. A: ask the assistant. These need an Anthropic API key in Settings." : {
+    "I: describe the image under the VoiceOver cursor. A: ask the assistant. These use the AI on this Mac (macOS 27 with Apple Intelligence), or Claude with your Anthropic API key in Settings." : {
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I: Bild unter dem VoiceOver-Cursor beschreiben. A: den Assistenten fragen. Dafür ist ein Anthropic-API-Schlüssel in den Einstellungen nötig."
+            "value" : "I: das Bild unter dem VoiceOver-Cursor beschreiben. A: den Assistenten fragen. Sie verwenden die KI auf diesem Mac (macOS 27 mit Apple Intelligence) oder Claude mit deinem Anthropic-API-Schlüssel in den Einstellungen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "I: describe the image under the VoiceOver cursor. A: ask the assistant. These use the AI on this Mac (macOS 27 with Apple Intelligence), or Claude with your Anthropic API key in Settings."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I: describir la imagen bajo el cursor de VoiceOver. A: preguntar al asistente. Necesitan una clave de API de Anthropic en Ajustes."
+            "value" : "I: describir la imagen bajo el cursor de VoiceOver. A: preguntar al asistente. Usan la IA de este Mac (macOS 27 con Apple Intelligence) o Claude con tu clave de API de Anthropic en Ajustes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I : décrire l'image sous le curseur VoiceOver. A : demander à l'assistant. Ces commandes nécessitent une clé API Anthropic dans les réglages."
+            "value" : "I : décrire l’image sous le curseur VoiceOver. A : interroger l’assistant. Ils utilisent l’IA de ce Mac (macOS 27 avec Apple Intelligence), ou Claude avec votre clé d’API Anthropic dans les Réglages."
           }
         }
       }
@@ -20942,6 +21007,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Liens"
+          }
+        }
+      }
+    },
+    "List Timers and Reminders" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timer und Erinnerungen auflisten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List Timers and Reminders"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enumerar temporizadores y recordatorios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lister les minuteurs et les rappels"
           }
         }
       }
@@ -37601,6 +37695,35 @@
         }
       }
     },
+    "Still saving the recording." : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Aufnahme wird noch gespeichert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Still saving the recording."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La grabación todavía se está guardando."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’enregistrement est encore en cours de sauvegarde."
+          }
+        }
+      }
+    },
     "Still working on the last request" : {
       "localizations" : {
         "de" : {
@@ -37883,6 +38006,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arrêter le test"
+          }
+        }
+      }
+    },
+    "Stopping the recording." : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Aufnahme wird beendet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Stopping the recording."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deteniendo la grabación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêt de l’enregistrement."
           }
         }
       }
@@ -39999,6 +40151,35 @@
         }
       }
     },
+    "The control is %@." : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Steuerelement ist %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The control is %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El control es %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le contrôle est %@."
+          }
+        }
+      }
+    },
     "The document has no title." : {
       "localizations" : {
         "de" : {
@@ -41535,6 +41716,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cette commande n'a pas de touche pour le moment ; choisissez-en une dans les Réglages, ou passez cette étape."
+          }
+        }
+      }
+    },
+    "This conversation has a picture in it, and sending pictures to Anthropic isn't allowed in Settings. Start a new one, or allow it in Settings." : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Unterhaltung enthält ein Bild, und das Senden von Bildern an Anthropic ist in den Einstellungen nicht erlaubt. Beginne eine neue oder erlaube es in den Einstellungen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This conversation has a picture in it, and sending pictures to Anthropic isn't allowed in Settings. Start a new one, or allow it in Settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta conversación contiene una imagen, y en Ajustes no está permitido enviar imágenes a Anthropic. Empieza una nueva o permítelo en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette conversation contient une image, et l’envoi d’images à Anthropic n’est pas autorisé dans les Réglages. Commencez-en une nouvelle, ou autorisez-le dans les Réglages."
           }
         }
       }
@@ -54034,6 +54244,35 @@
         }
       }
     },
+    "the balance" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Balance"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "the balance"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el balance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la balance"
+          }
+        }
+      }
+    },
     "the day, week and month views, moving by day and week, hearing your events, and adding an event." : {
       "localizations" : {
         "de" : {
@@ -54184,6 +54423,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "l'appareil pour la parole"
+          }
+        }
+      }
+    },
+    "the split" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Aufteilung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "the split"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la división"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la séparation"
           }
         }
       }

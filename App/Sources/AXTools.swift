@@ -68,6 +68,16 @@ enum AX {
         return ""
     }
 
+    /// What a field is called: its title, description, placeholder or help, but not its
+    /// contents.
+    static func label(_ element: AXUIElement) -> String {
+        for attribute in [kAXTitleAttribute, kAXDescriptionAttribute, kAXPlaceholderValueAttribute, kAXHelpAttribute] {
+            let text = string(element, attribute).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !text.isEmpty { return String(text.prefix(200)) }
+        }
+        return ""
+    }
+
     static func pressResult(_ element: AXUIElement) -> AXError {
         AXUIElementPerformAction(element, kAXPressAction as CFString)
     }

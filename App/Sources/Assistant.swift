@@ -56,11 +56,21 @@ enum Claude {
 
     /// Sends the conversation and returns the assistant's full content blocks
     /// (to append to the conversation unchanged) and its spoken text.
+    static func hasImage(_ message: [String: Any]) -> Bool {
+        guard let blocks = message["content"] as? [Any] else { return false }
+        return blocks.contains { ($0 as? [String: Any])?["type"] as? String == "image" }
+    }
+
     static func send(_ messages: [[String: Any]], system: String = Claude.system) async throws -> (content: [Any], text: String) {
         // The AI on this Mac, when chosen (or when there's no key): nothing leaves the Mac.
         if AI.usesOnDevice { return try await OnDeviceAI.send(messages, system: system) }
         guard let key = APIKey.current, !key.isEmpty else {
             throw Failure(message: AI.notReadyMessage)
+        }
+        // A picture taken for the AI on this Mac (which asks no permission) must not go
+        // to Anthropic later, say with a follow-up after the provider changed.
+        if !Preferences.shared.allowImageUpload, messages.contains(where: hasImage) {
+            throw Failure(message: String(localized: "This conversation has a picture in it, and sending pictures to Anthropic isn't allowed in Settings. Start a new one, or allow it in Settings."))
         }
         var request = URLRequest(url: URL(string: "https://api.anthropic.com/v1/messages")!)
         request.httpMethod = "POST"

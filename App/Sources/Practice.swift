@@ -89,9 +89,9 @@ final class PracticeModel: ObservableObject {
         Hotkeys.keyObserver = nil
         session += 1
         running = false
-        current = nil
         // The task being asked when it stopped wasn't answered.
         let asked = round - (current == nil ? 0 : 1)
+        current = nil
         Announcer.say(String(localized: "Practice stopped. \(score) right out of \(asked)."))
     }
 

@@ -543,6 +543,9 @@ final class AssistiveToolTests: XCTestCase {
         XCTAssertEqual(choice?.element, 3)
         XCTAssertEqual(choice?.action, "press")
         XCTAssertEqual(DoItModel.Choice("{\"element\": null, \"action\": \"delete\", \"say\": \"x\"}")?.action, "none")
+        // A closing brace before the only opening one mustn't crash the parser.
+        XCTAssertNil(DoItModel.Choice("} nothing here {"))
+        XCTAssertNil(DoItModel.Choice("no json at all"))
         XCTAssertNil(DoItModel.Choice("no json here"))
     }
 
@@ -947,6 +950,8 @@ final class VoiceCommandsTests: XCTestCase {
         XCTAssertEqual(VoiceCommands.findRequest(in: "find the search field"), "the search field")
         XCTAssertEqual(VoiceCommands.findRequest(in: "go to the send button"), "the send button")
         XCTAssertNil(VoiceCommands.findRequest(in: "quiet everything"))
+        // A command of its own that happens to start with "find" isn't a Do It for Me request.
+        XCTAssertNil(VoiceCommands.findRequest(in: "find a window"))
     }
 
     func testWhatCanISayListsTheCommands() {

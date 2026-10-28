@@ -6,6 +6,21 @@
 - **Describe images automatically:** when the VoiceOver cursor rests on a picture for a second, the AI on this Mac describes it, with no key to press. Great for going through photos. Turn it on in Settings, the Assistant menu, or say "Audio Split, describe images automatically".
 - **Record the screen:** one command starts and stops a recording of the screen, with the Mac's sound and VoiceOver, and your microphone if you like, saved in Movies, VoiceOver Audio Split Recordings (macOS 15 or later). Give it a key in Settings, under Command keys, or say "Audio Split, start recording".
 - **"Audio Split, can you see me?"** runs the camera framing check by voice: whether your face is centered, at a good distance and well lit.
+- **Fixed, from a code audit:**
+  - The hearing profile did nothing unless the split or another sound feature was already on.
+  - "Keep this sound setting?" after a preset chosen by hand put back the layout and the other settings but not the split or the balance; and its window was never freed.
+  - Spoken yes-or-no questions (restart VoiceOver, switch output, leave the meeting, Do It for Me's press) often heard nothing, because the app's own question was still being discounted when the answer came. A microphone change during a question is handled too.
+  - "Audio Split, find a window" opened Do It for Me instead of the window switcher.
+  - Do It for Me no longer sends what's typed in text fields (only their labels), always says which control it is about to press, using the app's own name for it, and can't crash on an odd answer from the AI.
+  - A picture taken for the AI on this Mac is never sent to Anthropic with a later follow-up unless sending pictures is allowed in Settings.
+  - Describing images automatically now cancels when the cursor moves on, and can't describe one picture under another's name.
+  - Pressing the recording key again while the movie was being saved reported a good recording as failed; it now says it is still saving. Quitting while recording finishes the movie first.
+  - The listening test restarted within nine seconds skipped a tone.
+  - Timers between whole minutes were rounded ("a minute and a half" became 2 minutes). Reminders follow a time-zone change without a relaunch.
+  - Practice's closing score counted the unanswered task. The Braille window no longer picks up a password manager's copy, translates off the main thread so typing stays smooth, and says when a file had to be uncontracted.
+  - In lessons, Command-Tab, Command-Q, Command-W, Command-H and Command-M always work during practice, so you can leave.
+  - The setup guide said the AI features need an Anthropic key; they don't on macOS 27. "List Timers and Reminders" and "Cancel the Last Reminder" are in the menu.
+  - CI now fails if a new string is missing from the translation catalog, and the system audio permission text is checked and translated again.
 ## 1.1, 28 October 2026
 
 - **Fixed: the app closed as soon as it opened on some Macs with voice commands on** (seen on a MacBook Air with macOS 27). Connecting to the microphone could fail with an error the app didn't catch. Now, if the microphone can't be used, voice commands stay off and say why, and the rest of the app works. The microphone check is protected the same way.

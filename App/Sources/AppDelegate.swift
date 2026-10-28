@@ -292,6 +292,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     #endif
 
     func applicationWillTerminate(_ notification: Notification) {
+        ScreenRecorder.shared.stopForQuit()
         controller.stopForQuit()
     }
 
@@ -696,6 +697,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: tools, String(localized: "Open Latest Download"), command: .openDownload) { $0.run(.openDownload) }
         add(to: tools, String(localized: "Audio Mouse"), command: .audioMouse, checked: AudioMouse.isOn) { $0.run(.audioMouse) }
         add(to: tools, String(localized: "Timers and Reminders…"), command: .reminders) { $0.run(.reminders) }
+        add(to: tools, String(localized: "List Timers and Reminders"), command: .listReminders) { $0.run(.listReminders) }
+        add(to: tools, String(localized: "Cancel the Last Reminder"), command: .cancelLastReminder) { $0.run(.cancelLastReminder) }
         add(to: tools, String(localized: "Clipboard History…"), command: .clipboardHistory) { $0.run(.clipboardHistory) }
         add(to: tools, String(localized: "Switch to a Window…"), command: .windowSwitcher) { $0.run(.windowSwitcher) }
         let recording = MainActor.assumeIsolated { ScreenRecorder.shared.isRecording }

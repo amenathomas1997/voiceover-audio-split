@@ -3,7 +3,8 @@
 // one asked for. The VoiceOver cursor is moved there, so the user stays in charge.
 // Pressing always needs a confirmation first, and Claude is told never to choose
 // pressing for anything that sends, buys, posts or deletes.
-// Only the names and roles of the front window's controls are sent, and only when asked.
+// Only the names and roles of the front window's controls are sent, and only when asked;
+// what has been typed into a field is left out.
 
 import AppKit
 import SwiftUI
@@ -42,9 +43,12 @@ final class DoItModel: ObservableObject {
 
     func run() {
         let request = request.trimmingCharacters(in: .whitespacesAndNewlines)
+        let voice = fromVoice
+        fromVoice = false
         guard !request.isEmpty, !busy else { return }
         guard Hotkeys.isTrusted else { return note(String(localized: "Allow keyboard shortcuts in Settings first; this uses the same permission.")) }
         guard let target, !target.isTerminated else { return note(String(localized: "Open the app first, then choose Do It for Me.")) }
+        fromVoice = voice
         busy = true
         pendingPress = nil
         pendingElement = nil
@@ -83,11 +87,14 @@ final class DoItModel: ObservableObject {
             pendingPress = name
             busy = false
             log.append(choice.say)
+            // The control is named from the app itself, not from the AI's answer, so what's
+            // about to be pressed is always heard, whatever the AI said.
+            let named = String(localized: "The control is \(name ?? "").")
             if fromVoice {
                 fromVoice = false
-                return VoiceCommand.shared.askYesNo(choice.say + " " + String(localized: "Press it?")) { [weak self] in self?.confirmPress() }
+                return VoiceCommand.shared.askYesNo(choice.say + " " + named + " " + String(localized: "Press it?")) { [weak self] in self?.confirmPress() }
             }
-            Announcer.say(choice.say + " " + String(localized: "Press Return to press it, or Escape to cancel."))
+            Announcer.say(choice.say + " " + named + " " + String(localized: "Press Return to press it, or Escape to cancel."))
             return
         }
         fromVoice = false
@@ -160,13 +167,16 @@ final class DoItModel: ObservableObject {
         kAXImageRole, "AXHeading", kAXStaticTextRole, "AXSearchField", kAXDisclosureTriangleRole, kAXIncrementorRole,
     ]
 
+    static let editable: Set<String> = [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole, "AXSearchField"]
+
     static func controls(in window: AXUIElement) -> [Control] {
         var result: [Control] = []
         let deadline = Date().addingTimeInterval(8)
         for element in AX.descendants(of: window, limit: 4000) where result.count < 400 && Date() < deadline {
             let role = AX.string(element, kAXRoleAttribute)
             guard actionable.contains(role) else { continue }
-            let text = AX.text(element)
+            // A field is named by its label or placeholder, never by what's typed in it.
+            let text = editable.contains(role) ? AX.label(element) : AX.text(element)
             if role == kAXStaticTextRole && text.count < 2 { continue }
             let roleName = AX.string(element, kAXRoleDescriptionAttribute)
             result.append(Control(element: element, line: "\(roleName.isEmpty ? role : roleName): \(text.isEmpty ? "(no name)" : text)"))
@@ -181,7 +191,7 @@ final class DoItModel: ObservableObject {
         let say: String
 
         init?(_ text: String) {
-            guard let start = text.firstIndex(of: "{"), let end = text.lastIndex(of: "}"),
+            guard let start = text.firstIndex(of: "{"), let end = text.lastIndex(of: "}"), start <= end,
                   let json = try? JSONSerialization.jsonObject(with: Data(text[start...end].utf8)) as? [String: Any],
                   let action = json["action"] as? String else { return nil }
             element = json["element"] as? Int

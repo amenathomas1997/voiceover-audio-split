@@ -35,12 +35,17 @@ final class CallCaptions: ObservableObject {
     private let queue = DispatchQueue(label: "VoiceOverAudioSplit.call-captions", qos: .userInteractive)
     private static let maxLines = 200
 
+    private var starting = false
+
     func toggle() { isRunning ? stop() : start() }
 
     func start() {
-        guard !isRunning else { return }
+        guard !isRunning, !starting else { return }
+        starting = true
         SFSpeechRecognizer.requestAuthorization { status in
             DispatchQueue.main.async {
+                self.starting = false
+                guard !self.isRunning else { return }
                 guard status == .authorized else {
                     return Announcer.say(String(localized: "Call captions need Speech Recognition. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Speech Recognition."))
                 }

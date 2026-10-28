@@ -1476,6 +1476,10 @@ final class LessonRunner: ObservableObject {
                 DispatchQueue.main.async { self.repeatCurrent() }
                 return true
             }
+            // Leaving is always allowed: switching apps, hiding, closing or quitting with
+            // Command isn't an attempt, unless that's the combination asked for.
+            if flags.contains(.maskCommand), !KeyCombo.isVO(flags), [48, 12, 13, 4, 46].contains(keyCode),
+               !combo.matches(keyCode: keyCode, flags: flags, letter: letter) { return false }
             // Only judge real attempts: something held with the key, or the keys asked for.
             let attempt = KeyCombo.isVO(flags) || flags.contains(.maskCommand) || flags.contains(.maskAlternate)
                 || flags.contains(.maskShift) || flags.contains(.maskControl)

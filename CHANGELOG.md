@@ -2,6 +2,8 @@
 
 ## Next
 
+## 1.2, 3 November 2026
+
 - **AI on your Mac:** image and video descriptions, the assistant, Do It for Me and the money identifier can use Apple's on-device model (macOS 27 with Apple Intelligence): no API key, no cost, and nothing leaves your Mac. Choose in Settings, under Assistant and image descriptions; Claude with your own key is still there for longer answers.
 - **Describe images automatically:** when the VoiceOver cursor rests on a picture for a second, the AI on this Mac describes it, with no key to press. Great for going through photos. Turn it on in Settings, the Assistant menu, or say "Audio Split, describe images automatically".
 - **Record the screen:** one command starts and stops a recording of the screen, with the Mac's sound and VoiceOver, and your microphone if you like, saved in Movies, VoiceOver Audio Split Recordings (macOS 15 or later). Give it a key in Settings, under Command keys, or say "Audio Split, start recording".

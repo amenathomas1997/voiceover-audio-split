@@ -37,6 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var clipboardWindow: NSWindow?
     private var switcherWindow: NSWindow?
     private var objectFinderWindow: NSWindow?
+    private var resourceWindow: NSWindow?
     private var practiceWindow: NSWindow?
     private var typingWindow: NSWindow?
     private var lessonsWindow: NSWindow?
@@ -99,6 +100,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 let choice = try? await Claude.send([["role": "user", "content": "Request: the search field\n\nControls:\n[0] button: Back\n[1] search field: Search\n[2] link: Help"]],
                                                     system: DoItModel.system)
                 log("Check: AI control choice = \(choice?.text.prefix(200) ?? "failed")")
+                NSApp.terminate(nil)
+            }
+            return
+        }
+        // The resource monitor: logs every part, as spoken.
+        if CommandLine.arguments.contains("--check-resources") {
+            SystemStatus.start()
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(1))
+                log("Check: resources summary = \(await ResourceMonitor.summary())")
+                for detail in ResourceMonitor.Detail.allCases {
+                    log("Check: resources \(detail.title) = \(await ResourceMonitor.detail(detail))")
+                }
                 NSApp.terminate(nil)
             }
             return
@@ -407,6 +421,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         })
     }
 
+    func showResourceMonitor() {
+        resourceWindow = show(resourceWindow, title: String(localized: "Resource Monitor"), view: ResourceMonitorView())
+    }
+
     func showObjectFinder() {
         objectFinderWindow = show(objectFinderWindow, title: String(localized: "Find an Object"), view: ObjectFinderView())
     }
@@ -705,6 +723,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: tools, recording ? String(localized: "Stop Recording the Screen") : String(localized: "Record the Screen"),
             command: .screenRecording, checked: recording) { $0.run(.screenRecording) }
         add(to: tools, String(localized: "Open the Recordings Folder")) { _ in MainActor.assumeIsolated { ScreenRecorder.shared.openFolder() } }
+        add(to: tools, String(localized: "Resource Monitor"), command: .resourceMonitor) { $0.run(.resourceMonitor) }
+        add(to: tools, String(localized: "Resource Monitor Window…")) { [weak self] _ in self?.showResourceMonitor() }
 
         if !preferences.userCommands.isEmpty {
             let yours = submenu(in: menu, String(localized: "Your Commands"))

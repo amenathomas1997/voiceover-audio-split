@@ -10,7 +10,7 @@
 - **Hearing and clarity:** a speech clarity boost, leveling for loud media, a volume limit, one-ear mode and ear balance.
 - **Speech tools:** speech on demand, speech history, captions, say clipboard, and system status.
 - **Reading and low vision:** a large-print Doc Reader, camera text reading (Scan and Read), captions and a focus frame.
-- **Everyday tools:** barcode, QR code, medicine label and money readers, a color identifier and light detector, a document accessibility check, braille files, and camera and microphone alerts.
+- **Everyday tools:** barcode, QR code, medicine label and money readers, a color identifier and light detector, a document accessibility check, braille files, camera and microphone alerts, and a resource monitor like NVDA's (processor, memory, disk space, battery, uptime, network, busiest apps).
 - **Working with apps:** custom labels for unlabeled controls, place markers on web pages, and Do It for Me.
 - **Learning:** VoiceOver Lessons, a 30-lesson course for learning VoiceOver from the beginning, up to Pages, Numbers, Keynote, Safari bookmarks, Messages, Calendar, Finder, Zoom and Teams, braille displays and VoiceOver Utility; trainers can add their own lessons and keep progress for several students; a tutorial for this app's keys; input help; VoiceOver practice; and a talking typing trainer.
 - **Fixes for problems AppleVis users report:**
@@ -76,6 +76,7 @@
 - **Hands-free:** read this page (Scan and Read); what color is this?; read this barcode; read this label; what money is this?; read the window.
 - **Sound:** speech left; speech right; split off; quiet everything; sound back; mute my microphone; unmute; next output device (asks first); any preset by name, such as "Meeting preset".
 - **Questions:** what time is it?; how's my battery?; system status; what's playing?; what's using my microphone?; what did VoiceOver say?
+- **Resource monitor:** resource monitor; processor; memory; disk space; uptime; busiest apps (what's using the processor).
 - **Learning:** next lesson; daily practice; repeat that. "Launch VoiceOver training" works without the wake word.
 - **Do It for Me:** "find…" or "go to…" and the name of a control, such as "Audio Split, find the search field". It moves the VoiceOver cursor there. If it would press something, it asks "Press it? Say yes or no." This uses Do It for Me, so your request and the control names are sent to Anthropic.
 
@@ -155,7 +156,9 @@ The main version is a menu bar app in [App/](App/), built with Xcode and distrib
 | Right Option + Grave Accent | Input help: shortcuts say what they do instead of doing it. Press again to stop. |
 | Right Option + Apostrophe | Translates the clipboard on your Mac (macOS 15 or later) |
 
-Every letter key is in use, so newer commands start without a key: the tutorial, VoiceOver practice, the typing trainer, the audio mouse, beeps, custom labels, place markers, Do It for Me, the document check, braille, the barcode, label and money readers, camera and microphone status, export and import, diagnostics and app performance. They're in the menu and the command palette.
+Every letter key is in use, so newer commands start without a key: the tutorial, VoiceOver practice, the typing trainer, the audio mouse, beeps, custom labels, place markers, Do It for Me, the document check, braille, the barcode, label and money readers, camera and microphone status, export and import, diagnostics, app performance and the resource monitor. They're in the menu and the command palette.
+
+**Resource monitor** (like NVDA's Resource Monitor add-on): the command speaks a summary of the processor, memory, the startup disk, the battery and how long the Mac has been on. Within eight seconds, press a digit on its own for one part in full: 1 processor (with the busiest core and whether the Mac is running hot), 2 memory (used, free, memory pressure and swap), 3 every disk, 4 battery and its health, 5 macOS version, Mac model, chip and uptime, 6 network and this Mac's address, 7 the apps using the processor most. Each part is also a voice command. "Resource Monitor Window" in the Everyday Tools menu shows all seven, refreshed every few seconds, with Copy and Speak All. Everything is read on the Mac; nothing is sent.
 
 Every key can be changed in Settings, under Command keys (like JAWS Keyboard Manager), including giving a key to a command that has none. Choosing a key another command uses swaps the two commands' keys. Digits 1 to 9 always switch presets, and slash always lists the layer keys.
 

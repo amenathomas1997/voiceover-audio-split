@@ -198,6 +198,25 @@ final class RemindersModelTests: XCTestCase {
         XCTAssertEqual(delivered.count, 2)
     }
 
+    func testResourceMonitorWords() {
+        XCTAssertEqual(ResourceMonitor.Detail.allCases.count, 7)
+        XCTAssertEqual(ResourceMonitor.Detail.allCases.map(\.rawValue), [1, 2, 3, 4, 5, 6, 7])
+        XCTAssertEqual(ResourceMonitor.uptimeWords(5 * 60), "5 minutes")
+        XCTAssertEqual(ResourceMonitor.uptimeWords(3 * 3600 + 20 * 60), "3 hours, 20 minutes")
+        XCTAssertEqual(ResourceMonitor.uptimeWords(2 * 86400 + 5 * 3600 + 7 * 60), "2 days, 5 hours")
+        XCTAssertEqual(ResourceMonitor.percent(0.4249), 42)
+        XCTAssertEqual(ResourceMonitor.bytes(16 * 1024 * 1024 * 1024, .memory), "16 GB")
+        XCTAssertEqual(ResourceMonitor.bytes(23_890_000_000, .file), "23.9 GB")
+        XCTAssertEqual(ResourceMonitor.bytes(946_060_000_000, .file), "946 GB")
+        XCTAssertEqual(ResourceMonitor.bytes(2_000_000_000_000, .file), "2 TB")
+        XCTAssertEqual(ResourceMonitor.bytes(512 * 1024 * 1024, .memory), "512 MB")
+        XCTAssertTrue(ResourceMonitor.macOSVersion().hasPrefix("macOS "))
+        // Reading the Mac itself works in the sandbox: memory, disks and the processor.
+        XCTAssertNotNil(ResourceMonitor.memory())
+        XCTAssertFalse(ResourceMonitor.volumes().isEmpty)
+        XCTAssertTrue(ResourceMonitor.volumes().first?.isStartup ?? false)
+    }
+
     func testSpokenLengths() {
         XCTAssertEqual(Reminders.spoken(600), "10 minutes")
         XCTAssertEqual(Reminders.spoken(5400), "1 hour, 30 minutes")

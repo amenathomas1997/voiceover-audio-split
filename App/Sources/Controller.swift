@@ -278,6 +278,7 @@ final class Controller {
         case .analyzeText: analyzeClipboard()
         case .research: app?.showResearch()
         case .systemStatus: announceSystemStatus()
+        case .resourceMonitor: MainActor.assumeIsolated { ResourceMonitor.announce() }
         case .docReader: app?.showDocReader()
         case .scanAndRead: app?.showScan()
         case .captions: toggleCaptions()

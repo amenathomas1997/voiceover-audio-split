@@ -350,6 +350,36 @@ enum VoiceCommands {
                                          String(localized: "system status", comment: "Voice command phrases, separated by |"))) {
                 controller.announceSystemStatus()
             },
+            VoiceAction(name: String(localized: "Resource monitor"),
+                        phrases: phrases("resource monitor|resources|system resources|how busy is my mac|how busy is the mac",
+                                         String(localized: "resource monitor|resources", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ResourceMonitor.announce() }
+            },
+            VoiceAction(name: String(localized: "Processor use"),
+                        phrases: phrases("processor|cpu|cpu usage|processor usage|processor use|how busy is the processor|how busy is the cpu",
+                                         String(localized: "processor|processor usage", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ResourceMonitor.announce(.processor) }
+            },
+            VoiceAction(name: String(localized: "Memory use"),
+                        phrases: phrases("memory|memory usage|memory use|how much memory|how much memory is free|ram",
+                                         String(localized: "memory|how much memory", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ResourceMonitor.announce(.memory) }
+            },
+            VoiceAction(name: String(localized: "Disk space"),
+                        phrases: phrases("disk space|free space|how much space|how much space is left|storage|how much storage",
+                                         String(localized: "disk space|free space", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ResourceMonitor.announce(.disks) }
+            },
+            VoiceAction(name: String(localized: "Uptime and system"),
+                        phrases: phrases("uptime|how long has my mac been on|how long has the mac been on|which version of macos|what version of macos|system information",
+                                         String(localized: "uptime|which version of macos", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ResourceMonitor.announce(.system) }
+            },
+            VoiceAction(name: String(localized: "Busiest apps"),
+                        phrases: phrases("busiest apps|what s using the processor|whats using the processor|what s using the cpu|whats using the cpu|top processes|what is slowing my mac",
+                                         String(localized: "busiest apps|what's using the processor", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ResourceMonitor.announce(.processes) }
+            },
             VoiceAction(name: String(localized: "What's playing?"),
                         phrases: phrases("what s playing|whats playing|what is playing",
                                          String(localized: "what's playing", comment: "Voice command phrases, separated by |"))) {

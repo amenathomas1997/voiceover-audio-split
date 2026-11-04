@@ -43,7 +43,10 @@ enum SystemStatus {
         return nil
     }
 
-    private static func network() -> String {
+    /// The network path as last reported, for the resource monitor.
+    static var currentPath: NWPath? { path }
+
+    static func network() -> String {
         guard let path, path.status == .satisfied else { return String(localized: "No network connection") }
         if path.usesInterfaceType(.wifi) { return String(localized: "Connected over Wi-Fi") }
         if path.usesInterfaceType(.wiredEthernet) { return String(localized: "Connected over Ethernet") }

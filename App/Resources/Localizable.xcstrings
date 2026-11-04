@@ -23,6 +23,34 @@
         }
       }
     },
+    "%@ %lld percent" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %lld Prozent"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ %lld percent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %lld por ciento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %lld pour cent"
+          }
+        }
+      }
+    },
     "%@ (%@): right after %lld tries" : {
       "localizations" : {
         "de" : {
@@ -309,6 +337,34 @@
         }
       }
     },
+    "%@ free on %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ frei auf %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ free on %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ libres en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ libres sur %@"
+          }
+        }
+      }
+    },
     "%@ is playing" : {
       "localizations" : {
         "de" : {
@@ -437,6 +493,62 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ coupé"
+          }
+        }
+      }
+    },
+    "%@ of swap is in use." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Auslagerungsspeicher sind in Gebrauch."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ of swap is in use."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se están usando %@ de memoria de intercambio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de mémoire d’échange sont utilisés."
+          }
+        }
+      }
+    },
+    "%@ on %@. On for %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ auf %@. Eingeschaltet seit %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ on %@. On for %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ en %@. Encendido desde hace %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sur %@. Allumé depuis %@."
           }
         }
       }
@@ -591,6 +703,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volume de %@ : %@"
+          }
+        }
+      }
+    },
+    "%@ with %@, %lld cores and %@ of memory" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ mit %@, %lld Kernen und %@ Arbeitsspeicher"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ with %@, %lld cores and %@ of memory"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ con %@, %lld núcleos y %@ de memoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ avec %@, %lld cœurs et %@ de mémoire"
           }
         }
       }
@@ -856,6 +996,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ : %@"
+          }
+        }
+      }
+    },
+    "%@: %@ free of %@, %lld percent used" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@ frei von %@, %lld Prozent belegt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@: %@ free of %@, %lld percent used"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@ libres de %@, %lld por ciento usado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ : %@ libres sur %@, %lld pour cent utilisés"
           }
         }
       }
@@ -2286,6 +2454,62 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ", le premier à la ligne %lld"
+          }
+        }
+      }
+    },
+    ", memory pressure critical" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", Speicherdruck kritisch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : ", memory pressure critical"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", presión de memoria crítica"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", pression mémoire critique"
+          }
+        }
+      }
+    },
+    ", memory pressure high" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", Speicherdruck hoch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : ", memory pressure high"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", presión de memoria alta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", pression mémoire élevée"
           }
         }
       }
@@ -5986,6 +6210,34 @@
         }
       }
     },
+    "Battery" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batterie"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Battery"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batería"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batterie"
+          }
+        }
+      }
+    },
     "Battery %lld percent" : {
       "localizations" : {
         "de" : {
@@ -6642,6 +6894,62 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réunir le curseur VoiceOver et le focus clavier, décrire les éléments, verrouiller les touches VO, et Utilitaire VoiceOver."
+          }
+        }
+      }
+    },
+    "Busiest apps" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivste Apps"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Busiest apps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps más activas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps les plus actives"
+          }
+        }
+      }
+    },
+    "Busiest now: " : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerade am aktivsten: "
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Busiest now: "
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más activas ahora: "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les plus actives en ce moment : "
           }
         }
       }
@@ -13168,6 +13476,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estompé veut dire indisponible : le bouton est là, mais il ne peut pas être utilisé tant que quelque chose d'autre ne change pas, par exemple remplir un champ."
+          }
+        }
+      }
+    },
+    "Disk space" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speicherplatz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Disk space"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Espacio en disco"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Espace disque"
           }
         }
       }
@@ -22184,6 +22520,202 @@
         }
       }
     },
+    "Memory" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arbeitsspeicher"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Memory"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mémoire"
+          }
+        }
+      }
+    },
+    "Memory %@ of %@ used" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arbeitsspeicher: %@ von %@ belegt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Memory %@ of %@ used"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria: %@ de %@ en uso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mémoire : %@ sur %@ utilisés"
+          }
+        }
+      }
+    },
+    "Memory pressure is critical: closing some apps would help." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Speicherdruck ist kritisch: Einige Apps zu schließen würde helfen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Memory pressure is critical: closing some apps would help."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La presión de memoria es crítica: cerrar algunas apps ayudaría."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La pression mémoire est critique : fermer quelques apps aiderait."
+          }
+        }
+      }
+    },
+    "Memory pressure is high." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Speicherdruck ist hoch."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Memory pressure is high."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La presión de memoria es alta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La pression mémoire est élevée."
+          }
+        }
+      }
+    },
+    "Memory pressure is normal." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Speicherdruck ist normal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Memory pressure is normal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La presión de memoria es normal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La pression mémoire est normale."
+          }
+        }
+      }
+    },
+    "Memory use" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichernutzung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Memory use"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uso de memoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisation de la mémoire"
+          }
+        }
+      }
+    },
+    "Memory: %@ used of %@, %@ free." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arbeitsspeicher: %@ von %@ belegt, %@ frei."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Memory: %@ used of %@, %@ free."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria: %@ en uso de %@, %@ libres."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mémoire : %@ utilisés sur %@, %@ libres."
+          }
+        }
+      }
+    },
     "Menu extras" : {
       "localizations" : {
         "de" : {
@@ -23350,6 +23882,34 @@
         }
       }
     },
+    "Network" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Netzwerk"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Network"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réseau"
+          }
+        }
+      }
+    },
     "Network connection back" : {
       "localizations" : {
         "de" : {
@@ -24226,6 +24786,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune définition trouvée pour %@"
+          }
+        }
+      }
+    },
+    "No disks were found." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es wurden keine Festplatten gefunden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No disks were found."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró ningún disco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun disque trouvé."
           }
         }
       }
@@ -26184,6 +26772,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sur une longue page web, quel est généralement le moyen le plus rapide d'avoir une vue d'ensemble ?"
+          }
+        }
+      }
+    },
+    "On for %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eingeschaltet seit %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "On for %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encendido desde hace %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allumé depuis %@"
           }
         }
       }
@@ -28454,6 +29070,34 @@
         }
       }
     },
+    "Pause updates" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualisierung anhalten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Pause updates"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausar las actualizaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suspendre les mises à jour"
+          }
+        }
+      }
+    },
     "Paused" : {
       "localizations" : {
         "de" : {
@@ -29312,6 +29956,34 @@
         }
       }
     },
+    "Press 1 to 7 for processor, memory, disks, battery, system, network or busiest apps." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücke 1 bis 7 für Prozessor, Arbeitsspeicher, Festplatten, Batterie, System, Netzwerk oder aktivste Apps."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Press 1 to 7 for processor, memory, disks, battery, system, network or busiest apps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsa de 1 a 7 para procesador, memoria, discos, batería, sistema, red o apps más activas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur 1 à 7 pour le processeur, la mémoire, les disques, la batterie, le système, le réseau ou les apps les plus actives."
+          }
+        }
+      }
+    },
     "Press Escape" : {
       "localizations" : {
         "de" : {
@@ -29990,6 +30662,118 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Problèmes"
+          }
+        }
+      }
+    },
+    "Processor" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prozessor"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Processor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procesador"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processeur"
+          }
+        }
+      }
+    },
+    "Processor %lld percent busy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prozessor zu %lld Prozent ausgelastet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Processor %lld percent busy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procesador al %lld por ciento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processeur occupé à %lld pour cent"
+          }
+        }
+      }
+    },
+    "Processor %lld percent busy across %lld cores; the busiest core is at %lld percent. %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prozessor zu %lld Prozent ausgelastet über %lld Kerne; der am stärksten ausgelastete Kern liegt bei %lld Prozent. %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Processor %lld percent busy across %lld cores; the busiest core is at %lld percent. %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procesador al %lld por ciento en %lld núcleos; el núcleo más ocupado está al %lld por ciento. %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processeur occupé à %lld pour cent sur %lld cœurs ; le cœur le plus occupé est à %lld pour cent. %@"
+          }
+        }
+      }
+    },
+    "Processor use" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prozessorauslastung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Processor use"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uso del procesador"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisation du processeur"
           }
         }
       }
@@ -31292,6 +32076,34 @@
         }
       }
     },
+    "Reading…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gelesen …"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reading…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture…"
+          }
+        }
+      }
+    },
     "Record the Screen" : {
       "localizations" : {
         "de" : {
@@ -32344,6 +33156,118 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réinitialiser sans perte auditive"
+          }
+        }
+      }
+    },
+    "Resource Monitor" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ressourcenmonitor"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Resource Monitor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitor de recursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moniteur de ressources"
+          }
+        }
+      }
+    },
+    "Resource Monitor Window…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenster des Ressourcenmonitors …"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Resource Monitor Window…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ventana del monitor de recursos…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenêtre du moniteur de ressources…"
+          }
+        }
+      }
+    },
+    "Resource monitor" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ressourcenmonitor"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Resource monitor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitor de recursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moniteur de ressources"
+          }
+        }
+      }
+    },
+    "Resource monitor: processor, memory, disks, battery, uptime" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ressourcenmonitor: Prozessor, Arbeitsspeicher, Festplatten, Batterie, Laufzeit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Resource monitor: processor, memory, disks, battery, uptime"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitor de recursos: procesador, memoria, discos, batería, tiempo encendido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moniteur de ressources : processeur, mémoire, disques, batterie, temps allumé"
           }
         }
       }
@@ -36265,6 +37189,34 @@
         }
       }
     },
+    "Speak All" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles vorlesen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Speak All"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leer todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout lire"
+          }
+        }
+      }
+    },
     "Speak again" : {
       "localizations" : {
         "de" : {
@@ -38391,6 +39343,34 @@
         }
       }
     },
+    "System" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "System"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Système"
+          }
+        }
+      }
+    },
     "System Settings has everything from Wi-Fi to accessibility. Open it with Spotlight: Command Space, type System Settings, and press Return." : {
       "localizations" : {
         "de" : {
@@ -39535,6 +40515,118 @@
         }
       }
     },
+    "The Mac is a little warm." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Mac ist etwas warm."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Mac is a little warm."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Mac está un poco caliente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le Mac est un peu chaud."
+          }
+        }
+      }
+    },
+    "The Mac is hot, and may slow down." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Mac ist heiß und wird möglicherweise langsamer."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Mac is hot, and may slow down."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Mac está caliente y puede ir más lento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le Mac est chaud et peut ralentir."
+          }
+        }
+      }
+    },
+    "The Mac is running cool." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Mac läuft kühl."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Mac is running cool."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Mac está fresco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le Mac reste frais."
+          }
+        }
+      }
+    },
+    "The Mac is very hot and is slowing down to cool off." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Mac ist sehr heiß und wird langsamer, um abzukühlen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The Mac is very hot and is slowing down to cool off."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Mac está muy caliente y va más lento para enfriarse."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le Mac est très chaud et ralentit pour refroidir."
+          }
+        }
+      }
+    },
     "The PDF doesn't say what language it is in." : {
       "localizations" : {
         "de" : {
@@ -39905,6 +40997,90 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La séparation audio, les sous-titres d'appel et toutes les fonctions sonores. Rien n'est enregistré. Votre Mac demande la première fois que vous activez la séparation."
+          }
+        }
+      }
+    },
+    "The battery's health is fair." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Zustand der Batterie ist mittelmäßig."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The battery's health is fair."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El estado de la batería es regular."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’état de la batterie est moyen."
+          }
+        }
+      }
+    },
+    "The battery's health is good." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Zustand der Batterie ist gut."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The battery's health is good."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El estado de la batería es bueno."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’état de la batterie est bon."
+          }
+        }
+      }
+    },
+    "The battery's health is poor; it may need a service." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Zustand der Batterie ist schlecht; sie muss möglicherweise gewartet werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The battery's health is poor; it may need a service."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El estado de la batería es malo; puede necesitar servicio técnico."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’état de la batterie est mauvais ; une révision peut être nécessaire."
           }
         }
       }
@@ -40642,6 +41818,34 @@
         }
       }
     },
+    "The memory use couldn't be read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Speichernutzung konnte nicht gelesen werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The memory use couldn't be read."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer el uso de memoria."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’utilisation de la mémoire n’a pas pu être lue."
+          }
+        }
+      }
+    },
     "The menu bar, menu extras, the Dock, shortcut menus, and moving between apps and windows." : {
       "localizations" : {
         "de" : {
@@ -40770,6 +41974,62 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La zone d'entraînement se trouve plus bas dans cette fenêtre. VO Flèche droite vous en rapproche."
+          }
+        }
+      }
+    },
+    "The processor use of other apps couldn't be read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Prozessorauslastung anderer Apps konnte nicht gelesen werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The processor use of other apps couldn't be read."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer el uso del procesador de otras apps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’utilisation du processeur par les autres apps n’a pas pu être lue."
+          }
+        }
+      }
+    },
+    "The processor's use couldn't be read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Prozessorauslastung konnte nicht gelesen werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The processor's use couldn't be read."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer el uso del procesador."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’utilisation du processeur n’a pas pu être lue."
           }
         }
       }
@@ -41672,6 +42932,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ce Mac n'a pas de batterie."
+          }
+        }
+      }
+    },
+    "This Mac's address is %@, on %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Adresse dieses Mac ist %@, auf %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This Mac's address is %@, on %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dirección de este Mac es %@, en %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’adresse de ce Mac est %@, sur %@."
           }
         }
       }
@@ -44279,6 +45567,34 @@
         }
       }
     },
+    "Uptime and system" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laufzeit und System"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Uptime and system"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo encendido y sistema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps allumé et système"
+          }
+        }
+      }
+    },
     "Use %@" : {
       "localizations" : {
         "de" : {
@@ -46431,6 +47747,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Les commandes vocales n'ont pas pu démarrer le micro ; elles sont donc désactivées pour l'instant. Le reste de l'app fonctionne normalement. Essayez de réactiver les commandes vocales dans les Réglages."
+          }
+        }
+      }
+    },
+    "VoiceOver Audio Split" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VoiceOver Audio Split"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split"
           }
         }
       }
@@ -50373,6 +51717,34 @@
         }
       }
     },
+    "a system process" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ein Systemprozess"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "a system process"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un proceso del sistema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un processus système"
+          }
+        }
+      }
+    },
     "a table" : {
       "localizations" : {
         "de" : {
@@ -50660,6 +52032,34 @@
         }
       }
     },
+    "an unknown processor" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ein unbekannter Prozessor"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "an unknown processor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un procesador desconocido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un processeur inconnu"
+          }
+        }
+      }
+    },
     "another key" : {
       "localizations" : {
         "de" : {
@@ -50899,6 +52299,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "marron"
+          }
+        }
+      }
+    },
+    "busiest apps|what's using the processor" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aktivste apps|was nutzt den prozessor"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "busiest apps|what's using the processor"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "apps más activas|qué está usando el procesador"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "apps les plus actives|qu est ce qui utilise le processeur"
           }
         }
       }
@@ -51281,6 +52710,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "decrire les images automatiquement|description automatique des images"
+          }
+        }
+      }
+    },
+    "disk space|free space" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "speicherplatz|freier speicher"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "disk space|free space"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "espacio en disco|espacio libre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "espace disque|espace libre"
           }
         }
       }
@@ -52189,6 +53647,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "un médicament"
+          }
+        }
+      }
+    },
+    "memory|how much memory" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "arbeitsspeicher|wie viel arbeitsspeicher"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "memory|how much memory"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "memoria|cuánta memoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mémoire|combien de mémoire"
           }
         }
       }
@@ -53323,6 +54810,35 @@
         }
       }
     },
+    "processor|processor usage" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "prozessor|prozessorauslastung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "processor|processor usage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "procesador|uso del procesador"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "processeur|utilisation du processeur"
+          }
+        }
+      }
+    },
     "purple" : {
       "localizations" : {
         "de" : {
@@ -53680,6 +55196,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "mot répété"
+          }
+        }
+      }
+    },
+    "resource monitor|resources" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ressourcenmonitor|ressourcen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "resource monitor|resources"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "monitor de recursos|recursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moniteur de ressources|ressources"
           }
         }
       }
@@ -54828,6 +56373,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "reactive le micro|reactive mon micro|reactiver le micro|remets le micro"
+          }
+        }
+      }
+    },
+    "uptime|which version of macos" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "laufzeit|welche version von macos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "uptime|which version of macos"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tiempo encendido|qué versión de macos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "temps allumé|quelle version de macos"
           }
         }
       }

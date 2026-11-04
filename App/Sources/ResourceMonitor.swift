@@ -404,33 +404,59 @@ enum ResourceMonitor {
 
 // MARK: - Window
 
-/// Every part at once, refreshed every few seconds; each row is one VoiceOver item.
+/// Every part at once. Nothing changes under the VoiceOver cursor unless asked: Refresh
+/// reads everything again, and updating by itself is off until it's turned on. The
+/// readings are taken off the main thread, so the window stays responsive.
 final class ResourceMonitorModel: ObservableObject {
     @Published var rows: [(detail: ResourceMonitor.Detail, text: String)] = ResourceMonitor.Detail.allCases.map { ($0, "") }
-    @Published var paused = false
+    @Published var autoUpdate = false { didSet { autoUpdate ? startUpdating() : stopUpdating() } }
+    @Published private(set) var isRefreshing = false
+    @Published private(set) var updatedAt: Date?
     private var task: Task<Void, Never>?
+    private var updating: Task<Void, Never>?
 
-    func start() {
-        task?.cancel()
+    /// Reads every part again, and says so when done.
+    @MainActor
+    func refresh(announce: Bool = false) {
+        guard !isRefreshing else { return }
+        isRefreshing = true
         task = Task { @MainActor [weak self] in
+            let texts = await Task.detached(priority: .userInitiated) { () -> [(ResourceMonitor.Detail, String)] in
+                var result: [(ResourceMonitor.Detail, String)] = []
+                for detail in ResourceMonitor.Detail.allCases { result.append((detail, await ResourceMonitor.detail(detail))) }
+                return result
+            }.value
+            guard let self, !Task.isCancelled else { return }
+            // Only rows whose words changed are touched, so VoiceOver isn't interrupted for nothing.
+            for (detail, text) in texts {
+                if let index = rows.firstIndex(where: { $0.detail == detail }), rows[index].text != text { rows[index].text = text }
+            }
+            updatedAt = Date()
+            isRefreshing = false
+            if announce { Announcer.say(String(localized: "Updated.")) }
+        }
+    }
+
+    private func startUpdating() {
+        updating?.cancel()
+        updating = Task { @MainActor [weak self] in
             while !Task.isCancelled {
-                if self?.paused == false { await self?.refresh() }
-                try? await Task.sleep(for: .seconds(3))
+                try? await Task.sleep(for: .seconds(5))
+                guard !Task.isCancelled else { return }
+                self?.refresh()
             }
         }
     }
 
-    func stop() {
-        task?.cancel()
-        task = nil
+    private func stopUpdating() {
+        updating?.cancel()
+        updating = nil
     }
 
-    @MainActor
-    func refresh() async {
-        for detail in ResourceMonitor.Detail.allCases {
-            let text = await ResourceMonitor.detail(detail)
-            if let index = rows.firstIndex(where: { $0.detail == detail }) { rows[index].text = text }
-        }
+    func stop() {
+        stopUpdating()
+        task?.cancel()
+        task = nil
     }
 
     var asText: String { rows.map { "\($0.detail.title): \($0.text)" }.joined(separator: "\n") }
@@ -450,7 +476,10 @@ struct ResourceMonitorView: View {
                 .padding(.vertical, 2)
             }
             HStack {
-                Toggle(String(localized: "Pause updates"), isOn: $model.paused)
+                Button(String(localized: "Refresh")) { model.refresh(announce: true) }
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(model.isRefreshing)
+                Toggle(String(localized: "Update every 5 seconds"), isOn: $model.autoUpdate)
                 Spacer()
                 Button(String(localized: "Copy")) {
                     NSPasteboard.general.clearContents()
@@ -460,9 +489,14 @@ struct ResourceMonitorView: View {
                 Button(String(localized: "Speak All")) { Announcer.say(model.asText) }
             }
             .padding([.horizontal, .bottom])
+            if let date = model.updatedAt {
+                Text(String(localized: "Updated at \(date.formatted(date: .omitted, time: .standard)). Press Return to refresh."))
+                    .font(.caption).foregroundStyle(.secondary)
+                    .padding([.horizontal, .bottom])
+            }
         }
-        .frame(width: 560, height: 480)
-        .onAppear { model.start() }
+        .frame(width: 560, height: 500)
+        .onAppear { model.refresh() }
         .onDisappear { model.stop() }
     }
 }

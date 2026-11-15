@@ -364,17 +364,7 @@ enum AccessiblePDF {
     private static var window: NSWindow?
 
     @MainActor static func showWindow() {
-        let window = self.window ?? {
-            let window = NSWindow(contentViewController: NSHostingController(rootView: PDFScanView()))
-            window.title = String(localized: "Scan to Accessible PDF")
-            window.styleMask = [.titled, .closable]
-            window.isReleasedWhenClosed = false
-            window.center()
-            return window
-        }()
-        self.window = window
-        NSApp.activate()
-        window.makeKeyAndOrderFront(nil)
+        window = ReusableWindow.show(window, title: String(localized: "Scan to Accessible PDF"), view: PDFScanView())
     }
 }
 

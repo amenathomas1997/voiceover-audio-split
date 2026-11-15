@@ -458,6 +458,12 @@ final class LessonProgress: ObservableObject {
             // Preferences has the current student's latest progress (it may have come from a settings import).
             records[currentID, default: Record()].take(from: mirror)
         } else {
+            // Students that were saved but can't be read any more (a damaged file, or a shape
+            // from another version) are kept aside rather than written over, so nothing is lost.
+            if let data = defaults.data(forKey: Self.storeKey) {
+                defaults.set(data, forKey: Self.storeKey + ".unreadable")
+                log("Lesson students couldn't be read; the saved copy was kept as \(Self.storeKey).unreadable.")
+            }
             // The first time: the progress so far becomes "Me", without losing anything.
             var me = Record()
             me.done = defaults.stringArray(forKey: "lessonsDone") ?? []

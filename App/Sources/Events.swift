@@ -126,8 +126,10 @@ enum SystemEvents {
                 let added = current.subtracting(knownDevices), removed = knownDevices.subtracting(current)
                 knownDevices = current
                 guard Preferences.shared.announceDevices else { return }
-                for name in added { Announcer.say(String(localized: "\(name) connected")) }
-                for name in removed { Announcer.say(String(localized: "\(name) disconnected")) }
+                var said: [String] = []
+                if !added.isEmpty { said.append(String(localized: "\(ListFormatter.localizedString(byJoining: added.sorted())) connected")) }
+                if !removed.isEmpty { said.append(String(localized: "\(ListFormatter.localizedString(byJoining: removed.sorted())) disconnected")) }
+                if !said.isEmpty { Announcer.say(said.joined(separator: ". ")) }
             }
         }
     }

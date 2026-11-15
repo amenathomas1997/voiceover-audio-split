@@ -5,6 +5,33 @@
 //     description into a report for Feedback Assistant or Apple's accessibility email
 
 import AppKit
+import SwiftUI
+
+/// Windows are kept and reused, which keeps their position but means SwiftUI's onDisappear
+/// never ran when the window closed, so cameras, tests and timers kept going. Now the
+/// window's content is let go when it closes, and a fresh view is put in when it's shown
+/// again: onDisappear and onAppear run as the user expects.
+enum ReusableWindow {
+    static func show(_ existing: NSWindow?, title: String, view: some View) -> NSWindow {
+        let window = existing ?? {
+            let window = NSWindow(contentViewController: NSHostingController(rootView: view))
+            window.title = title
+            window.styleMask = [.titled, .closable]
+            window.isReleasedWhenClosed = false
+            window.center()
+            NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak window] _ in
+                window?.contentViewController = nil
+            }
+            return window
+        }()
+        if existing != nil, window.contentViewController == nil {
+            window.contentViewController = NSHostingController(rootView: view)
+        }
+        NSApp.activate()
+        window.makeKeyAndOrderFront(nil)
+        return window
+    }
+}
 import CoreAudio
 import SwiftUI
 

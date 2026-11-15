@@ -211,12 +211,12 @@ struct DoItForMeView: View {
                 Text(String(localized: "Acting on: \(model.target?.localizedName ?? String(localized: "no app"))"))
                 TextField(String(localized: "What should I find or press? For example, the search field, or press Play."), text: $model.request)
                     .focused($focused)
-                    .onSubmit { model.run() }
+                    .onSubmit { model.pendingPress != nil ? model.confirmPress() : model.run() }
                 Button(String(localized: "Do It")) { model.run() }
                     .disabled(model.busy || model.request.trimmingCharacters(in: .whitespaces).isEmpty)
                 Text(AI.usesOnDevice
                      ? String(localized: "The AI on this Mac reads the names of the controls in that app's front window; nothing is sent anywhere. Nothing is pressed without your confirmation.")
-                     : String(localized: "The names of the controls in that app's front window are sent to Anthropic. Nothing is pressed without your confirmation."))
+                     : String(localized: "The names of the controls and the text shown in that app's front window are sent to Anthropic. Nothing is pressed without your confirmation."))
                     .font(.caption).foregroundStyle(.secondary)
             }
             if let name = model.pendingPress {

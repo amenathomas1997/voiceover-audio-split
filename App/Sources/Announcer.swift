@@ -38,6 +38,17 @@ enum Announcer {
         }
     }
 
+    /// Speaks with the Mac's own voice, whatever VoiceOver is doing: for telling the user that
+    /// the connection to VoiceOver itself isn't working.
+    static func sayWithSystemVoice(_ text: String) {
+        lastText = text
+        markSpeaking(text)
+        DispatchQueue.main.async {
+            synthesizer.stopSpeaking(at: .immediate)
+            synthesizer.speak(AVSpeechUtterance(string: text))
+        }
+    }
+
     /// For the setup guide: tries to speak through VoiceOver and reports whether it worked.
     static func testVoiceOver(completion: @escaping (Bool) -> Void) {
         queue.async {

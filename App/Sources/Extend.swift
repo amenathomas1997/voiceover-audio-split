@@ -148,9 +148,16 @@ enum SettingsTransfer {
         "meetingChatAnnounce", "clipboardHistory", "reminderNotifications", "brailleGrade", "objectFinderCameraFacesYou",
     ]
 
-    static func exportData() throws -> Data {
+    /// Settings about the user rather than the app: their hearing, the sites and apps they use,
+    /// their labels and markers, their scripts. In their own export, never in a bug report.
+    static let personalKeys: Set<String> = [
+        "hearingLeft", "hearingRight", "sitePresets", "appPresets", "appRules", "callApps", "customLabels", "placeMarkers",
+        "newsFeeds", "userCommands", "lessonsDone", "lessonsMissed", "lessonSchedule", "lessonChallengeBest", "typingBest",
+    ]
+
+    static func exportData(forReport: Bool = false) throws -> Data {
         let all = UserDefaults.standard.dictionaryRepresentation()
-        var settings = all.filter { portableKeys.contains($0.key) }
+        var settings = all.filter { portableKeys.contains($0.key) && !(forReport && personalKeys.contains($0.key)) }
         settings["formatVersion"] = 1
         return try PropertyListSerialization.data(fromPropertyList: settings, format: .xml, options: 0)
     }

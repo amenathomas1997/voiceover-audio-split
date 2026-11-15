@@ -233,7 +233,11 @@ struct VoiceOverAppleScriptSteps: View {
                 Button(String(localized: "Open VoiceOver Utility")) { Self.openVoiceOverUtility() }
                 Button(String(localized: "Test Announcement")) {
                     result = String(localized: "Testing…")
-                    VoiceOverSetup.check { result = $0 }
+                    VoiceOverSetup.check { message in
+                        result = message
+                        // VoiceOver spoke the test if it worked; otherwise the Mac's voice says what's wrong.
+                        if message != VoiceOverSetup.message(.working) { Announcer.sayWithSystemVoice(message) }
+                    }
                 }
             }
             if let result { Text(result) }

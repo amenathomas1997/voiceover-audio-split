@@ -7,14 +7,20 @@ import CoreAudio
 import Foundation
 import IOKit.ps
 import Network
+import os
 
 enum SystemStatus {
     private static let monitor = NWPathMonitor()
-    nonisolated(unsafe) private static var path: NWPath?
+    /// Written on the monitor's queue, read from wherever status is asked for.
+    private static let pathLock = OSAllocatedUnfairLock<NWPath?>(initialState: nil)
+    private static var path: NWPath? { pathLock.withLock { $0 } }
+    nonisolated(unsafe) private static var started = false
 
     /// Call at launch so the network state is known when asked.
     static func start() {
-        monitor.pathUpdateHandler = { path = $0 }
+        guard !started else { return }
+        started = true
+        monitor.pathUpdateHandler = { new in pathLock.withLock { $0 = new } }
         monitor.start(queue: DispatchQueue(label: "VoiceOverAudioSplit.network"))
     }
 

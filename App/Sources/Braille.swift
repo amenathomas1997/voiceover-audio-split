@@ -197,7 +197,7 @@ private enum Louis {
     private static func run(_ table: String, _ input: [UInt16]) -> String? {
         dispatchPrecondition(condition: .onQueue(queue))
         var room = input.count * 2 + 64
-        while room <= input.count * 64 + 1024 {
+        while room <= min(input.count * 64 + 1024, Int(Int32.max) / 4) {
             var inLength = Int32(input.count)
             var outLength = Int32(room)
             var output = [UInt16](repeating: 0, count: room)

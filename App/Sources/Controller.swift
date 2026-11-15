@@ -503,7 +503,8 @@ final class Controller {
                 guard let self else { return }
                 let sitePreset = host.flatMap { SitePresets.match(host: $0, in: rules) }
                 self.currentSitePresetID = sitePreset
-                self.applyAutomaticPreset(id: sitePreset ?? self.appPresetID(for: bundleID), reason: host ?? bundleID)
+                // Which website is never logged: PRIVACY.md promises addresses are never stored.
+                self.applyAutomaticPreset(id: sitePreset ?? self.appPresetID(for: bundleID), reason: host != nil ? "a website in \(bundleID)" : bundleID)
             }
         }
     }
@@ -629,8 +630,9 @@ final class Controller {
             }
         }
         if activeSide != Side(rawValue: preset.split) {
-            SoundSafety.shared.note("split", String(localized: "the split")) { [activeSide] in
+            SoundSafety.shared.note("split", String(localized: "the split")) { [activeSide, lastSide] in
                 self.activeSide = activeSide
+                self.lastSide = lastSide
                 self.update()
             }
         }

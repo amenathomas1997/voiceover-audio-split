@@ -98,6 +98,7 @@ struct SettingsView: View {
                                 value: ruleBinding(rule, \.treble), in: -12...12, step: 3)
                         Button(String(localized: "Reset \(rule.name)")) {
                             preferences.appRules.removeAll { $0.bundleID == rule.bundleID }
+                            Announcer.say(String(localized: "Removed"))
                         }
                     }
                 }
@@ -130,6 +131,7 @@ struct SettingsView: View {
                         Button(String(localized: "Delete \(preset.name)")) {
                             preferences.presets.removeAll { $0.id == preset.id }
                             preferences.forgetMissingPresets()
+                            Announcer.say(String(localized: "Removed"))
                         }
                     }
                 }
@@ -155,7 +157,7 @@ struct SettingsView: View {
                         Picker(appName(bundleID), selection: appPresetBinding(bundleID)) {
                             ForEach(preferences.presets) { Text($0.name).tag($0.id.uuidString) }
                         }
-                        Button(String(localized: "Remove \(appName(bundleID))")) { preferences.appPresets[bundleID] = nil }
+                        Button(String(localized: "Remove \(appName(bundleID))")) { preferences.appPresets[bundleID] = nil; Announcer.say(String(localized: "Removed")) }
                     }
                 }
                 HStack {
@@ -213,7 +215,7 @@ struct SettingsView: View {
                                                         set: { preferences.sitePresets[site] = $0 })) {
                             ForEach(preferences.presets) { Text($0.name).tag($0.id.uuidString) }
                         }
-                        Button(String(localized: "Remove \(site)")) { preferences.sitePresets[site] = nil }
+                        Button(String(localized: "Remove \(site)")) { preferences.sitePresets[site] = nil; Announcer.say(String(localized: "Removed")) }
                     }
                 }
                 HStack {
@@ -238,6 +240,7 @@ struct SettingsView: View {
                         Spacer()
                         Button(String(localized: "Remove \(app.name)")) {
                             preferences.callApps.removeAll { $0 == app }
+                            Announcer.say(String(localized: "Removed"))
                         }
                     }
                 }

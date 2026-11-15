@@ -110,6 +110,7 @@ struct LabelEditorView: View {
                         Spacer()
                         Button(String(localized: "Delete \(label.label)")) {
                             preferences.customLabels.removeAll { $0.id == label.id }
+                            Announcer.say(String(localized: "Removed"))
                         }
                     }
                 }
@@ -234,6 +235,7 @@ struct PlaceMarkersSection: View {
                     Spacer()
                     Button(String(localized: "Delete place marker \(marker.name)")) {
                         preferences.placeMarkers.removeAll { $0.id == marker.id }
+                        Announcer.say(String(localized: "Removed"))
                     }
                 }
             }

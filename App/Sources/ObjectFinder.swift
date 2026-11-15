@@ -546,16 +546,8 @@ extension ObjectFinder {
 
     /// Opens the finder's window, or brings it forward.
     static func showWindow() {
-        let window = self.window ?? {
-            let window = NSWindow(contentViewController: NSHostingController(rootView: ObjectFinderView()))
-            window.title = String(localized: "Find an Object")
-            window.styleMask = [.titled, .closable]
-            window.isReleasedWhenClosed = false
-            window.center()
-            return window
-        }()
-        self.window = window
-        NSApp.activate()
-        window.makeKeyAndOrderFront(nil)
+        MainActor.assumeIsolated {
+            window = ReusableWindow.show(window, title: String(localized: "Find an Object"), view: ObjectFinderView())
+        }
     }
 }

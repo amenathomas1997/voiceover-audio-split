@@ -153,6 +153,22 @@ struct AppRule: Codable, Hashable, Identifiable {
     }
 }
 
+/// Decodes a saved list keeping every element that still decodes, so one odd entry (or a
+/// field a newer version added) doesn't throw the whole list away.
+struct Lenient<Value: Decodable>: Decodable {
+    let value: Value?
+    init(from decoder: Decoder) throws { value = try? Value(from: decoder) }
+}
+
+extension JSONDecoder {
+    func decodeList<Value: Decodable>(_ type: Value.Type, from data: Data) -> [Value]? {
+        guard let items = try? decode([Lenient<Value>].self, from: data) else { return nil }
+        let kept = items.compactMap(\.value)
+        if kept.count < items.count { log("Saved list of \(Value.self): \(items.count - kept.count) entries couldn't be read and were skipped.") }
+        return kept
+    }
+}
+
 /// A saved combination of settings, applied with the shortcut key + a number.
 struct Preset: Codable, Hashable, Identifiable {
     var id = UUID()
@@ -171,6 +187,33 @@ struct Preset: Codable, Hashable, Identifiable {
     var volumeLimitLevel: Int
     var oneEar: OneEar
     var earBalance: Int
+
+    init(id: UUID = UUID(), name: String, split: String, balance: Int, layout: Layout, stereoOthers: Bool, ducking: Bool, duckingAmount: Int,
+         callMode: CallMode, clarity: Bool, leveler: Bool, volumeLimit: Bool, volumeLimitLevel: Int, oneEar: OneEar, earBalance: Int) {
+        self.id = id; self.name = name; self.split = split; self.balance = balance; self.layout = layout; self.stereoOthers = stereoOthers
+        self.ducking = ducking; self.duckingAmount = duckingAmount; self.callMode = callMode; self.clarity = clarity; self.leveler = leveler
+        self.volumeLimit = volumeLimit; self.volumeLimitLevel = volumeLimitLevel; self.oneEar = oneEar; self.earBalance = earBalance
+    }
+
+    /// Presets saved by an earlier version may lack fields added since: those take their defaults.
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        name = try values.decode(String.self, forKey: .name)
+        split = try values.decodeIfPresent(String.self, forKey: .split) ?? "off"
+        balance = try values.decodeIfPresent(Int.self, forKey: .balance) ?? 0
+        layout = try values.decodeIfPresent(Layout.self, forKey: .layout) ?? .opposite
+        stereoOthers = try values.decodeIfPresent(Bool.self, forKey: .stereoOthers) ?? false
+        ducking = try values.decodeIfPresent(Bool.self, forKey: .ducking) ?? false
+        duckingAmount = try values.decodeIfPresent(Int.self, forKey: .duckingAmount) ?? 10
+        callMode = try values.decodeIfPresent(CallMode.self, forKey: .callMode) ?? .split
+        clarity = try values.decodeIfPresent(Bool.self, forKey: .clarity) ?? false
+        leveler = try values.decodeIfPresent(Bool.self, forKey: .leveler) ?? false
+        volumeLimit = try values.decodeIfPresent(Bool.self, forKey: .volumeLimit) ?? false
+        volumeLimitLevel = try values.decodeIfPresent(Int.self, forKey: .volumeLimitLevel) ?? -6
+        oneEar = try values.decodeIfPresent(OneEar.self, forKey: .oneEar) ?? .off
+        earBalance = try values.decodeIfPresent(Int.self, forKey: .earBalance) ?? 0
+    }
 
     /// Fixed IDs, so apps and sites set to a default preset keep it after a restart or a restore.
     static let defaults: [Preset] = [
@@ -370,7 +413,7 @@ final class Preferences: ObservableObject {
         duckingAmount = store.integer(forKey: "duckingAmount")
         speechDeviceUID = store.string(forKey: "speechDeviceUID") ?? ""
         callMode = CallMode(rawValue: store.string(forKey: "callMode") ?? "") ?? .split
-        callApps = store.data(forKey: "callApps").flatMap { try? JSONDecoder().decode([CallApp].self, from: $0) }
+        callApps = store.data(forKey: "callApps").flatMap { JSONDecoder().decodeList(CallApp.self, from: $0) }
             ?? CallApp.defaults
         playTones = store.bool(forKey: "playTones")
         modifier = ShortcutModifier(rawValue: store.string(forKey: "modifier") ?? "") ?? .option
@@ -383,7 +426,7 @@ final class Preferences: ObservableObject {
         volumeLimitLevel = store.integer(forKey: "volumeLimitLevel")
         oneEar = OneEar(rawValue: store.string(forKey: "oneEar") ?? "") ?? .off
         earBalance = store.integer(forKey: "earBalance")
-        appRules = store.data(forKey: "appRules").flatMap { try? JSONDecoder().decode([AppRule].self, from: $0) } ?? []
+        appRules = store.data(forKey: "appRules").flatMap { JSONDecoder().decodeList(AppRule.self, from: $0) } ?? []
         speechHistory = store.bool(forKey: "speechHistory")
         customKeys = (store.dictionary(forKey: "customKeys") as? [String: Int64])
             ?? (store.dictionary(forKey: "customKeys") as? [String: Int])?.mapValues(Int64.init) ?? [:]
@@ -408,14 +451,14 @@ final class Preferences: ObservableObject {
         announceBattery = store.bool(forKey: "announceBattery")
         announceLock = store.bool(forKey: "announceLock")
         clockInterval = store.integer(forKey: "clockInterval")
-        userCommands = store.data(forKey: "userCommands").flatMap { try? JSONDecoder().decode([UserCommand].self, from: $0) } ?? []
+        userCommands = store.data(forKey: "userCommands").flatMap { JSONDecoder().decodeList(UserCommand.self, from: $0) } ?? []
         beepsWhenSilenced = store.bool(forKey: "beepsWhenSilenced")
         announceClipboard = store.bool(forKey: "announceClipboard")
         translateTarget = store.string(forKey: "translateTarget") ?? "es"
         preferIPhoneCamera = store.bool(forKey: "preferIPhoneCamera")
         announceCamera = store.bool(forKey: "announceCamera")
         announceMicrophone = store.bool(forKey: "announceMicrophone")
-        customLabels = store.data(forKey: "customLabels").flatMap { try? JSONDecoder().decode([CustomLabel].self, from: $0) } ?? []
+        customLabels = store.data(forKey: "customLabels").flatMap { JSONDecoder().decodeList(CustomLabel.self, from: $0) } ?? []
         typingBest = store.dictionary(forKey: "typingBest") as? [String: Int] ?? [:]
         typingSound = store.string(forKey: "typingSound") ?? TypingSound.click.rawValue
         lessonsDone = store.stringArray(forKey: "lessonsDone") ?? []
@@ -436,10 +479,11 @@ final class Preferences: ObservableObject {
         hearingRight = HearingProfile.valid(store.array(forKey: "hearingRight") as? [Double])
         skippedUpdate = store.string(forKey: "skippedUpdate") ?? ""
         lastUpdateCheck = store.double(forKey: "lastUpdateCheck")
-        placeMarkers = store.data(forKey: "placeMarkers").flatMap { try? JSONDecoder().decode([PlaceMarker].self, from: $0) } ?? []
+        placeMarkers = store.data(forKey: "placeMarkers").flatMap { JSONDecoder().decodeList(PlaceMarker.self, from: $0) } ?? []
         sitePresets = store.dictionary(forKey: "sitePresets") as? [String: String] ?? [:]
-        presets = store.data(forKey: "presets").flatMap { try? JSONDecoder().decode([Preset].self, from: $0) }
+        presets = store.data(forKey: "presets").flatMap { JSONDecoder().decodeList(Preset.self, from: $0) }.flatMap { $0.isEmpty ? nil : $0 }
             ?? Preset.defaults
+        clampLoadedValues()
     }
 
     /// Apps and sites set to a preset that's gone go back to no preset.
@@ -464,6 +508,18 @@ final class Preferences: ObservableObject {
     }
 
     private var changePending = false
+
+    /// A settings file from someone else, or an older version, may hold numbers outside what
+    /// Settings allows: a negative ducking amount would make other sounds louder, a volume
+    /// limit of -200 silence. They're kept within the steppers' ranges when loaded.
+    func clampLoadedValues() {
+        func clamp(_ value: Int, _ range: ClosedRange<Int>) -> Int { min(max(value, range.lowerBound), range.upperBound) }
+        if duckingAmount != clamp(duckingAmount, 3...30) { duckingAmount = clamp(duckingAmount, 3...30) }
+        if volumeLimitLevel != clamp(volumeLimitLevel, -24...(-1)) { volumeLimitLevel = clamp(volumeLimitLevel, -24...(-1)) }
+        if balanceStep != clamp(balanceStep, 1...6) { balanceStep = clamp(balanceStep, 1...6) }
+        if balanceLimit != clamp(balanceLimit, 6...30) { balanceLimit = clamp(balanceLimit, 6...30) }
+        if earBalance != clamp(earBalance, -12...12) { earBalance = clamp(earBalance, -12...12) }
+    }
 
     /// Saves a setting. Several changes in a row (applying a preset) are
     /// reported to the Controller once.

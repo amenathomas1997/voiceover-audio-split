@@ -9,6 +9,18 @@ import sys
 
 LANGUAGES = ("es", "fr", "de")
 PLACEHOLDER = re.compile(r"%(?:\d+\$)?(@|lld|ld|d|f|\.\d+f)")
+POSITIONAL = re.compile(r"%\d+\$")
+
+
+def placeholders_match(source, translation):
+    """Same placeholders, in the same order, unless the translation numbers every one
+    (%1$@, %2$lld), which is the only safe way to reorder them."""
+    ours, theirs = PLACEHOLDER.findall(source), PLACEHOLDER.findall(translation)
+    if sorted(ours) != sorted(theirs):
+        return False
+    if ours == theirs:
+        return True
+    return len(POSITIONAL.findall(translation)) == len(theirs)
 problems = []
 
 for name in ("Localizable", "InfoPlist"):
@@ -26,7 +38,7 @@ for name in ("Localizable", "InfoPlist"):
                 problems.append(f"{name}: no {language} for: {key[:80]}")
             elif unit.get("state") != "translated":
                 problems.append(f"{name}: {language} is {unit.get('state')} for: {key[:80]}")
-            elif sorted(PLACEHOLDER.findall(source)) != sorted(PLACEHOLDER.findall(unit["value"])):
+            elif not placeholders_match(source, unit["value"]):
                 problems.append(f"{name}: {language} placeholders differ for: {key[:80]}")
 
 for problem in problems:

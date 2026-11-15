@@ -2,6 +2,20 @@
 
 ## Next
 
+- **Fixed, from a second code audit:**
+  - Closing a window now really stops what it was doing: the camera after Scan and Read, Scan to PDF or Find an Object; the listening test; the permissions check in Settings. (Windows are kept for reuse, and their views weren't told they had closed.) Reopened windows start fresh: the command palette empty, the window list reloaded.
+  - Command W closes and Command M minimizes any of the app's windows.
+  - Saved presets, reminders, labels, place markers, call apps and your own commands survive a new version adding a field; one unreadable entry no longer throws the rest away. Students and lesson reports that can't be read are kept aside instead of written over.
+  - Numbers in an imported settings file are kept within the ranges Settings allows, so a file can't make other sounds louder during speech or silence the Mac.
+  - The resource monitor's digits now wait until the summary has been spoken, VoiceOver's own keys pass through during the wait, and it can no longer take the keys away from a lesson that started meanwhile. Sizes are said in words ("23.9 gigabytes"). The window's Refresh can't get stuck after closing it mid-refresh.
+  - Privacy: the address of the website in front is no longer written to the log when a website preset switches. The diagnostics report leaves out your hearing profile, sites, apps, labels, markers and scripts. The Do It for Me text and PRIVACY.md now say that the text shown in the window is sent along with the control names.
+  - In Do It for Me, Return in the request field confirms a pending press instead of asking again.
+  - The assistant says "Thinking" when asked, and replies are labelled "Assistant", not "Claude", since the AI on your Mac may have answered.
+  - Test Announcement speaks its result with the Mac's own voice when VoiceOver's connection isn't working, which is exactly when you can't hear it otherwise.
+  - The listening test says which ear and tone is next. Several devices connecting at once are announced in one sentence. Removing an app rule, preset, site, label or marker says "Removed".
+  - Check for Updates tells a busy GitHub, a missing download page and a full disk apart from a lost connection.
+  - Undoing a hand-chosen preset also restores which side speech goes back to; a cancelled automatic image description can be described later; restarting VoiceOver twice at once is ignored; the network state is read safely; the translation check in CI now catches placeholders in the wrong order.
+
 ## 1.2, 3 November 2026
 
 - **AI on your Mac:** image and video descriptions, the assistant, Do It for Me and the money identifier can use Apple's on-device model (macOS 27 with Apple Intelligence): no API key, no cost, and nothing leaves your Mac. Choose in Settings, under Assistant and image descriptions; Claude with your own key is still there for longer answers.

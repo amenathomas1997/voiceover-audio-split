@@ -118,6 +118,7 @@ final class HearingTest: ObservableObject {
         level = -80
         let ear = item.ear == 0 ? String(localized: "Left ear") : String(localized: "Right ear")
         step = "\(ear), \(HearingProfile.name(item.frequency))"
+        Announcer.say(step)
         // A pause first, so the tone isn't masked by the spoken step.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             guard let self, self.running, self.current?.frequency == item.frequency, self.current?.ear == item.ear else { return }

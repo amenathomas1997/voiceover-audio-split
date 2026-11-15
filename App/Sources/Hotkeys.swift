@@ -44,7 +44,10 @@ enum Hotkeys {
     nonisolated(unsafe) static var modifier = ShortcutModifier.option
     /// While set (VoiceOver lessons and practice, the typing trainer), sees every key press
     /// first, with the key event for its characters; returning true takes the key.
-    nonisolated(unsafe) static var keyObserver: ((Int64, CGEventFlags, NSEvent?) -> Bool)?
+    nonisolated(unsafe) static var keyObserver: ((Int64, CGEventFlags, NSEvent?) -> Bool)? { didSet { keyObserverGeneration &+= 1 } }
+    /// Changes each time the observer is set, so a short-lived observer (the resource monitor's
+    /// digit) clears only itself, never a lesson that took over meanwhile.
+    nonisolated(unsafe) private(set) static var keyObserverGeneration = 0
 
     static var isTrusted: Bool { AXIsProcessTrusted() }
 

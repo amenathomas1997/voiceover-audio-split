@@ -124,6 +124,8 @@ enum AutoDescribe {
     private static func cancelWork() {
         work?.cancel()
         work = nil
+        // Not described after all: coming back to it describes it then.
+        described = nil
     }
 
     /// Whether the cursor is still on the picture a key names.

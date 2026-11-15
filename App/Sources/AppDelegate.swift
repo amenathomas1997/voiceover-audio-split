@@ -70,8 +70,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         let editItem = NSMenuItem(title: edit.title, action: nil, keyEquivalent: "")
         editItem.submenu = edit
+        // Command W closes and Command M minimizes any of the app's windows, as everywhere else.
+        let window = NSMenu(title: String(localized: "Window"))
+        window.addItem(NSMenuItem(title: String(localized: "Close"), action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"))
+        window.addItem(NSMenuItem(title: String(localized: "Minimize"), action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m"))
+        let windowItem = NSMenuItem(title: window.title, action: nil, keyEquivalent: "")
+        windowItem.submenu = window
         main.addItem(NSMenuItem()) // The app menu's place.
         main.addItem(editItem)
+        main.addItem(windowItem)
         return main
     }
 
@@ -518,17 +525,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// Brings an existing window forward, or creates it. Menu bar apps must
     /// activate themselves for a window to take keyboard focus.
     private func show(_ existing: NSWindow?, title: String, view: some View) -> NSWindow {
-        let window = existing ?? {
-            let window = NSWindow(contentViewController: NSHostingController(rootView: view))
-            window.title = title
-            window.styleMask = [.titled, .closable]
-            window.isReleasedWhenClosed = false
-            window.center()
-            return window
-        }()
-        NSApp.activate()
-        window.makeKeyAndOrderFront(nil)
-        return window
+        ReusableWindow.show(existing, title: title, view: view)
     }
 
     // MARK: - Menu (rebuilt each time it opens so checkmarks are current)

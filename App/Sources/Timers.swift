@@ -668,7 +668,7 @@ final class Reminders: ObservableObject {
 
     private static func load(_ defaults: UserDefaults) -> [Reminder] {
         guard let data = defaults.data(forKey: storageKey),
-              let saved = try? JSONDecoder().decode([Reminder].self, from: data) else { return [] }
+              let saved = JSONDecoder().decodeList(Reminder.self, from: data) else { return [] }
         return saved.sorted { $0.due < $1.due }
     }
 

@@ -403,6 +403,20 @@ final class AppSoundTests: XCTestCase {
         XCTAssertEqual(Mixer.pan(100)[0]!.fromLeft, 0, accuracy: 0.001)
     }
 
+    func testOldPresetsStillLoad() throws {
+        // A preset saved before fields were added keeps loading, with defaults for what's missing.
+        let old = #"[{"id":"5E1A0001-0000-4000-8000-0000000000AA","name":"Podcast","split":"left","balance":6,"layout":"opposite","stereoOthers":false,"ducking":true}]"#
+        let presets = JSONDecoder().decodeList(Preset.self, from: Data(old.utf8))
+        XCTAssertEqual(presets?.count, 1)
+        XCTAssertEqual(presets?.first?.name, "Podcast")
+        XCTAssertEqual(presets?.first?.duckingAmount, 10)
+        XCTAssertEqual(presets?.first?.oneEar, .off)
+        // One unreadable entry is skipped, not the whole list.
+        let mixed = #"[{"name":"Good","split":"off"},{"split":"left"}]"#
+        XCTAssertEqual(JSONDecoder().decodeList(Preset.self, from: Data(mixed.utf8))?.map(\.name), ["Good"])
+        XCTAssertNil(JSONDecoder().decodeList(Preset.self, from: Data("not json".utf8)))
+    }
+
     func testOldAppRulesStillLoad() throws {
         let old = #"[{"name":"Music","bundleID":"com.apple.Music","volume":-6,"muted":false,"ear":"right"}]"#
         let rules = try JSONDecoder().decode([AppRule].self, from: Data(old.utf8))

@@ -57,8 +57,13 @@ enum VoiceOverRescue {
     private static let voiceOverApp = URL(fileURLWithPath: "/System/Library/CoreServices/VoiceOver.app")
 
     /// Quits VoiceOver and starts it again, speaking progress with the system voice.
+    @MainActor private static var restarting = false
+
     @MainActor
     static func restart() {
+        guard !restarting else { return }
+        restarting = true
+        defer { DispatchQueue.main.asyncAfter(deadline: .now() + 15) { restarting = false } }
         let wasRunning = NSWorkspace.shared.isVoiceOverEnabled
         Announcer.useSystemVoice = true
         Announcer.say(wasRunning ? String(localized: "Restarting VoiceOver") : String(localized: "Starting VoiceOver"))

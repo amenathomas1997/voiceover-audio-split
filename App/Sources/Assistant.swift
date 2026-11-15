@@ -320,6 +320,7 @@ final class AssistantModel: ObservableObject {
         guard !question.isEmpty, !busy else { return }
         busy = true
         turns.append(AssistantTurn(fromUser: true, text: question))
+        Announcer.say(String(localized: "Thinking"))
         Task { @MainActor in await send([["type": "text", "text": question]]) }
     }
 
@@ -382,7 +383,7 @@ struct AssistantView: View {
                     Text(String(localized: "Ask about using your Mac or VoiceOver, or press the describe-image shortcut on a picture."))
                 }
                 ForEach(model.turns) { turn in
-                    Text(turn.fromUser ? String(localized: "You: \(turn.text)") : String(localized: "Claude: \(turn.text)"))
+                    Text(turn.fromUser ? String(localized: "You: \(turn.text)") : String(localized: "Assistant: \(turn.text)"))
                         .textSelection(.enabled)
                 }
                 if model.busy { Text(String(localized: "Thinking…")) }

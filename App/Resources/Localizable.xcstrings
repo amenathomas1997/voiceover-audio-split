@@ -5638,6 +5638,34 @@
         }
       }
     },
+    "Assistant: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assistent: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Assistant: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asistente: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assistant : %@"
+          }
+        }
+      }
+    },
     "Audio Hub" : {
       "localizations" : {
         "de" : {
@@ -7703,7 +7731,6 @@
       }
     },
     "Cancel the Last Reminder" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9007,28 +9034,6 @@
         }
       }
     },
-    "Claude: %@" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Claude: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Claude: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Claude : %@"
-          }
-        }
-      }
-    },
     "Clear" : {
       "localizations" : {
         "de" : {
@@ -9223,6 +9228,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Presse-papiers chargé. %lld paragraphes."
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermer"
           }
         }
       }
@@ -11450,7 +11483,6 @@
       }
     },
     "Contracted braille isn't available on this Mac, so the file is uncontracted." : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -15994,6 +16026,34 @@
         }
       }
     },
+    "GitHub is busy. Try checking for updates again in an hour." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub ist ausgelastet. Suche in einer Stunde noch einmal nach Updates."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "GitHub is busy. Try checking for updates again in an hour."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub está ocupado. Vuelve a buscar actualizaciones dentro de una hora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub est occupé. Réessayez de rechercher des mises à jour dans une heure."
+          }
+        }
+      }
+    },
     "Give an app its own volume, ear or place between your ears, and bass and treble. You can also hold the shortcut key and press equals, minus or zero to change the app in front." : {
       "localizations" : {
         "de" : {
@@ -17821,7 +17881,6 @@
       }
     },
     "I: describe the image under the VoiceOver cursor. A: ask the assistant. These use the AI on this Mac (macOS 27 with Apple Intelligence), or Claude with your Anthropic API key in Settings." : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -21348,7 +21407,6 @@
       }
     },
     "List Timers and Reminders" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -22954,6 +23012,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Micro : demandé"
+          }
+        }
+      }
+    },
+    "Minimize" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Minimize"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimizar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire"
           }
         }
       }
@@ -32582,6 +32668,34 @@
         }
       }
     },
+    "Removed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfernt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Removed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimé"
+          }
+        }
+      }
+    },
     "Removed %@." : {
       "localizations" : {
         "de" : {
@@ -38620,7 +38734,6 @@
       }
     },
     "Still saving the recording." : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -38935,7 +39048,6 @@
       }
     },
     "Stopping the recording." : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -41300,7 +41412,6 @@
       }
     },
     "The control is %@." : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -41368,6 +41479,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le document est au milieu de la fenêtre, avec une barre d'outils au-dessus et la barre latérale Format à droite. Tapez dans le document comme dans TextEdit. Commande B, I et U mettent en forme le texte sélectionné, et le menu local Style de paragraphe de la barre latérale Format transforme une ligne en titre ou en intertitre."
+          }
+        }
+      }
+    },
+    "The download page wasn't found. The latest version is at the VoiceOver Audio Split website." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Downloadseite wurde nicht gefunden. Die neueste Version gibt es auf der Website von VoiceOver Audio Split."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The download page wasn't found. The latest version is at the VoiceOver Audio Split website."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró la página de descarga. La última versión está en el sitio web de VoiceOver Audio Split."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La page de téléchargement n’a pas été trouvée. La dernière version se trouve sur le site de VoiceOver Audio Split."
           }
         }
       }
@@ -41610,6 +41749,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Les touches à revoir aujourd'hui."
+          }
+        }
+      }
+    },
+    "The latest release has no installer yet. Try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die neueste Version hat noch kein Installationsprogramm. Versuche es später noch einmal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The latest release has no installer yet. Try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La última versión todavía no tiene instalador. Inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dernière version n’a pas encore d’installateur. Réessayez plus tard."
           }
         }
       }
@@ -41884,24 +42051,30 @@
         }
       }
     },
-    "The names of the controls in that app's front window are sent to Anthropic. Nothing is pressed without your confirmation." : {
+    "The names of the controls and the text shown in that app's front window are sent to Anthropic. Nothing is pressed without your confirmation." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Namen der Steuerelemente im vordersten Fenster dieser App werden an Anthropic gesendet. Ohne deine Bestätigung wird nichts gedrückt."
+            "value" : "Die Namen der Steuerelemente und der im vordersten Fenster dieser App angezeigte Text werden an Anthropic gesendet. Nichts wird ohne deine Bestätigung gedrückt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The names of the controls and the text shown in that app's front window are sent to Anthropic. Nothing is pressed without your confirmation."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los nombres de los controles de la ventana al frente de esa app se envían a Anthropic. No se pulsa nada sin tu confirmación."
+            "value" : "Los nombres de los controles y el texto que se muestra en la ventana frontal de esa app se envían a Anthropic. No se pulsa nada sin tu confirmación."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les noms des commandes de la fenêtre au premier plan de cette app sont envoyés à Anthropic. Rien n'est activé sans votre confirmation."
+            "value" : "Les noms des contrôles et le texte affiché dans la fenêtre avant de cette app sont envoyés à Anthropic. Rien n’est activé sans votre confirmation."
           }
         }
       }
@@ -42644,6 +42817,34 @@
         }
       }
     },
+    "There isn't enough space on the disk to download the update." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf der Festplatte ist nicht genug Platz, um das Update zu laden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "There isn't enough space on the disk to download the update."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay suficiente espacio en el disco para descargar la actualización."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il n’y a pas assez d’espace sur le disque pour télécharger la mise à jour."
+          }
+        }
+      }
+    },
     "There's a lot of background noise." : {
       "localizations" : {
         "de" : {
@@ -42842,6 +43043,34 @@
         }
       }
     },
+    "Thinking" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Denke nach"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Thinking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pensando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réflexion en cours"
+          }
+        }
+      }
+    },
     "Thinking…" : {
       "localizations" : {
         "de" : {
@@ -42908,30 +43137,30 @@
         }
       }
     },
-    "This Mac's address is %@, on %@." : {
+    "This Mac's address is %@." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Adresse dieses Mac ist %@, auf %@."
+            "value" : "Die Adresse dieses Mac ist %@."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "This Mac's address is %@, on %@."
+            "value" : "This Mac's address is %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La dirección de este Mac es %@, en %@."
+            "value" : "La dirección de este Mac es %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’adresse de ce Mac est %@, sur %@."
+            "value" : "L’adresse de ce Mac est %@."
           }
         }
       }
@@ -42981,7 +43210,6 @@
       }
     },
     "This conversation has a picture in it, and sending pictures to Anthropic isn't allowed in Settings. Start a new one, or allow it in Settings." : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -55846,7 +56074,6 @@
       }
     },
     "the balance" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -56029,7 +56256,6 @@
       }
     },
     "the split" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {

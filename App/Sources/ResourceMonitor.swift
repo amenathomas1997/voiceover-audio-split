@@ -105,34 +105,34 @@ enum ResourceMonitor {
         Task { @MainActor in Announcer.say(await self.detail(detail)) }
     }
 
-    /// For a few seconds, a digit on its own picks a part; any other key passes through and
-    /// ends the wait. Not while a lesson or practice is watching the keys.
+    /// Once the summary has been spoken, and for a few seconds after, a digit on its own picks
+    /// a part. Keys with modifiers (VoiceOver's own, Command shortcuts) pass through untouched;
+    /// another plain key ends the wait. Not while a lesson or practice is watching the keys.
     @MainActor
     private static func listenForDigit() {
         guard Hotkeys.keyObserver == nil else { return }
-        let until = Date().addingTimeInterval(digitSeconds)
+        // The invitation is at the end of the summary: the clock starts when that has been said.
+        let until = max(Announcer.speakingUntil, Date()).addingTimeInterval(digitSeconds)
+        var generation = 0
         let observer: (Int64, CGEventFlags, NSEvent?) -> Bool = { keyCode, flags, _ in
-            // Only a plain digit: Command-1 and the like belong to the app in front.
+            // The event tap runs on the main run loop, so this is on main.
             let plain = flags.intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift]).isEmpty
-            guard Date() < until, plain, let number = Key.presetDigits[keyCode], let detail = Detail(rawValue: number) else {
-                DispatchQueue.main.async { if Hotkeys.keyObserver != nil { Hotkeys.keyObserver = nil } }
+            guard plain else { return false }
+            guard Date() < until, let number = Key.presetDigits[keyCode], let detail = Detail(rawValue: number) else {
+                if Hotkeys.keyObserverGeneration == generation { Hotkeys.keyObserver = nil }
                 return false
             }
-            DispatchQueue.main.async {
-                Hotkeys.keyObserver = nil
-                announce(detail)
-            }
+            if Hotkeys.keyObserverGeneration == generation { Hotkeys.keyObserver = nil }
+            DispatchQueue.main.async { announce(detail) }
             return true
         }
         Hotkeys.keyObserver = observer
-        DispatchQueue.main.asyncAfter(deadline: .now() + digitSeconds + 0.1) {
-            // Only this wait is cleared, not a lesson that started meanwhile.
-            if Date() >= until, Hotkeys.keyObserver != nil, waitingForDigit { Hotkeys.keyObserver = nil }
-            waitingForDigit = false
+        generation = Hotkeys.keyObserverGeneration
+        DispatchQueue.main.asyncAfter(deadline: .now() + until.timeIntervalSinceNow + 0.1) {
+            // Only this observer is cleared, never a lesson that took over meanwhile.
+            if Hotkeys.keyObserverGeneration == generation { Hotkeys.keyObserver = nil }
         }
-        waitingForDigit = true
     }
-    nonisolated(unsafe) private static var waitingForDigit = false
 
     // MARK: Processor
 
@@ -289,9 +289,10 @@ enum ResourceMonitor {
     /// "MacBook Pro (14-inch, M5 Pro)", from the Mac's own description of itself: the
     /// "product" entry of the device tree on Apple silicon, or the platform expert on Intel.
     private static func productName() -> String? {
-        for entry in [IORegistryEntryFromPath(kIOMainPortDefault, "IODeviceTree:/product"),
-                      IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOPlatformExpertDevice"))] where entry != 0 {
-            defer { IOObjectRelease(entry) }
+        let entries = [IORegistryEntryFromPath(kIOMainPortDefault, "IODeviceTree:/product"),
+                       IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOPlatformExpertDevice"))]
+        defer { for entry in entries where entry != 0 { IOObjectRelease(entry) } }
+        for entry in entries where entry != 0 {
             guard let value = IORegistryEntryCreateCFProperty(entry, "product-name" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() else { continue }
             let name = (value as? String) ?? (value as? Data).flatMap { String(data: $0, encoding: .utf8) } ?? ""
             let trimmed = name.trimmingCharacters(in: CharacterSet(charactersIn: "\0").union(.whitespacesAndNewlines))
@@ -312,7 +313,7 @@ enum ResourceMonitor {
         var text = SystemStatus.network()
         if let interface = SystemStatus.currentPath?.availableInterfaces.first,
            let address = ipv4Address(of: interface.name) {
-            text += ". " + String(localized: "This Mac's address is \(address), on \(interface.name).")
+            text += ". " + String(localized: "This Mac's address is \(address).")
         }
         return text + (text.hasSuffix(".") ? "" : ".")
     }
@@ -365,14 +366,17 @@ enum ResourceMonitor {
 
     /// The apps and processes using the processor most, over the sample, busiest first.
     static func busiestProcesses() async -> [Process] {
+        let started = Date()
         let before = processTimes()
         guard !before.isEmpty else { return [] }
         try? await Task.sleep(for: .milliseconds(Int(sampleSeconds * 1000)))
         let after = processTimes()
+        // Walking every process takes time of its own: measure what really passed.
+        let elapsed = max(Date().timeIntervalSince(started), sampleSeconds)
         var shares: [(pid_t, Double)] = []
         for (pid, time) in after {
             guard let earlier = before[pid] else { continue }
-            let share = (time - earlier) / sampleSeconds
+            let share = (time - earlier) / elapsed
             if share >= 0.005 { shares.append((pid, share)) }
         }
         return shares.sorted { $0.1 > $1.1 }.prefix(8).map { Process(name: processName($0.0), cpu: $0.1) }
@@ -389,8 +393,9 @@ enum ResourceMonitor {
 
     static func percent(_ fraction: Double) -> Int { Int((fraction * 100).rounded()) }
 
-    /// "23.9 GB", "946 GB", "2 TB": one decimal at most, in the units Finder uses for files
-    /// (1000 to the unit) or Activity Monitor for memory (1024).
+    /// "23.9 gigabytes", "946 gigabytes", "2 terabytes": one decimal at most, in words (VoiceOver
+    /// spells "GB" out letter by letter), in the units Finder uses for files (1000 to the unit)
+    /// or Activity Monitor for memory (1024).
     static func bytes(_ count: UInt64, _ style: ByteCountFormatter.CountStyle) -> String {
         let step = style == .memory ? 1024.0 : 1000.0
         var value = Double(count) / (step * step)
@@ -398,7 +403,7 @@ enum ResourceMonitor {
         if value >= step * step { value /= step * step; unit = .terabytes } else if value >= step { value /= step; unit = .gigabytes }
         let digits = value >= 100 || unit == .megabytes ? 0 : 1
         return Measurement(value: value, unit: unit)
-            .formatted(.measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(0...digits))))
+            .formatted(.measurement(width: .wide, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(0...digits))))
     }
 }
 
@@ -426,7 +431,7 @@ final class ResourceMonitorModel: ObservableObject {
                 for detail in ResourceMonitor.Detail.allCases { result.append((detail, await ResourceMonitor.detail(detail))) }
                 return result
             }.value
-            guard let self, !Task.isCancelled else { return }
+            guard let self, !Task.isCancelled else { self?.isRefreshing = false; return }
             // Only rows whose words changed are touched, so VoiceOver isn't interrupted for nothing.
             for (detail, text) in texts {
                 if let index = rows.firstIndex(where: { $0.detail == detail }), rows[index].text != text { rows[index].text = text }
@@ -457,7 +462,11 @@ final class ResourceMonitorModel: ObservableObject {
         stopUpdating()
         task?.cancel()
         task = nil
+        isRefreshing = false
     }
+
+    /// When the window is shown again with the switch still on.
+    func resume() { if autoUpdate { startUpdating() } }
 
     var asText: String { rows.map { "\($0.detail.title): \($0.text)" }.joined(separator: "\n") }
 }
@@ -496,7 +505,7 @@ struct ResourceMonitorView: View {
             }
         }
         .frame(width: 560, height: 500)
-        .onAppear { model.refresh() }
+        .onAppear { model.refresh(); model.resume() }
         .onDisappear { model.stop() }
     }
 }

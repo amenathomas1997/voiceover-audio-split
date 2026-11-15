@@ -177,10 +177,22 @@ final class Updater {
         var request = URLRequest(url: UpdateCheck.latestURL, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("VoiceOverAudioSplit/\(UpdateCheck.version)", forHTTPHeaderField: "User-Agent")
-        guard let (data, response) = try? await URLSession.shared.data(for: request),
-              (response as? HTTPURLResponse)?.statusCode == 200, let release = UpdateCheck.parse(data) else {
-            log("Update check failed.")
+        guard let (data, response) = try? await URLSession.shared.data(for: request) else {
+            log("Update check failed: no response.")
             if userInitiated { Announcer.say(String(localized: "Couldn't check for updates. Check your internet connection, and try again later.")) }
+            return nil
+        }
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        guard status == 200, let release = UpdateCheck.parse(data) else {
+            log("Update check failed: status \(status).")
+            if userInitiated {
+                switch status {
+                case 403, 429: Announcer.say(String(localized: "GitHub is busy. Try checking for updates again in an hour."))
+                case 404: Announcer.say(String(localized: "The download page wasn't found. The latest version is at the VoiceOver Audio Split website."))
+                case 200: Announcer.say(String(localized: "The latest release has no installer yet. Try again later."))
+                default: Announcer.say(String(localized: "Couldn't check for updates. Check your internet connection, and try again later."))
+                }
+            }
             return nil
         }
         Preferences.shared.lastUpdateCheck = Date().timeIntervalSince1970
@@ -251,8 +263,11 @@ final class Updater {
                         NSWorkspace.shared.open(UpdateCheck.releasesPage)
                     }
                 }
+            } catch let error as CocoaError where error.code == .fileWriteOutOfSpace {
+                log("Update download failed: disk full.")
+                Announcer.say(String(localized: "There isn't enough space on the disk to download the update."))
             } catch {
-                log("Update download failed.")
+                log("Update download failed: \(type(of: error)).")
                 Announcer.say(String(localized: "The update couldn't be downloaded. Check your internet connection, and try again later."))
             }
         }

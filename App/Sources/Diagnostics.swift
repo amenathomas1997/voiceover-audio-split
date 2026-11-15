@@ -10,7 +10,7 @@ import OSLog
 
 enum Diagnostics {
     static func report(log: String? = nil) -> String {
-        let settings = (try? SettingsTransfer.exportData()).flatMap { String(data: $0, encoding: .utf8) } ?? "unavailable"
+        let settings = (try? SettingsTransfer.exportData(forReport: true)).flatMap { String(data: $0, encoding: .utf8) } ?? "unavailable"
         return """
         VoiceOver Audio Split diagnostics report
         Created: \(Date().formatted(date: .abbreviated, time: .standard))
@@ -23,7 +23,7 @@ enum Diagnostics {
         Recent log (last hour):
         \(log ?? recentLog())
 
-        Settings (no API key or personal files):
+        Settings (no API key, and nothing about you: no hearing profile, sites, apps, labels, markers or scripts):
         \(settings)
         """
     }

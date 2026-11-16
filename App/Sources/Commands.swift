@@ -25,7 +25,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case objectFinder, scanToPDF, fileToPDF
     case importLesson, exportStudentReport
     case autoDescribeImages, screenRecording
-    case resourceMonitor
+    case resourceMonitor, screenOCR
 
     var id: String { rawValue }
 
@@ -108,6 +108,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .autoDescribeImages: String(localized: "Describe images automatically when VoiceOver lands on them")
         case .screenRecording: String(localized: "Start or stop recording the screen")
         case .resourceMonitor: String(localized: "Resource monitor: processor, memory, disks, battery, uptime")
+        case .screenOCR: String(localized: "Screen OCR: read and click text in apps without accessibility")
         case .sensorStatus: String(localized: "What's using the camera and microphone")
         case .customLabel: String(localized: "Label the item under the VoiceOver cursor")
         case .placeMarker: String(localized: "Add a place marker on this web page")
@@ -180,7 +181,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
              .meetingReadChat, .meetingWhoIsTalking, .meetingLeave, .meetingChatAnnounce,
              .reminders, .listReminders, .cancelLastReminder, .clipboardHistory, .windowSwitcher,
              .objectFinder, .scanToPDF, .fileToPDF, .importLesson, .exportStudentReport,
-             .autoDescribeImages, .screenRecording, .resourceMonitor: nil
+             .autoDescribeImages, .screenRecording, .resourceMonitor, .screenOCR: nil
         }
     }
 }

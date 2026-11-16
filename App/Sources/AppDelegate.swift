@@ -38,6 +38,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var switcherWindow: NSWindow?
     private var objectFinderWindow: NSWindow?
     private var resourceWindow: NSWindow?
+    private var screenOCRWindow: NSWindow?
     private var practiceWindow: NSWindow?
     private var typingWindow: NSWindow?
     private var lessonsWindow: NSWindow?
@@ -119,6 +120,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 log("Check: resources summary = \(await ResourceMonitor.summary())")
                 for detail in ResourceMonitor.Detail.allCases {
                     log("Check: resources \(detail.title) = \(await ResourceMonitor.detail(detail))")
+                }
+                NSApp.terminate(nil)
+            }
+            return
+        }
+        // Screen OCR of the front window: logs the lines found and where the first one is.
+        if CommandLine.arguments.contains("--check-screen-ocr") {
+            Task { @MainActor in
+                do {
+                    let capture = try await ScreenPicture.frontWindowCapture()
+                    let lines = ScreenOCRLayout.recognize(capture.image)
+                    log("Check: screen OCR frame = \(capture.frame), \(lines.count) lines")
+                    for line in lines.prefix(12) {
+                        log("Check: screen OCR line \(line.id) at \(ScreenOCRLayout.screenRect(line.box, in: capture.frame)): \(line.text) [\(line.words.count) words]")
+                    }
+                } catch {
+                    log("Check: screen OCR failed: \(error)")
                 }
                 NSApp.terminate(nil)
             }
@@ -428,6 +446,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         })
     }
 
+    func showScreenOCR() {
+        screenOCRWindow = show(screenOCRWindow, title: String(localized: "Screen OCR"), view: ScreenOCRView())
+    }
+
     func showResourceMonitor() {
         resourceWindow = show(resourceWindow, title: String(localized: "Resource Monitor"), view: ResourceMonitorView())
     }
@@ -722,6 +744,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(to: tools, String(localized: "Open the Recordings Folder")) { _ in MainActor.assumeIsolated { ScreenRecorder.shared.openFolder() } }
         add(to: tools, String(localized: "Resource Monitor"), command: .resourceMonitor) { $0.run(.resourceMonitor) }
         add(to: tools, String(localized: "Resource Monitor Window…")) { [weak self] _ in self?.showResourceMonitor() }
+        tools.addItem(.separator())
+        add(to: tools, String(localized: "Screen OCR: Front Window"), command: .screenOCR) { $0.run(.screenOCR) }
+        add(to: tools, String(localized: "Screen OCR: Whole Screen")) { _ in
+            MainActor.assumeIsolated { ScreenOCR.shared.capture(wholeScreen: true, thenNavigate: true) }
+        }
+        add(to: tools, String(localized: "Screen OCR Window…")) { [weak self] _ in self?.showScreenOCR() }
 
         if !preferences.userCommands.isEmpty {
             let yours = submenu(in: menu, String(localized: "Your Commands"))

@@ -1622,6 +1622,34 @@
         }
       }
     },
+    "%lld lines." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Zeilen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%lld lines."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld líneas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld lignes."
+          }
+        }
+      }
+    },
     "%lld links have unclear text." : {
       "localizations" : {
         "de" : {
@@ -8044,6 +8072,90 @@
         }
       }
     },
+    "Capture Whole Screen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ganzen Bildschirm erfassen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Capture Whole Screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturar toda la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturer tout l’écran"
+          }
+        }
+      }
+    },
+    "Capture Window" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenster erfassen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Capture Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturar ventana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturer la fenêtre"
+          }
+        }
+      }
+    },
+    "Capture the screen first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erfassen Sie zuerst den Bildschirm."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Capture the screen first."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Captura la pantalla primero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturez d’abord l’écran."
+          }
+        }
+      }
+    },
     "Car" : {
       "localizations" : {
         "de" : {
@@ -9074,6 +9186,90 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Parole et audition plus claires"
+          }
+        }
+      }
+    },
+    "Click" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klicken"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Click"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cliquer"
+          }
+        }
+      }
+    },
+    "Click %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ anklicken"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Click %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cliquer sur %@"
+          }
+        }
+      }
+    },
+    "Clicked %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ angeklickt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Clicked %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic sur %@"
           }
         }
       }
@@ -11840,6 +12036,34 @@
         }
       }
     },
+    "Copy All" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles kopieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy All"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout copier"
+          }
+        }
+      }
+    },
     "Copy Report" : {
       "localizations" : {
         "de" : {
@@ -14354,6 +14578,34 @@
         }
       }
     },
+    "End of line" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeilenende"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "End of line"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin de la línea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin de ligne"
+          }
+        }
+      }
+    },
     "English" : {
       "localizations" : {
         "de" : {
@@ -15384,6 +15636,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Terminé : %@"
+          }
+        }
+      }
+    },
+    "First line. %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erste Zeile. %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "First line. %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primera línea. %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Première ligne. %@"
           }
         }
       }
@@ -20368,6 +20648,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus grande différence : %lld décibels"
+          }
+        }
+      }
+    },
+    "Last line. %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzte Zeile. %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last line. %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Última línea. %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dernière ligne. %@"
           }
         }
       }
@@ -25916,6 +26224,34 @@
         }
       }
     },
+    "Nothing to copy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts zu kopieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nothing to copy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada que copiar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien à copier"
+          }
+        }
+      }
+    },
     "Nothing to read. Check that VoiceOver allows AppleScript control." : {
       "localizations" : {
         "de" : {
@@ -30042,6 +30378,34 @@
         }
       }
     },
+    "Press Capture to read the front window." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücken Sie Erfassen, um das vordere Fenster zu lesen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Press Capture to read the front window."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsa Capturar para leer la ventana frontal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur Capturer pour lire la fenêtre de devant."
+          }
+        }
+      }
+    },
     "Press Escape" : {
       "localizations" : {
         "de" : {
@@ -32162,6 +32526,62 @@
         }
       }
     },
+    "Recognized lines" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erkannte Zeilen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Recognized lines"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Líneas reconocidas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes reconnues"
+          }
+        }
+      }
+    },
+    "Recognizing…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erkennung läuft…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Recognizing…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconociendo…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnaissance…"
+          }
+        }
+      }
+    },
     "Record the Screen" : {
       "localizations" : {
         "de" : {
@@ -33842,6 +34262,34 @@
         }
       }
     },
+    "Right clicked %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechtsklick auf %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Right clicked %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic derecho en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic droit sur %@"
+          }
+        }
+      }
+    },
     "Right ear" : {
       "localizations" : {
         "de" : {
@@ -35467,6 +35915,230 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Score : %lld"
+          }
+        }
+      }
+    },
+    "Screen OCR" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm-OCR"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Screen OCR"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR de pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR d’écran"
+          }
+        }
+      }
+    },
+    "Screen OCR Window…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm-OCR-Fenster…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Screen OCR Window…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ventana de OCR de pantalla…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenêtre OCR d’écran…"
+          }
+        }
+      }
+    },
+    "Screen OCR of the whole screen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm-OCR des ganzen Bildschirms"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Screen OCR of the whole screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR de toda la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR de tout l’écran"
+          }
+        }
+      }
+    },
+    "Screen OCR off" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm-OCR aus"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Screen OCR off"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR de pantalla desactivado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR d’écran désactivé"
+          }
+        }
+      }
+    },
+    "Screen OCR: %lld lines. Up and Down Arrow move by line, Left and Right by word, Return clicks, Escape leaves. %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm-OCR: %lld Zeilen. Pfeil auf und ab wechseln die Zeile, links und rechts das Wort, Zeilenschalter klickt, Escape beendet. %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Screen OCR: %lld lines. Up and Down Arrow move by line, Left and Right by word, Return clicks, Escape leaves. %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR de pantalla: %lld líneas. Flecha arriba y abajo mueven por línea, izquierda y derecha por palabra, Retorno hace clic, Escape sale. %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR d’écran : %lld lignes. Flèches haut et bas pour changer de ligne, gauche et droite de mot, Retour pour cliquer, Échap pour quitter. %@"
+          }
+        }
+      }
+    },
+    "Screen OCR: Front Window" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm-OCR: vorderes Fenster"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Screen OCR: Front Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR de pantalla: ventana frontal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR d’écran : fenêtre de devant"
+          }
+        }
+      }
+    },
+    "Screen OCR: Whole Screen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm-OCR: ganzer Bildschirm"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Screen OCR: Whole Screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR de pantalla: toda la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR d’écran : tout l’écran"
+          }
+        }
+      }
+    },
+    "Screen OCR: read and click text in apps without accessibility" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm-OCR: Text in Apps ohne Barrierefreiheit lesen und anklicken"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Screen OCR: read and click text in apps without accessibility"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR de pantalla: leer y hacer clic en texto de apps sin accesibilidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OCR d’écran : lire et cliquer sur du texte dans les apps sans accessibilité"
           }
         }
       }
@@ -38359,6 +39031,34 @@
         }
       }
     },
+    "Start of line" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeilenanfang"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start of line"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicio de la línea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Début de ligne"
+          }
+        }
+      }
+    },
     "Start or stop recording the screen" : {
       "localizations" : {
         "de" : {
@@ -38729,6 +39429,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recherche en cours. Sur les emballages, le code-barres se trouve souvent dessous ou au dos."
+          }
+        }
+      }
+    },
+    "Still recognizing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erkennung läuft noch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Still recognizing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía reconociendo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnaissance en cours"
           }
         }
       }
@@ -41731,6 +42459,34 @@
         }
       }
     },
+    "The keys are busy with a lesson. Use the Screen OCR window instead." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Tasten sind mit einer Lektion beschäftigt. Verwenden Sie stattdessen das Bildschirm-OCR-Fenster."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The keys are busy with a lesson. Use the Screen OCR window instead."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las teclas están ocupadas con una lección. Usa la ventana de OCR de pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les touches sont occupées par une leçon. Utilisez plutôt la fenêtre OCR d’écran."
+          }
+        }
+      }
+    },
     "The keys due for practice today." : {
       "localizations" : {
         "de" : {
@@ -42483,6 +43239,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La séparation est désactivée. Vous avez terminé le tutoriel. Rouvrez-le à tout moment depuis le menu."
+          }
+        }
+      }
+    },
+    "The text is recognized on this Mac. Clicking a line presses the mouse where that text is in the app." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Text wird auf diesem Mac erkannt. Das Anklicken einer Zeile drückt die Maus dort, wo dieser Text in der App steht."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The text is recognized on this Mac. Clicking a line presses the mouse where that text is in the app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El texto se reconoce en este Mac. Al hacer clic en una línea se pulsa el ratón donde está ese texto en la app."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le texte est reconnu sur ce Mac. Cliquer sur une ligne presse la souris là où ce texte se trouve dans l’app."
           }
         }
       }
@@ -54740,6 +55524,35 @@
         }
       }
     },
+    "ocr the whole screen" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ocr des ganzen bildschirms|ganzen bildschirm erkennen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ocr the whole screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ocr de toda la pantalla|reconocer toda la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ocr de tout l’écran|reconnaître tout l’écran"
+          }
+        }
+      }
+    },
     "olive" : {
       "localizations" : {
         "de" : {
@@ -55598,6 +56411,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annulaire"
+          }
+        }
+      }
+    },
+    "screen ocr|recognize the screen" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bildschirm ocr|bildschirm erkennen|erkenne den bildschirm"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "screen ocr|recognize the screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ocr de pantalla|reconocer la pantalla|reconoce la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ocr d’écran|reconnaître l’écran|reconnais l’écran"
           }
         }
       }

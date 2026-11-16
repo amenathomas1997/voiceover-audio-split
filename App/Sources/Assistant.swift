@@ -196,8 +196,25 @@ enum ScreenPicture {
         return NSBitmapImageRep(cgImage: image).representation(using: .jpeg, properties: [.compressionFactor: 0.85])
     }
 
+    /// A picture of a window or screen, with where it is on screen (points, origin top left,
+    /// the same space CGEvent mouse positions use) and the app that owns it.
+    struct Capture {
+        let image: CGImage
+        let frame: CGRect
+        let processID: pid_t?
+    }
+
     /// A PNG of the front window of the app in front (leaving out this app's own windows).
     static func frontWindow() async throws -> Data {
+        let capture = try await frontWindowCapture()
+        guard let png = NSBitmapImageRep(cgImage: capture.image).representation(using: .png, properties: [:]) else {
+            throw Failure(message: String(localized: "Couldn't capture the window."))
+        }
+        return png
+    }
+
+    /// The front window of the app in front, with its frame (leaving out this app's own windows).
+    static func frontWindowCapture() async throws -> Capture {
         let content: SCShareableContent
         do {
             content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
@@ -225,10 +242,34 @@ enum ScreenPicture {
         configuration.height = Int(window.frame.height * scale)
         let image = try await SCScreenshotManager.captureImage(
             contentFilter: SCContentFilter(desktopIndependentWindow: window), configuration: configuration)
-        guard let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
-            throw Failure(message: String(localized: "Couldn't capture the window."))
+        return Capture(image: image, frame: window.frame, processID: window.owningApplication?.processID)
+    }
+
+    /// The whole screen the front window is on (or the main screen), leaving out this app's windows.
+    static func screenCapture() async throws -> Capture {
+        let content: SCShareableContent
+        do {
+            content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        } catch {
+            throw Failure(message: String(localized: "Allow screen recording for VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording. Then try again."))
         }
-        return png
+        let me = ProcessInfo.processInfo.processIdentifier
+        let front = await MainActor.run {
+            let app = NSWorkspace.shared.frontmostApplication
+            return app?.processIdentifier == me ? Controller.shared.lastUsedApp?.processIdentifier : app?.processIdentifier
+        }
+        let frontWindow = content.windows.first { $0.windowLayer == 0 && $0.owningApplication?.processID == front }
+        let display = content.displays.first { display in frontWindow.map { display.frame.intersects($0.frame) } ?? false }
+            ?? content.displays.first { $0.displayID == CGMainDisplayID() } ?? content.displays.first
+        guard let display else { throw Failure(message: String(localized: "No screen found.")) }
+        let configuration = SCStreamConfiguration()
+        let scale = await MainActor.run { backingScale(of: display.displayID) }
+        configuration.width = Int(CGFloat(display.width) * scale)
+        configuration.height = Int(CGFloat(display.height) * scale)
+        let filter = SCContentFilter(display: display, excludingApplications: content.applications.filter { $0.processID == me },
+                                     exceptingWindows: [])
+        let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
+        return Capture(image: image, frame: display.frame, processID: front)
     }
 }
 

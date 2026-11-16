@@ -48,6 +48,7 @@
 		6211A00901FECB7E78D84983 /* Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBDFD5EDAB77DAE517B9BF5 /* Extras.swift */; };
 		63B54F1F25FDD29AD183E6A3 /* pattern.c in Sources */ = {isa = PBXBuildFile; fileRef = BBE63589AF3B3DBC46B6A815 /* pattern.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		66741D4E7BCA83B985B79885 /* HearingProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C97D53B46341929C73471E /* HearingProfile.swift */; };
+		6A7677C48E1A3C20C9C74565 /* ScreenOCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A36AFF7BF3EB761035F942A /* ScreenOCR.swift */; };
 		6B29AF628867377E1251AE3E /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD31E71011E45D913D36D75 /* Helpers.swift */; };
 		7650F4CE52B7F1E055672BB0 /* TypingTrainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1C81BFD8ACC3BF8DAA1F36 /* TypingTrainer.swift */; };
 		7B189AAE9350AEAEFA6ED592 /* Rescue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459BE65ADD9D9716FA7A905C /* Rescue.swift */; };
@@ -161,6 +162,7 @@
 		905B1780D992BFE37282A51D /* VoiceOverAudioSplitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoiceOverAudioSplitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		93973F619FCA512E09CC7499 /* lou_translateString.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lou_translateString.c; sourceTree = "<group>"; };
 		9743335D5D6442AD1AAE8B11 /* LessonsExtra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsExtra.swift; sourceTree = "<group>"; };
+		9A36AFF7BF3EB761035F942A /* ScreenOCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenOCR.swift; sourceTree = "<group>"; };
 		9C254E12144E2A8EB417323D /* Timers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timers.swift; sourceTree = "<group>"; };
 		A313189C956DAA97F93B38F8 /* AutoDescribe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoDescribe.swift; sourceTree = "<group>"; };
 		A51294BFC7A2A2C6B104F15D /* Splitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Splitter.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				EA5F49B50C694A5495B0BA9B /* Research.swift */,
 				DCC77DDD0F8998337F9F50A6 /* ResourceMonitor.swift */,
 				B023FC949563E9D8606496D2 /* ScanReader.swift */,
+				9A36AFF7BF3EB761035F942A /* ScreenOCR.swift */,
 				8621B9F5911CFAEBD5F78449 /* ScreenRecorder.swift */,
 				2670C89F5B31B2CC0FDC9910 /* ScreenText.swift */,
 				045EBC71E6D4C5157A4512CF /* Sensors.swift */,
@@ -493,6 +496,7 @@
 				0CCCA5E6742794CEF6F95139 /* Research.swift in Sources */,
 				8E0E0D6C0A33CAA663996A41 /* ResourceMonitor.swift in Sources */,
 				5797A7C3A848C4750940DBA7 /* ScanReader.swift in Sources */,
+				6A7677C48E1A3C20C9C74565 /* ScreenOCR.swift in Sources */,
 				F4C69804FF5C7174F3773D81 /* ScreenRecorder.swift in Sources */,
 				FBD3C4162ABE42BD600FCE42 /* ScreenText.swift in Sources */,
 				9582A74F33113C066AE88D58 /* Sensors.swift in Sources */,
@@ -606,7 +610,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202611141200;
+				CURRENT_PROJECT_VERSION = 202611161000;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -713,7 +717,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 202611141200;
+				CURRENT_PROJECT_VERSION = 202611161000;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 9G2D7CDZ5D;
 				ENABLE_NS_ASSERTIONS = NO;

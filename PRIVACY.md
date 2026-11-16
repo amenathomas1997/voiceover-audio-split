@@ -14,7 +14,7 @@ VoiceOver Audio Split does not collect, store or share any personal information.
 - **Files you open or save.** Doc Reader and Scan and Read read only the files you choose, and save text only where you choose.
 - **Microphone.** The microphone check listens for about five seconds and measures how loud your voice and the background are. The sound is never recorded or saved.
 - **Downloads folder.** If download announcements are on, the app notices new files in your Downloads folder and says their names. It never opens or reads them unless you ask it to open the latest download.
-- **Screen.** Reading the front window and describing a video take a picture of that window. Window text is recognized on your Mac. Video descriptions send the picture to Anthropic, the same as image descriptions.
+- **Screen.** Reading the front window, Screen OCR and describing a video take a picture of that window, or with Screen OCR of the whole screen, of the screen. Window and Screen OCR text is recognized on your Mac with Apple's Vision framework and nothing leaves the Mac; the picture is discarded as soon as the text is recognized, and the text is kept only until the next capture or until the app quits. Video descriptions send the picture to Anthropic, the same as image descriptions.
 - **Websites.** If you set presets for websites, the app asks Safari or Chrome for the address of the current tab every two seconds while the browser is in front, and compares it with your list on your Mac. Addresses are never stored or sent anywhere.
 - **Clipboard.** Say Clipboard, the Text Analyzer, Doc Reader and Translate read the clipboard only when you use them. If you turn on "Say what you copy", the app checks whether the clipboard changed twice a second and speaks the start of what was copied, except passwords and other items a password manager marks as concealed. It's never stored or sent.
 - **Translation.** Translate uses Apple's on-device translation. Text isn't sent anywhere, though macOS may download a language the first time.
@@ -61,7 +61,7 @@ Like any internet request, these services can see your IP address. Dictionary de
 | --- | --- |
 | Accessibility | The keyboard shortcuts, custom labels, place markers and Do It for Me |
 | System audio recording | Splitting and adjusting sound |
-| Screen recording | Describe image (the item under the VoiceOver cursor), reading the front window's text, and describing a video |
+| Screen recording | Describe image (the item under the VoiceOver cursor), reading the front window's text, Screen OCR, and describing a video |
 | Microphone | The microphone check, and the voice command if you turn it on |
 | Speech Recognition | Voice commands ("Audio Split" and a command, and "Launch VoiceOver training"), if you turn them on; recognized on your Mac only |
 | Downloads folder (read only) | Saying when a download finishes, and opening the latest download |

@@ -279,6 +279,7 @@ final class Controller {
         case .research: app?.showResearch()
         case .systemStatus: announceSystemStatus()
         case .resourceMonitor: MainActor.assumeIsolated { ResourceMonitor.announce() }
+        case .screenOCR: MainActor.assumeIsolated { ScreenOCR.shared.capture(thenNavigate: true) }
         case .docReader: app?.showDocReader()
         case .scanAndRead: app?.showScan()
         case .captions: toggleCaptions()

@@ -2,6 +2,7 @@
 
 ## Next
 
+- **Screen OCR, like NVDA's screen OCR and JAWS's Convenient OCR.** For apps built without accessibility, shared screens in meetings, remote desktops, games and text in videos. Everyday Tools, Screen OCR: Front Window (or Whole Screen) takes a picture, recognizes the text on your Mac, and then the Up and Down Arrows move by line, Left and Right by word, Return clicks the text under the cursor in the app (Shift-Return right-clicks), Home and End go to the first and last line, C copies all the text and Escape leaves. VoiceOver's own keys and Command shortcuts pass through untouched, and any other key leaves. The Screen OCR window lists every line with a Click button, Copy All and Speak All. Voice: "Audio Split, screen OCR" or "OCR the whole screen". No key by default: choose one in Settings, Keys.
 - **Fixed, from a second code audit:**
   - Closing a window now really stops what it was doing: the camera after Scan and Read, Scan to PDF or Find an Object; the listening test; the permissions check in Settings. (Windows are kept for reuse, and their views weren't told they had closed.) Reopened windows start fresh: the command palette empty, the window list reloaded.
   - Command W closes and Command M minimizes any of the app's windows.

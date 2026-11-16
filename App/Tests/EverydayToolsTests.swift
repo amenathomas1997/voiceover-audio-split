@@ -324,3 +324,56 @@ final class WindowSwitcherTests: XCTestCase {
         XCTAssertTrue(WindowSwitcher.filter(entries, query: "zoom").isEmpty)
     }
 }
+
+/// Screen OCR's layout: reading order, words and screen positions, without a screen.
+final class ScreenOCRLayoutTests: XCTestCase {
+    private func line(_ id: Int, _ text: String, x: CGFloat, y: CGFloat, width: CGFloat = 0.3, height: CGFloat = 0.05) -> ScreenOCRLayout.Line {
+        ScreenOCRLayout.Line(id: id, text: text, box: CGRect(x: x, y: y, width: width, height: height))
+    }
+
+    func testReadingOrderIsRowsTopToBottomThenLeftToRight() {
+        // Two columns on the same row, then a line below, given out of order.
+        let lines = [
+            line(0, "bottom", x: 0.1, y: 0.1),
+            line(1, "right column", x: 0.6, y: 0.8),
+            line(2, "left column", x: 0.1, y: 0.81),
+        ]
+        let ordered = ScreenOCRLayout.ordered(lines)
+        XCTAssertEqual(ordered.map(\.text), ["left column", "right column", "bottom"])
+        XCTAssertEqual(ordered.map(\.id), [0, 1, 2])
+    }
+
+    func testLinesThatBarelyTouchAreSeparateRows() {
+        let lines = [line(0, "lower", x: 0.1, y: 0.50), line(1, "upper", x: 0.5, y: 0.54)]
+        XCTAssertEqual(ScreenOCRLayout.ordered(lines).map(\.text), ["upper", "lower"])
+    }
+
+    func testWordsShareTheLineByLength() {
+        let words = ScreenOCRLayout.words(of: "Save  the file", in: CGRect(x: 0.2, y: 0.5, width: 0.6, height: 0.1))
+        XCTAssertEqual(words.map(\.text), ["Save", "the", "file"])
+        XCTAssertEqual(words.first!.box.minX, 0.2, accuracy: 0.0001)
+        XCTAssertEqual(words.last!.box.maxX, 0.8, accuracy: 0.0001)
+        XCTAssertLessThan(words[0].box.maxX, words[1].box.minX)
+        XCTAssertEqual(words[0].box.width, words[2].box.width, accuracy: 0.0001)
+        XCTAssertTrue(ScreenOCRLayout.words(of: "   ", in: .zero).isEmpty)
+    }
+
+    func testScreenRectFlipsVisionCoordinates() {
+        // A window at (100, 50) on a 1000 by 800 screen, 400 by 300 points. A box at the top
+        // left of the picture in Vision's bottom-left space is at the top left on screen.
+        let frame = CGRect(x: 100, y: 50, width: 400, height: 300)
+        let rect = ScreenOCRLayout.screenRect(CGRect(x: 0, y: 0.9, width: 0.5, height: 0.1), in: frame)
+        XCTAssertEqual(rect.minX, 100, accuracy: 0.0001)
+        XCTAssertEqual(rect.minY, 50, accuracy: 0.0001)
+        XCTAssertEqual(rect.width, 200, accuracy: 0.0001)
+        XCTAssertEqual(rect.height, 30, accuracy: 0.0001)
+        let center = ScreenOCRLayout.screenCenter(CGRect(x: 0.5, y: 0, width: 0.5, height: 0.2), in: frame)
+        XCTAssertEqual(center.x, 400, accuracy: 0.0001)
+        XCTAssertEqual(center.y, 320, accuracy: 0.0001)
+    }
+
+    func testScreenOCRCommandHasNoKeyByDefault() {
+        XCTAssertNil(Command.screenOCR.defaultKey)
+        XCTAssertFalse(Command.screenOCR.title.isEmpty)
+    }
+}

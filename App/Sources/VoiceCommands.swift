@@ -350,6 +350,16 @@ enum VoiceCommands {
                                          String(localized: "system status", comment: "Voice command phrases, separated by |"))) {
                 controller.announceSystemStatus()
             },
+            VoiceAction(name: String(localized: "Screen OCR"),
+                        phrases: phrases("screen ocr|screen o c r|ocr|ocr the screen|ocr the window|recognize the screen|recognise the screen|recognize the window|navigate the screen|click text on the screen",
+                                         String(localized: "screen ocr|recognize the screen", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ScreenOCR.shared.capture(thenNavigate: true) }
+            },
+            VoiceAction(name: String(localized: "Screen OCR of the whole screen"),
+                        phrases: phrases("ocr the whole screen|screen ocr whole screen|recognize the whole screen|recognise the whole screen",
+                                         String(localized: "ocr the whole screen", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ScreenOCR.shared.capture(wholeScreen: true, thenNavigate: true) }
+            },
             VoiceAction(name: String(localized: "Resource monitor"),
                         phrases: phrases("resource monitor|resources|system resources|how busy is my mac|how busy is the mac",
                                          String(localized: "resource monitor|resources", comment: "Voice command phrases, separated by |"))) {

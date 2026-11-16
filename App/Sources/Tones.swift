@@ -32,28 +32,76 @@ enum Tones {
     private static var stopWork: DispatchWorkItem?
     /// Typing sounds have their own player, so a fast typist never cuts off other tones.
     private static let typingPlayer = AVAudioPlayerNode()
+    private static var observer: NSObjectProtocol?
+    /// Set when the output changed under the engine (a wireless headset asleep, the Mac
+    /// woken, headphones unplugged): the players are connected again before the next sound.
+    /// Without that, the first tone afterwards ended the app with an audio exception.
+    private static var needsReconnect = false
 
     static func play(_ tone: Tone) {
         guard Preferences.shared.playTones else { return }
-        if engine.attachedNodes.contains(player) == false {
-            engine.attach(player)
-            engine.connect(player, to: engine.mainMixerNode, format: format)
-        }
-        do {
-            if !engine.isRunning { try engine.start() }
-        } catch {
-            log("Could not play tone: \(error)")
-            return
-        }
-        player.stop()
-        player.scheduleBuffer(buffer(for: tone))
-        player.play()
+        guard start(player, buffer(for: tone)) else { return }
 
         // Release the audio device shortly after the last tone.
         stopWork?.cancel()
         let work = DispatchWorkItem { player.stop(); engine.stop() }
         stopWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: work)
+    }
+
+    // MARK: Starting a sound safely
+
+    /// Gets the engine ready for `node`: attached, connected (again, after an output
+    /// change) and running. False when there's no output to play on.
+    private static func prepare(_ node: AVAudioPlayerNode) -> Bool {
+        observer = observer ?? NotificationCenter.default.addObserver(
+            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main
+        ) { _ in needsReconnect = true }
+        if needsReconnect {
+            needsReconnect = false
+            for attached in [player, typingPlayer] where engine.attachedNodes.contains(attached) {
+                _ = caught { attached.stop() }
+                engine.disconnectNodeOutput(attached)
+                engine.connect(attached, to: engine.mainMixerNode, format: format)
+            }
+        }
+        if !engine.attachedNodes.contains(node) {
+            engine.attach(node)
+            engine.connect(node, to: engine.mainMixerNode, format: format)
+        }
+        do {
+            if !engine.isRunning { try engine.start() }
+        } catch {
+            log("Could not play a sound: \(error)")
+            return false
+        }
+        return true
+    }
+
+    /// Plays `buffer` on `node`. A player on a broken graph reports it by throwing an
+    /// Objective-C exception, which Swift can't catch and which would end the app (it did,
+    /// twenty hours after a login). Here it becomes one retry on a rebuilt graph, then silence.
+    private static func start(_ node: AVAudioPlayerNode, _ buffer: AVAudioPCMBuffer,
+                              options: AVAudioPlayerNodeBufferOptions = [], stopFirst: Bool = true) -> Bool {
+        for attempt in 1...2 {
+            guard prepare(node) else { return false }
+            let problem = caught {
+                if stopFirst { node.stop() }
+                node.scheduleBuffer(buffer, at: nil, options: options)
+                node.play()
+            }
+            guard let problem else { return true }
+            log("A sound could not start (attempt \(attempt)): \(problem)")
+            needsReconnect = true
+            engine.stop()
+        }
+        return false
+    }
+
+    /// Runs `block`, returning the reason if it threw an Objective-C exception.
+    static func caught(_ block: () -> Void) -> String? {
+        var error: NSError?
+        return VOACatchException(block, &error) ? nil : (error?.localizedDescription ?? "unknown audio problem")
     }
 
     // MARK: Typing trainer
@@ -65,18 +113,8 @@ enum Tones {
         guard kind != .none else { return }
         // Made each time (they're tiny), so they follow the one-ear setting.
         let buffer = makeBuffer(correct ? typingSamples(kind) : wrongSamples())
-        if !engine.attachedNodes.contains(typingPlayer) {
-            engine.attach(typingPlayer)
-            engine.connect(typingPlayer, to: engine.mainMixerNode, format: format)
-        }
-        do {
-            if !engine.isRunning { try engine.start() }
-        } catch {
-            return
-        }
         // Each sound fades to silence, so starting the next one over it doesn't click.
-        typingPlayer.scheduleBuffer(buffer, at: nil, options: .interrupts)
-        typingPlayer.play()
+        guard start(typingPlayer, buffer, options: .interrupts, stopFirst: false) else { return }
         stopWork?.cancel()
         let work = DispatchWorkItem { player.stop(); typingPlayer.stop(); engine.stop() }
         stopWork = work

@@ -2,7 +2,24 @@
 // permissions or VoiceOver, so they can run in CI.
 
 import XCTest
+import AVFoundation
 @testable import VoiceOverAudioSplit
+
+final class TonesTests: XCTestCase {
+    /// A player that isn't on a running engine reports it by throwing an Objective-C
+    /// exception. It must come back as a reason, not end the test runner (or the app).
+    func testAudioExceptionIsCaught() {
+        let problem = Tones.caught { AVAudioPlayerNode().play() }
+        XCTAssertNotNil(problem)
+        XCTAssertNil(Tones.caught {})
+    }
+
+    /// With no sound to play on (CI has no output device), a tone is silent, not fatal.
+    func testToneWithoutOutputDoesNotCrash() {
+        Tones.play(.status)
+        Tones.playTyping(correct: true)
+    }
+}
 
 final class TextAnalyzerTests: XCTestCase {
     func testCleanTextHasNoProblems() {

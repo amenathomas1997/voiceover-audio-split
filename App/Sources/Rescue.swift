@@ -34,8 +34,12 @@ enum KeepAudioAwake {
             log("Keep audio awake could not start: \(error)")
             return
         }
-        player.scheduleBuffer(silence, at: nil, options: .loops)
-        player.play()
+        // A player on a broken graph throws an Objective-C exception; caught, not fatal.
+        if let problem = Tones.caught({ player.scheduleBuffer(silence, at: nil, options: .loops); player.play() }) {
+            log("Keep audio awake could not play: \(problem)")
+            engine.stop()
+            return
+        }
         // A new output device (headphones plugged in) stops the engine; start again on it.
         observer = observer ?? NotificationCenter.default.addObserver(
             forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main

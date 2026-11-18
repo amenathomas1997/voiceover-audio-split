@@ -109,7 +109,7 @@ Commands that change something important ask "Say yes or no" first. While the ap
 
 ## The app (Xcode project, TestFlight)
 
-The main version is a menu bar app in [App/](App/), built with Xcode and distributed through TestFlight. It has no Dock icon. To open its menu, press Right Option + M. The menu is also a headphones icon in the menu bar, which you can reach with VoiceOver by pressing VO-M twice. On Macs with a notch or a full menu bar, macOS may hide that icon for lack of space. The shortcut always works. Opening the app again from Spotlight or Finder opens its Settings window.
+The main version is a menu bar app in [App/](App/), built with Xcode and distributed through TestFlight. It has no Dock icon. To open its menu, press Right Option + M. The menu is also a headphones icon in the menu bar, which you can reach with VoiceOver by pressing VO-M twice. On Macs with a notch or a full menu bar, macOS may hide that icon for lack of space, most often at login when every menu bar app starts at once; the app then says so and names the shortcut. The shortcut always works. Opening the app again from Spotlight or Finder opens its Settings window.
 
 | Keys | What it does |
 | --- | --- |

@@ -19,6 +19,7 @@ enum Diagnostics {
         \(Performance.summary())
         Audio capture running: \(Mixer.sources.isEmpty ? "no" : "yes, \(Mixer.sources.count) sources")
         Keyboard shortcuts allowed: \(Hotkeys.isTrusted ? "yes" : "no")
+        Menu bar icon on screen: \(Thread.isMainThread ? ((NSApp.delegate as? AppDelegate)?.statusItemIsVisible == true ? "yes" : "no, hidden by a full menu bar") : "unknown")
 
         Recent log (last hour):
         \(log ?? recentLog())

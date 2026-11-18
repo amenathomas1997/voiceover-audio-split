@@ -42741,6 +42741,50 @@
         }
       }
     },
+    "The menu bar is full, so the VoiceOver Audio Split icon is hidden. The app is running: choose a key for Open the Menu in Settings, Keys." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Menüleiste ist voll, deshalb ist das Symbol von VoiceOver Audio Split verborgen. Die App läuft: Wähle in den Einstellungen unter Tasten eine Taste für „Menü öffnen“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La barra de menús está llena, así que el icono de VoiceOver Audio Split está oculto. La app está en marcha: elige una tecla para Abrir el menú en Ajustes, Teclas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La barre des menus est pleine, l'icône de VoiceOver Audio Split est donc masquée. L'app est en marche : choisissez une touche pour Ouvrir le menu dans Réglages, Touches."
+          }
+        }
+      }
+    },
+    "The menu bar is full, so the VoiceOver Audio Split icon is hidden. The app is running: press %@ %@ to open its menu." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Menüleiste ist voll, deshalb ist das Symbol von VoiceOver Audio Split verborgen. Die App läuft: Drücke %1$@ %2$@, um ihr Menü zu öffnen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La barra de menús está llena, así que el icono de VoiceOver Audio Split está oculto. La app está en marcha: pulsa %1$@ %2$@ para abrir su menú."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La barre des menus est pleine, l'icône de VoiceOver Audio Split est donc masquée. L'app est en marche : appuyez sur %1$@ %2$@ pour ouvrir son menu."
+          }
+        }
+      }
+    },
     "The menu bar, menu extras, the Dock, shortcut menus, and moving between apps and windows." : {
       "localizations" : {
         "de" : {

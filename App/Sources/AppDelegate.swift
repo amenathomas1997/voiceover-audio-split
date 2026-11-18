@@ -11,6 +11,8 @@ import WebKit
 @main
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem!
+    /// Said once per launch when the menu bar has no room for the icon.
+    private var saidIconHidden = false
     private let controller = Controller.shared
     private let preferences = Preferences.shared
     private var settingsWindow: NSWindow?
@@ -205,6 +207,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let menu = NSMenu()
         menu.delegate = self
         statusItem.menu = menu
+        #if DEBUG
+        // Logs what the menu bar did with the icon, then quits. Run with: open -n <app> --args --check-status-item
+        if CommandLine.arguments.contains("--check-status-item") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [self] in
+                let window = statusItem.button?.window
+                log("Check: status item visible = \(statusItemIsVisible), frame = \(window?.frame ?? .zero), window visible = \(window?.isVisible ?? false), occlusion visible = \(window?.occlusionState.contains(.visible) ?? false), screen = \(NSScreen.main?.frame ?? .zero), notch = \(NSScreen.main?.auxiliaryTopLeftArea != nil)")
+                NSApp.terminate(nil)
+            }
+            return
+        }
+        #endif
+        // MacBook Pros with a notch hide the status items that don't fit, silently. At
+        // login, with every menu bar app starting at once, this one is often among them,
+        // so the app seems not to have started. Say so once the bar has settled, and
+        // again when the screens change (a display unplugged takes the room away).
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in self?.checkStatusItemVisible() }
+        NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
+                                               object: nil, queue: .main) { [weak self] _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { self?.checkStatusItemVisible() }
+        }
 
         controller.restore()
         Hotkeys.start()
@@ -340,6 +362,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         showSettings()
         return false
+    }
+
+    /// Whether the menu bar icon is really on screen. An item the menu bar has no
+    /// room for keeps its window, but the window isn't shown.
+    var statusItemIsVisible: Bool {
+        guard let window = statusItem?.button?.window else { return false }
+        return window.isVisible && window.occlusionState.contains(.visible)
+            && NSScreen.screens.contains { $0.frame.intersects(window.frame) }
+    }
+
+    /// Says once that the icon is hidden, after two misses fifteen seconds apart, so a
+    /// menu bar still settling after login can't cause a false alarm.
+    private func checkStatusItemVisible(confirming: Bool = false) {
+        let visible = statusItemIsVisible
+        log("Menu bar icon visible: \(visible), at \(statusItem?.button?.window?.frame ?? .zero)")
+        guard !visible, !saidIconHidden else { return }
+        guard confirming else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 15) { [weak self] in self?.checkStatusItemVisible(confirming: true) }
+            return
+        }
+        saidIconHidden = true
+        if let key = KeyMap.key(for: .menu) {
+            Announcer.say(String(localized: "The menu bar is full, so the VoiceOver Audio Split icon is hidden. The app is running: press \(preferences.modifier.title) \(key.name) to open its menu."))
+        } else {
+            Announcer.say(String(localized: "The menu bar is full, so the VoiceOver Audio Split icon is hidden. The app is running: choose a key for Open the Menu in Settings, Keys."))
+        }
     }
 
     /// Shows the app's menu where the pointer is, for the menu shortcut. Works

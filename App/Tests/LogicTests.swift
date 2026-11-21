@@ -2,6 +2,7 @@
 // permissions or VoiceOver, so they can run in CI.
 
 import XCTest
+import CoreAudio
 import AVFoundation
 @testable import VoiceOverAudioSplit
 
@@ -9,8 +10,10 @@ final class TonesTests: XCTestCase {
     /// A player that isn't on a running engine reports it by throwing an Objective-C
     /// exception. It must come back as a reason, not end the test runner (or the app).
     func testAudioExceptionIsCaught() {
-        let problem = Tones.caught { AVAudioPlayerNode().play() }
-        XCTAssertNotNil(problem)
+        // Raised directly: making a real player can take minutes on a Mac whose output
+        // device has stopped answering, which is not what this checks.
+        let problem = Tones.caught { NSException(name: .internalInconsistencyException, reason: "player started when in a disconnected state").raise() }
+        XCTAssertEqual(problem, "player started when in a disconnected state")
         XCTAssertNil(Tones.caught {})
     }
 
@@ -18,6 +21,74 @@ final class TonesTests: XCTestCase {
     func testToneWithoutOutputDoesNotCrash() {
         Tones.play(.status)
         Tones.playTyping(correct: true)
+    }
+}
+
+final class HTMLTextTests: XCTestCase {
+    /// A saved web page becomes its words: no markup, no scripts or styles, one line per
+    /// block, and nothing it links to is fetched (the picture's address is never used).
+    func testPageBecomesItsWords() {
+        let page = """
+            <html><head><title>T</title><style>p { color: red }</style><script>alert("x")</script></head>
+            <body><h1>News &amp; notes</h1>
+            <p>First   line<br>second line with <b>bold</b>, <i>slanted</i> <u>under</u> text.</p>
+            <img src="https://example.invalid/pixel.png"><ul><li>One</li><li>Two</li></ul>
+            <table><tr><td>Name</td><td>Amena</td></tr></table>
+            </body></html>
+            """
+        XCTAssertEqual(HTMLText.text(from: Data(page.utf8)),
+                       "News & notes\nFirst line\nsecond line with bold, slanted under text.\nOne\nTwo\nName, Amena,")
+    }
+
+    /// Accented letters, other scripts and emoji survive, declared encoding or not.
+    func testLettersSurviveInEveryEncoding() {
+        let words = "<html><body><p>ünïcödé 日本語 Caf&eacute; 🙂</p></body></html>"
+        XCTAssertEqual(HTMLText.text(from: Data(words.utf8)), "ünïcödé 日本語 Café 🙂")
+        XCTAssertEqual(HTMLText.text(from: words.data(using: .utf16)!), "ünïcödé 日本語 Café 🙂")
+        let declared = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"></head><body><p>Caf\u{e9} cr\u{e8}me</p></body></html>"
+        XCTAssertEqual(HTMLText.text(from: declared.data(using: .isoLatin1)!), "Café crème")
+        let old = "<html><body><p>na\u{ef}ve \u{201c}quoted\u{201d}</p></body></html>"
+        XCTAssertEqual(HTMLText.text(from: old.data(using: .windowsCP1252)!), "naïve “quoted”")
+    }
+
+    func testEmptyAndBrokenPages() {
+        XCTAssertNil(HTMLText.text(from: Data()))
+        XCTAssertEqual(HTMLText.text(from: Data("<div>Unclosed <span>tags <p>everywhere".utf8)), "Unclosed tags\neverywhere")
+        XCTAssertEqual(HTMLText.text(from: Data("plain words, no markup".utf8)), "plain words, no markup")
+    }
+}
+
+final class AppleScriptTests: XCTestCase {
+    /// Every script the app sends must at least be AppleScript. The Safari tab count was a
+    /// one-line "if … then … else", which doesn't exist, so it never ran and nothing said so.
+    func testScriptsCompile() {
+        let voiceOver = [
+            "output \"hello\"", "return content of last phrase", "return text under cursor of vo cursor",
+            "perform command \"move voiceover cursor to mouse pointer\"", "tell vo cursor to perform action", "quit",
+            "set b to bounds of vo cursor\nreturn (item 1 of b as text) & \",\" & (item 2 of b as text)",
+        ].map { "tell application id \"com.apple.VoiceOver\" to \($0)" }
+        for source in voiceOver + [Mission.safariTabCountScript, SitePresets.browsers["com.apple.Safari"]!] {
+            var error: NSDictionary?
+            XCTAssertNotNil(NSAppleScript(source: AppleScriptRunner.limited(source)))
+            _ = NSAppleScript(source: AppleScriptRunner.limited(source))?.compileAndReturnError(&error)
+            // Only grammar counts here: a Mac without the app, or one that won't let a test
+            // read its dictionary, reports a different kind of error.
+            let number = error?[NSAppleScript.errorNumber] as? Int ?? 0
+            XCTAssertFalse((-2763 ... -2740).contains(number), "\(source): \(error?[NSAppleScript.errorMessage] ?? "")")
+        }
+    }
+
+    /// An app that didn't answer is left alone for a while, then asked again.
+    func testAppThatDidNotAnswerRests() {
+        let app = "test.app.\(UUID().uuidString)"
+        XCTAssertFalse(AppleScriptRunner.isResting(app))
+        AppleScriptRunner.rest(app, until: Date().addingTimeInterval(20))
+        XCTAssertTrue(AppleScriptRunner.isResting(app))
+        XCTAssertFalse(AppleScriptRunner.isResting(app, now: Date().addingTimeInterval(21)))
+        XCTAssertNil(AppleScriptRunner.run("return \"never runs\"", target: app))
+        AppleScriptRunner.rest(app, until: nil)
+        XCTAssertEqual(AppleScriptRunner.run("return \"runs\"", target: app), "runs")
+        XCTAssertEqual(AppleScriptRunner.limited("beep"), "with timeout of 10 seconds\nbeep\nend timeout")
     }
 }
 
@@ -35,6 +106,20 @@ final class TextAnalyzerTests: XCTestCase {
         XCTAssertTrue(result.contains("1 repeated word"), result)
         XCTAssertTrue(result.contains("line ending in a space, first on line 2"), result)
         XCTAssertTrue(result.contains("unmatched parentheses: 1 opening, 0 closing"), result)
+    }
+
+    /// Text from Windows, a final line ending, and one word or line said as one.
+    func testLineEndingsAndCounts() {
+        XCTAssertTrue(TextAnalyzer.analyze("one \r\ntwo\r\n").contains("1 line ending in a space, first on line 1"))
+        XCTAssertTrue(TextAnalyzer.analyze("Hello\n").hasSuffix("1 word, 1 line."), TextAnalyzer.analyze("Hello\n"))
+        XCTAssertTrue(TextAnalyzer.analyze("Hello there\nfriend").hasSuffix("3 words, 2 lines."))
+    }
+
+    /// French puts a space before ; : ! and ?: that isn't a problem in French text.
+    func testFrenchPunctuationIsNotAProblem() {
+        XCTAssertEqual(TextAnalyzer.sentenceProblems("Bonjour ! Comment allez-vous aujourd'hui ? Voici la liste des courses : des pommes ; des poires."), [])
+        XCTAssertEqual(TextAnalyzer.sentenceProblems("Bonjour , comment allez-vous aujourd'hui ? Voici la liste des courses.").count, 1)
+        XCTAssertEqual(TextAnalyzer.sentenceProblems("Hello there ! How are you today ? Here is the shopping list.").count, 1)
     }
 
     func testOddStraightQuotes() {
@@ -201,6 +286,10 @@ final class ReadingTests: XCTestCase {
         XCTAssertEqual(cutLeft?.contains("to your left"), true, "image left edge means move the page left")
         let small = TextRecognition.guidance(for: [CGRect(x: 0.4, y: 0.4, width: 0.2, height: 0.2)])
         XCTAssertEqual(small?.contains("closer"), true)
+        // Cut off on both sides: too close. "Move left and move right" can't be done.
+        let tooClose = TextRecognition.guidance(for: [CGRect(x: 0, y: 0.2, width: 1, height: 0.6)])
+        XCTAssertEqual(tooClose?.contains("further away"), true)
+        XCTAssertEqual(tooClose?.contains("left"), false)
     }
 
     func testRSSFeedReadsTitlesSummariesAndAudio() {
@@ -349,10 +438,83 @@ final class PowerToolTests: XCTestCase {
         defaults.set(4, forKey: "balanceStep")
         let data = try SettingsTransfer.exportData()
         defaults.set(2, forKey: "balanceStep")
-        XCTAssertGreaterThan(try SettingsTransfer.importData(data), 0)
+        XCTAssertGreaterThan(try SettingsTransfer.importData(data).applied, 0)
         XCTAssertEqual(defaults.integer(forKey: "balanceStep"), 4)
         XCTAssertThrowsError(try SettingsTransfer.importData(Data("not settings".utf8)))
         XCTAssertFalse(SettingsTransfer.portableKeys.contains("allowImageUpload"), "consent stays on each Mac")
+    }
+
+    /// A settings file can't switch on what records, keeps or sends things, or switch off a
+    /// protection; everything else in it is applied.
+    func testImportedFileCannotSwitchOnRecordingOrSwitchOffProtections() throws {
+        let suite = "test.import.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(true, forKey: "confirmSoundChanges")
+        defaults.set(false, forKey: "clipboardHistory")
+        defaults.set(true, forKey: "volumeLimit")
+        defaults.set(true, forKey: "announceClipboard")
+        let file: [String: Any] = [
+            "formatVersion": 1, "clipboardHistory": true, "confirmSoundChanges": false, "aiProvider": "claude", "volumeLimit": false,
+            "playTones": false, "autoDescribeImages": false, "announceClipboard": true, "balanceStep": 3,
+        ]
+        let data = try PropertyListSerialization.data(fromPropertyList: file, format: .xml, options: 0)
+        let result = try SettingsTransfer.importData(data, into: defaults)
+        XCTAssertEqual(result.held, 4, "clipboard history on, sound confirmation off, the cloud AI, the volume limit off")
+        XCTAssertEqual(result.applied, 4, "tones, image descriptions off, an announcement that was already on, the balance step")
+        XCTAssertFalse(defaults.bool(forKey: "clipboardHistory"))
+        XCTAssertTrue(defaults.bool(forKey: "confirmSoundChanges"))
+        XCTAssertTrue(defaults.bool(forKey: "volumeLimit"))
+        XCTAssertNotEqual(defaults.string(forKey: "aiProvider"), "claude")
+        XCTAssertEqual(defaults.object(forKey: "playTones") as? Bool, false)
+        XCTAssertEqual(defaults.integer(forKey: "balanceStep"), 3)
+    }
+
+    /// Numbers in presets and app rules stay within what Settings allows, wherever they came from.
+    func testPresetAndRuleNumbersStayInRange() throws {
+        let preset = try JSONDecoder().decode(Preset.self, from: Data(#"{"name":"x","duckingAmount":-60,"volumeLimitLevel":40,"earBalance":99}"#.utf8))
+        XCTAssertEqual(preset.duckingAmount, 3)
+        XCTAssertEqual(preset.volumeLimitLevel, -1)
+        XCTAssertEqual(preset.earBalance, 12)
+        let rule = try JSONDecoder().decode(AppRule.self, from: Data(#"{"name":"x","bundleID":"com.example","volume":90,"bass":-50,"treble":50,"position":500}"#.utf8))
+        XCTAssertEqual(rule.volume, 6)
+        XCTAssertEqual(rule.bass, -12)
+        XCTAssertEqual(rule.treble, 12)
+        XCTAssertEqual(rule.position, 100)
+    }
+
+    /// A listener that has been removed must stop being called. (Added with Apple's block
+    /// form from Swift, removal silently did nothing, and listeners piled up for days.)
+    func testAudioListenersAreReallyRemoved() throws {
+        // A switch that belongs to this process alone; nothing else is affected.
+        let system = AudioObjectID(kAudioObjectSystemObject)
+        var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyUnloadingIsAllowed,
+                                                 mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+        func read() -> UInt32 {
+            var value: UInt32 = 0, size = UInt32(MemoryLayout<UInt32>.size)
+            AudioObjectGetPropertyData(system, &address, 0, nil, &size, &value)
+            return value
+        }
+        func flip() {
+            var value: UInt32 = read() == 0 ? 1 : 0
+            AudioObjectSetPropertyData(system, &address, 0, nil, UInt32(MemoryLayout<UInt32>.size), &value)
+            RunLoop.main.run(until: Date().addingTimeInterval(0.5))
+        }
+        let original = read()
+        defer { var value = original; AudioObjectSetPropertyData(system, &address, 0, nil, UInt32(MemoryLayout<UInt32>.size), &value) }
+        let before = AudioListeners.count
+        var calls = 0
+        let token = try XCTUnwrap(AudioListeners.add(system, address) { calls += 1 })
+        XCTAssertEqual(AudioListeners.count, before + 1)
+        flip()
+        let whileListening = calls
+        AudioListeners.remove(token)
+        XCTAssertEqual(AudioListeners.count, before)
+        flip()
+        flip()
+        XCTAssertEqual(calls, whileListening, "called after it was removed")
+        // A Mac with no working audio service tells nobody anything: nothing more to check there.
+        try XCTSkipIf(whileListening == 0, "the audio service sent no change here")
     }
 
     func testAudioMouseMapsPositionToPitchAndEar() {
@@ -466,6 +628,13 @@ final class BrailleAndDocumentTests: XCTestCase {
         XCTAssertEqual(Braille.translate("Hello, world."), ",hello1 world4")
         XCTAssertEqual(Braille.translate("NASA 2026"), ",,nasa #bjbf")
         XCTAssertEqual(Braille.translate("3.5 or 2a"), "#c4e or #b;a")
+        // Capitals are signed run by run: a capital after a number keeps its sign (which is
+        // what ends the number), and each part of a hyphenated word keeps its own.
+        XCTAssertEqual(Braille.translate("A4B"), ",a#d,b")
+        XCTAssertEqual(Braille.translate("SW1A 2AA"), ",,sw#a,a #b,,aa")
+        XCTAssertEqual(Braille.translate("USB3C"), ",,usb#c,c")
+        XCTAssertEqual(Braille.translate("SELF-CONTROL"), ",,self-,,control")
+        XCTAssertEqual(Braille.translate("McDONALD"), ",mc,,donald")
         XCTAssertEqual(Braille.translate("\"Yes\" (no)"), "8,yes0 \"<no\">")
     }
 
@@ -666,6 +835,9 @@ final class AuditFixTests: XCTestCase {
     func testMedicineLabelKeepsNewLinesContainingShortOnes() {
         XCTAssertFalse(LabelReader.isRepeat("Take 5 mg twice daily", of: ["5 mg"]))
         XCTAssertTrue(LabelReader.isRepeat("IBUPROFEN 200mg", of: ["IBUPROFEN 200 mg"]))
+        // A different number is a different line: the real dose after a partial reading of it.
+        XCTAssertFalse(LabelReader.isRepeat("250 mg tablets", of: ["50 mg tablets"]))
+        XCTAssertFalse(LabelReader.isRepeat("Take 12", of: ["Take 1"]))
         XCTAssertTrue(LabelReader.isRepeat("Take one tablet daily.", of: ["Take one tablet daily"]))
     }
 
@@ -1082,6 +1254,34 @@ final class DeepAuditFixTests: XCTestCase {
 }
 
 final class UpdateCheckTests: XCTestCase {
+    /// The version is read from the package's own description, as productbuild writes it.
+    func testInstallerVersionIsReadFromThePackage() {
+        let distribution = """
+            <installer-gui-script minSpecVersion="2">
+                <choice id="default" title="Test">
+                    <pkg-ref id="com.fullcircleat.VoiceOverAudioSplit.pkg"/>
+                </choice>
+                <pkg-ref id="com.fullcircleat.VoiceOverAudioSplit.pkg" version="1.2.202611031940" installKBytes="2" updateKBytes="0">#app-component.pkg</pkg-ref>
+                <pkg-ref id="com.fullcircleat.VoiceOverAudioSplit.pkg">
+                    <bundle-version/>
+                </pkg-ref>
+            </installer-gui-script>
+            """
+        XCTAssertEqual(UpdateCheck.packageVersion(inDistribution: distribution), "1.2.202611031940")
+        XCTAssertNil(UpdateCheck.packageVersion(inDistribution: "<pkg-ref id=\"com.example.other\" version=\"9.9\"/>"))
+        XCTAssertNil(UpdateCheck.packageVersion(inDistribution: ""))
+    }
+
+    /// An old, genuinely signed installer under a new release must not install over a newer app.
+    func testOlderInstallerIsNotNewer() {
+        XCTAssertTrue(UpdateCheck.isNewer(packageVersion: "1.3.202612010900", thanVersion: "1.2", build: "202611031940"))
+        XCTAssertTrue(UpdateCheck.isNewer(packageVersion: "1.2.202611050900", thanVersion: "1.2", build: "202611031940"))
+        XCTAssertFalse(UpdateCheck.isNewer(packageVersion: "1.2.202611031940", thanVersion: "1.2", build: "202611031940"))
+        XCTAssertFalse(UpdateCheck.isNewer(packageVersion: "1.1.202610241900", thanVersion: "1.2", build: "202611031940"))
+        XCTAssertFalse(UpdateCheck.isNewer(packageVersion: "1.2", thanVersion: "1.2", build: "202611031940"))
+        XCTAssertTrue(UpdateCheck.isNewer(packageVersion: "2.0", thanVersion: "1.2", build: "202611031940"))
+    }
+
     private func release(_ tag: String, notes: String = "", assets: [[String: Any]]? = nil) throws -> Data {
         let installer: [String: Any] = [
             "name": "VoiceOver-Audio-Split.pkg", "size": 3_140_711,
@@ -1105,6 +1305,9 @@ final class UpdateCheckTests: XCTestCase {
         XCTAssertNil(UpdateCheck.parse(try release("v1.2", assets: [["name": "VoiceOver-Audio-Split.pkg", "browser_download_url": "http://example.com/a.pkg"]])),
                      "only over https")
         XCTAssertNil(UpdateCheck.parse(Data("not json".utf8)))
+        // Only this project's own downloads on GitHub, whatever the answer names.
+        XCTAssertNil(UpdateCheck.parse(try release("v1.2", assets: [["name": "VoiceOver-Audio-Split.pkg", "browser_download_url": "https://example.com/amenathomas1997/voiceover-audio-split/releases/download/v1.2/VoiceOver-Audio-Split.pkg"]])))
+        XCTAssertNil(UpdateCheck.parse(try release("v1.2", assets: [["name": "VoiceOver-Audio-Split.pkg", "browser_download_url": "https://github.com/someone-else/voiceover-audio-split/releases/download/v1.2/VoiceOver-Audio-Split.pkg"]])))
     }
 
     func testNewerVersions() throws {

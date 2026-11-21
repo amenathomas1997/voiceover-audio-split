@@ -202,7 +202,8 @@ final class AudioHub: ObservableObject {
         case .news:
             var headlines: [HubItem] = []
             for address in Preferences.shared.newsFeeds {
-                guard let url = URL(string: address) else { continue }
+                // Web addresses only: a feed list can come from an imported settings file.
+                guard let url = URL(string: address), ["http", "https"].contains(url.scheme?.lowercased() ?? "") else { continue }
                 let items = (try? await data(url)).map(RSSFeed.parse) ?? []
                 headlines += items.prefix(15)
                     .filter { query.isEmpty || $0.title.localizedCaseInsensitiveContains(query) }

@@ -145,7 +145,7 @@ enum PlaceMarkers {
         guard let app = NSWorkspace.shared.frontmostApplication, let bundleID = app.bundleIdentifier else { return nil }
         if let script = SitePresets.browsers[bundleID] {
             // In a browser, markers belong to the page; if the address can't be read, don't guess.
-            guard let address = AppleScriptRunner.run(script, logErrors: false), !address.isEmpty else { return nil }
+            guard let address = AppleScriptRunner.run(script, target: bundleID, logErrors: false), !address.isEmpty else { return nil }
             return page(for: address)
         }
         return "app:" + bundleID

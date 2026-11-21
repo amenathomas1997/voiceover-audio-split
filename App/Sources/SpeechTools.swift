@@ -8,6 +8,7 @@
 
 import AppKit
 import Combine
+import os
 
 struct SpokenPhrase: Identifiable, Hashable {
     let id = UUID()
@@ -65,14 +66,54 @@ enum AppleScriptRunner {
     /// so every script goes through this one queue.
     private static let queue = DispatchQueue(label: "VoiceOverAudioSplit.applescript")
 
+    /// How long a script waits for the other app to answer. AppleScript's own limit is two
+    /// minutes, and every script shares one queue, so one app that had stopped answering
+    /// (VoiceOver mid-restart, a browser showing a beach ball) held up every announcement.
+    static let timeoutSeconds = 10
+    /// How long an app that didn't answer is left alone before it's asked again.
+    static let restSeconds: TimeInterval = 20
+    /// Apple's error number for "the other app didn't answer in time".
+    static let timedOut = -1712
+
+    /// Apps that didn't answer in time, and until when they're left alone.
+    private static let resting = OSAllocatedUnfairLock(initialState: [String: Date]())
+
+    /// The script inside AppleScript's own time limit.
+    static func limited(_ source: String) -> String {
+        "with timeout of \(timeoutSeconds) seconds\n\(source)\nend timeout"
+    }
+
+    /// Whether `target` didn't answer lately and is being left alone.
+    static func isResting(_ target: String, now: Date = Date()) -> Bool {
+        resting.withLock { ($0[target] ?? .distantPast) > now }
+    }
+
+    /// Notes that `target` didn't answer in time (or, with nil, that it's answering again).
+    static func rest(_ target: String, until date: Date?) {
+        resting.withLock { $0[target] = date }
+    }
+
     /// Runs a script and returns its text result, or nil on failure. Don't call from the main thread.
+    /// `target` names the app the script talks to: one that doesn't answer within the time
+    /// limit isn't asked again for a while, so the scripts queued behind it fail at once
+    /// instead of each waiting its turn to time out.
     @discardableResult
-    static func run(_ source: String, logErrors: Bool = true) -> String? {
+    static func run(_ source: String, target: String? = nil, logErrors: Bool = true) -> String? {
         queue.sync {
+            // Checked here, on the queue: scripts that queued up behind a hung one see its result.
+            if let target, isResting(target) { return nil }
             var error: NSDictionary?
-            let result = NSAppleScript(source: source)?.executeAndReturnError(&error)
-            if let error, logErrors { log("AppleScript failed: \(error[NSAppleScript.errorMessage] ?? error)") }
-            return error == nil ? (result?.stringValue ?? "") : nil
+            let result = NSAppleScript(source: limited(source))?.executeAndReturnError(&error)
+            if let error {
+                if let target, (error[NSAppleScript.errorNumber] as? Int) == timedOut {
+                    rest(target, until: Date().addingTimeInterval(restSeconds))
+                    log("AppleScript: \(target) didn't answer in \(timeoutSeconds) seconds; leaving it alone for \(Int(restSeconds)).")
+                } else if logErrors {
+                    log("AppleScript failed: \(error[NSAppleScript.errorMessage] ?? error)")
+                }
+                return nil
+            }
+            return result?.stringValue ?? ""
         }
     }
 }
@@ -82,7 +123,7 @@ enum VoiceOverText {
     /// returns the text result, or nil on failure. Don't call from the main thread.
     @discardableResult
     static func run(_ line: String, logErrors: Bool = true) -> String? {
-        AppleScriptRunner.run("tell application id \"com.apple.VoiceOver\" to \(line)", logErrors: logErrors)
+        AppleScriptRunner.run("tell application id \"com.apple.VoiceOver\" to \(line)", target: "com.apple.VoiceOver", logErrors: logErrors)
     }
 
     /// Escapes text for use inside an AppleScript string.
@@ -119,7 +160,8 @@ enum Clipboard {
             let list = ListFormatter.localizedString(byJoining: names)
             return files.count == 1 ? String(localized: "1 file: \(list)") : String(localized: "\(files.count) files: \(list)")
         }
-        if board.data(forType: .tiff) != nil || board.data(forType: .png) != nil { return String(localized: "An image") }
+        // By its kind alone: asking for the picture itself fetches all of it, just to say "an image".
+        if board.types?.contains(where: { $0 == .tiff || $0 == .png }) == true { return String(localized: "An image") }
         return String(localized: "The clipboard is empty")
     }
 }

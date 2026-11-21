@@ -63,11 +63,26 @@ enum Braille {
     }
 
     private static func translate(word: String) -> String {
-        let letters = word.filter(\.isLetter)
-        let allCaps = letters.count > 1 && letters.allSatisfy(\.isUppercase)
-        var output = allCaps ? ",," : ""
+        var output = ""
         var inNumber = false
         let characters = Array(word)
+        // Two or more capitals in a row take one sign for the run (,,); a lone capital takes
+        // its own (,). Decided run by run, not for the word as a whole: with one sign at the
+        // front of "A4B", the capital sign that ends the number was dropped and it read as
+        // A42, and "SELF-CONTROL" lost its capitals after the hyphen.
+        var runStarts = Set<Int>(), inRun = Set<Int>()
+        var index = 0
+        while index < characters.count {
+            guard characters[index].isLetter, characters[index].isUppercase else { index += 1; continue }
+            var end = index
+            while end < characters.count, characters[end].isLetter, characters[end].isUppercase { end += 1 }
+            // A run that runs into small letters ("DONALDson") is signed letter by letter.
+            if end - index >= 2, end == characters.count || !characters[end].isLetter {
+                runStarts.insert(index)
+                inRun.formUnion(index..<end)
+            }
+            index = end
+        }
         for (i, character) in characters.enumerated() {
             if let digit = character.wholeNumberValue, character.isASCII {
                 if !inNumber { output += "#" }
@@ -85,7 +100,7 @@ enum Braille {
                 // (A capital sign ends the number by itself.)
                 if inNumber && character.isLowercase && "abcdefghij".contains(character) { output += ";" }
                 inNumber = false
-                if character.isUppercase && !allCaps { output += "," }
+                if runStarts.contains(i) { output += ",," } else if character.isUppercase && !inRun.contains(i) { output += "," }
                 output += character.lowercased()
                 continue
             }

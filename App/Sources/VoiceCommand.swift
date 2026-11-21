@@ -43,10 +43,16 @@ final class VoiceCommand {
     private struct Question {
         let id = UUID()
         let perform: () -> Void
+        /// Run on a spoken no, or no answer: whatever was offered is withdrawn.
+        let otherwise: (() -> Void)?
         let until: Date
         var request: SFSpeechAudioBufferRecognitionRequest?
     }
     private var awaitingAnswer: Question?
+    /// An answer being said: it counts once the speaker has paused.
+    private var answerTimer: Timer?
+    /// Tries the microphone again after it couldn't be started.
+    private var retryTimer: Timer?
 
     /// Starts or stops listening to match the setting.
     func update(enabled: Bool) {
@@ -69,9 +75,10 @@ final class VoiceCommand {
     }
 
     /// Asks a question out loud and acts on a spoken yes; no, or nothing within 8 seconds, cancels.
-    func askYesNo(_ question: String, perform: @escaping () -> Void) {
+    func askYesNo(_ question: String, otherwise: (() -> Void)? = nil, perform: @escaping () -> Void) {
         let words = question + " " + String(localized: "Say yes or no.")
-        awaitingAnswer = Question(perform: perform, until: Date().addingTimeInterval(60), request: nil)
+        awaitingAnswer?.otherwise?()
+        awaitingAnswer = Question(perform: perform, otherwise: otherwise, until: Date().addingTimeInterval(60), request: nil)
         Tones.play(.status)
         Announcer.say(words)
         if !isListening { requestThenStart(oneShot: true) }
@@ -88,6 +95,8 @@ final class VoiceCommand {
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
                 guard self.awaitingAnswer?.id == asked.id else { return }
                 self.awaitingAnswer = nil
+                self.answerTimer?.invalidate()
+                asked.otherwise?()
                 Announcer.say(String(localized: "No answer, so I didn't do it."))
                 self.stopIfNotWanted()
             }
@@ -113,35 +122,42 @@ final class VoiceCommand {
                     DispatchQueue.main.async {
                         guard self.wanted || oneShot else { return }
                         granted ? self.start() : Announcer.say(String(localized: "Voice command needs the microphone. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Microphone."))
+                        // At login the microphone may not be there yet: it said it waits, so it does.
+                        if granted, self.wanted, !self.isListening { self.retryLater() }
                     }
                 }
             }
         }
     }
 
-    private func start() {
+    /// `quiet` is for another try after a failure that has already been announced.
+    private func start(quiet: Bool = false) {
         guard !isListening else { return }
+        func say(_ text: String) { if !quiet { Announcer.say(text) } }
         // On-device only: the language of the Mac if it can, otherwise English.
         let candidates = [SFSpeechRecognizer(locale: Locale.current), SFSpeechRecognizer(locale: Locale(identifier: "en-US"))]
         guard let recognizer = candidates.compactMap({ $0 }).first(where: \.supportsOnDeviceRecognition) else {
-            return Announcer.say(String(localized: "Voice command isn't available: this Mac can't recognize speech on the device."))
+            return say(String(localized: "Voice command isn't available: this Mac can't recognize speech on the device."))
         }
         guard let microphone = Self.builtInMicrophone() else {
-            log("Voice command: no built-in microphone; not listening, to keep Bluetooth headsets at full quality.")
-            return Announcer.say(String(localized: "Voice command waits for a built-in or wired microphone, so your Bluetooth headphones keep their full sound quality."))
+            if !quiet { log("Voice command: no built-in microphone; not listening, to keep Bluetooth headsets at full quality.") }
+            return say(String(localized: "Voice command waits for a built-in or wired microphone, so your Bluetooth headphones keep their full sound quality."))
         }
         let engine = AVAudioEngine()
         var device = microphone
         // If the built-in microphone can't be chosen, don't fall back to a Bluetooth headset's.
-        guard let unit = engine.inputNode.audioUnit,
+        // (Reaching for the input can itself throw an Objective-C exception while devices change.)
+        var unit: AudioUnit?
+        _ = VOACatchException({ unit = engine.inputNode.audioUnit }, nil)
+        guard let unit,
               AudioUnitSetProperty(unit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0,
                                    &device, UInt32(MemoryLayout<AudioDeviceID>.size)) == noErr else {
-            log("Voice command: couldn't choose the built-in microphone.")
-            return Announcer.say(String(localized: "Voice command couldn't use the built-in microphone."))
+            if !quiet { log("Voice command: couldn't choose the built-in microphone.") }
+            return say(String(localized: "Voice command couldn't use the built-in microphone."))
         }
         guard Self.installTap(on: engine, appendingTo: currentRequest) else {
-            log("Voice command: the microphone's format wasn't accepted.")
-            return failedToListen()
+            if !quiet { log("Voice command: the microphone's format wasn't accepted.") }
+            return failedToListen(quiet: quiet)
         }
         var startError: NSError?
         var started = false
@@ -151,8 +167,8 @@ final class VoiceCommand {
         }, &startError)
         guard caught, started else {
             _ = VOACatchException({ engine.inputNode.removeTap(onBus: 0) }, nil)
-            log("Voice command: microphone couldn't start.")
-            return failedToListen()
+            if !quiet { log("Voice command: microphone couldn't start.") }
+            return failedToListen(quiet: quiet)
         }
         self.engine = engine
         self.recognizer = recognizer
@@ -167,6 +183,8 @@ final class VoiceCommand {
             if keep.0 || keep.1 != nil || keep.2 != nil { self.start() }
             // A question still waiting is answered on the new request.
             if self.awaitingAnswer?.request != nil { self.awaitingAnswer?.request = self.request }
+            // Always-on listening that couldn't restart (no microphone yet) tries again.
+            if self.wanted, !self.isListening { self.retryLater() }
         }
         log("Voice command: listening on the device.")
         listen()
@@ -196,10 +214,12 @@ final class VoiceCommand {
     }
 
     /// Listening couldn't start: voice commands stay off this time, and say so once.
-    private func failedToListen() {
+    private func failedToListen(quiet: Bool = false) {
         engine = nil
         isListening = false
-        Announcer.say(String(localized: "Voice commands couldn't start the microphone, so they're off for now. The rest of the app works as usual. Try turning voice commands on again in Settings."))
+        if !quiet {
+            Announcer.say(String(localized: "Voice commands couldn't start the microphone, so they're off for now. The rest of the app works as usual. Try turning voice commands on again in Settings."))
+        }
     }
 
     /// A new recognition task, replacing the last one.
@@ -243,19 +263,17 @@ final class VoiceCommand {
         }
         if let waiting = awaitingAnswer, waiting.until > Date() {
             guard let asked = waiting.request, asked === request else { return }
-            // A short, clear answer: "yes", "no", "yes please". Not both, not a sentence.
-            guard VoiceCommands.normalize(text).split(separator: " ").count <= 4 else { return }
-            let yes = VoiceCommands.says(text, any: VoiceCommands.yes), no = VoiceCommands.says(text, any: VoiceCommands.no)
-            guard yes != no else { return }
-            awaitingAnswer = nil
-            if yes {
-                Tones.play(.louder)
-                waiting.perform()
-            } else {
-                Announcer.say(String(localized: "Cancelled"))
+            // Decided on everything said, once the speaker has paused. Acting on the words
+            // as they arrived could take "say yes" out of the app's own "Say yes or no" when
+            // that was spoken more slowly than expected, or the first half of "yes… no, wait".
+            answerTimer?.invalidate()
+            if final { return decide(text, for: waiting.id) }
+            let pause = Timer(timeInterval: 0.8, repeats: false) { [weak self] _ in
+                self?.decide(text, for: waiting.id)
             }
-            listen()
-            return stopIfNotWanted()
+            RunLoop.main.add(pause, forMode: .common)
+            answerTimer = pause
+            return
         }
         if Self.isLaunchCommand(text) && VoiceCommands.command(after: text) == nil {
             return launchLessons()
@@ -267,10 +285,42 @@ final class VoiceCommand {
         pendingCommand = command
         pauseTimer?.invalidate()
         if final { return perform(command) }
-        pauseTimer = Timer.scheduledTimer(withTimeInterval: 1.2, repeats: false) { [weak self] _ in
+        // In every run loop mode, so a command heard while a dialog or menu is open still runs.
+        let pause = Timer(timeInterval: 1.2, repeats: false) { [weak self] _ in
             guard let self else { return }
             self.perform(self.pendingCommand)
         }
+        RunLoop.main.add(pause, forMode: .common)
+        pauseTimer = pause
+    }
+
+    /// Whether a pause-complete phrase answers a question: true for yes, false for no, nil
+    /// for anything else. A short, clear answer: "yes", "no", "yes please". Not both (the
+    /// question's own "say yes or no"), and not a sentence.
+    static func answer(in text: String) -> Bool? {
+        guard VoiceCommands.normalize(text).split(separator: " ").count <= 4 else { return nil }
+        let yes = VoiceCommands.says(text, any: VoiceCommands.yes), no = VoiceCommands.says(text, any: VoiceCommands.no)
+        return yes == no ? nil : yes
+    }
+
+    private func decide(_ text: String, for id: UUID) {
+        guard let waiting = awaitingAnswer, waiting.id == id else { return }
+        guard let yes = Self.answer(in: text) else {
+            // Not an answer (other talk, or the question itself heard): listen afresh for one.
+            listen()
+            awaitingAnswer?.request = request
+            return
+        }
+        awaitingAnswer = nil
+        if yes {
+            Tones.play(.louder)
+            waiting.perform()
+        } else {
+            waiting.otherwise?()
+            Announcer.say(String(localized: "Cancelled"))
+        }
+        listen()
+        stopIfNotWanted()
     }
 
     private func perform(_ command: String) {
@@ -341,15 +391,37 @@ final class VoiceCommand {
         pendingCommand = ""
         oneShotUntil = nil
         awaitingAnswer = nil
+        answerTimer?.invalidate()
+        answerTimer = nil
+        retryTimer?.invalidate()
+        retryTimer = nil
         task?.cancel()
         task = nil
         request = nil
         if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
         configurationObserver = nil
-        engine?.inputNode.removeTap(onBus: 0)
+        // Removing a tap can throw an Objective-C exception when the microphone has just
+        // changed, which is exactly when this runs.
+        if let engine { _ = VOACatchException({ engine.inputNode.removeTap(onBus: 0) }, nil) }
         engine?.stop()
         engine = nil
         isListening = false
+    }
+
+    /// The microphone couldn't be started (none built in yet after waking, the lid closed):
+    /// try again quietly, less and less often, for as long as voice commands are wanted.
+    /// Without this, always-on listening stayed off until the setting was switched off and on.
+    private func retryLater(after seconds: TimeInterval = 10) {
+        retryTimer?.invalidate()
+        retryTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { [weak self] _ in
+            guard let self, self.wanted, !self.isListening else { return }
+            self.start(quiet: true)
+            if self.isListening {
+                log("Voice command: listening again.")
+            } else {
+                self.retryLater(after: min(seconds * 2, 120))
+            }
+        }
     }
 
     /// "Launch VoiceOver training", or the same in the Mac's language: a word to start, VoiceOver,

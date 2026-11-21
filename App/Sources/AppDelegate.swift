@@ -133,7 +133,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 do {
                     let capture = try await ScreenPicture.frontWindowCapture()
                     let lines = ScreenOCRLayout.recognize(capture.image)
-                    log("Check: screen OCR frame = \(capture.frame), \(lines.count) lines")
+                    log("Check: screen OCR frame = \(capture.frame), \(lines.count) lines, picture \(capture.image.width) x \(capture.image.height), see-through margin (left, right, top, bottom) = \(Self.margins(of: capture.image))")
                     for line in lines.prefix(12) {
                         log("Check: screen OCR line \(line.id) at \(ScreenOCRLayout.screenRect(line.box, in: capture.frame)): \(line.text) [\(line.words.count) words]")
                     }
@@ -240,6 +240,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     #if DEBUG
+    /// How many pixels in from each edge the picture is see-through, at mid height and mid
+    /// width. A window pictured with its shadow has a wide margin; pictured to its frame, none.
+    private static func margins(of image: CGImage) -> [Int] {
+        let width = image.width, height = image.height
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        guard let context = CGContext(data: &pixels, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4,
+                                      space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return [] }
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        func solid(_ x: Int, _ y: Int) -> Bool { pixels[(y * width + x) * 4 + 3] == 255 }
+        return [
+            (0..<width).first { solid($0, height / 2) } ?? -1,
+            (0..<width).reversed().first { solid($0, height / 2) }.map { width - 1 - $0 } ?? -1,
+            (0..<height).first { solid(width / 2, $0) } ?? -1,
+            (0..<height).reversed().first { solid(width / 2, $0) }.map { height - 1 - $0 } ?? -1,
+        ]
+    }
+
     /// Development builds only: checks text recognition and the online services
     /// without starting shortcuts, audio capture or VoiceOver scripting (so no
     /// permission prompts), logs the results, and quits.
@@ -472,6 +489,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func showDoItForMe() {
         // Act on the last app used, never this one (the palette or Settings may be in front).
         DoItModel.shared.target = controller.lastUsedApp
+        // A press offered the last time the window was open isn't still on offer.
+        DoItModel.shared.forgetPress()
         doItWindow = show(doItWindow, title: String(localized: "Do It for Me"), view: DoItForMeView())
     }
 

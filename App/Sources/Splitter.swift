@@ -19,6 +19,58 @@ import os
 
 // MARK: - Core Audio property helpers
 
+/// Core Audio property listeners that can really be taken away again.
+///
+/// The block form (`AudioObjectAddPropertyListenerBlock`) can't be removed from Swift:
+/// every call wraps the closure in a new block, so `AudioObjectRemovePropertyListenerBlock`
+/// matches nothing, and still reports success. Each rebuild of the split then left its
+/// device listeners behind, still firing, for as long as the app ran. This uses the
+/// function form, which removes by function and context; the context is a number, not a
+/// pointer, so a call that arrives late finds nothing rather than freed memory.
+enum AudioListeners {
+    struct Token {
+        fileprivate let id: Int
+        fileprivate let object: AudioObjectID
+        fileprivate let address: AudioObjectPropertyAddress
+    }
+
+    private static let handlers = OSAllocatedUnfairLock(initialState: (next: 1, byID: [Int: () -> Void]()))
+
+    private static let proc: AudioObjectPropertyListenerProc = { _, _, _, context in
+        let id = Int(bitPattern: context)
+        // Run on the main thread, and only if it's still wanted by then.
+        DispatchQueue.main.async {
+            handlers.withLockUnchecked { $0.byID[id] }?()
+        }
+        return noErr
+    }
+
+    /// Calls `handler` on the main thread when the property changes, until the token is removed.
+    static func add(_ object: AudioObjectID, _ address: AudioObjectPropertyAddress, handler: @escaping () -> Void) -> Token? {
+        let id = handlers.withLockUnchecked { state -> Int in
+            let id = state.next
+            state.next += 1
+            state.byID[id] = handler
+            return id
+        }
+        var address = address
+        guard AudioObjectAddPropertyListener(object, &address, proc, UnsafeMutableRawPointer(bitPattern: id)) == noErr else {
+            handlers.withLockUnchecked { $0.byID[id] = nil }
+            return nil
+        }
+        return Token(id: id, object: object, address: address)
+    }
+
+    static func remove(_ token: Token) {
+        var address = token.address
+        AudioObjectRemovePropertyListener(token.object, &address, proc, UnsafeMutableRawPointer(bitPattern: token.id))
+        handlers.withLockUnchecked { $0.byID[token.id] = nil }
+    }
+
+    /// How many are in place (for the tests).
+    static var count: Int { handlers.withLockUnchecked { $0.byID.count } }
+}
+
 func address(_ selector: AudioObjectPropertySelector,
              scope: AudioObjectPropertyScope = kAudioObjectPropertyScopeGlobal) -> AudioObjectPropertyAddress {
     AudioObjectPropertyAddress(mSelector: selector, mScope: scope, mElement: kAudioObjectPropertyElementMain)
@@ -191,25 +243,44 @@ final class Splitter {
         var speechDevice: AudioDeviceID?
     }
     private var built: Plan?
-    private var listeners: [(AudioObjectPropertySelector, AudioObjectPropertyListenerBlock)] = []
+    private var listeners: [AudioListeners.Token] = []
 
     init(configuration: SplitConfiguration) { self.configuration = configuration }
 
     func start() {
         failedPlan = nil
+        running = true
         rebuildIfNeeded()
+        // Sound captured across a sleep doesn't always come back, and nothing may change to
+        // prompt a rebuild. A few seconds after waking, see whether sound is still passing
+        // through; only if it has stopped, build afresh.
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                guard let self, self.running, self.aggregate != kAudioObjectUnknown else { return }
+                let before = Splitter.renders
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                    guard let self, self.running, self.aggregate != kAudioObjectUnknown, Splitter.renders == before else { return }
+                    log("No sound passed through after waking; building the audio again.")
+                    self.scheduleRebuild(force: true)
+                }
+            }
+        }
         let system = AudioObjectID(kAudioObjectSystemObject)
         for selector in [kAudioHardwarePropertyProcessObjectList, kAudioHardwarePropertyDefaultOutputDevice,
                          kAudioHardwarePropertyDevices] {
-            var addr = address(selector)
-            let block: AudioObjectPropertyListenerBlock = { [weak self] _, _ in self?.scheduleRebuild() }
-            AudioObjectAddPropertyListenerBlock(system, &addr, DispatchQueue.main, block)
-            listeners.append((selector, block))
+            if let token = AudioListeners.add(system, address(selector), handler: { [weak self] in self?.scheduleRebuild() }) {
+                listeners.append(token)
+            }
         }
     }
 
     private var pendingRebuild: DispatchWorkItem?
     private var pendingForce = false
+    private var running = false
+    private var wakeObserver: Any?
+    /// Tries left for the setup that just failed.
+    private var retries = 0
     /// The last setup that couldn't be built.
     private var failedPlan: Plan?
 
@@ -231,7 +302,7 @@ final class Splitter {
 
     /// Listeners on the output device itself: its channel count or sample rate can change
     /// without it changing (AirPods switch to a mono, lower-rate mode during calls).
-    private var deviceListeners: [(AudioObjectID, AudioObjectPropertySelector, AudioObjectPropertyListenerBlock)] = []
+    private var deviceListeners: [AudioListeners.Token] = []
 
     /// Rebuilds only on a real change: building can itself make the device report a
     /// change, which mustn't start a loop.
@@ -241,23 +312,18 @@ final class Splitter {
         }
         let builtShape = shape()
         for selector in [kAudioDevicePropertyStreamConfiguration, kAudioDevicePropertyNominalSampleRate] {
-            var addr = AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeWildcard,
+            let addr = AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeWildcard,
                                                   mElement: kAudioObjectPropertyElementMain)
-            let block: AudioObjectPropertyListenerBlock = { [weak self] _, _ in
+            if let token = AudioListeners.add(device, addr, handler: { [weak self] in
                 if shape() != builtShape { self?.scheduleRebuild(force: true) }
-            }
-            if AudioObjectAddPropertyListenerBlock(device, &addr, DispatchQueue.main, block) == noErr {
-                deviceListeners.append((device, selector, block))
+            }) {
+                deviceListeners.append(token)
             }
         }
     }
 
     private func unwatchDevices() {
-        for (device, selector, block) in deviceListeners {
-            var addr = AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeWildcard,
-                                                  mElement: kAudioObjectPropertyElementMain)
-            AudioObjectRemovePropertyListenerBlock(device, &addr, DispatchQueue.main, block)
-        }
+        deviceListeners.forEach(AudioListeners.remove)
         deviceListeners.removeAll()
     }
 
@@ -265,11 +331,10 @@ final class Splitter {
     func stop() {
         pendingRebuild?.cancel()
         pendingRebuild = nil
-        let system = AudioObjectID(kAudioObjectSystemObject)
-        for (selector, block) in listeners {
-            var addr = address(selector)
-            AudioObjectRemovePropertyListenerBlock(system, &addr, DispatchQueue.main, block)
-        }
+        running = false
+        if let wakeObserver { NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver) }
+        wakeObserver = nil
+        listeners.forEach(AudioListeners.remove)
         listeners.removeAll()
         teardown()
         Mixer.sources = []
@@ -331,12 +396,23 @@ final class Splitter {
         do {
             try build(plan)
             failedPlan = nil
+            retries = 0
             log("Audio active: \(plan.apps.count) app(s) with their own settings\(plan.speechDevice != nil ? ", two devices" : "").")
         } catch {
             log("Could not start audio: \(error)")
             teardown()
             failedPlan = plan
             NotificationCenter.default.post(name: Splitter.failed, object: nil)
+            // The same setup often works a moment later (a device still reconnecting after
+            // waking). Left alone, it wasn't tried again until something else changed, which
+            // could be never: two more tries, 3 and 15 seconds on.
+            guard retries < 2 else { return }
+            retries += 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + (retries == 1 ? 3 : 15)) { [weak self] in
+                guard let self, self.running, self.failedPlan == plan else { return }
+                self.failedPlan = nil
+                self.rebuildIfNeeded()
+            }
         }
     }
 
@@ -390,7 +466,10 @@ final class Splitter {
         ]
         try check(AudioHardwareCreateAggregateDevice(description as CFDictionary, &aggregate), "create aggregate device")
 
-        Mixer.sampleRate = readValue(aggregate, kAudioDevicePropertyNominalSampleRate, default: Float64(48000))
+        // A device mid-switch can report a rate of 0, which would turn every filter's output
+        // into something that isn't a number.
+        let rate = readValue(aggregate, kAudioDevicePropertyNominalSampleRate, default: Float64(48000))
+        Mixer.sampleRate = rate > 0 ? rate : 48000
         Mixer.mainChannels = outputChannelCount(plan.output)
         Mixer.speechDeviceChannel = subDevices.count > 1 ? outputChannelCount(plan.output) : nil
         Mixer.sources = sources
@@ -404,11 +483,16 @@ final class Splitter {
         try check(AudioDeviceStart(aggregate, ioProc), "start audio")
     }
 
+    /// Counts every pass of sound through the app, so a stall can be noticed. Written on the
+    /// audio thread and only compared for change elsewhere, so an exact value doesn't matter.
+    nonisolated(unsafe) private(set) static var renders: UInt64 = 0
+
     /// Real-time render: the last `tapCount` input buffers are the taps, in source
     /// order (any input streams of the output hardware itself, such as an AirPods
     /// mic, come first).
     private static func render(input: UnsafePointer<AudioBufferList>,
                                output: UnsafeMutablePointer<AudioBufferList>, tapCount: Int) {
+        renders &+= 1
         let inputs = UnsafeMutableAudioBufferListPointer(UnsafeMutablePointer(mutating: input))
         let count = min(tapCount, inputs.count, Mixer.maxSources)
         var frames = Int.max

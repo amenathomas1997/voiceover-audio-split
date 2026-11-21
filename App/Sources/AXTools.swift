@@ -11,8 +11,16 @@ enum AX {
     /// question, which would stall these features for minutes on a frozen app.
     static let timeout: Float = 1
 
+    /// The time limit for every element this app asks about, set once. Set on an app's own
+    /// element it covers only that one element: its windows and controls kept the six-second
+    /// default, so walking a busy app's controls could take minutes.
+    private static let limitEverything: Void = {
+        AXUIElementSetMessagingTimeout(AXUIElementCreateSystemWide(), timeout)
+    }()
+
     /// An app's accessibility element, with the shorter timeout.
     static func application(_ pid: pid_t) -> AXUIElement {
+        _ = limitEverything
         let element = AXUIElementCreateApplication(pid)
         AXUIElementSetMessagingTimeout(element, timeout)
         return element

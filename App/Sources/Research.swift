@@ -59,15 +59,21 @@ enum Research {
         return try JSONSerialization.jsonObject(with: data)
     }
 
+    /// Wikipedia in the app's language, where it's one of the four the app speaks.
+    static var wikipediaHost: String {
+        let language = Bundle.main.preferredLocalizations.first.map { String($0.prefix(2)) } ?? "en"
+        return (["en", "es", "fr", "de"].contains(language) ? language : "en") + ".wikipedia.org"
+    }
+
     private static func wikipedia(_ topic: String) async throws -> String {
-        var search = URLComponents(string: "https://en.wikipedia.org/w/api.php")!
+        var search = URLComponents(string: "https://\(wikipediaHost)/w/api.php")!
         search.queryItems = [.init(name: "action", value: "opensearch"), .init(name: "search", value: topic),
                              .init(name: "limit", value: "1"), .init(name: "format", value: "json")]
         guard let results = try await json(search.encodedURL) as? [Any], results.count > 1,
               let title = (results[1] as? [String])?.first else { return String(localized: "No Wikipedia article found for \(topic)") }
         let path = title.replacingOccurrences(of: " ", with: "_")
             .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed.subtracting(CharacterSet(charactersIn: "/"))) ?? title
-        guard let summary = try await json(URL(string: "https://en.wikipedia.org/api/rest_v1/page/summary/\(path)")!)
+        guard let summary = try await json(URL(string: "https://\(wikipediaHost)/api/rest_v1/page/summary/\(path)")!)
                 as? [String: Any],
               let extract = summary["extract"] as? String else { return String(localized: "No summary available for \(title)") }
         return "\(title). \(extract)"

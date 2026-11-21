@@ -13,13 +13,15 @@ pkill -x "VoiceOver Audio Split" 2>/dev/null
 
 if [[ -n "$USER_HOME" && -n "$USER_ID" ]]; then
   OLD_AGENT="$USER_HOME/Library/LaunchAgents/local.voaudiosplit.keys.plist"
+  # Files in the user's own folders are removed as that user, not as root: a link planted
+  # there can then lead to nothing the user couldn't already delete.
   if [[ -f "$OLD_AGENT" ]]; then
     launchctl bootout "gui/$USER_ID" "$OLD_AGENT" 2>/dev/null
-    rm -f "$OLD_AGENT"
+    /usr/bin/sudo -u "$USER_NAME" /bin/rm -f "$OLD_AGENT"
   fi
   pkill -x VOAudioSplitKeys 2>/dev/null
   pkill -x VOAudioSplit 2>/dev/null
-  rm -rf "$USER_HOME/Applications/VoiceOver Audio Split" \
+  /usr/bin/sudo -u "$USER_NAME" /bin/rm -rf "$USER_HOME/Applications/VoiceOver Audio Split" \
          "$USER_HOME/Applications/VO Audio Split.app" "$USER_HOME/Applications/VO Audio Split Keys.app"
 fi
 exit 0

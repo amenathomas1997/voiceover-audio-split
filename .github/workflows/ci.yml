@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# The jobs only read the repository: the token they run with can't write to it.
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true

@@ -80,7 +80,9 @@ enum MicCheck {
             return Announcer.say(String(localized: "The microphone couldn't start"))
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            input.removeTap(onBus: 0)
+            // The microphone may have changed in those five seconds; removing the tap then
+            // can throw an Objective-C exception.
+            _ = VOACatchException({ input.removeTap(onBus: 0) }, nil)
             engine.stop()
             running = false
             lock.lock()

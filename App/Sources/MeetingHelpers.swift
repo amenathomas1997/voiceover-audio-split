@@ -456,10 +456,13 @@ enum MeetingHelpers {
         return value.isEmpty ? nil : value
     }
 
-    /// The rows that are new since the last look. The first look (no previous rows)
-    /// finds nothing new, so joining a meeting doesn't read the whole history.
-    static func newMessages(previous: [String], current: [String]) -> [String] {
-        guard !previous.isEmpty, !current.isEmpty else { return [] }
+    /// The rows that are new since the last look. Before the first look (`previous` nil)
+    /// nothing is new, so joining a meeting doesn't read the whole history. A chat that was
+    /// looked at and was empty is different: everything in it now is new. (Treated as the
+    /// same, the first message of a meeting was never read.)
+    static func newMessages(previous: [String]?, current: [String]) -> [String] {
+        guard let previous, !current.isEmpty else { return [] }
+        if previous.isEmpty { return Array(current.suffix(5)) }
         // Find where the last rows seen are in the list now; everything after is new.
         let overlap = min(3, previous.count)
         let tail = Array(previous.suffix(overlap))
@@ -535,6 +538,22 @@ extension MeetingHelpers {
     static func toggleMute() { toggle(.mute) }
     static func toggleVideo() { toggle(.video) }
     static func toggleHand() { toggle(.hand) }
+
+    /// "Mute me", "camera off", "lower my hand": to that state, not just a press. Pressing
+    /// when it's already so does the opposite of what was asked: "mute me" while muted
+    /// unmuted, and "camera off" while off turned the camera on.
+    static func setMute(_ muted: Bool) { toggle(.mute, want: muted) }
+    static func setVideo(_ on: Bool) { toggle(.video, want: on) }
+    static func setHand(_ raised: Bool) { toggle(.hand, want: raised) }
+
+    enum PressDecision: Equatable { case press, alreadySo, cannotTell }
+
+    /// Whether to press a control that is `current` (nil when the app doesn't say) to get it to `want`.
+    static func decide(current: Bool?, want: Bool?) -> PressDecision {
+        guard let want else { return .press } // A plain toggle.
+        guard let current else { return .cannotTell }
+        return current == want ? .alreadySo : .press
+    }
 
     /// Opens or closes the meeting chat with the app's chat button.
     static func openChat() { toggle(.chat) }
@@ -767,9 +786,15 @@ extension MeetingHelpers {
     }
 
     /// Presses a control's button, or uses the app's shortcut, then says the new state.
-    private static func toggle(_ control: MeetingControl) {
+    private static func toggle(_ control: MeetingControl, want: Bool? = nil) {
         run { meeting in
             let button = meeting.find(control)
+            switch decide(current: button?.state, want: want) {
+            case .press: break
+            case .alreadySo: return announce(control, state: want, app: meeting.app)
+            case .cannotTell:
+                return say(String(localized: "I couldn't tell whether that's on or off in \(meeting.app.name), so nothing was pressed. To press it anyway, say toggle mute, toggle video or toggle hand."))
+            }
             if let button {
                 guard press(button.element) else { return say(String(localized: "That button couldn't be pressed.")) }
             } else if !sendShortcut(control, for: meeting) {

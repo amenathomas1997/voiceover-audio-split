@@ -24,6 +24,52 @@ final class ReminderParserTests: XCTestCase {
         calendar.date(from: DateComponents(year: 2026, month: 10, day: day, hour: hour, minute: minute))!
     }
 
+    /// Noon is in the day. Left open, "at noon" said after noon was set for midnight tonight,
+    /// and "tomorrow at 12" for the midnight that starts tomorrow.
+    func testNoonIsInTheDay() {
+        XCTAssertEqual(parse("remind me at noon to eat")?.due, at(12))
+        XCTAssertEqual(parse("remind me tomorrow at noon to eat")?.due, at(day: 26, 12))
+        XCTAssertEqual(parse("remind me tomorrow at 12 to eat")?.due, at(day: 26, 12))
+        let afternoon = calendar.date(from: DateComponents(year: 2026, month: 10, day: 25, hour: 13))!
+        XCTAssertEqual(ReminderParser.parse("remind me at noon to eat", now: afternoon, calendar: calendar)?.due, at(day: 26, 12))
+        XCTAssertEqual(ReminderParser.parse("rappelle-moi à midi de manger", now: afternoon, calendar: calendar)?.due, at(day: 26, 12))
+        XCTAssertEqual(ReminderParser.parse("set an alarm for noon", now: afternoon, calendar: calendar)?.due, at(day: 26, 12))
+        XCTAssertEqual(ReminderParser.parse("remind me at midnight to sleep", now: afternoon, calendar: calendar)?.due, at(day: 26, 0))
+    }
+
+    /// Asking about or cancelling what's set must not set another one.
+    func testCommandsAboutExistingOnesAreNotNewOnes() {
+        for text in ["cancel the 10 minute timer", "stop the timer", "how long is left on my 20 minute timer",
+                     "cancel the reminder at 3 pm", "list my reminders", "what timers do I have",
+                     "cancela el temporizador de 10 minutos", "annule le minuteur de 10 minutes", "lösche den 10 Minuten Timer"] {
+            XCTAssertNil(parse(text), text)
+        }
+        // The same words inside the reminder itself are part of the message.
+        XCTAssertEqual(parse("remind me in 10 minutes to cancel my order")?.message, "cancel my order")
+        XCTAssertNotNil(parse("remind me to stop the oven in 20 minutes"))
+    }
+
+    /// "1.5 hours" was heard as "1" and "5 hours"; "seventy five" as five.
+    func testDecimalsAndLongerNumbers() {
+        assertTimer("timer for 1.5 hours", 5400)
+        assertTimer("Timer für 1,5 Stunden", 5400)
+        assertTimer("set a timer for 2.5 minutes", 150)
+        assertTimer("set a timer for seventy five minutes", 4500)
+        assertTimer("temporizador de treinta y cinco minutos", 2100)
+        assertTimer("set a timer for one hundred twenty minutes", 7200)
+        assertTimer("minuteur de soixante-dix minutes", 4200)
+        assertTimer("minuteur de quatre-vingt-dix minutes", 5400)
+        assertTimer("set a timer for twenty five minutes", 1500)
+        assertTimer("set a timer for an hour and a half", 5400)
+        XCTAssertEqual(parse("remind me in 1.5 hours to call mom")?.due, now.addingTimeInterval(5400))
+        XCTAssertEqual(parse("remind me in 1.5 hours to call mom")?.message, "call mom")
+        // The tail of a number that wasn't understood sets nothing, rather than something wrong.
+        XCTAssertNil(parse("set a timer for 2 15 minutes"))
+        XCTAssertNil(parse("set a timer for one thousand five minutes"))
+        // A clock time written with a dot stays a clock time.
+        XCTAssertEqual(parse("remind me at 3.30 pm to stretch")?.due, at(15, 30))
+    }
+
     private func assertTimer(_ text: String, _ seconds: TimeInterval, message: String = "",
                              file: StaticString = #filePath, line: UInt = #line) {
         guard let reminder = parse(text) else { return XCTFail("Not understood: \(text)", file: file, line: line) }
@@ -327,6 +373,65 @@ final class WindowSwitcherTests: XCTestCase {
 
 /// Screen OCR's layout: reading order, words and screen positions, without a screen.
 final class ScreenOCRLayoutTests: XCTestCase {
+    /// Arrow keys as the keyboard really sends them: with the Fn and keypad flags set.
+    /// Treating Fn as a modifier, as the first version did, passed every one of them on.
+    func testArrowKeysAreTakenWithTheFlagsTheyReallyCarry() {
+        let arrow = CGEventFlags(rawValue: 0xA00100) // keypad + Fn + the "not coalesced" bit
+        let homeEnd = CGEventFlags(rawValue: 0x800100)
+        func action(_ code: Int64, _ flags: CGEventFlags = [], letter: Character? = nil, caps: Bool = false) -> ScreenOCR.KeyAction {
+            ScreenOCR.action(keyCode: code, flags: flags, letter: letter, capsLockHeld: caps)
+        }
+        XCTAssertEqual(action(125, arrow), .line(1))
+        XCTAssertEqual(action(126, arrow), .line(-1))
+        XCTAssertEqual(action(123, arrow), .word(-1))
+        XCTAssertEqual(action(124, arrow), .word(1))
+        XCTAssertEqual(action(115, homeEnd), .first)
+        XCTAssertEqual(action(119, homeEnd), .last)
+        XCTAssertEqual(action(36), .click(right: false))
+        XCTAssertEqual(action(36, .maskShift), .click(right: true))
+        XCTAssertEqual(action(53), .leave)
+        // VoiceOver's keys and Command shortcuts go through, and the mode stays on.
+        XCTAssertEqual(action(124, arrow.union([.maskControl, .maskAlternate])), .pass)
+        XCTAssertEqual(action(13, .maskCommand, letter: "w"), .pass)
+        XCTAssertEqual(action(124, arrow.union(.maskAlphaShift), caps: true), .pass)
+        // Caps Lock switched on for capitals, not held, is not VoiceOver's key.
+        XCTAssertEqual(action(125, arrow.union(.maskAlphaShift)), .line(1))
+        // C is the letter typed, wherever it sits: on Dvorak the C position types J.
+        XCTAssertEqual(action(8, letter: "c"), .copy)
+        XCTAssertEqual(action(34, letter: "c"), .copy)
+        XCTAssertEqual(action(8, letter: "j"), .leaveAndPass)
+        XCTAssertEqual(action(0, letter: "a"), .leaveAndPass)
+    }
+
+    /// A click is checked against the screen as it is now, not as it was pictured.
+    func testClickIsCheckedAgainstTheScreenNow() {
+        typealias Window = ScreenOCRLayout.OnScreenWindow
+        let frame = CGRect(x: 100, y: 100, width: 800, height: 600)
+        let point = CGPoint(x: 300, y: 250)
+        func check(_ windows: [Window], id: CGWindowID? = 7) -> ScreenOCRLayout.ClickCheck {
+            ScreenOCRLayout.check(click: point, picturedFrame: frame, windowID: id, windows: windows, me: 1)
+        }
+        let pictured = Window(id: 7, frame: frame, layer: 0, processID: 50)
+        let everywhere = CGRect(x: 0, y: 0, width: 2000, height: 2000)
+        XCTAssertEqual(check([pictured]), .click(point))
+        XCTAssertEqual(check([]), .gone)
+        XCTAssertEqual(check([Window(id: 7, frame: frame.insetBy(dx: 40, dy: 0), layer: 0, processID: 50)]), .resized)
+        // Moved but the same size: the click moves with it.
+        XCTAssertEqual(check([Window(id: 7, frame: frame.offsetBy(dx: 50, dy: -20), layer: 0, processID: 50)]), .click(CGPoint(x: 350, y: 230)))
+        // A dialog in front of the text would take the click; one elsewhere wouldn't.
+        let dialog = Window(id: 9, frame: CGRect(x: 250, y: 200, width: 300, height: 200), layer: 0, processID: 50)
+        XCTAssertEqual(check([dialog, pictured]), .covered)
+        XCTAssertEqual(check([Window(id: 9, frame: CGRect(x: 700, y: 500, width: 100, height: 100), layer: 8, processID: 50), pictured]), .click(point))
+        // Windows behind it, the menu bar, and this app's own see-through overlays don't count.
+        XCTAssertEqual(check([pictured, dialog]), .click(point))
+        XCTAssertEqual(check([Window(id: 2, frame: everywhere, layer: 25, processID: 60), pictured]), .click(point))
+        XCTAssertEqual(check([Window(id: 3, frame: everywhere, layer: 3, processID: 1), pictured]), .click(point))
+        // This app's own ordinary window in front (the Screen OCR window itself) does.
+        XCTAssertEqual(check([Window(id: 4, frame: everywhere, layer: 0, processID: 1), pictured]), .covered)
+        // A whole-screen picture has no window to compare.
+        XCTAssertEqual(check([], id: nil), .click(point))
+    }
+
     private func line(_ id: Int, _ text: String, x: CGFloat, y: CGFloat, width: CGFloat = 0.3, height: CGFloat = 0.05) -> ScreenOCRLayout.Line {
         ScreenOCRLayout.Line(id: id, text: text, box: CGRect(x: x, y: y, width: width, height: height))
     }

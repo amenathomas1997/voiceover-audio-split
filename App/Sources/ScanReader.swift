@@ -34,10 +34,17 @@ enum TextRecognition {
         guard !boxes.isEmpty else { return String(localized: "No text yet. Hold the page in front of the camera, about a foot away.") }
         let area = boxes.reduce(CGRect.null) { $0.union($1) }
         var advice: [String] = []
-        if area.minX < 0.02 { advice.append(String(localized: "move the page to your left")) }
-        if area.maxX > 0.98 { advice.append(String(localized: "move the page to your right")) }
-        if area.maxY > 0.98 { advice.append(String(localized: "move the page down")) }
-        if area.minY < 0.02 { advice.append(String(localized: "move the page up")) }
+        let left = area.minX < 0.02, right = area.maxX > 0.98, top = area.maxY > 0.98, bottom = area.minY < 0.02
+        // Cut off on two opposite sides, the page is too close: "move it left and move it
+        // right" can't be followed, and the scan never got as far as reading.
+        if (left && right) || (top && bottom) {
+            advice.append(String(localized: "hold the page further away"))
+        } else {
+            if left { advice.append(String(localized: "move the page to your left")) }
+            if right { advice.append(String(localized: "move the page to your right")) }
+            if top { advice.append(String(localized: "move the page down")) }
+            if bottom { advice.append(String(localized: "move the page up")) }
+        }
         if advice.isEmpty && area.width * area.height < 0.12 { advice.append(String(localized: "hold the page closer")) }
         guard !advice.isEmpty else { return nil }
         let fix = ListFormatter.localizedString(byJoining: advice).capitalizedFirst

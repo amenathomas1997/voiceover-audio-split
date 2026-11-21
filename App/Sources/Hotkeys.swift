@@ -44,7 +44,19 @@ enum Hotkeys {
     nonisolated(unsafe) static var modifier = ShortcutModifier.option
     /// While set (VoiceOver lessons and practice, the typing trainer), sees every key press
     /// first, with the key event for its characters; returning true takes the key.
-    nonisolated(unsafe) static var keyObserver: ((Int64, CGEventFlags, NSEvent?) -> Bool)? { didSet { keyObserverGeneration &+= 1 } }
+    nonisolated(unsafe) static var keyObserver: ((Int64, CGEventFlags, NSEvent?) -> Bool)? {
+        didSet {
+            keyObserverGeneration &+= 1
+            keyObserverIsBrief = false
+            // Whoever had the keys can notice it no longer does (Screen OCR leaves its mode).
+            NotificationCenter.default.post(name: observerChanged, object: nil)
+        }
+    }
+    /// Posted whenever the observer is set or cleared.
+    static let observerChanged = Notification.Name("VoiceOverAudioSplit.keyObserverChanged")
+    /// Set, after taking the keys, by an observer that only waits a few seconds for one key
+    /// (the resource monitor's digit): another feature may take over from it.
+    nonisolated(unsafe) static var keyObserverIsBrief = false
     /// Changes each time the observer is set, so a short-lived observer (the resource monitor's
     /// digit) clears only itself, never a lesson that took over meanwhile.
     nonisolated(unsafe) private(set) static var keyObserverGeneration = 0
@@ -86,6 +98,14 @@ enum Hotkeys {
         CFRunLoopAddSource(CFRunLoopGetMain(), CFMachPortCreateRunLoopSource(kCFAllocatorDefault, newTap, 0), .commonModes)
         CGEvent.tapEnable(tap: newTap, enable: true)
         log("Listening for shortcuts at the \(level) level.")
+        // macOS switches a listener off when the app is slow to answer, and says so only
+        // through the listener itself. Looked at every few seconds as well, a listener that
+        // stayed off is found and switched back on.
+        Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
+            guard let tap, !CGEvent.tapIsEnabled(tap: tap) else { return }
+            CGEvent.tapEnable(tap: tap, enable: true)
+            log("The shortcut listener was off; switched back on.")
+        }
         return true
     }
 

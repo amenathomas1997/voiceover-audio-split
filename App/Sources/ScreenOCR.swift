@@ -86,6 +86,59 @@ enum ScreenOCRLayout {
         let rect = screenRect(box, in: frame)
         return CGPoint(x: rect.midX, y: rect.midY)
     }
+
+    // MARK: Checking a click
+
+    /// A window on screen now: enough to tell whether a click would still land on the text.
+    struct OnScreenWindow: Equatable {
+        let id: CGWindowID
+        let frame: CGRect
+        /// 0 for ordinary windows; panels, menus and overlays are above that.
+        let layer: Int
+        let processID: pid_t
+    }
+
+    enum ClickCheck: Equatable {
+        /// Safe to click, here (the window may have moved since the picture).
+        case click(CGPoint)
+        case gone, resized, covered
+    }
+
+    /// Whether the text pictured at `point` is still there to click. The picture is of one
+    /// moment: since then the window may have closed, moved or changed size, or a dialog or
+    /// another window may have come in front, and a click posted blind would press whatever
+    /// is there now. `windows` is what's on screen, front to back. A whole-screen picture
+    /// has no window to compare, so it is clicked as pictured.
+    static func check(click point: CGPoint, picturedFrame: CGRect, windowID: CGWindowID?,
+                      windows: [OnScreenWindow], me: pid_t) -> ClickCheck {
+        guard let windowID else { return .click(point) }
+        guard let window = windows.first(where: { $0.id == windowID }) else { return .gone }
+        guard abs(window.frame.width - picturedFrame.width) < 2, abs(window.frame.height - picturedFrame.height) < 2 else { return .resized }
+        // Moved but the same size: the text moved with it.
+        let now = CGPoint(x: point.x + window.frame.minX - picturedFrame.minX, y: point.y + window.frame.minY - picturedFrame.minY)
+        for other in windows {
+            if other.id == windowID { break }
+            // Ordinary windows, floating panels and dialogs take clicks. Menu bar items, the
+            // Dock and see-through overlays (this app's own captions and focus frame among
+            // them) are higher layers and don't count.
+            let takesClicks = (0...8).contains(other.layer) && !(other.processID == me && other.layer != 0)
+            if takesClicks, other.frame.contains(now) { return .covered }
+        }
+        return .click(now)
+    }
+
+    /// The windows on screen now, front to back, in the space mouse events use.
+    static func windowsOnScreen() -> [OnScreenWindow] {
+        let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] ?? []
+        return list.compactMap { info in
+            guard let id = info[kCGWindowNumber as String] as? CGWindowID,
+                  let bounds = info[kCGWindowBounds as String] as? NSDictionary,
+                  let frame = CGRect(dictionaryRepresentation: bounds),
+                  (info[kCGWindowAlpha as String] as? Double ?? 1) > 0 else { return nil }
+            return OnScreenWindow(id: id, frame: frame, layer: info[kCGWindowLayer as String] as? Int ?? 0,
+                                  processID: info[kCGWindowOwnerPID as String] as? pid_t ?? 0)
+        }
+    }
 }
 
 // MARK: - Recognition
@@ -133,17 +186,34 @@ final class ScreenOCR: ObservableObject {
 
     private var frame = CGRect.zero
     private var target: pid_t?
+    /// The window pictured (nil for a whole screen), checked again before every click.
+    private var windowID: CGWindowID?
     private var word: Int?
     private var generation = 0
     private var appWatcher: Any?
+    private var keysWatcher: Any?
+    private var sleepWatchers: [Any] = []
+    private var idle: DispatchWorkItem?
+    /// With no key for this long, the arrow keys go back to the app. Left on, they were
+    /// still taken in that app the next morning.
+    static let idleSeconds: TimeInterval = 120
     private var captureTask: Task<Void, Never>?
+    /// Which capture is the current one, so a late or abandoned one changes nothing.
+    private var captureToken = 0
+    private var captureStarted = Date.distantPast
 
     var text: String { lines.map(\.text).joined(separator: "\n") }
 
     /// Takes the picture, recognizes the text, and (from a key or the menu) starts the arrow keys.
     func capture(wholeScreen: Bool = false, thenNavigate: Bool) {
-        if busy { return Announcer.say(String(localized: "Still recognizing")) }
+        // A capture that hasn't come back after fifteen seconds is given up on, so a
+        // picture that never arrives can't block every later one.
+        if busy, Date().timeIntervalSince(captureStarted) < 15 { return Announcer.say(String(localized: "Still recognizing")) }
         stopNavigation(say: nil)
+        captureTask?.cancel()
+        captureToken += 1
+        let token = captureToken
+        captureStarted = Date()
         busy = true
         self.wholeScreen = wholeScreen
         status = String(localized: "Recognizing…")
@@ -153,10 +223,11 @@ final class ScreenOCR: ObservableObject {
             do {
                 let capture = try wholeScreen ? await ScreenPicture.screenCapture() : await ScreenPicture.frontWindowCapture()
                 let lines = await Task.detached { ScreenOCRLayout.recognize(capture.image) }.value
-                guard !Task.isCancelled, let self else { return }
+                guard !Task.isCancelled, let self, captureToken == token else { return }
                 self.lines = lines
                 frame = capture.frame
                 target = capture.processID
+                windowID = capture.windowID
                 current = 0
                 word = nil
                 busy = false
@@ -172,12 +243,12 @@ final class ScreenOCR: ObservableObject {
                     Announcer.say(status)
                 }
             } catch let failure as ScreenPicture.Failure {
-                guard let self else { return }
+                guard let self, captureToken == token else { return }
                 busy = false
                 status = failure.message
                 Announcer.say(failure.message)
             } catch {
-                guard let self else { return }
+                guard let self, captureToken == token else { return }
                 busy = false
                 status = String(localized: "Couldn't capture the screen.")
                 Announcer.say(status)
@@ -189,6 +260,7 @@ final class ScreenOCR: ObservableObject {
     func stop() {
         captureTask?.cancel()
         captureTask = nil
+        captureToken += 1
         busy = false
         stopNavigation(say: nil)
     }
@@ -200,19 +272,41 @@ final class ScreenOCR: ObservableObject {
     /// shortcuts) pass through untouched. Not while a lesson is watching the keys.
     func startNavigation() {
         guard !lines.isEmpty else { return Announcer.say(String(localized: "Capture the screen first.")) }
-        if Hotkeys.keyObserver != nil, !navigating {
+        // The keys come through the same listener as the shortcuts: without it, the arrow
+        // keys would be announced and then do nothing.
+        guard Hotkeys.isTrusted else {
+            return Announcer.say(String(localized: "Allow keyboard shortcuts in Settings first; this uses the same permission."))
+        }
+        // A lesson, practice or the typing trainer keeps the keys; a few seconds' wait for a
+        // digit (the resource monitor) gives way.
+        if Hotkeys.keyObserver != nil, !navigating, !Hotkeys.keyObserverIsBrief {
             return Announcer.say(String(localized: "The keys are busy with a lesson. Use the Screen OCR window instead."))
         }
         navigating = true
         current = min(current, lines.count - 1)
         word = nil
-        let observer: (Int64, CGEventFlags, NSEvent?) -> Bool = { [weak self] keyCode, flags, _ in
+        let observer: (Int64, CGEventFlags, NSEvent?) -> Bool = { [weak self] keyCode, flags, event in
             // The event tap runs on the main run loop, so this is on main.
             guard let self else { return false }
-            return MainActor.assumeIsolated { self.handle(keyCode, flags) }
+            return MainActor.assumeIsolated { self.handle(keyCode, flags, event) }
         }
         Hotkeys.keyObserver = observer
         generation = Hotkeys.keyObserverGeneration
+        restartIdleTimer()
+        // Sleeping, locking the screen or switching user ends it too.
+        let workspace = NSWorkspace.shared.notificationCenter
+        sleepWatchers = [NSWorkspace.willSleepNotification, NSWorkspace.screensDidSleepNotification, NSWorkspace.sessionDidResignActiveNotification].map { name in
+            workspace.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.stopNavigation(say: nil) }
+            }
+        }
+        // If a lesson, practice or the typing trainer takes the keys, this is over.
+        keysWatcher = NotificationCenter.default.addObserver(forName: Hotkeys.observerChanged, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, self.navigating, Hotkeys.keyObserverGeneration != self.generation else { return }
+                self.stopNavigation(say: nil)
+            }
+        }
         appWatcher = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) { [weak self] note in
             guard let self else { return }
@@ -233,7 +327,22 @@ final class ScreenOCR: ObservableObject {
         if Hotkeys.keyObserverGeneration == generation { Hotkeys.keyObserver = nil }
         if let appWatcher { NSWorkspace.shared.notificationCenter.removeObserver(appWatcher) }
         appWatcher = nil
+        if let keysWatcher { NotificationCenter.default.removeObserver(keysWatcher) }
+        keysWatcher = nil
+        sleepWatchers.forEach(NSWorkspace.shared.notificationCenter.removeObserver)
+        sleepWatchers = []
+        idle?.cancel()
+        idle = nil
         if let message { Announcer.say(message) }
+    }
+
+    private func restartIdleTimer() {
+        idle?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            MainActor.assumeIsolated { self?.stopNavigation(say: String(localized: "Screen OCR off")) }
+        }
+        idle = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.idleSeconds, execute: work)
     }
 
     private enum Keys {
@@ -242,26 +351,55 @@ final class ScreenOCR: ObservableObject {
         static let `return`: Int64 = 36, enter: Int64 = 76, escape: Int64 = 53, c: Int64 = 8, space: Int64 = 49
     }
 
-    /// Returns true when the key was taken.
-    private func handle(_ keyCode: Int64, _ flags: CGEventFlags) -> Bool {
-        guard navigating else { return false }
-        let modifiers = flags.intersection([.maskCommand, .maskControl, .maskAlternate, .maskSecondaryFn, .maskAlphaShift])
-        guard modifiers.isEmpty else { return false }
-        let shift = flags.contains(.maskShift)
+    /// What a key does while the keys belong to Screen OCR.
+    enum KeyAction: Equatable {
+        case line(Int), word(Int), first, last, click(right: Bool), copy, leave
+        /// For VoiceOver or the app, and the mode stays on.
+        case pass
+        /// Any other key is for the app: the mode ends and the key goes through.
+        case leaveAndPass
+    }
+
+    /// Decided from the key alone, so it can be tested with the flags real keys carry.
+    /// macOS marks every arrow, Home, End and Page key with the Fn flag (and the keypad
+    /// flag): counted as a modifier, as it first was here, those keys were never taken and
+    /// moving by line and word didn't work at all. Caps Lock switched on marks every key
+    /// too; only Caps Lock held down is VoiceOver's key.
+    nonisolated static func action(keyCode: Int64, flags: CGEventFlags, letter: Character?, capsLockHeld: Bool) -> KeyAction {
+        // VoiceOver's own keys (Control Option, or Caps Lock held) and Command shortcuts.
+        if !flags.intersection([.maskCommand, .maskControl, .maskAlternate]).isEmpty || capsLockHeld { return .pass }
         switch keyCode {
-        case Keys.up: moveLine(by: -1)
-        case Keys.down: moveLine(by: 1)
-        case Keys.left: moveWord(by: -1)
-        case Keys.right: moveWord(by: 1)
-        case Keys.home, Keys.pageUp: go(to: 0)
-        case Keys.end, Keys.pageDown: go(to: lines.count - 1)
-        case Keys.return, Keys.enter, Keys.space: click(right: shift)
-        case Keys.c: copyAll()
-        case Keys.escape: stopNavigation(say: String(localized: "Screen OCR off"))
+        case Keys.up: return .line(-1)
+        case Keys.down: return .line(1)
+        case Keys.left: return .word(-1)
+        case Keys.right: return .word(1)
+        case Keys.home, Keys.pageUp: return .first
+        case Keys.end, Keys.pageDown: return .last
+        case Keys.return, Keys.enter, Keys.space: return .click(right: flags.contains(.maskShift))
+        case Keys.escape: return .leave
         default:
-            // Any other key is for the app: leave quietly and let it through.
+            // C by the letter typed: it's on another key on Dvorak and other layouts.
+            if letter == "c" || (letter == nil && keyCode == Keys.c) { return .copy }
+            return .leaveAndPass
+        }
+    }
+
+    /// Returns true when the key was taken.
+    private func handle(_ keyCode: Int64, _ flags: CGEventFlags, _ event: NSEvent?) -> Bool {
+        guard navigating else { return false }
+        restartIdleTimer()
+        switch Self.action(keyCode: keyCode, flags: flags, letter: KeyCombo.letter(typedBy: event), capsLockHeld: KeyCombo.capsLockHeld) {
+        case .pass: return false
+        case .leaveAndPass:
             stopNavigation(say: String(localized: "Screen OCR off"))
             return false
+        case .line(let step): moveLine(by: step)
+        case .word(let step): moveWord(by: step)
+        case .first: go(to: 0)
+        case .last: go(to: lines.count - 1)
+        case .click(let right): click(right: right)
+        case .copy: copyAll()
+        case .leave: stopNavigation(say: String(localized: "Screen OCR off"))
         }
         return true
     }
@@ -312,24 +450,53 @@ final class ScreenOCR: ObservableObject {
 
     func click(line: ScreenOCRLayout.Line, word index: Int? = nil, right: Bool = false) {
         let box = index.flatMap { line.words.indices.contains($0) ? line.words[$0].box : nil } ?? line.box
-        let point = ScreenOCRLayout.screenCenter(box, in: frame)
+        let pictured = ScreenOCRLayout.screenCenter(box, in: frame)
         let label = index.flatMap { line.words.indices.contains($0) ? line.words[$0].text : nil } ?? line.text
-        if let target, let app = NSRunningApplication(processIdentifier: target), !app.isActive {
-            app.activate()
+        // Without the permission the click is dropped silently, and "Clicked" would be a lie.
+        guard CGPreflightPostEventAccess() else {
+            return Announcer.say(String(localized: "Allow keyboard shortcuts in Settings first; this uses the same permission."))
         }
-        // A moment for the app to come forward, so the click lands in it.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            Self.post(click: point, right: right)
-            Announcer.say(right ? String(localized: "Right clicked \(label)") : String(localized: "Clicked \(label)"))
+        // The picture is of one moment, and a click changes the screen: the keys go back to
+        // the app, so what's typed next isn't taken for C or a second click.
+        stopNavigation(say: nil)
+        let app = target.flatMap { NSRunningApplication(processIdentifier: $0) }
+        if target != nil, app?.isTerminated != false {
+            return Announcer.say(String(localized: "That window has closed. Capture again."))
+        }
+        if let app, !app.isActive { app.activate() }
+        let frame = frame, windowID = windowID
+        Task { @MainActor in
+            // Until the app has come forward (at most a second), so the click lands in it
+            // and not in this app's own window.
+            for _ in 0..<20 where app?.isActive == false { try? await Task.sleep(for: .milliseconds(50)) }
+            try? await Task.sleep(for: .milliseconds(120))
+            switch ScreenOCRLayout.check(click: pictured, picturedFrame: frame, windowID: windowID,
+                                         windows: ScreenOCRLayout.windowsOnScreen(), me: ProcessInfo.processInfo.processIdentifier) {
+            case .gone: Announcer.say(String(localized: "That window has closed. Capture again."))
+            case .resized: Announcer.say(String(localized: "That window changed size. Capture again."))
+            case .covered: Announcer.say(String(localized: "Something is in front of that text. Capture again."))
+            case .click(let point):
+                await Self.post(click: point, right: right)
+                Announcer.say(right ? String(localized: "Right clicked \(label)") : String(localized: "Clicked \(label)"))
+            }
         }
     }
 
-    private static func post(click point: CGPoint, right: Bool) {
+    private static func post(click point: CGPoint, right: Bool) async {
         let button: CGMouseButton = right ? .right : .left
-        let types: [CGEventType] = right ? [.mouseMoved, .rightMouseDown, .rightMouseUp] : [.mouseMoved, .leftMouseDown, .leftMouseUp]
-        for type in types {
-            CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: point, mouseButton: button)?.post(tap: .cghidEventTap)
+        let source = CGEventSource(stateID: .hidSystemState)
+        func send(_ type: CGEventType) {
+            let event = CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: point, mouseButton: button)
+            // A Shift still held from Shift-Return must not make it a Shift-click.
+            event?.flags = []
+            event?.post(tap: .cghidEventTap)
         }
+        send(.mouseMoved)
+        try? await Task.sleep(for: .milliseconds(30))
+        send(right ? .rightMouseDown : .leftMouseDown)
+        // Some apps miss a press and release that arrive in the same instant.
+        try? await Task.sleep(for: .milliseconds(40))
+        send(right ? .rightMouseUp : .leftMouseUp)
     }
 
     func copyAll() {

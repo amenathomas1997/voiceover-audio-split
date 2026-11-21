@@ -269,6 +269,7 @@ enum LightDetector {
     nonisolated(unsafe) private static var frequency: Double = 220
     nonisolated(unsafe) private static var phase: Double = 0
     private static var stopWork: DispatchWorkItem?
+    private static var configurationObserver: NSObjectProtocol?
     /// Counts runs, so a delayed start from an earlier one is ignored.
     private static var run = 0
 
@@ -291,8 +292,16 @@ enum LightDetector {
             return noErr
         }
         let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1)!
-        engine.attach(source)
-        engine.connect(source, to: engine.mainMixerNode, format: format)
+        // Connecting can throw an Objective-C exception while the output is changing.
+        _ = Tones.caught {
+            engine.attach(source)
+            engine.connect(source, to: engine.mainMixerNode, format: format)
+        }
+        // Headphones connected while it runs stop the tone: start it again on the new output.
+        configurationObserver = configurationObserver ?? NotificationCenter.default.addObserver(
+            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { _ in
+            if isRunning && !engine.isRunning { _ = Tones.caught { try? engine.start() } }
+        }
         Announcer.say(String(localized: "Light detector on. The tone rises with more light."))
         feed.start({ pixels in
             let color = CameraFeed.averageColor(pixels, centerFraction: 0.8)
@@ -303,7 +312,7 @@ enum LightDetector {
             let thisRun = run
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 guard run == thisRun, isRunning, !engine.isRunning else { return }
-                try? engine.start()
+                _ = Tones.caught { try? engine.start() }
             }
         }, failed: { message in
             stop(announce: false)

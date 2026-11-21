@@ -471,7 +471,8 @@ final class Controller {
     private func applyAutomaticPreset(id presetID: String?, reason: String) {
         guard let presetID, presetID != automaticPresetID,
               let preset = preferences.presets.first(where: { $0.id.uuidString == presetID }) else { return }
-        log("Automatic preset \(preset.name) for \(reason).")
+        // Neither the preset's name nor which app or site: what's used when isn't logged.
+        log("Automatic preset number \((preferences.presets.firstIndex(of: preset) ?? 0) + 1) for \(reason.hasPrefix("a website") ? "a website" : "an app").")
         // Switching with the app in front is expected: it doesn't ask to keep the sound.
         SoundSafety.shared.withoutAsking { applyPreset(preset, automatic: true) }
         automaticPresetID = presetID
@@ -480,6 +481,8 @@ final class Controller {
     // MARK: - Website presets
 
     private var siteTimer: Timer?
+
+    private var checkingSite = false
     /// The website preset in effect, if the front browser is on a site that has one.
     private var currentSitePresetID: String?
 
@@ -498,10 +501,15 @@ final class Controller {
         guard let front = NSWorkspace.shared.frontmostApplication, let bundleID = front.bundleIdentifier,
               let script = SitePresets.browsers[bundleID] else { return }
         let rules = preferences.sitePresets
+        // One question at a time: a browser slow to answer would otherwise collect a new
+        // waiting thread every two seconds.
+        guard !checkingSite else { return }
+        checkingSite = true
         DispatchQueue.global(qos: .utility).async { [weak self] in
-            let host = AppleScriptRunner.run(script, logErrors: false).flatMap { URL(string: $0)?.host() }
+            let host = AppleScriptRunner.run(script, target: bundleID, logErrors: false).flatMap { URL(string: $0)?.host() }
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
+                self.checkingSite = false
                 let sitePreset = host.flatMap { SitePresets.match(host: $0, in: rules) }
                 self.currentSitePresetID = sitePreset
                 // Which website is never logged: PRIVACY.md promises addresses are never stored.
@@ -578,7 +586,8 @@ final class Controller {
             AudioSystem.releaseHold()
             AudioSystem.setDefaultOutput(before)
         }
-        log("Output switched to \(name).")
+        // The kind of device, not its name (which is often "<someone>'s AirPods").
+        log("Output switched: \(AudioSystem.kind(of: defaultOutputDevice())).")
         Tones.play(.device)
         Announcer.say(String(localized: "Output: \(name)"))
     }

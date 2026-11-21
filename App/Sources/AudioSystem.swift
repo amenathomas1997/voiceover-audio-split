@@ -6,6 +6,25 @@ import AppKit
 import CoreAudio
 
 enum AudioSystem {
+    /// What kind of device it is, for logs and the diagnostics report: how it's connected,
+    /// its channels and its rate, which help find a problem, and not its name, which is
+    /// often the owner's.
+    static func kind(of device: AudioDeviceID) -> String {
+        let transport = readValue(device, kAudioDevicePropertyTransportType, default: UInt32(0))
+        let how = switch transport {
+        case kAudioDeviceTransportTypeBuiltIn: "built-in"
+        case kAudioDeviceTransportTypeBluetooth, kAudioDeviceTransportTypeBluetoothLE: "Bluetooth"
+        case kAudioDeviceTransportTypeUSB: "USB"
+        case kAudioDeviceTransportTypeHDMI, kAudioDeviceTransportTypeDisplayPort: "display"
+        case kAudioDeviceTransportTypeAirPlay: "AirPlay"
+        case kAudioDeviceTransportTypeAggregate: "aggregate"
+        case kAudioDeviceTransportTypeVirtual: "virtual"
+        default: "other"
+        }
+        let rate = Int(readValue(device, kAudioDevicePropertyNominalSampleRate, default: Float64(0)))
+        return "\(how), \(outputChannelCount(device)) channels, \(rate) Hz"
+    }
+
     // MARK: - Output device
 
     /// The device the user picked with the shortcut, held for a short time.
@@ -73,11 +92,11 @@ enum AudioSystem {
             let taker = outputDevices().first { $0.id == current }?.name ?? "Another device"
             if choice.restores < 8 {
                 held?.restores += 1
-                log("Output taken back by \(taker); restoring the chosen device.")
+                log("Output taken back by another device; restoring the chosen one.")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { setDefaultOutput(choice.device) }
             } else {
                 held = nil
-                log("Output keeps being taken back by \(taker); giving up.")
+                log("Output keeps being taken back by another device; giving up.")
                 Announcer.say(String(localized: "\(taker) keeps taking the sound back. To stop this, open \(taker) in System Settings and set Connect to This Mac to When Last Connected to This Mac."))
             }
         }

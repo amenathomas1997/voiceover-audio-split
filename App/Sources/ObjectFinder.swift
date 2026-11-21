@@ -141,9 +141,10 @@ enum ObjectFinder {
         catalog.filter { $0.method != .classify || $0.labels.contains(where: classifierLabels.contains) }
     }
 
-    /// Lowercase letters, numbers and single spaces; underscores count as spaces.
+    /// Lowercase letters without accents, numbers and single spaces; underscores count as
+    /// spaces. (Speech arrives without accents, so "telefono" must match "Teléfono".)
     static func normalized(_ text: String) -> String {
-        text.lowercased().replacingOccurrences(of: "_", with: " ")
+        text.lowercased().folding(options: .diacriticInsensitive, locale: nil).replacingOccurrences(of: "_", with: " ")
             .map { $0.isLetter || $0.isNumber ? $0 : " " }
             .reduce(into: "") { $0.append($1) }
             .split(separator: " ").joined(separator: " ")
@@ -153,9 +154,13 @@ enum ObjectFinder {
     /// a known thing, or else the words to look for. Nil when nothing is left to find.
     static func target(for request: String, in list: [Target] = catalog) -> Target? {
         var words = normalized(request).split(separator: " ").map(String.init)
-        let fillers: Set<String> = ["find", "look", "for", "where", "is", "are", "my", "the", "a", "an", "some", "me", "please"]
+        // Little words in front, in the four languages ("s" is what's left of "where's").
+        let fillers: Set<String> = ["find", "look", "for", "where", "is", "are", "my", "the", "a", "an", "some", "me", "please", "s",
+                                    "busca", "donde", "esta", "estan", "el", "la", "los", "las", "un", "una", "mi", "mis",
+                                    "cherche", "ou", "est", "sont", "le", "les", "une", "mon", "ma", "mes",
+                                    "suche", "wo", "ist", "sind", "der", "die", "das", "den", "ein", "eine", "einen", "mein", "meine", "meinen"]
         while let first = words.first, fillers.contains(first) { words.removeFirst() }
-        if let first = words.first, ["word", "words", "text", "sign"].contains(first) {
+        if let first = words.first, ["word", "words", "text", "sign", "palabra", "palabras", "texto", "mot", "mots", "texte", "wort", "worter"].contains(first) {
             words.removeFirst()
             return words.isEmpty ? nil : .text(words.joined(separator: " "))
         }
@@ -290,7 +295,7 @@ enum ObjectFinder {
         }
         // Not a thing the finder knows, such as keys: say it will look for the words instead.
         let asked = normalized(request).split(separator: " ")
-        let wantedWords = asked.contains { ["word", "words", "text", "sign"].contains($0) }
+        let wantedWords = asked.contains { ["word", "words", "text", "sign", "palabra", "palabras", "texto", "mot", "mots", "texte", "wort", "worter"].contains($0) }
         if target.method == .text && !wantedWords {
             return start(target, intro: String(localized: "I can't recognize \(target.words.first ?? "") as an object, so I'll look for the words. Turn the camera slowly. The tone gets higher and faster as they come into view."))
         }
@@ -419,6 +424,7 @@ enum ObjectFinder {
 /// detector's tone, it's made as it plays, so it changes smoothly.
 private enum FinderTone {
     private static let engine = AVAudioEngine()
+    private static var configurationObserver: NSObjectProtocol?
     nonisolated(unsafe) private static var frequency: Double = 330
     nonisolated(unsafe) private static var rate: Double = 1
     nonisolated(unsafe) private static var level: Float = 0.04
@@ -463,9 +469,18 @@ private enum FinderTone {
             return noErr
         }
         let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 2)!
-        engine.attach(source)
-        engine.connect(source, to: engine.mainMixerNode, format: format)
-        try? engine.start()
+        // Connecting and starting can throw an Objective-C exception while the output is changing.
+        _ = Tones.caught {
+            engine.attach(source)
+            engine.connect(source, to: engine.mainMixerNode, format: format)
+            try? engine.start()
+        }
+        // Headphones connected while it runs stop the beeps: start them again on the new output.
+        configurationObserver = configurationObserver ?? NotificationCenter.default.addObserver(
+            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { _ in
+            let hasSource = engine.attachedNodes.contains { $0 is AVAudioSourceNode }
+            if hasSource && !engine.isRunning { _ = Tones.caught { try? engine.start() } }
+        }
     }
 
     static func stop() {

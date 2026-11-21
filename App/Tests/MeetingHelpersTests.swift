@@ -5,6 +5,19 @@ import XCTest
 @testable import VoiceOverAudioSplit
 
 final class MeetingHelpersTests: XCTestCase {
+    /// "Mute me" while muted must not press the button, which would unmute.
+    func testAskingForAStateDoesNotToggleItAway() {
+        XCTAssertEqual(MeetingHelpers.decide(current: true, want: true), .alreadySo)
+        XCTAssertEqual(MeetingHelpers.decide(current: false, want: false), .alreadySo)
+        XCTAssertEqual(MeetingHelpers.decide(current: false, want: true), .press)
+        XCTAssertEqual(MeetingHelpers.decide(current: true, want: false), .press)
+        // The app doesn't say: nothing is pressed blind (the camera could come on).
+        XCTAssertEqual(MeetingHelpers.decide(current: nil, want: false), .cannotTell)
+        // A plain toggle presses whatever the state.
+        XCTAssertEqual(MeetingHelpers.decide(current: nil, want: nil), .press)
+        XCTAssertEqual(MeetingHelpers.decide(current: true, want: nil), .press)
+    }
+
     // MARK: Normalizing
 
     func testNormalizeDropsShortcutHintsAccentsAndCase() {
@@ -270,7 +283,9 @@ final class MeetingHelpersTests: XCTestCase {
 
     func testNewMessages() {
         // The first look reads nothing: no reading the whole history on joining.
-        XCTAssertEqual(MeetingHelpers.newMessages(previous: [], current: ["a", "b"]), [])
+        XCTAssertEqual(MeetingHelpers.newMessages(previous: nil, current: ["a", "b"]), [])
+        // A chat that was empty when looked at: the first message is new.
+        XCTAssertEqual(MeetingHelpers.newMessages(previous: [], current: ["Ana | can you unmute?"]), ["Ana | can you unmute?"])
         XCTAssertEqual(MeetingHelpers.newMessages(previous: ["a", "b"], current: ["a", "b"]), [])
         XCTAssertEqual(MeetingHelpers.newMessages(previous: ["a", "b"], current: ["a", "b", "c", "d"]), ["c", "d"])
         // Older rows scrolled off the top.

@@ -220,6 +220,9 @@ enum LabelReader {
         return heard.contains { earlier in
             let other = normalized(earlier)
             guard other.contains(key) || key.contains(other) else { return false }
+            // The numbers must be the same. A partial reading "50 mg tablets" made the full
+            // "250 mg tablets" a repeat of it, so the real dose was never spoken.
+            guard key.filter(\.isNumber) == other.filter(\.isNumber) else { return false }
             return Double(min(key.count, other.count)) >= 0.8 * Double(max(key.count, other.count))
         }
     }
@@ -270,8 +273,11 @@ enum MoneyReader {
         }, failed: { Announcer.say($0) })
     }
 
+    /// Made once: a context is costly to set up, and a frame that can't be encoded is retried.
+    private static let imageContext = CIContext()
+
     private static func jpeg(_ pixels: CVPixelBuffer) -> Data? {
-        CIContext().jpegRepresentation(of: CIImage(cvPixelBuffer: pixels), colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
+        imageContext.jpegRepresentation(of: CIImage(cvPixelBuffer: pixels), colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
                                        options: [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.8])
     }
 

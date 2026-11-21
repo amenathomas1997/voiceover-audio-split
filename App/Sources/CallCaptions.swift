@@ -31,6 +31,10 @@ final class CallCaptions: ObservableObject {
     private var aggregate = AudioObjectID(kAudioObjectUnknown)
     private var ioProc: AudioDeviceIOProcID?
     private var tapped: Set<AudioObjectID> = []
+    /// The output device and its rate when the capture was built: either changing (AirPods
+    /// dropping to call mode, another device chosen mid-call) means building it again.
+    private var builtOutput = AudioObjectID(kAudioObjectUnknown)
+    private var builtRate: Float64 = 0
     private var panel: NSPanel?
     private let queue = DispatchQueue(label: "VoiceOverAudioSplit.call-captions", qos: .userInteractive)
     private static let maxLines = 200
@@ -130,9 +134,16 @@ final class CallCaptions: ObservableObject {
     private func capture() {
         guard isRunning else { return }
         let processes = Self.callProcesses(prefixes: Preferences.shared.callApps.map(\.bundleID))
-        guard processes != tapped else { return }
+        let output = defaultOutputDevice()
+        let rate = readValue(output, kAudioDevicePropertyNominalSampleRate, default: Float64(0))
+        // The capture is tied to the output device and its rate. Checked only against the
+        // processes, captions went garbled or stopped when either changed mid-call, and a
+        // capture that had failed was never tried again.
+        guard processes != tapped || (!processes.isEmpty && (output != builtOutput || rate != builtRate)) else { return }
         teardown()
         tapped = processes
+        builtOutput = output
+        builtRate = rate
         guard !processes.isEmpty else { return }
         do {
             try build(processes)

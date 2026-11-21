@@ -245,8 +245,9 @@ enum LessonFile {
     /// A whole number from JSON (not true or false, which JSON also stores as numbers here).
     private static func integer(_ value: Any) -> Int? {
         guard let number = value as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID() else { return nil }
-        let double = number.doubleValue
-        return double == double.rounded() ? Int(double) : nil
+        // (A number too big to be one, such as 1e30 in a lesson file, isn't; converting it
+        // straight to a whole number ends the app.)
+        return Int(exactly: number.doubleValue)
     }
 
     /// A short lesson showing every kind of step, for trainers to start from.

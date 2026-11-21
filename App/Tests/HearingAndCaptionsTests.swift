@@ -45,8 +45,20 @@ final class CallCaptionsTests: XCTestCase {
 
 final class NewVoiceRoutingTests: XCTestCase {
     func testObjectRequestsDontTakeDoItForMe() {
-        XCTAssertEqual(VoiceCommands.objectRequest(in: "look for my cup"), "look for my cup")
-        XCTAssertEqual(VoiceCommands.objectRequest(in: "Where are my glasses?"), "where are my glasses")
+        XCTAssertEqual(VoiceCommands.objectRequest(in: "look for my cup"), "my cup")
+        XCTAssertEqual(VoiceCommands.objectRequest(in: "Where are my glasses?"), "glasses")
+        // The start is taken off in every language, and "where's" leaves no stray "s".
+        XCTAssertEqual(VoiceCommands.objectRequest(in: "Where's my phone?"), "phone")
+        XCTAssertEqual(VoiceCommands.objectRequest(in: "busca mi teléfono"), "telefono")
+        XCTAssertEqual(VoiceCommands.objectRequest(in: "où est mon téléphone"), "telephone")
+        XCTAssertEqual(VoiceCommands.objectRequest(in: "wo ist meine Brille"), "brille")
+        XCTAssertEqual(ObjectFinder.target(for: VoiceCommands.objectRequest(in: "Where's my phone?") ?? "")?.id, "phone")
+        XCTAssertEqual(ObjectFinder.target(for: VoiceCommands.objectRequest(in: "look for the word exit") ?? "")?.method, .text)
+        XCTAssertEqual(VoiceCommand.answer(in: "yes"), true)
+        XCTAssertEqual(VoiceCommand.answer(in: "no thanks"), false)
+        // The question's own last words, heard by the microphone, are not an answer.
+        XCTAssertNil(VoiceCommand.answer(in: "say yes or no"))
+        XCTAssertNil(VoiceCommand.answer(in: "well I think that yes we could do that"))
         XCTAssertNotNil(VoiceCommands.objectRequest(in: "look for the word exit"))
         XCTAssertNil(VoiceCommands.objectRequest(in: "find the search field"), "find stays with Do It for Me")
         XCTAssertNil(VoiceCommands.objectRequest(in: "look for"))

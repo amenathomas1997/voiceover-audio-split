@@ -98,7 +98,11 @@ final class SoundSafety: ObservableObject {
         Tones.play(.status)
         Announcer.say(String(localized: "You changed \(list). Keep this sound setting? Press Return to keep it, or Escape to go back. If you do nothing, it goes back in \(Self.seconds) seconds."))
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in self?.tick() }
+        // In every run loop mode: while a dialog or the app's menu was open the countdown
+        // stood still, and a change that took the sound away didn't undo itself.
+        let countdown = Timer(timeInterval: 1, repeats: true) { [weak self] _ in self?.tick() }
+        RunLoop.main.add(countdown, forMode: .common)
+        timer = countdown
     }
 
     private func tick() {

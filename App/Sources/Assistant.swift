@@ -202,6 +202,8 @@ enum ScreenPicture {
         let image: CGImage
         let frame: CGRect
         let processID: pid_t?
+        /// The window pictured, so a later click can check it's still there; nil for a whole screen.
+        var windowID: CGWindowID?
     }
 
     /// A PNG of the front window of the app in front (leaving out this app's own windows).
@@ -240,9 +242,15 @@ enum ScreenPicture {
         let scale = await MainActor.run { backingScale(of: displayID) }
         configuration.width = Int(window.frame.width * scale)
         configuration.height = Int(window.frame.height * scale)
+        // The picture must be exactly the window's frame, or every position worked out from it
+        // is off: no shadow around it, not cut where the window runs off the screen, and no
+        // pointer drawn over the text.
+        configuration.ignoreShadowsSingleWindow = true
+        configuration.ignoreGlobalClipSingleWindow = true
+        configuration.showsCursor = false
         let image = try await SCScreenshotManager.captureImage(
             contentFilter: SCContentFilter(desktopIndependentWindow: window), configuration: configuration)
-        return Capture(image: image, frame: window.frame, processID: window.owningApplication?.processID)
+        return Capture(image: image, frame: window.frame, processID: window.owningApplication?.processID, windowID: window.windowID)
     }
 
     /// The whole screen the front window is on (or the main screen), leaving out this app's windows.
@@ -268,6 +276,7 @@ enum ScreenPicture {
         configuration.height = Int(CGFloat(display.height) * scale)
         let filter = SCContentFilter(display: display, excludingApplications: content.applications.filter { $0.processID == me },
                                      exceptingWindows: [])
+        configuration.showsCursor = false
         let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
         return Capture(image: image, frame: display.frame, processID: front)
     }

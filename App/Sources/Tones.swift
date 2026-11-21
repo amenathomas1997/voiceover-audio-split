@@ -4,6 +4,7 @@
 // so tones are never moved or muted by it.
 
 import AVFoundation
+import os
 
 enum Tone {
     case speechLeft, speechRight, speechBoth, off, louder, quieter, status
@@ -38,15 +39,47 @@ enum Tones {
     /// Without that, the first tone afterwards ended the app with an audio exception.
     private static var needsReconnect = false
 
+    /// Everything that touches the engine runs here, never on the main thread. Starting sound
+    /// can take a very long time when the output is a wireless headset that has gone to
+    /// sleep (measured on the user's Mac: over 45 seconds for a bare engine), and the main
+    /// thread also carries the keyboard shortcuts: a tone played there froze them for as long.
+    private static let queue = DispatchQueue(label: "VoiceOverAudioSplit.tones", qos: .userInteractive)
+    /// Sounds asked for and not yet started.
+    private static let waiting = OSAllocatedUnfairLock(initialState: 0)
+
+    /// Runs a sound's work on the queue, unless the queue is stuck behind an output that
+    /// isn't answering: a tone seconds late, or a dozen at once when it finally answers, is
+    /// worse than none.
+    private static func enqueue(_ work: @escaping () -> Void) {
+        let asked = Date()
+        let room = waiting.withLock { count -> Bool in
+            guard count < 3 else { return false }
+            count += 1
+            return true
+        }
+        guard room else { return }
+        queue.async {
+            waiting.withLock { $0 -= 1 }
+            guard Date().timeIntervalSince(asked) < 1.5 else { return }
+            work()
+        }
+    }
+
     static func play(_ tone: Tone) {
         guard Preferences.shared.playTones else { return }
-        guard start(player, buffer(for: tone)) else { return }
-
-        // Release the audio device shortly after the last tone.
-        stopWork?.cancel()
-        let work = DispatchWorkItem { player.stop(); engine.stop() }
-        stopWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: work)
+        // Made here, on the caller's thread: it reads the one-ear setting.
+        let sound = buffer(for: tone)
+        enqueue {
+            guard start(player, sound) else { return }
+            // Release the audio device shortly after the last tone.
+            stopWork?.cancel()
+            let work = DispatchWorkItem {
+                _ = caught { player.stop() }
+                engine.stop()
+            }
+            stopWork = work
+            queue.asyncAfter(deadline: .now() + 2, execute: work)
+        }
     }
 
     // MARK: Starting a sound safely
@@ -55,27 +88,39 @@ enum Tones {
     /// change) and running. False when there's no output to play on.
     private static func prepare(_ node: AVAudioPlayerNode) -> Bool {
         observer = observer ?? NotificationCenter.default.addObserver(
-            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main
-        ) { _ in needsReconnect = true }
-        if needsReconnect {
-            needsReconnect = false
-            for attached in [player, typingPlayer] where engine.attachedNodes.contains(attached) {
-                _ = caught { attached.stop() }
-                engine.disconnectNodeOutput(attached)
-                engine.connect(attached, to: engine.mainMixerNode, format: format)
+            forName: .AVAudioEngineConfigurationChange, object: engine, queue: nil
+        ) { _ in queue.async { needsReconnect = true } }
+        var ready = false
+        // Connecting and starting throw Objective-C exceptions too, in the very state that
+        // needs them (an output still waking reports no channels or no rate), so the whole of
+        // getting ready is caught, not only the play that follows. (The output's format isn't
+        // asked for first: reaching for the engine's output node before anything is connected
+        // can deadlock inside the audio framework, on the main thread.)
+        let problem = caught {
+            if needsReconnect {
+                for attached in [player, typingPlayer] where engine.attachedNodes.contains(attached) {
+                    attached.stop()
+                    engine.disconnectNodeOutput(attached)
+                    engine.connect(attached, to: engine.mainMixerNode, format: format)
+                }
+                needsReconnect = false
+            }
+            if !engine.attachedNodes.contains(node) {
+                engine.attach(node)
+                engine.connect(node, to: engine.mainMixerNode, format: format)
+            }
+            do {
+                if !engine.isRunning { try engine.start() }
+                ready = true
+            } catch {
+                log("Could not play a sound: \(error)")
             }
         }
-        if !engine.attachedNodes.contains(node) {
-            engine.attach(node)
-            engine.connect(node, to: engine.mainMixerNode, format: format)
+        if let problem {
+            log("Could not get a sound ready: \(problem)")
+            needsReconnect = true
         }
-        do {
-            if !engine.isRunning { try engine.start() }
-        } catch {
-            log("Could not play a sound: \(error)")
-            return false
-        }
-        return true
+        return ready
     }
 
     /// Plays `buffer` on `node`. A player on a broken graph reports it by throwing an
@@ -113,12 +158,17 @@ enum Tones {
         guard kind != .none else { return }
         // Made each time (they're tiny), so they follow the one-ear setting.
         let buffer = makeBuffer(correct ? typingSamples(kind) : wrongSamples())
-        // Each sound fades to silence, so starting the next one over it doesn't click.
-        guard start(typingPlayer, buffer, options: .interrupts, stopFirst: false) else { return }
-        stopWork?.cancel()
-        let work = DispatchWorkItem { player.stop(); typingPlayer.stop(); engine.stop() }
-        stopWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: work)
+        enqueue {
+            // Each sound fades to silence, so starting the next one over it doesn't click.
+            guard start(typingPlayer, buffer, options: .interrupts, stopFirst: false) else { return }
+            stopWork?.cancel()
+            let work = DispatchWorkItem {
+                _ = caught { player.stop(); typingPlayer.stop() }
+                engine.stop()
+            }
+            stopWork = work
+            queue.asyncAfter(deadline: .now() + 10, execute: work)
+        }
     }
 
     /// Mono samples for a key typed right: a short, quiet click like a soft key,

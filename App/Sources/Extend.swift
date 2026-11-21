@@ -27,14 +27,17 @@ enum UserCommands {
         Tones.play(.status)
         switch command.kind {
         case .appleScript:
-            guard let url = scriptsFolder?.appendingPathComponent(command.target),
+            // A script is one of the files in the scripts folder, by name: never a path out of it.
+            guard availableScripts().contains(command.target),
+                  let url = scriptsFolder?.appendingPathComponent(command.target),
                   let task = try? NSUserAppleScriptTask(url: url) else {
                 return Announcer.say(String(localized: "Couldn't find the script \(command.target)"))
             }
             task.execute(withAppleEvent: nil) { result, error in
                 DispatchQueue.main.async {
                     if let error {
-                        log("Script \(command.name) failed: \(error.localizedDescription)")
+                        // Which script, and what it said, stay out of the log.
+                        log("A script failed: error \((error as NSError).code).")
                         Announcer.say(String(localized: "\(command.name) failed"))
                     } else if let text = result?.stringValue, !text.isEmpty {
                         // A script that returns text has it spoken.
@@ -152,6 +155,8 @@ enum SettingsTransfer {
     /// their labels and markers, their scripts. In their own export, never in a bug report.
     static let personalKeys: Set<String> = [
         "hearingLeft", "hearingRight", "sitePresets", "appPresets", "appRules", "callApps", "customLabels", "placeMarkers",
+        // A device's address, and names the user typed.
+        "speechDeviceUID", "presets",
         "newsFeeds", "userCommands", "lessonsDone", "lessonsMissed", "lessonSchedule", "lessonChallengeBest", "typingBest",
     ]
 
@@ -162,14 +167,37 @@ enum SettingsTransfer {
         return try PropertyListSerialization.data(fromPropertyList: settings, format: .xml, options: 0)
     }
 
-    /// Applies settings from a file; returns how many were applied.
+    /// What a file can't switch on or off for you. Things that keep, record or send what's
+    /// on the Mac can't be turned on by a file, and protections can't be turned off by one:
+    /// a settings file from someone else would otherwise do either without a word. (Your own
+    /// file turns the same things on again in Settings, by hand.)
+    static let notByFile: [String: Bool] = [
+        "autoDescribeImages": true, "recordMicrophone": true, "clipboardHistory": true, "announceClipboard": true,
+        "meetingChatAnnounce": true, "checkForUpdates": false, "confirmSoundChanges": false, "volumeLimit": false,
+    ]
+
+    /// Whether a file's value for `key` is one only the user may choose.
+    static func isHeld(_ key: String, _ value: Any, current: Any?) -> Bool {
+        if key == "aiProvider" {
+            // Switching to the AI in the cloud sends window text there.
+            return (value as? String) == AIProvider.claude.rawValue && (current as? String) != AIProvider.claude.rawValue
+        }
+        guard let barred = notByFile[key], let wanted = value as? Bool else { return false }
+        return wanted == barred && (current as? Bool ?? !barred) != barred
+    }
+
+    /// Applies settings from a file; returns how many were applied, and how many were left
+    /// for the user to choose.
     @discardableResult
-    static func importData(_ data: Data) throws -> Int {
+    static func importData(_ data: Data, into defaults: UserDefaults = .standard) throws -> (applied: Int, held: Int) {
         guard let settings = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
               settings["formatVersion"] != nil else { throw CocoaError(.fileReadCorruptFile) }
-        let applied = settings.filter { portableKeys.contains($0.key) }
-        for (key, value) in applied { UserDefaults.standard.set(value, forKey: key) }
-        return applied.count
+        let portable = settings.filter { portableKeys.contains($0.key) }
+        let held = portable.filter { isHeld($0.key, $0.value, current: defaults.object(forKey: $0.key)) }
+        let applied = portable.filter { held[$0.key] == nil }
+        for (key, value) in applied { defaults.set(value, forKey: key) }
+        if !held.isEmpty { log("Settings import: \(held.count) privacy or safety settings were left as they are.") }
+        return (applied.count, held.count)
     }
 
     @MainActor
@@ -194,8 +222,10 @@ enum SettingsTransfer {
         NSApp.activate()
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
-            let count = try importData(Data(contentsOf: url))
-            Announcer.say(String(localized: "Imported \(count) settings. Restarting VoiceOver Audio Split to use them."))
+            let (count, held) = try importData(Data(contentsOf: url))
+            Announcer.say(held == 0
+                ? String(localized: "Imported \(count) settings. Restarting VoiceOver Audio Split to use them.")
+                : String(localized: "Imported \(count) settings. \(held) privacy or safety settings in the file were left as they are; turn those on or off yourself in Settings. Restarting VoiceOver Audio Split to use them."))
             // Settings are read at launch, so restart to apply them all consistently.
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { Relaunch.now() }
         } catch {

@@ -301,7 +301,7 @@ enum Mission: Hashable {
         case .safariAt(let parts):
             guard NSWorkspace.shared.frontmostApplication?.bundleIdentifier == "com.apple.Safari",
                   let script = SitePresets.browsers["com.apple.Safari"],
-                  let address = AppleScriptRunner.run(script, logErrors: false)?.lowercased() else { return false }
+                  let address = AppleScriptRunner.run(script, target: "com.apple.Safari", logErrors: false)?.lowercased() else { return false }
             return parts.allSatisfy { address.contains($0.lowercased()) }
         case .settingsPage(let title):
             return Self.frontWindowTitle(of: "com.apple.systempreferences") == title
@@ -313,12 +313,21 @@ enum Mission: Hashable {
         }
     }
 
+    /// Counts the tabs in Safari's front window. Written as a block: AppleScript has no
+    /// one-line "if … then … else", so the one-line form never compiled and the two tab
+    /// missions could never be finished.
+    static let safariTabCountScript = """
+        tell application id "com.apple.Safari"
+        if (count of windows) > 0 then return count of tabs of front window
+        return 0
+        end tell
+        """
+
     /// Tabs in Safari's front window (0 with no window), or nil if Safari isn't open or
     /// can't be asked. Safari isn't opened just to count.
     static func safariTabCount() -> Int? {
         guard !NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.Safari").isEmpty else { return nil }
-        return AppleScriptRunner.run("tell application id \"com.apple.Safari\" to if (count of windows) > 0 then return count of tabs of front window else return 0",
-                                     logErrors: false).flatMap { Int($0) }
+        return AppleScriptRunner.run(safariTabCountScript, target: "com.apple.Safari", logErrors: false).flatMap { Int($0) }
     }
 
     /// "Practice", "Practice.rtf" or "Practice — Edited" all mean saved as Practice.
@@ -943,6 +952,9 @@ final class LessonRunner: ObservableObject {
     private var wrongTries = 0
     /// The current step has been answered; further presses are ignored until the next.
     private var answered = false
+    /// A real task is done and the learner, in another app, was asked to come back and press Return.
+    private var awaitingReturn = false
+    private var returnObserver: NSObjectProtocol?
     private var session = 0
     private var missionTimer: Timer?
     /// When the one-minute challenge ends.
@@ -1148,6 +1160,7 @@ final class LessonRunner: ObservableObject {
         stepNumber = index + 1
         wrongTries = 0
         answered = false
+        awaitingReturn = false
         say([whereYouAre, prompt(for: step)].filter { !$0.isEmpty }.joined(separator: " "))
         if case .mission(_, let check, _) = step.kind { watch(check) }
     }
@@ -1184,6 +1197,14 @@ final class LessonRunner: ObservableObject {
         let thisSession = session
         let step = index
         missionStart = nil
+        // The practice area keeps what was done in it. Left from an earlier run (or another
+        // student, or exploring), the task said "Done!" a second later with nothing done.
+        switch mission {
+        case .pressedPlay: pressedPlay = false
+        case .checkedSubscribe: subscribed = false
+        case .typedInField: notes = ""
+        default: break
+        }
         guard mission != .yourWord else { return }
         checkingMission = false
         // Done already (for example Finder is in front): notice it after the instructions.
@@ -1219,7 +1240,21 @@ final class LessonRunner: ObservableObject {
         // Probably in another app now: say how to get back.
         say(onYourOwn ? String(localized: "Done! Well done. Come back to the lessons window with Command Tab, then press Return.")
                       : String(localized: "Done!"))
-        advance(after: 2.5)
+        // On their own and in another app: wait for the Return that was just asked for.
+        // Moving on by the clock, the next step was spoken while they were still away, and
+        // that Return then landed on it and skipped it.
+        guard onYourOwn, !NSApp.isActive else { return advance(after: 2.5) }
+        awaitingReturn = true
+        let thisSession = session
+        if let returnObserver { NotificationCenter.default.removeObserver(returnObserver) }
+        returnObserver = NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 6) { [weak self] in
+                guard let self, self.awaitingReturn, self.session == thisSession else { return }
+                // Back, and a few seconds have gone by without Return: go on anyway.
+                self.awaitingReturn = false
+                self.advance(after: 0)
+            }
+        }
     }
 
     private func stopMission() {
@@ -1320,7 +1355,9 @@ final class LessonRunner: ObservableObject {
         stopMission()
         session += 1
         phase = .done
-        let checked = report.filter { !$0.skipped }.count
+        // Every question asked counts, skipped ones too. Counting only those answered, one
+        // right and four skipped was "1 of 1 right first time. You've got the hang of it."
+        let checked = report.count
         if isChallenge {
             let best = LessonProgress.shared.challengeBest
             score = String(localized: "\(checkRight) right in a minute")
@@ -1458,6 +1495,11 @@ final class LessonRunner: ObservableObject {
         case .mission:
             guard plain && keyCode == 36 else { return false } // Return skips the task, or says it's done.
             DispatchQueue.main.async {
+                // The task is done and the learner is back: this is the Return that moves on.
+                if self.answered, self.awaitingReturn {
+                    self.awaitingReturn = false
+                    return self.advance(after: 0.2)
+                }
                 guard !self.answered else { return }
                 self.answered = true
                 self.stopMission()

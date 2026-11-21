@@ -1600,6 +1600,28 @@
         }
       }
     },
+    "%lld lines" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Zeilen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld líneas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld lignes"
+          }
+        }
+      }
+    },
     "%lld lines ending in spaces" : {
       "localizations" : {
         "de" : {
@@ -2112,6 +2134,28 @@
         }
       }
     },
+    "%lld words" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Wörter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld palabras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld mots"
+          }
+        }
+      }
+    },
     "%lld words per minute, %lld percent accurate." : {
       "localizations" : {
         "de" : {
@@ -2130,28 +2174,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld mots par minute, précision de %lld pour cent."
-          }
-        }
-      }
-    },
-    "%lld words, %lld lines" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Wörter, %lld Zeilen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld palabras, %lld líneas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld mots, %lld lignes"
           }
         }
       }
@@ -2608,6 +2630,28 @@
         }
       }
     },
+    "1 line" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Zeile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 línea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 ligne"
+          }
+        }
+      }
+    },
     "1 line ending in a space" : {
       "localizations" : {
         "de" : {
@@ -2868,6 +2912,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 fenêtre. Appuyez sur Retour pour y passer."
+          }
+        }
+      }
+    },
+    "1 word" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Wort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 palabra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 mot"
           }
         }
       }
@@ -8133,7 +8199,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erfassen Sie zuerst den Bildschirm."
+            "value" : "Erfasse zuerst den Bildschirm."
           }
         },
         "en" : {
@@ -18116,6 +18182,28 @@
         }
       }
     },
+    "I couldn't tell whether that's on or off in %@, so nothing was pressed. To press it anyway, say toggle mute, toggle video or toggle hand." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich konnte nicht erkennen, ob das in %@ ein- oder ausgeschaltet ist, deshalb wurde nichts gedrückt. Um es trotzdem zu drücken, sage toggle mute, toggle video oder toggle hand."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pude saber si eso está activado o desactivado en %@, así que no se pulsó nada. Para pulsarlo de todos modos, di toggle mute, toggle video o toggle hand."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je n'ai pas pu savoir si c'est activé ou désactivé dans %@, donc rien n'a été pressé. Pour appuyer quand même, dites toggle mute, toggle video ou toggle hand."
+          }
+        }
+      }
+    },
     "I found the mute button in %@, but couldn't tell whether you're muted." : {
       "localizations" : {
         "de" : {
@@ -18514,6 +18602,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ importée. Elle se trouve dans Vos leçons."
+          }
+        }
+      }
+    },
+    "Imported %lld settings. %lld privacy or safety settings in the file were left as they are; turn those on or off yourself in Settings. Restarting VoiceOver Audio Split to use them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld Einstellungen importiert. %2$lld Datenschutz- oder Sicherheitseinstellungen aus der Datei wurden gelassen, wie sie sind; schalte sie selbst in den Einstellungen ein oder aus. VoiceOver Audio Split wird neu gestartet, um sie zu verwenden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se importaron %1$lld ajustes. %2$lld ajustes de privacidad o seguridad del archivo se dejaron como estaban; actívalos o desactívalos tú mismo en Ajustes. Reiniciando VoiceOver Audio Split para usarlos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld réglages importés. %2$lld réglages de confidentialité ou de sécurité du fichier ont été laissés tels quels ; activez-les ou désactivez-les vous-même dans Réglages. Redémarrage de VoiceOver Audio Split pour les appliquer."
           }
         }
       }
@@ -30383,7 +30493,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drücken Sie Erfassen, um das vordere Fenster zu lesen."
+            "value" : "Drücke Erfassen, um das vordere Fenster zu lesen."
           }
         },
         "en" : {
@@ -37639,6 +37749,28 @@
         }
       }
     },
+    "Something is in front of that text. Capture again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwas liegt vor diesem Text. Erfasse erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hay algo delante de ese texto. Captura de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelque chose se trouve devant ce texte. Capturez à nouveau."
+          }
+        }
+      }
+    },
     "Sorry, I didn't catch that." : {
       "localizations" : {
         "de" : {
@@ -40821,6 +40953,28 @@
         }
       }
     },
+    "That control has changed, so nothing was pressed. Ask again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Steuerelement hat sich geändert, deshalb wurde nichts gedrückt. Frag noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ese control ha cambiado, así que no se pulsó nada. Pregunta de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette commande a changé, donc rien n'a été pressé. Redemandez."
+          }
+        }
+      }
+    },
     "That file couldn't be read. Choose a .docx Word document or a PDF." : {
       "localizations" : {
         "de" : {
@@ -40909,6 +41063,28 @@
         }
       }
     },
+    "That window changed size. Capture again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Fenster hat seine Größe geändert. Erfasse erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esa ventana cambió de tamaño. Captura de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette fenêtre a changé de taille. Capturez à nouveau."
+          }
+        }
+      }
+    },
     "That window couldn't be brought forward. It may have closed." : {
       "localizations" : {
         "de" : {
@@ -40927,6 +41103,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cette fenêtre n'a pas pu être mise au premier plan. Elle a peut-être été fermée."
+          }
+        }
+      }
+    },
+    "That window has closed. Capture again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Fenster wurde geschlossen. Erfasse erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esa ventana se ha cerrado. Captura de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette fenêtre s'est fermée. Capturez à nouveau."
           }
         }
       }
@@ -42211,6 +42409,28 @@
         }
       }
     },
+    "The download isn't newer than the version you have, so it wasn't installed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Download ist nicht neuer als deine Version und wurde deshalb nicht installiert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La descarga no es más nueva que la versión que tienes, así que no se instaló."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le téléchargement n'est pas plus récent que la version que vous avez, il n'a donc pas été installé."
+          }
+        }
+      }
+    },
     "The download page wasn't found. The latest version is at the VoiceOver Audio Split website." : {
       "localizations" : {
         "de" : {
@@ -42464,7 +42684,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Tasten sind mit einer Lektion beschäftigt. Verwenden Sie stattdessen das Bildschirm-OCR-Fenster."
+            "value" : "Die Tasten sind mit einer Lektion beschäftigt. Verwende stattdessen das Bildschirm-OCR-Fenster."
           }
         },
         "en" : {
@@ -43177,6 +43397,28 @@
         }
       }
     },
+    "The screen isn't being recorded." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Bildschirm wird nicht aufgenommen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se está grabando la pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'écran n'est pas en cours d'enregistrement."
+          }
+        }
+      }
+    },
     "The scripts folder isn't available" : {
       "localizations" : {
         "de" : {
@@ -43239,6 +43481,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La barre latérale, la recherche d'un réglage, et les pages VoiceOver et Accessibilité."
+          }
+        }
+      }
+    },
+    "The sound output changed, so the listening test stopped and nothing was saved. Start it again when your headphones are connected." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Tonausgabe hat sich geändert, deshalb wurde der Hörtest beendet und nichts gespeichert. Starte ihn erneut, wenn deine Kopfhörer verbunden sind."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La salida de sonido cambió, así que la prueba de audición se detuvo y no se guardó nada. Empiézala de nuevo cuando tus auriculares estén conectados."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La sortie audio a changé, le test d'écoute s'est donc arrêté et rien n'a été enregistré. Relancez-le quand votre casque est connecté."
           }
         }
       }
@@ -53489,25 +53753,48 @@
         }
       }
     },
-    "camera on|camera off" : {
+    "camera off" : {
       "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "kamera ein|kamera aus|kamera an"
+            "value" : "kamera aus"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "activa la camara|desactiva la camara|enciende la camara|apaga la camara"
+            "value" : "desactiva la camara|apaga la camara"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "activer la caméra|désactiver la caméra|caméra"
+            "value" : "désactiver la caméra|éteins la caméra"
+          }
+        }
+      }
+    },
+    "camera on" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kamera ein|kamera an"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "activa la camara|enciende la camara"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "activer la caméra|allume la caméra"
           }
         }
       }
@@ -54342,6 +54629,28 @@
         }
       }
     },
+    "hold the page further away" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die Seite weiter weg halten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aleja más la página"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "éloignez la page"
+          }
+        }
+      }
+    },
     "home row" : {
       "localizations" : {
         "de" : {
@@ -54649,6 +54958,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "gris clair"
+          }
+        }
+      }
+    },
+    "lower my hand" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hand senken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "baja mi mano|bajar la mano"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "baisser la main|baisse la main"
           }
         }
       }
@@ -55232,25 +55564,25 @@
         }
       }
     },
-    "mute me|unmute me" : {
+    "mute me" : {
       "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "schalte mich stumm|stummschaltung aufheben|stummschalten"
+            "value" : "schalte mich stumm|stummschalten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "silenciame|quitame el silencio|activa mi microfono"
+            "value" : "silenciame|silencia mi microfono"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "coupe mon micro|réactive mon micro|couper mon micro"
+            "value" : "coupe mon micro|couper mon micro"
           }
         }
       }
@@ -56091,25 +56423,25 @@
         }
       }
     },
-    "raise my hand|lower my hand" : {
+    "raise my hand" : {
       "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hand heben|hand senken"
+            "value" : "hand heben"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "levanta mi mano|baja mi mano|levantar la mano"
+            "value" : "levanta mi mano|levantar la mano"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "lever la main|baisser la main"
+            "value" : "lever la main|lève la main"
           }
         }
       }
@@ -56251,25 +56583,25 @@
         }
       }
     },
-    "record the screen|stop recording" : {
+    "record the screen" : {
       "comment" : "Voice command phrases, separated by |",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bildschirm aufnehmen|aufnahme stoppen|aufnahme starten"
+            "value" : "bildschirm aufnehmen|aufnahme starten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "grabar la pantalla|detener la grabacion|empezar a grabar"
+            "value" : "grabar la pantalla|empezar a grabar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "enregistrer l ecran|arreter l enregistrement|commencer l enregistrement"
+            "value" : "enregistrer l ecran|commencer l enregistrement"
           }
         }
       }
@@ -56842,6 +57174,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "arrête de chercher|arrêter de chercher"
+          }
+        }
+      }
+    },
+    "stop recording" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aufnahme stoppen|aufnahme beenden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "detener la grabacion|parar la grabacion"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "arreter l enregistrement"
           }
         }
       }
@@ -57518,6 +57873,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "crochets non appariés"
+          }
+        }
+      }
+    },
+    "unmute me" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stummschaltung aufheben|schalte mich laut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "quitame el silencio|activa mi microfono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "réactive mon micro|réactiver mon micro"
           }
         }
       }

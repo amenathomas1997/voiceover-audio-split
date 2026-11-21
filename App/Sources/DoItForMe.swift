@@ -25,6 +25,10 @@ final class DoItModel: ObservableObject {
     private var pendingElement: AXUIElement?
     /// The app the waiting control belongs to.
     private var pendingApp: NSRunningApplication?
+    /// When the press was offered: an offer is good for a minute, not for ever.
+    private var pendingSince = Date.distantPast
+    /// How long an offered press can still be confirmed.
+    static let offerSeconds: TimeInterval = 60
 
     static let system = """
     You help a blind Mac user who uses the VoiceOver screen reader to find and use controls in an app. You get the \
@@ -50,9 +54,7 @@ final class DoItModel: ObservableObject {
         guard let target, !target.isTerminated else { return note(String(localized: "Open the app first, then choose Do It for Me.")) }
         fromVoice = voice
         busy = true
-        pendingPress = nil
-        pendingElement = nil
-        pendingApp = nil
+        forgetPress()
         log.append(String(localized: "You: \(request)"))
         Announcer.say(String(localized: "Looking"))
         let pid = target.processIdentifier
@@ -85,16 +87,18 @@ final class DoItModel: ObservableObject {
             pendingElement = element
             pendingApp = target
             pendingPress = name
+            pendingSince = Date()
             busy = false
             log.append(choice.say)
-            // The control is named from the app itself, not from the AI's answer, so what's
-            // about to be pressed is always heard, whatever the AI said.
+            // The control is named from the app itself, not from the AI's answer, and first,
+            // so what's about to be pressed is always heard, whatever the AI said.
             let named = String(localized: "The control is \(name ?? "").")
             if fromVoice {
                 fromVoice = false
-                return VoiceCommand.shared.askYesNo(choice.say + " " + named + " " + String(localized: "Press it?")) { [weak self] in self?.confirmPress() }
+                return VoiceCommand.shared.askYesNo(named + " " + choice.say + " " + String(localized: "Press it?"),
+                                                    otherwise: { [weak self] in self?.forgetPress() }) { [weak self] in self?.confirmPress() }
             }
-            Announcer.say(choice.say + " " + named + " " + String(localized: "Press Return to press it, or Escape to cancel."))
+            Announcer.say(named + " " + choice.say + " " + String(localized: "Press Return to press it, or Escape to cancel."))
             return
         }
         fromVoice = false
@@ -116,13 +120,17 @@ final class DoItModel: ObservableObject {
     }
 
     func confirmPress() {
-        guard let element = pendingElement, let app = pendingApp, !app.isTerminated else { return cancelPress() }
-        pendingElement = nil
-        pendingApp = nil
-        pendingPress = nil
+        guard let element = pendingElement, let app = pendingApp, let offered = pendingPress, !app.isTerminated,
+              Date().timeIntervalSince(pendingSince) < Self.offerSeconds else { return cancelPress() }
+        forgetPress()
         NSApp.hide(nil)
         app.activate()
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+            // What was offered is what gets pressed: a page can rename or replace a control
+            // after its name has been read out.
+            guard Self.line(for: element) == offered else {
+                return DispatchQueue.main.async { Announcer.say(String(localized: "That control has changed, so nothing was pressed. Ask again.")) }
+            }
             // A slow app can report "couldn't complete" after the press already happened;
             // only press through VoiceOver when the control has no press action at all.
             let result = AX.pressResult(element)
@@ -136,10 +144,16 @@ final class DoItModel: ObservableObject {
     }
 
     func cancelPress() {
+        forgetPress()
+        Announcer.say(String(localized: "Cancelled"))
+    }
+
+    /// Drops an offered press without a word: the request changed, the window opened again,
+    /// a spoken "no" or no answer. A declined press must not fire on a later Return.
+    func forgetPress() {
         pendingElement = nil
         pendingApp = nil
         pendingPress = nil
-        Announcer.say(String(localized: "Cancelled"))
     }
 
     @MainActor
@@ -171,17 +185,32 @@ final class DoItModel: ObservableObject {
 
     static func controls(in window: AXUIElement) -> [Control] {
         var result: [Control] = []
+        // Finding the elements has its own time limit; naming them starts a new one. (Sharing
+        // one, a slow page used it all up being walked and nothing was left to name.)
+        let elements = AX.descendants(of: window, limit: 4000)
         let deadline = Date().addingTimeInterval(8)
-        for element in AX.descendants(of: window, limit: 4000) where result.count < 400 && Date() < deadline {
-            let role = AX.string(element, kAXRoleAttribute)
-            guard actionable.contains(role) else { continue }
-            // A field is named by its label or placeholder, never by what's typed in it.
-            let text = editable.contains(role) ? AX.label(element) : AX.text(element)
-            if role == kAXStaticTextRole && text.count < 2 { continue }
-            let roleName = AX.string(element, kAXRoleDescriptionAttribute)
-            result.append(Control(element: element, line: "\(roleName.isEmpty ? role : roleName): \(text.isEmpty ? "(no name)" : text)"))
+        for element in elements where result.count < 400 && Date() < deadline {
+            if let line = line(for: element) { result.append(Control(element: element, line: line)) }
         }
         return result
+    }
+
+    /// How a control is listed and read out, "role: name", or nil for one not worth listing.
+    static func line(for element: AXUIElement) -> String? {
+        let role = AX.string(element, kAXRoleAttribute)
+        guard actionable.contains(role) else { return nil }
+        // A field is named by its label or placeholder, never by what's typed in it.
+        let text = oneLine(editable.contains(role) ? AX.label(element) : AX.text(element))
+        if role == kAXStaticTextRole && text.count < 2 { return nil }
+        let roleName = oneLine(AX.string(element, kAXRoleDescriptionAttribute))
+        return "\(roleName.isEmpty ? role : roleName): \(text.isEmpty ? "(no name)" : text)"
+    }
+
+    /// A name on one line. The list is one control per line, so a name with a line break in
+    /// it (a web page can give its controls any name) could pass itself off as another
+    /// control, or as part of the request.
+    static func oneLine(_ text: String) -> String {
+        text.split(whereSeparator: \.isNewline).joined(separator: " ")
     }
 
     /// Claude's choice, from the JSON in its reply.
@@ -196,7 +225,8 @@ final class DoItModel: ObservableObject {
                   let action = json["action"] as? String else { return nil }
             element = json["element"] as? Int
             self.action = ["move", "press", "none"].contains(action) ? action : "none"
-            say = json["say"] as? String ?? ""
+            // One or two sentences were asked for; more than that isn't read out.
+            say = String((json["say"] as? String ?? "").prefix(400))
         }
     }
 }
@@ -212,6 +242,8 @@ struct DoItForMeView: View {
                 TextField(String(localized: "What should I find or press? For example, the search field, or press Play."), text: $model.request)
                     .focused($focused)
                     .onSubmit { model.pendingPress != nil ? model.confirmPress() : model.run() }
+                    // A new request withdraws the old offer: Return must not press the earlier control.
+                    .onChange(of: model.request) { _, _ in model.forgetPress() }
                 Button(String(localized: "Do It")) { model.run() }
                     .disabled(model.busy || model.request.trimmingCharacters(in: .whitespaces).isEmpty)
                 Text(AI.usesOnDevice

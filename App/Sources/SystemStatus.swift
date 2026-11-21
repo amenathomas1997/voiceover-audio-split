@@ -2,6 +2,7 @@
 // network, output device and volume, and the microphone. JAWS has a command
 // for each of these; VoiceOver has some, spread across different keys.
 
+import NaturalLanguage
 import AudioToolbox
 import CoreAudio
 import Foundation
@@ -84,10 +85,15 @@ enum SystemStatus {
 enum TextAnalyzer {
     /// A summary of every formatting problem, for speaking.
     static func analyze(_ text: String) -> String {
+        // Text from Windows ends its lines with two characters; as one kind of line ending,
+        // lines ending in a space are found there too.
+        let text = text.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\r", with: "\n")
         let problems = sentenceProblems(text) + wholeTextProblems(text)
         let words = text.split { $0.isWhitespace || $0.isNewline }.count
-        let lines = text.components(separatedBy: "\n").count
-        let summary = String(localized: "\(words) words, \(lines) lines")
+        // A final line ending doesn't start another line.
+        let lines = max(1, text.components(separatedBy: "\n").count - (text.hasSuffix("\n") ? 1 : 0))
+        let summary = (words == 1 ? String(localized: "1 word") : String(localized: "\(words) words")) + ", "
+            + (lines == 1 ? String(localized: "1 line") : String(localized: "\(lines) lines"))
         guard !problems.isEmpty else { return String(localized: "No formatting problems found. \(summary).") }
         let list = problems.joined(separator: ". ")
         return problems.count == 1 ? String(localized: "1 problem: \(list). \(summary).")
@@ -116,9 +122,12 @@ enum TextAnalyzer {
         }
         let doubles = count("[^ \\n] {2,}[^ \\n]", in: text)
         add(doubles, String(localized: "1 double space"), String(localized: "\(doubles) double spaces"), matches("[^ ] {2,}[^ ]"))
-        let before = count(" [,.;:!?](\\s|$)", in: text)
+        // French puts a space before ; : ! and ?, so in French text only , and . are checked.
+        let french = NLLanguageRecognizer.dominantLanguage(for: String(text.prefix(2000))) == .french
+        let spaced = french ? " [,.](\\s|$)" : " [,.;:!?](\\s|$)"
+        let before = count(spaced, in: text)
         add(before, String(localized: "1 space before punctuation"), String(localized: "\(before) spaces before punctuation"),
-            matches(" [,.;:!?](\\s|$)"))
+            matches(spaced))
         let repeated = count("(?i)\\b(\\w+)\\s+\\1\\b", in: text)
         add(repeated, String(localized: "1 repeated word"), String(localized: "\(repeated) repeated words"),
             matches("(?i)\\b(\\w+)\\s+\\1\\b"))

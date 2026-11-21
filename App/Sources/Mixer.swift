@@ -308,6 +308,12 @@ enum Mixer {
 
     // MARK: Real time
 
+    /// The hard safety clamp: never louder than full scale, and never something that isn't
+    /// a number (which `max` and `min` would have turned into full scale).
+    @inline(__always) static func safe(_ sample: Float) -> Float {
+        sample.isFinite ? max(-1, min(1, sample)) : 0
+    }
+
     /// Mixes one buffer from `sourceData` (filled for `count` sources) into `output`.
     static func render(count: Int, tapFrames: Int, output: UnsafeMutableAudioBufferListPointer) {
         var frames = min(tapFrames, maxFrames)
@@ -429,7 +435,7 @@ enum Mixer {
                         gain = min(target, gain + (1 - gain) * release)
                         a *= gain
                     }
-                    mono[f * stride] = max(-1, min(1, a))
+                    mono[f * stride] = Mixer.safe(a)
                 }
                 limiterGain[p] = gain
                 continue
@@ -457,8 +463,8 @@ enum Mixer {
                     a *= gain
                     b *= gain
                 }
-                left[f * ls] = max(-1, min(1, a))
-                right[f * rs] = max(-1, min(1, b))
+                left[f * ls] = Mixer.safe(a)
+                right[f * rs] = Mixer.safe(b)
             }
             limiterGain[p] = gain
         }
@@ -521,6 +527,13 @@ final class Biquad {
 
     func process(_ x: Float) -> Float {
         let y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
+        // A filter remembers its last samples. One that isn't a number (from any app's sound)
+        // would stay in that memory and turn everything after it, VoiceOver included, into a
+        // pop and then silence until the app was restarted: forget it and start clean.
+        guard y.isFinite else {
+            x1 = 0; x2 = 0; y1 = 0; y2 = 0
+            return 0
+        }
         x2 = x1; x1 = x; y2 = y1; y1 = y
         return y
     }

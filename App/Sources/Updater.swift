@@ -33,7 +33,9 @@ enum UpdateCheck {
               let assets = json["assets"] as? [[String: Any]],
               let asset = assets.first(where: { $0["name"] as? String == assetName }),
               let link = (asset["browser_download_url"] as? String).flatMap(URL.init(string:)),
-              link.scheme == "https" else { return nil }
+              // Only this project's own release downloads on GitHub, whatever the answer says.
+              link.scheme == "https", link.host() == "github.com",
+              link.path().hasPrefix("/amenathomas1997/voiceover-audio-split/releases/download/") else { return nil }
         let notes = json["body"] as? String ?? ""
         let digest = (asset["digest"] as? String).flatMap { $0.hasPrefix("sha256:") ? String($0.dropFirst(7)).lowercased() : nil }
         let version = tag.hasPrefix("v") || tag.hasPrefix("V") ? String(tag.dropFirst()) : tag
@@ -92,6 +94,51 @@ enum UpdateCheck {
               let signer = lines.first(where: { $0.hasPrefix("1. ") }) else { return false }
         return signer.hasPrefix("1. Developer ID Installer: ") && signer.hasSuffix("(\(teamID))")
             && lines.contains("2. Developer ID Certification Authority") && lines.contains("3. Apple Root CA")
+    }
+
+    /// The installer's own package, as build.sh names it.
+    static let packageID = "com.fullcircleat.VoiceOverAudioSplit.pkg"
+
+    /// The version a package says it installs ("1.2.202611031940": the version, then the
+    /// build), from the Distribution file inside it.
+    static func packageVersion(inDistribution xml: String) -> String? {
+        let pattern = #"<pkg-ref\s[^>]*id="\#(packageID)"[^>]*\sversion="([0-9][0-9.]*)""#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: xml, range: NSRange(xml.startIndex..., in: xml)),
+              let range = Range(match.range(at: 1), in: xml) else { return nil }
+        return String(xml[range])
+    }
+
+    /// Whether a package carrying `packageVersion` is newer than this copy. A signature
+    /// proves who made an installer, not which one it is: an old, genuinely signed installer
+    /// put under a new release would otherwise install over a newer app.
+    static func isNewer(packageVersion: String, thanVersion version: String, build: String) -> Bool {
+        var parts = packageVersion.split(separator: ".").map(String.init)
+        // The last part is the build number when it's long enough to be one.
+        let packageBuild = (parts.last?.count ?? 0) >= 6 ? parts.removeLast() : nil
+        let release = Release(version: parts.joined(separator: "."), build: packageBuild, notes: "",
+                              installer: releasesPage, size: 0, sha256: nil)
+        return isNewer(release, thanVersion: version, build: build)
+    }
+
+    /// The version inside a downloaded package, or nil if it can't be read.
+    static func packageVersion(of package: URL) -> String? {
+        let folder = package.deletingLastPathComponent().appendingPathComponent("Contents-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        guard (try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)) != nil else { return nil }
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/xar")
+        // Only the small text file that describes the package is taken out, not its payload.
+        process.arguments = ["-x", "-f", package.path, "-C", folder.path, "Distribution"]
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        do { try process.run() } catch { return nil }
+        process.waitUntilExit()
+        let file = folder.appendingPathComponent("Distribution")
+        guard process.terminationStatus == 0,
+              let size = try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize, size < 1 << 20,
+              let xml = try? String(contentsOf: file, encoding: .utf8) else { return nil }
+        return packageVersion(inDistribution: xml)
     }
 
     /// pkgutil's signature report for a package, or nil if it isn't signed or can't be checked.
@@ -214,7 +261,13 @@ final class Updater {
             + (notes.isEmpty ? "" : "\n\n" + notes)
         alert.addButton(withTitle: String(localized: "Download and Install"))
         alert.addButton(withTitle: String(localized: "Later"))
-        if !userInitiated { alert.addButton(withTitle: String(localized: "Skip This Version")) }
+        if !userInitiated {
+            alert.addButton(withTitle: String(localized: "Skip This Version"))
+            // Offered unasked, it can open in the middle of typing, and Return would start
+            // the download: no button answers Return, and Escape is "Later".
+            alert.buttons[0].keyEquivalent = ""
+            alert.buttons[1].keyEquivalent = "\u{1b}"
+        }
         switch alert.runModal() {
         case .alertFirstButtonReturn: install(release)
         case .alertThirdButtonReturn: Preferences.shared.skippedUpdate = release.version + (release.build ?? "")
@@ -251,7 +304,15 @@ final class Updater {
                     log("Update isn't signed by our Developer ID or isn't notarized; not opened.")
                     return Announcer.say(String(localized: "The update isn't signed by Full Circle AT and notarized by Apple, so it wasn't installed."))
                 }
-                log("Update downloaded and verified; opening the installer.")
+                // And it must be newer than this copy. If the version can't be read the
+                // signature still stands, so that alone doesn't stop a real update.
+                let inside = await Task.detached { UpdateCheck.packageVersion(of: installer) }.value
+                if let inside, !UpdateCheck.isNewer(packageVersion: inside, thanVersion: UpdateCheck.version, build: UpdateCheck.buildNumber) {
+                    try? FileManager.default.removeItem(at: folder)
+                    log("Update's installer is version \(inside), not newer than this copy; not opened.")
+                    return Announcer.say(String(localized: "The download isn't newer than the version you have, so it wasn't installed."))
+                }
+                log("Update downloaded and verified (installer version \(inside ?? "unreadable")); opening the installer.")
                 Tones.play(.device)
                 Announcer.say(String(localized: "Opening the installer. Follow its steps; VoiceOver Audio Split closes while it installs and opens again afterwards."))
                 let installerApp = URL(fileURLWithPath: "/System/Library/CoreServices/Installer.app")

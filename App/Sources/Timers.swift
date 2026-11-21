@@ -65,30 +65,48 @@ enum ReminderParser {
         "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
         "nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14, "fifteen": 15,
         "sixteen": 16, "seventeen": 17, "eighteen": 18, "nineteen": 19, "twenty": 20, "thirty": 30,
-        "forty": 40, "fifty": 50, "sixty": 60, "ninety": 90, "a": 1, "an": 1,
+        "forty": 40, "fifty": 50, "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90, "hundred": 100, "a": 1, "an": 1,
         "uno": 1, "una": 1, "un": 1, "dos": 2, "tres": 3, "cuatro": 4, "cinco": 5, "seis": 6, "siete": 7,
-        "ocho": 8, "nueve": 9, "diez": 10, "once": 11, "doce": 12, "quince": 15, "veinte": 20, "treinta": 30,
-        "cuarenta": 40, "cincuenta": 50, "sesenta": 60,
+        "ocho": 8, "nueve": 9, "diez": 10, "once": 11, "doce": 12, "trece": 13, "catorce": 14, "quince": 15,
+        "veinte": 20, "treinta": 30, "cuarenta": 40, "cincuenta": 50, "sesenta": 60, "setenta": 70, "ochenta": 80,
+        "noventa": 90, "cien": 100, "ciento": 100,
         "une": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5, "sept": 7, "huit": 8, "neuf": 9, "dix": 10,
-        "onze": 11, "douze": 12, "quinze": 15, "vingt": 20, "trente": 30, "quarante": 40, "cinquante": 50,
-        "soixante": 60,
+        "onze": 11, "douze": 12, "treize": 13, "quatorze": 14, "quinze": 15, "seize": 16, "vingt": 20, "vingts": 20,
+        "trente": 30, "quarante": 40, "cinquante": 50, "soixante": 60, "cent": 100,
         "ein": 1, "eine": 1, "einen": 1, "einer": 1, "zwei": 2, "drei": 3, "vier": 4, "funf": 5, "sechs": 6,
-        "sieben": 7, "acht": 8, "neun": 9, "zehn": 10, "elf": 11, "zwolf": 12, "funfzehn": 15, "zwanzig": 20,
-        "dreissig": 30, "dreißig": 30, "vierzig": 40, "funfzig": 50, "sechzig": 60,
+        "sieben": 7, "acht": 8, "neun": 9, "zehn": 10, "elf": 11, "zwolf": 12, "dreizehn": 13, "vierzehn": 14,
+        "funfzehn": 15, "zwanzig": 20, "dreissig": 30, "dreißig": 30, "vierzig": 40, "funfzig": 50, "sechzig": 60,
+        "siebzig": 70, "achtzig": 80, "neunzig": 90, "hundert": 100, "einhundert": 100,
         "eineinhalb": 1.5, "anderthalb": 1.5,
+    ]
+    /// "A" and "one" as the article: "a 10 minute timer" is ten minutes, not a number before another.
+    private static let articleNumbers: Set<String> = ["a", "an", "un", "una", "une", "uno", "ein", "eine", "einen", "einer"]
+    /// Words that ask about, list or cancel what's already set: said before "timer" or
+    /// "reminder", the command isn't a new one.
+    private static let notNewWords: Set<String> = [
+        "cancel", "stop", "delete", "remove", "clear", "list", "what", "which", "how", "any",
+        "cancela", "cancelar", "borra", "borrar", "elimina", "eliminar", "quita", "quitar", "deten", "detener",
+        "lista", "listar", "cuales", "que", "cuanto", "cuantos",
+        "annule", "annuler", "supprime", "supprimer", "arrete", "arreter", "liste", "lister", "quels", "quelles", "combien",
+        "losche", "loschen", "stoppe", "stoppen", "abbrechen", "brich", "beende", "beenden", "welche", "wie",
     ]
 
     /// A timer or reminder from what was said, or nil if it isn't one.
     static func parse(_ text: String, now: Date, calendar: Calendar) -> Reminder? {
-        let (words, shown) = tokenize(text)
+        let (words, shown) = tokenize(wholeUnits(text))
         guard !words.isEmpty else { return nil }
+        // "Cancel the 10 minute timer", "how long is left on my timer", "list my reminders":
+        // about ones already set. Taken as new, each of these started another timer.
+        let subject = words.firstIndex { timerWords.contains($0) || alarmWords.contains($0) } ?? words.count
+        let asked = min(subject, findTrigger(words).map { $0 - 1 } ?? words.count)
+        if words[..<min(asked, words.count)].contains(where: notNewWords.contains) { return nil }
 
         if let trigger = findTrigger(words) {
             return reminder(words, shown, after: trigger, now: now, calendar: calendar)
         }
         if let index = words.firstIndex(where: timerWords.contains) {
             // The length can come before ("a 10 minute timer") or after ("timer for 10 minutes").
-            for start in words.indices {
+            for start in words.indices where !followsNumber(words, start) {
                 guard let (length, end) = duration(words, start), length > 0, length <= longest else { continue }
                 let rest = end > index ? Array(end..<words.count) : Array((index + 1)..<words.count)
                 return Reminder(due: now.addingTimeInterval(length), message: message(rest, words, shown),
@@ -110,6 +128,37 @@ enum ReminderParser {
             return Reminder(due: due, message: "", duration: nil, created: now)
         }
         return nil
+    }
+
+    /// "1.5 hours" as "90 minutes", "2,5 Stunden" as "150 minutes". Punctuation separates
+    /// words, so left as written "1.5 hours" was "1" and "5 hours", and set five hours.
+    /// Only before a unit of time: "3.30 pm" stays a clock time.
+    static func wholeUnits(_ text: String) -> String {
+        guard let regex = try? NSRegularExpression(pattern: #"(\d+)[.,](\d+)(\s*)(\p{L}+)"#) else { return text }
+        var result = text
+        for match in regex.matches(in: text, range: NSRange(text.startIndex..., in: text)).reversed() {
+            guard let whole = Range(match.range, in: result), let before = Range(match.range(at: 1), in: result),
+                  let after = Range(match.range(at: 2), in: result), let word = Range(match.range(at: 4), in: result) else { continue }
+            let key = result[word].lowercased().folding(options: .diacriticInsensitive, locale: nil)
+            guard let unit = units[key], let value = Double("\(result[before]).\(result[after])") else { continue }
+            let seconds = (value * unit).rounded()
+            let words = seconds >= 60 && seconds.truncatingRemainder(dividingBy: 60) == 0 ? "\(Int(seconds / 60)) minutes" : "\(Int(seconds)) seconds"
+            result.replaceSubrange(whole, with: words)
+        }
+        return result
+    }
+
+    /// Whether the word before `index` is a number (or a number and "and"): a length found
+    /// there is the tail of a bigger one that wasn't understood ("one thousand five minutes"
+    /// is not five minutes), so it isn't used.
+    private static func followsNumber(_ words: [String], _ index: Int) -> Bool {
+        func isNumber(_ word: String) -> Bool {
+            (word.allSatisfy(\.isNumber) || numbers[word] != nil || ["thousand", "mil", "mille", "tausend", "million"].contains(word))
+                && !articleNumbers.contains(word)
+        }
+        guard index > 0 else { return false }
+        if isNumber(words[index - 1]) { return true }
+        return index > 1 && connectors.contains(words[index - 1]) && isNumber(words[index - 2])
     }
 
     /// Words to match (lowercase, without accents or apostrophes) and the same words
@@ -176,7 +225,7 @@ enum ReminderParser {
         }
         // "Remind me to stretch 10 minutes from now."
         if due == nil, clockTime == nil {
-            for start in trigger..<words.count {
+            for start in trigger..<words.count where !followsNumber(words, start) {
                 guard let (length, end) = duration(words, start) else { continue }
                 guard length > 0, length <= longest else { return nil }
                 due = now.addingTimeInterval(length)
@@ -224,11 +273,38 @@ enum ReminderParser {
             value = digits
         } else if let named = numbers[word] {
             value = named
-            // "twenty five"
-            if named >= 20, named.truncatingRemainder(dividingBy: 10) == 0, next < words.count,
-               let ones = numbers[words[next]], ones >= 1, ones <= 9, words[next] != "a", words[next] != "an" {
-                value += ones
+            // "quatre-vingts" is eighty, said as "four twenties".
+            if word == "quatre", next < words.count, words[next] == "vingt" || words[next] == "vingts" {
+                value = 80
                 next += 1
+            }
+            // "one hundred", "a hundred", "dos cientos" aside: a small number of hundreds.
+            if value >= 1, value <= 9, value == value.rounded(), next < words.count, numbers[words[next]] == 100 {
+                value *= 100
+                next += 1
+            }
+            if value >= 100, value.truncatingRemainder(dividingBy: 100) == 0 {
+                // "one hundred twenty", "one hundred and five", "ciento veinte".
+                var rest = next
+                if rest < words.count, connectors.contains(words[rest]) { rest += 1 }
+                if rest < words.count, numbers[words[rest]] != 100, !articleNumbers.contains(words[rest]),
+                   let (more, end) = number(words, rest), more >= 1, more < 100, more == more.rounded() {
+                    value += more
+                    next = end
+                }
+            } else if value >= 20, value.truncatingRemainder(dividingBy: 10) == 0 {
+                // "twenty five"; "treinta y cinco" and "vingt et un" with their "and";
+                // "soixante-dix" and "quatre-vingt-dix", which add a teen.
+                var rest = next
+                let joined = rest + 1 < words.count && connectors.contains(words[rest]) && !halfWords.contains(words[rest + 1])
+                    && !articleNumbers.subtracting(["un", "une", "uno", "una"]).contains(words[rest + 1])
+                if joined { rest += 1 }
+                let teens = value == 60 || value == 80
+                if rest < words.count, let ones = numbers[words[rest]], ones >= 1, ones <= (teens ? 19 : 9),
+                   ones == ones.rounded(), words[rest] != "a", words[rest] != "an" {
+                    value += ones
+                    next = rest + 1
+                }
             }
         } else if halfWords.contains(word) {
             // "half an hour", "media hora"
@@ -318,7 +394,8 @@ enum ReminderParser {
         let word = words[index]
         switch word {
         case "noon", "midday", "mediodia", "midi", "mittag":
-            return ClockTime(hour: 12, minute: 0, half: nil, explicit: true, end: index + 1)
+            // In the day: left open, "at noon" said after noon was set for midnight tonight.
+            return ClockTime(hour: 12, minute: 0, half: .pm, explicit: true, end: index + 1)
         case "midnight", "medianoche", "minuit", "mitternacht":
             return ClockTime(hour: 0, minute: 0, half: nil, explicit: true, end: index + 1)
         default: break
@@ -433,7 +510,8 @@ enum ReminderParser {
                 hours = [time.hour]
             }
             // Tomorrow, "at 3" means the afternoon; "at 9" the morning.
-            if tomorrow, hours.count == 2 { hours = [time.hour < 7 ? time.hour % 12 + 12 : time.hour % 12] }
+            // ("Tomorrow at 12" is noon, not the midnight that starts the day.)
+            if tomorrow, hours.count == 2 { hours = [time.hour < 7 || time.hour == 12 ? time.hour % 12 + 12 : time.hour % 12] }
         }
         let start = tomorrow ? calendar.date(byAdding: .day, value: 1, to: now) ?? now : now
         let candidates: [Date] = hours.compactMap { hour in
@@ -450,7 +528,7 @@ enum ReminderParser {
 /// Pending timers and reminders: schedules them, says them when due, and keeps
 /// them in UserDefaults so they survive a restart.
 final class Reminders: ObservableObject {
-    static let shared = Reminders()
+    static let shared = Reminders(settle: 12)
     /// Where pending ones are saved, as JSON.
     static let storageKey = "reminders"
     /// Whether to post a notification as well as speaking (on unless turned off).
@@ -472,9 +550,17 @@ final class Reminders: ObservableObject {
     private var started = false
     private var askedForNotifications = false
 
+    /// How long after starting or waking before anything due is said. Reminders that came
+    /// due while the Mac slept or the app wasn't running were said about a second after
+    /// waking: before Bluetooth headphones had reconnected, behind the lock screen, before
+    /// VoiceOver was up. Said once and unheard, they were gone.
+    private let settle: TimeInterval
+    private var quietUntil = Date.distantPast
+
     init(defaults: UserDefaults = .standard, now: @escaping () -> Date = Date.init, calendar: Calendar = .autoupdatingCurrent,
          announce: @escaping (String) -> Void = Announcer.say, sound: @escaping (Tone) -> Void = Tones.play,
-         deliver: ((_ due: [Reminder], _ missed: [Reminder]) -> Void)? = nil) {
+         deliver: ((_ due: [Reminder], _ missed: [Reminder]) -> Void)? = nil, settle: TimeInterval = 0) {
+        self.settle = settle
         self.defaults = defaults
         self.now = now
         self.calendar = calendar
@@ -489,10 +575,10 @@ final class Reminders: ObservableObject {
     func start() {
         guard !started else { return }
         started = true
-        checkDue()
+        checkAfterSettling()
         let center = NSWorkspace.shared.notificationCenter
         center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.checkDue()
+            self?.checkAfterSettling()
         }
         NotificationCenter.default.addObserver(forName: .NSSystemClockDidChange, object: nil, queue: .main) { [weak self] _ in
             self?.checkDue()
@@ -593,7 +679,16 @@ final class Reminders: ObservableObject {
     // MARK: Due
 
     /// Says every one that is due, and schedules the next.
+    /// Holds what's due until the Mac has settled after starting or waking, then says it.
+    private func checkAfterSettling() {
+        guard settle > 0 else { return checkDue() }
+        quietUntil = Date().addingTimeInterval(settle)
+        DispatchQueue.main.asyncAfter(deadline: .now() + settle + 0.1) { [weak self] in self?.checkDue() }
+    }
+
     func checkDue() {
+        // Still settling: the check at the end of it covers these.
+        guard Date() >= quietUntil else { return }
         let current = now()
         let due = pending.filter { $0.due <= current }
         if !due.isEmpty {

@@ -186,15 +186,30 @@ enum SystemEvents {
 
     // MARK: Talking clock
 
+    private static var clockObservers: [NSObjectProtocol] = []
+
     /// Schedules the next announcement on the chosen boundary (every 15, 30 or 60 minutes).
     static func updateClock() {
+        // A timer set before the Mac slept fires late by as long as it slept, off the
+        // boundary ("9:23"), and the real one is skipped: set it again on waking and when
+        // the clock or time zone changes.
+        if clockObservers.isEmpty {
+            clockObservers = [
+                NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { _ in updateClock() },
+                NotificationCenter.default.addObserver(forName: .NSSystemClockDidChange, object: nil, queue: .main) { _ in updateClock() },
+                NotificationCenter.default.addObserver(forName: .NSSystemTimeZoneDidChange, object: nil, queue: .main) { _ in updateClock() },
+            ]
+        }
         clockTimer?.invalidate()
         clockTimer = nil
         let interval = Preferences.shared.clockInterval
         guard interval > 0, let next = nextClockTime(after: Date(), every: interval) else { return }
         let timer = Timer(fire: next, interval: 0, repeats: false) { _ in
-            Tones.play(.preset)
-            Announcer.say(DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short))
+            // Only on time: a timer that fired late anyway (the Mac was busy waking) says nothing.
+            if abs(Date().timeIntervalSince(next)) < 90 {
+                Tones.play(.preset)
+                Announcer.say(DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short))
+            }
             updateClock()
         }
         RunLoop.main.add(timer, forMode: .common)

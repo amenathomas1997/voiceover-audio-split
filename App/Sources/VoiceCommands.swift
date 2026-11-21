@@ -13,6 +13,9 @@ struct VoiceAction {
     let phrases: [String]
     /// A question to confirm first, or nil to act straight away.
     var confirm: String?
+    /// Whether it's named in "What can I say?" (the other half of a pair, such as "unmute
+    /// me" beside "mute me", isn't named twice).
+    var listed = true
     let perform: () -> Void
 }
 
@@ -97,8 +100,9 @@ enum VoiceCommands {
                       "ou sont mes ", "suche mein ", "suche meine ", "suche meinen ", "wo ist mein ", "wo ist meine ", "wo sind meine "]
         guard let start = starts.first(where: { words.hasPrefix($0) }) else { return nil }
         let rest = String(words.dropFirst(start.count)).trimmingCharacters(in: .whitespaces)
-        // The finder takes the whole phrase, so "look for the word exit" keeps "word".
-        return rest.isEmpty ? nil : words
+        // What comes after the start ("the word exit" keeps "word"). Passed whole, "busca mi
+        // teléfono" and "where's my phone" were searched for as written words, start and all.
+        return rest.isEmpty ? nil : rest
     }
 
     static func findRequest(in command: String) -> String? {
@@ -246,19 +250,46 @@ enum VoiceCommands {
                                          String(localized: "am i muted|mute status", comment: "Voice command phrases, separated by |"))) {
                 MeetingHelpers.sayMuteStatus()
             },
+            // Each of these goes to the state asked for. As one command per pair that just
+            // pressed the button, "mute me" while muted unmuted, and "camera off" while off
+            // turned the camera on. "Toggle" still presses whatever the state.
             VoiceAction(name: String(localized: "Mute me in the meeting"),
-                        phrases: phrases("mute me|unmute me|toggle mute|mute the meeting|unmute the meeting",
-                                         String(localized: "mute me|unmute me", comment: "Voice command phrases, separated by |"))) {
+                        phrases: phrases("mute me|mute the meeting|mute my microphone",
+                                         String(localized: "mute me", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.setMute(true)
+            },
+            VoiceAction(name: String(localized: "Mute me in the meeting"),
+                        phrases: phrases("unmute me|unmute the meeting|unmute my microphone",
+                                         String(localized: "unmute me", comment: "Voice command phrases, separated by |")), listed: false) {
+                MeetingHelpers.setMute(false)
+            },
+            VoiceAction(name: String(localized: "Mute me in the meeting"), phrases: phrases("toggle mute", ""), listed: false) {
                 MeetingHelpers.toggleMute()
             },
             VoiceAction(name: String(localized: "Camera on or off"),
-                        phrases: phrases("toggle video|camera on|camera off|turn my camera on|turn my camera off|video on|video off",
-                                         String(localized: "camera on|camera off", comment: "Voice command phrases, separated by |"))) {
+                        phrases: phrases("camera on|turn my camera on|video on",
+                                         String(localized: "camera on", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.setVideo(true)
+            },
+            VoiceAction(name: String(localized: "Camera on or off"),
+                        phrases: phrases("camera off|turn my camera off|video off",
+                                         String(localized: "camera off", comment: "Voice command phrases, separated by |")), listed: false) {
+                MeetingHelpers.setVideo(false)
+            },
+            VoiceAction(name: String(localized: "Camera on or off"), phrases: phrases("toggle video|toggle camera", ""), listed: false) {
                 MeetingHelpers.toggleVideo()
             },
             VoiceAction(name: String(localized: "Raise my hand"),
-                        phrases: phrases("raise my hand|lower my hand|raise hand|lower hand",
-                                         String(localized: "raise my hand|lower my hand", comment: "Voice command phrases, separated by |"))) {
+                        phrases: phrases("raise my hand|raise hand",
+                                         String(localized: "raise my hand", comment: "Voice command phrases, separated by |"))) {
+                MeetingHelpers.setHand(true)
+            },
+            VoiceAction(name: String(localized: "Raise my hand"),
+                        phrases: phrases("lower my hand|lower hand",
+                                         String(localized: "lower my hand", comment: "Voice command phrases, separated by |")), listed: false) {
+                MeetingHelpers.setHand(false)
+            },
+            VoiceAction(name: String(localized: "Raise my hand"), phrases: phrases("toggle hand|toggle my hand", ""), listed: false) {
                 MeetingHelpers.toggleHand()
             },
             VoiceAction(name: String(localized: "Who's talking?"),
@@ -298,9 +329,24 @@ enum VoiceCommands {
                                          String(localized: "can you see me|is my face centered", comment: "Voice command phrases, separated by |"))) {
                 controller.checkCamera()
             },
+            // "Stop recording" stops and never starts one, and the other way round.
             VoiceAction(name: String(localized: "Record the screen"),
-                        phrases: phrases("record the screen|start recording|stop recording|screen recording",
-                                         String(localized: "record the screen|stop recording", comment: "Voice command phrases, separated by |"))) {
+                        phrases: phrases("record the screen|start recording",
+                                         String(localized: "record the screen", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated {
+                    ScreenRecorder.shared.isRecording ? Announcer.say(String(localized: "Recording. Use the same command again to stop."))
+                                                      : ScreenRecorder.shared.start()
+                }
+            },
+            VoiceAction(name: String(localized: "Record the screen"),
+                        phrases: phrases("stop recording|stop the recording",
+                                         String(localized: "stop recording", comment: "Voice command phrases, separated by |")), listed: false) {
+                MainActor.assumeIsolated {
+                    ScreenRecorder.shared.isRecording ? ScreenRecorder.shared.stop()
+                                                      : Announcer.say(String(localized: "The screen isn't being recorded."))
+                }
+            },
+            VoiceAction(name: String(localized: "Record the screen"), phrases: phrases("screen recording", ""), listed: false) {
                 MainActor.assumeIsolated { ScreenRecorder.shared.toggle() }
             },
             VoiceAction(name: String(localized: "Describe images automatically"),
@@ -448,7 +494,7 @@ enum VoiceCommands {
     }
 
     static func whatCanISay() -> String {
-        let names = all.map(\.name)
+        let names = all.filter(\.listed).map(\.name)
         return String(localized: "Say Audio Split, then a command. For example: \(ListFormatter.localizedString(byJoining: names)). You can also say find, or go to, and the name of a control, and I'll take you there; that uses Do It for Me, which sends the control names to Anthropic. And Launch VoiceOver training works on its own.")
     }
 }

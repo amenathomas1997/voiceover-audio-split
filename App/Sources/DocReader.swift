@@ -99,17 +99,37 @@ final class DocReaderModel: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     func open(_ url: URL) {
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
-        var loaded: String?
-        if url.pathExtension.lowercased() == "pdf" {
-            loaded = PDFDocument(url: url)?.string
-        } else {
-            loaded = try? NSAttributedString(url: url, options: [:], documentAttributes: nil).string
-        }
+        let loaded = Self.text(of: url)
         guard let loaded, !loaded.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return Announcer.say(String(localized: "No text found in \(url.lastPathComponent). For scanned pages, use Scan and Read."))
         }
         load(loaded)
         Announcer.say(String(localized: "\(url.deletingPathExtension().lastPathComponent) loaded. \(layout.paragraphs.count) paragraphs."))
+    }
+
+    /// The text of a file, by its kind. Each kind is read as what its name says it is:
+    /// left to guess, the system reads web pages with WebKit, which fetches the pictures
+    /// and styles they link to from the internet (telling those sites the page was opened)
+    /// and can stall the window while it waits for them.
+    static func text(of url: URL) -> String? {
+        let ext = url.pathExtension.lowercased()
+        let type = UTType(filenameExtension: ext)
+        if ext == "pdf" { return PDFDocument(url: url)?.string }
+        if ["html", "htm", "xhtml"].contains(ext) || type?.conforms(to: .html) == true {
+            return (try? Data(contentsOf: url)).flatMap(HTMLText.text(from:))
+        }
+        let kind: NSAttributedString.DocumentType? = switch ext {
+        case "rtf": .rtf
+        case "docx": .officeOpenXML
+        case "doc": .docFormat
+        default: nil
+        }
+        if let kind {
+            return try? NSAttributedString(url: url, options: [.documentType: kind], documentAttributes: nil).string
+        }
+        var encoding = String.Encoding.utf8
+        if let plain = try? String(contentsOf: url, usedEncoding: &encoding) { return plain }
+        return try? NSAttributedString(url: url, options: [.documentType: NSAttributedString.DocumentType.plain], documentAttributes: nil).string
     }
 
     // MARK: Speaking
@@ -299,5 +319,80 @@ enum TextExport {
         } catch {
             Announcer.say(String(localized: "Couldn't save the file"))
         }
+    }
+}
+
+
+/// The readable text of a web page, worked out from its markup alone: nothing the page
+/// links to is loaded, and no script runs.
+enum HTMLText {
+    private static let skipped: Set<String> = ["script", "style", "head", "noscript", "template", "svg", "iframe", "object"]
+    private static let blocks: Set<String> = [
+        "p", "div", "section", "article", "header", "footer", "main", "nav", "aside", "blockquote", "pre",
+        "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "dl", "dt", "dd", "table", "tr", "figure", "figcaption", "form", "hr",
+    ]
+
+    static func text(from data: Data) -> String? {
+        // Decoded here: given the bytes, the parser drops every accented letter of a page
+        // that doesn't declare its encoding.
+        guard !data.isEmpty, let markup = decode(data),
+              let document = try? XMLDocument(xmlString: markup, options: [.documentTidyHTML, .nodeLoadExternalEntitiesNever, .nodePreserveWhitespace]),
+              let root = document.rootElement() else { return nil }
+        var lines: [String] = [""]
+        var spaceBefore = false
+        func newLine() {
+            if lines.last?.isEmpty == false { lines.append("") }
+            spaceBefore = false
+        }
+        func walk(_ node: XMLNode) {
+            switch node.kind {
+            case .text:
+                // Line breaks and indentation in the markup are only spacing.
+                let raw = node.stringValue ?? ""
+                let words = raw.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+                guard !words.isEmpty else {
+                    spaceBefore = spaceBefore || !raw.isEmpty
+                    return
+                }
+                let current = lines[lines.count - 1]
+                let gap = !current.isEmpty && (spaceBefore || raw.first?.isWhitespace == true)
+                lines[lines.count - 1] = current + (gap ? " " : "") + words
+                spaceBefore = raw.last?.isWhitespace == true
+            case .element:
+                let name = (node.name ?? "").lowercased()
+                guard !skipped.contains(name) else { return }
+                let breaks = name == "br" || blocks.contains(name)
+                if breaks { newLine() }
+                for child in node.children ?? [] { walk(child) }
+                // Table cells are read with a pause between them.
+                if name == "td" || name == "th", let last = lines.last, !last.isEmpty, !last.hasSuffix(",") {
+                    lines[lines.count - 1] = last + ","
+                    spaceBefore = true
+                }
+                if breaks { newLine() }
+            default:
+                break
+            }
+        }
+        walk(root)
+        let text = lines.filter { !$0.isEmpty }.joined(separator: "\n")
+        return text.isEmpty ? nil : text
+    }
+
+    /// The page as text: UTF-8 if it is, else the encoding it names near the top, else
+    /// the usual one for older Western pages.
+    static func decode(_ data: Data) -> String? {
+        if let text = String(data: data, encoding: .utf8) { return text }
+        if data.starts(with: [0xFF, 0xFE]) || data.starts(with: [0xFE, 0xFF]) { return String(data: data, encoding: .utf16) }
+        let head = String(decoding: data.prefix(2048), as: UTF8.self).lowercased()
+        if let match = head.range(of: #"charset\s*=\s*["']?[a-z0-9_\-]+"#, options: .regularExpression) {
+            let name = head[match].drop { $0 != "=" }.dropFirst().trimmingCharacters(in: CharacterSet(charactersIn: " \"'"))
+            let encoding = CFStringConvertIANACharSetNameToEncoding(name as CFString)
+            if encoding != kCFStringEncodingInvalidId,
+               let text = String(data: data, encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(encoding))) {
+                return text
+            }
+        }
+        return String(data: data, encoding: .windowsCP1252) ?? String(data: data, encoding: .isoLatin1)
     }
 }

@@ -41,6 +41,7 @@ enum ClipboardWatcher {
     private static var timer: Timer?
     private static var lastCount = NSPasteboard.general.changeCount
     private static var announce = false
+    private static let reader = DispatchQueue(label: "VoiceOverAudioSplit.clipboard", qos: .utility)
 
     /// Also feeds the clipboard history (ClipboardHistory.swift), so the clipboard is watched by one timer.
     static func update(enabled: Bool) {
@@ -52,15 +53,25 @@ enum ClipboardWatcher {
                 let count = NSPasteboard.general.changeCount
                 guard count != lastCount else { return }
                 lastCount = count
-                // Password managers mark what they copy as concealed: never read that aloud.
-                let types = NSPasteboard.general.types ?? []
-                let concealed = ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType", "com.agilebits.onepassword"]
-                if types.contains(where: { concealed.contains($0.rawValue) }) { return }
-                if let text = NSPasteboard.general.string(forType: .string) { ClipboardHistory.shared.record(text) }
-                guard announce else { return }
-                let description = Clipboard.describe()
-                let shown = description.count > 120 ? String(description.prefix(120)) + "…" : description
-                Announcer.say(String(localized: "Copied: \(shown)"))
+                // Read off the main thread. What was copied is fetched from the app that
+                // copied it, which can take a long time (a big range of a spreadsheet); on the
+                // main thread, which also carries the keyboard shortcuts, typing froze meanwhile.
+                reader.async {
+                    // Password managers mark what they copy as concealed: never read that aloud.
+                    let types = NSPasteboard.general.types ?? []
+                    let concealed = ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType", "com.agilebits.onepassword"]
+                    if types.contains(where: { concealed.contains($0.rawValue) }) { return }
+                    let text = NSPasteboard.general.string(forType: .string)
+                    let description = Clipboard.describe()
+                    DispatchQueue.main.async {
+                        // Copied again meanwhile: that one is on its way.
+                        guard NSPasteboard.general.changeCount == count else { return }
+                        if let text { ClipboardHistory.shared.record(text) }
+                        guard announce else { return }
+                        let shown = description.count > 120 ? String(description.prefix(120)) + "…" : description
+                        Announcer.say(String(localized: "Copied: \(shown)"))
+                    }
+                }
             }
         } else if !needed {
             timer?.invalidate()
@@ -111,16 +122,21 @@ enum AudioMouse {
             return noErr
         }
         let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 2)!
-        engine.attach(source)
-        engine.connect(source, to: engine.mainMixerNode, format: format)
-        do { try engine.start() } catch {
-            engine.detach(source) // Otherwise the next try adds a second tone.
+        var started = false
+        // Connecting and starting can throw an Objective-C exception while the output is changing.
+        _ = Tones.caught {
+            engine.attach(source)
+            engine.connect(source, to: engine.mainMixerNode, format: format)
+            started = (try? engine.start()) != nil
+        }
+        guard started else {
+            _ = Tones.caught { engine.detach(source) } // Otherwise the next try adds a second tone.
             return Announcer.say(String(localized: "Audio mouse couldn't start"))
         }
         // Switching the output device stops the engine; start it again so the tone carries on.
         configurationObserver = NotificationCenter.default.addObserver(
             forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { _ in
-            if isOn && !engine.isRunning { try? engine.start() }
+            if isOn && !engine.isRunning { _ = Tones.caught { try? engine.start() } }
         }
         let handler: (NSEvent) -> Void = { _ in moved() }
         if let global = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged], handler: handler) {

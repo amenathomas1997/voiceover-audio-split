@@ -144,7 +144,7 @@ enum BugReport {
         macOS: \(ProcessInfo.processInfo.operatingSystemVersionString)
         Mac model: \(String(cString: model))
         VoiceOver running: \(NSWorkspace.shared.isVoiceOverEnabled ? "yes" : "no")
-        Sound output: \(readString(defaultOutputDevice(), kAudioObjectPropertyName) ?? "unknown")
+        Sound output: \(AudioSystem.kind(of: defaultOutputDevice()))
         Reported with VoiceOver Audio Split \(info["CFBundleShortVersionString"] as? String ?? "") \
         (\(info["CFBundleVersion"] as? String ?? ""))
         """

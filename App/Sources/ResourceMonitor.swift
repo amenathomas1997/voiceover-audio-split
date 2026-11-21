@@ -128,6 +128,7 @@ enum ResourceMonitor {
         }
         Hotkeys.keyObserver = observer
         generation = Hotkeys.keyObserverGeneration
+        Hotkeys.keyObserverIsBrief = true
         DispatchQueue.main.asyncAfter(deadline: .now() + until.timeIntervalSinceNow + 0.1) {
             // Only this observer is cleared, never a lesson that took over meanwhile.
             if Hotkeys.keyObserverGeneration == generation { Hotkeys.keyObserver = nil }

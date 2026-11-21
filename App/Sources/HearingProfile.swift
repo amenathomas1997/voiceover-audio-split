@@ -64,6 +64,7 @@ final class HearingTest: ObservableObject {
     private var results: [Int: [Double: Double]] = [:]
     private var timer: Timer?
     private var run = 0
+    private var outputObserver: Any?
     /// Read on the audio thread: what to play now.
     nonisolated(unsafe) private static var tone: (frequency: Double, amplitude: Float, ear: Int) = (1000, 0, 0)
 
@@ -89,7 +90,10 @@ final class HearingTest: ObservableObject {
     }
 
     func heard() {
-        guard running, let current else { return }
+        // Only while a tone is playing. In the pause before it starts the level is still at
+        // its quietest, so an early or doubled Return recorded perfect hearing for that tone,
+        // and every other tone was then boosted against it.
+        guard running, let current, timer != nil else { return }
         results[current.ear, default: [:]][current.frequency] = level
         Tones.play(.status)
         next()
@@ -99,6 +103,8 @@ final class HearingTest: ObservableObject {
         timer?.invalidate()
         timer = nil
         Self.tone.amplitude = 0
+        if let outputObserver { NotificationCenter.default.removeObserver(outputObserver) }
+        outputObserver = nil
         engine?.stop()
         engine = nil
         running = false
@@ -110,6 +116,7 @@ final class HearingTest: ObservableObject {
     private func next() {
         guard running else { return }
         timer?.invalidate()
+        timer = nil
         Self.tone.amplitude = 0
         guard !queue.isEmpty else { return finish() }
         let item = queue.removeFirst()
@@ -151,10 +158,10 @@ final class HearingTest: ObservableObject {
 
     private func startEngine() -> Bool {
         let engine = AVAudioEngine()
-        let output = engine.outputNode.outputFormat(forBus: 0)
-        guard output.sampleRate > 0,
-              let format = AVAudioFormat(standardFormatWithSampleRate: output.sampleRate, channels: 2) else { return false }
-        let rate = output.sampleRate
+        // The output's rate, asked of the device itself. (Asking the engine's output node
+        // before anything is connected can deadlock inside the audio framework.)
+        let rate = readValue(defaultOutputDevice(), kAudioDevicePropertyNominalSampleRate, default: Float64(0))
+        guard rate > 0, let format = AVAudioFormat(standardFormatWithSampleRate: rate, channels: 2) else { return false }
         nonisolated(unsafe) var phase = 0.0
         let source = AVAudioSourceNode(format: format) { _, _, frameCount, bufferList in
             let buffers = UnsafeMutableAudioBufferListPointer(bufferList)
@@ -170,10 +177,24 @@ final class HearingTest: ObservableObject {
             }
             return noErr
         }
-        engine.attach(source)
-        engine.connect(source, to: engine.mainMixerNode, format: format)
-        do { try engine.start() } catch { return false }
+        var started = false
+        // Connecting and starting can throw an Objective-C exception while the output is changing.
+        _ = Tones.caught {
+            engine.attach(source)
+            engine.connect(source, to: engine.mainMixerNode, format: format)
+            started = (try? engine.start()) != nil
+        }
+        guard started else { return false }
         self.engine = engine
+        // Headphones connected or changed mid-test stop the tones. Carrying on in silence,
+        // every tone counted as not heard, and the test then saved a profile that boosted
+        // everything: stop instead, saving nothing.
+        outputObserver = NotificationCenter.default.addObserver(forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, self.running else { return }
+                self.stop(saying: String(localized: "The sound output changed, so the listening test stopped and nothing was saved. Start it again when your headphones are connected."))
+            }
+        }
         return true
     }
 }

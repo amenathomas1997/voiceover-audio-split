@@ -13,46 +13,72 @@ enum KeepAudioAwake {
     private static let engine = AVAudioEngine()
     private static let player = AVAudioPlayerNode()
     private static var observer: NSObjectProtocol?
+    /// Off the main thread, like the tones: starting sound on a sleeping wireless headset
+    /// can block for most of a minute, and the main thread carries the keyboard shortcuts.
+    private static let queue = DispatchQueue(label: "VoiceOverAudioSplit.keep-awake")
+    private static var wanted: Bool { UserDefaults.standard.bool(forKey: "keepAudioAwake") }
 
     static func update(enabled: Bool) {
-        enabled ? start() : stop()
+        queue.async { enabled ? start() : stop() }
     }
 
-    private static func start() {
+    private static func start(retry: Bool = true) {
         guard !engine.isRunning else { return }
         let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 2)!
-        if !engine.attachedNodes.contains(player) {
-            engine.attach(player)
-            engine.connect(player, to: engine.mainMixerNode, format: format)
-        }
         // One second of digital silence, looped.
         let silence = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 44100)!
         silence.frameLength = silence.frameCapacity
-        do {
-            try engine.start()
-        } catch {
-            log("Keep audio awake could not start: \(error)")
-            return
+        var playing = false
+        // Connecting, starting and playing all throw Objective-C exceptions on a broken
+        // graph; caught, not fatal.
+        let problem = Tones.caught {
+            // Connected again every time: after the output changes the old connection is
+            // dead, and a player left on it throws on every later start. (Skipping this once
+            // the player was attached, Keep Audio Awake stayed off after the first headset
+            // change until the app was restarted.)
+            if engine.attachedNodes.contains(player) {
+                player.stop()
+                engine.disconnectNodeOutput(player)
+            } else {
+                engine.attach(player)
+            }
+            engine.connect(player, to: engine.mainMixerNode, format: format)
+            do {
+                try engine.start()
+            } catch {
+                log("Keep audio awake could not start: \(error)")
+                return
+            }
+            player.scheduleBuffer(silence, at: nil, options: .loops)
+            player.play()
+            playing = true
         }
-        // A player on a broken graph throws an Objective-C exception; caught, not fatal.
-        if let problem = Tones.caught({ player.scheduleBuffer(silence, at: nil, options: .loops); player.play() }) {
-            log("Keep audio awake could not play: \(problem)")
-            engine.stop()
-            return
-        }
+        if let problem { log("Keep audio awake could not play: \(problem)") }
         // A new output device (headphones plugged in) stops the engine; start again on it.
         observer = observer ?? NotificationCenter.default.addObserver(
-            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main
+            forName: .AVAudioEngineConfigurationChange, object: engine, queue: nil
         ) { _ in
-            guard Preferences.shared.keepAudioAwake else { return }
-            stop()
-            start()
+            queue.async {
+                guard wanted else { return }
+                stop()
+                start()
+            }
+        }
+        guard playing else {
+            engine.stop()
+            // The output may not be ready yet (just woken, still connecting): once more, shortly.
+            if retry {
+                queue.asyncAfter(deadline: .now() + 2) {
+                    if wanted { start(retry: false) }
+                }
+            }
+            return
         }
         log("Keeping audio awake.")
     }
 
     private static func stop() {
-        player.stop()
+        _ = Tones.caught { player.stop() }
         engine.stop()
     }
 }

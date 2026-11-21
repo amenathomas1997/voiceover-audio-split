@@ -144,12 +144,13 @@ struct AppRule: Codable, Hashable, Identifiable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         name = try values.decode(String.self, forKey: .name)
         bundleID = try values.decode(String.self, forKey: .bundleID)
-        volume = try values.decodeIfPresent(Int.self, forKey: .volume) ?? 0
+        // Numbers are kept within what Settings allows: a file can't make an app 90 dB louder.
+        volume = max(-30, min(6, try values.decodeIfPresent(Int.self, forKey: .volume) ?? 0))
         muted = try values.decodeIfPresent(Bool.self, forKey: .muted) ?? false
         ear = try values.decodeIfPresent(EarChoice.self, forKey: .ear) ?? .follow
-        position = try values.decodeIfPresent(Int.self, forKey: .position) ?? 0
-        bass = try values.decodeIfPresent(Int.self, forKey: .bass) ?? 0
-        treble = try values.decodeIfPresent(Int.self, forKey: .treble) ?? 0
+        position = max(-100, min(100, try values.decodeIfPresent(Int.self, forKey: .position) ?? 0))
+        bass = max(-12, min(12, try values.decodeIfPresent(Int.self, forKey: .bass) ?? 0))
+        treble = max(-12, min(12, try values.decodeIfPresent(Int.self, forKey: .treble) ?? 0))
     }
 }
 
@@ -205,14 +206,16 @@ struct Preset: Codable, Hashable, Identifiable {
         layout = try values.decodeIfPresent(Layout.self, forKey: .layout) ?? .opposite
         stereoOthers = try values.decodeIfPresent(Bool.self, forKey: .stereoOthers) ?? false
         ducking = try values.decodeIfPresent(Bool.self, forKey: .ducking) ?? false
-        duckingAmount = try values.decodeIfPresent(Int.self, forKey: .duckingAmount) ?? 10
+        // Kept within what Settings allows, like the settings themselves: a preset applies
+        // these as they are, and a negative ducking amount makes other sounds louder.
+        duckingAmount = max(3, min(30, try values.decodeIfPresent(Int.self, forKey: .duckingAmount) ?? 10))
         callMode = try values.decodeIfPresent(CallMode.self, forKey: .callMode) ?? .split
         clarity = try values.decodeIfPresent(Bool.self, forKey: .clarity) ?? false
         leveler = try values.decodeIfPresent(Bool.self, forKey: .leveler) ?? false
         volumeLimit = try values.decodeIfPresent(Bool.self, forKey: .volumeLimit) ?? false
-        volumeLimitLevel = try values.decodeIfPresent(Int.self, forKey: .volumeLimitLevel) ?? -6
+        volumeLimitLevel = max(-24, min(-1, try values.decodeIfPresent(Int.self, forKey: .volumeLimitLevel) ?? -6))
         oneEar = try values.decodeIfPresent(OneEar.self, forKey: .oneEar) ?? .off
-        earBalance = try values.decodeIfPresent(Int.self, forKey: .earBalance) ?? 0
+        earBalance = max(-12, min(12, try values.decodeIfPresent(Int.self, forKey: .earBalance) ?? 0))
     }
 
     /// Fixed IDs, so apps and sites set to a default preset keep it after a restart or a restore.

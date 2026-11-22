@@ -236,11 +236,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         // Starts voice commands as at launch with them on: logs whether listening started.
         if CommandLine.arguments.contains("--check-voice") {
+            log("Check: speech recognition allowed = \(SFSpeechRecognizer.authorizationStatus() == .authorized), microphone allowed = \(AVCaptureDevice.authorizationStatus(for: .audio) == .authorized), built-in microphone = \(VoiceCommand.builtInMicrophone() != nil)")
             VoiceCommand.shared.update(enabled: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
-                log("Check: voice commands listening = \(VoiceCommand.shared.isListening)")
-                VoiceCommand.shared.update(enabled: false)
-                NSApp.terminate(nil)
+            // The microphone opens off the main thread, so listening begins a moment later.
+            for seconds in [2.0, 6, 20] {
+                DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                    log("Check: voice commands listening = \(VoiceCommand.shared.isListening), after \(Int(seconds)) seconds")
+                    guard seconds == 20 else { return }
+                    VoiceCommand.shared.update(enabled: false)
+                    NSApp.terminate(nil)
+                }
             }
             return
         }

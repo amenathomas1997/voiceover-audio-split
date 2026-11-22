@@ -172,9 +172,12 @@ final class VoiceCommand {
         startAgain = false
         let mine = stops
         let current = currentRequest
+        let began = Date()
         Self.audio.async {
             let opened = Self.openMicrophone(microphone, appendingTo: current)
             DispatchQueue.main.async {
+                let took = Date().timeIntervalSince(began)
+                if took > 2 { log("Voice command: the microphone took \(Int(took)) seconds to open.") }
                 self.starting = false
                 guard mine == self.stops else {
                     // Stopped while the microphone was opening: put it away. If listening

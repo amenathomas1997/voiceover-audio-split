@@ -91,6 +91,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        // Builds the split for a few seconds with everything turned down to nothing: logs
+        // that starting didn't hold up the main thread, that sound passed through, and that
+        // stopping put things back. Run with: open -g -n <app> --args --check-split
+        // Add --built-in to build it on the Mac's own speakers (silently) instead of the
+        // current output, for when that one is asleep.
+        if CommandLine.arguments.contains("--check-split") {
+            Mixer.state = Mixer.State(quietAll: true, speechMuted: true)
+            if CommandLine.arguments.contains("--built-in") {
+                Splitter.checkOutput = outputDevices().first {
+                    readValue($0.id, kAudioDevicePropertyTransportType, default: UInt32(0)) == kAudioDeviceTransportTypeBuiltIn
+                }?.id
+                log("Check: split on the built-in output = \(Splitter.checkOutput != nil)")
+            }
+            let splitter = Splitter(configuration: SplitConfiguration(speechDeviceUID: nil, callMode: .split,
+                                                                      callAppPrefixes: [], appRuleIDs: []))
+            let began = Date()
+            splitter.start()
+            log("Check: split start returned after \(Int(Date().timeIntervalSince(began) * 1000)) ms")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                let before = Splitter.renders
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    log("Check: split sources = \(Mixer.sources.count), sound passing = \(Splitter.renders != before), rate = \(Int(Mixer.sampleRate)), stereo pair = \(Mixer.mainStereo.left) and \(Mixer.mainStereo.right)")
+                    let stopping = Date()
+                    splitter.stopAndWait(seconds: 3)
+                    log("Check: split stopped after \(Int(Date().timeIntervalSince(stopping) * 1000)) ms")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        log("Check: after stopping, sources = \(Mixer.sources.count)")
+                        NSApp.terminate(nil)
+                    }
+                }
+            }
+            return
+        }
         // Posts a notification filed quietly, then an ordinary one, and logs whether each put
         // a banner on the screen (a banner is what VoiceOver reads aloud).
         if CommandLine.arguments.contains("--check-quiet-notification") {

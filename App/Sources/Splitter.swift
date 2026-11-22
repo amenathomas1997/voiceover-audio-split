@@ -272,6 +272,11 @@ final class Splitter: @unchecked Sendable {
 
     init(configuration: SplitConfiguration) { self.configuration = configuration }
 
+    #if DEBUG
+    /// For the self-check: build on this output instead of the Mac's current one.
+    nonisolated(unsafe) static var checkOutput: AudioDeviceID?
+    #endif
+
     /// Starts capturing. Returns at once; the audio is built in turn, off the main thread.
     func start() {
         Splitter.control.async { self.begin() }
@@ -423,7 +428,10 @@ final class Splitter: @unchecked Sendable {
         let me = Set(processes.filter { $0.pid == getpid() }.map(\.object))
         let excluded = speech.union(me).union(calls).union(inApps)
 
-        let output = defaultOutputDevice()
+        var output = defaultOutputDevice()
+        #if DEBUG
+        if let device = Splitter.checkOutput { output = device }
+        #endif
         let speechDevice = configuration.speechDeviceUID
             .flatMap { uid in outputDevices().first { $0.uid == uid }?.id }
             .flatMap { $0 == output ? nil : $0 }

@@ -558,7 +558,9 @@ final class LocalizationTests: XCTestCase {
 
     func testPlaceholdersMatch() {
         for language in languages {
-            for (key, value) in table(language) {
+            // (A counted phrase keeps its wording for one and for several elsewhere, and
+            // only points to it from here; the string catalog check covers those.)
+            for (key, value) in table(language) where !value.contains("%#@") {
                 XCTAssertEqual(placeholders(key), placeholders(value), "\(language): \(key)")
             }
         }
@@ -670,7 +672,7 @@ final class BrailleAndDocumentTests: XCTestCase {
         XCTAssertTrue(findings.contains("The first heading is level 2, not level 1."))
         XCTAssertTrue(findings.contains("1 picture has no description."))
         XCTAssertTrue(findings.contains("1 table has no header row."))
-        XCTAssertTrue(findings.contains("Blank lines are used for spacing in 1 places."))
+        XCTAssertTrue(findings.contains("Blank lines are used for spacing in 1 place."))
         XCTAssertTrue(findings.contains("1 link has unclear text."))
     }
 

@@ -25,12 +25,12 @@ VoiceOver Audio Split does not collect, store or share any personal information.
 - **Hearing profile.** The hearing loss values you type in or measure with the listening test are stored in your settings on your Mac and used only to adjust the sound.
 - **Meeting helpers.** Am I Muted, Raise My Hand and the other meeting commands read the names of the buttons in your Zoom, Teams or FaceTime window through the accessibility interface. If you turn on reading new chat messages, the app reads the meeting's chat list every two seconds while a meeting app is open, speaks new messages, and keeps nothing.
 - **Clipboard history.** If you turn it on, the last 20 things you copy are kept in memory only, never on disk, and are cleared when the app quits or you turn it off. Items a password manager marks as concealed are left out.
-- **Timers and reminders.** What you ask to be reminded about is saved in your settings on your Mac until it's due, so reminders survive a restart. If you allow notifications, macOS shows them on screen.
+- **Timers and reminders.** What you ask to be reminded about is saved in your settings on your Mac until it's due, so reminders survive a restart. If you allow notifications, they're also kept in Notification Center: filed there quietly while VoiceOver is on (the app speaks them itself), shown on screen otherwise.
 - **Object finder and accessible PDFs.** The object finder analyzes camera pictures on your Mac with Apple's Vision framework and never saves them. Scanning to an accessible PDF recognizes text on your Mac and saves the PDF only where you choose.
 - **Window switcher.** The window list is read through the accessibility interface when you open it, and isn't kept.
 - **The AI on this Mac.** With "Use AI" set to On this Mac (the default where Apple Intelligence is available), image and video descriptions, the assistant, Do It for Me, "Audio Split, find…" and the money identifier use Apple's on-device model. Pictures, questions and control names stay on your Mac and aren't sent anywhere.
 - **Describing images automatically.** If you turn it on, when the VoiceOver cursor rests on a picture for a second, the app takes a picture of just that spot of the screen and has the AI on this Mac describe it. Only the on-device model is ever used for this, so nothing is sent anywhere. Recent descriptions are kept in memory, and nothing is saved.
-- **Screen recordings.** Record the Screen saves a movie of your main screen, with the Mac's sound and, if you choose, your microphone, in Movies, VoiceOver Audio Split Recordings. Recordings stay there until you delete them; nothing is sent anywhere.
+- **Screen recordings.** Record the Screen saves a movie of your main screen, with the Mac's sound and, only if you turn it on, your microphone (each recording says as it starts whether it's included), in Movies, VoiceOver Audio Split Recordings. Recordings stay there until you delete them; nothing is sent anywhere.
 - **Mouse.** The audio mouse follows the pointer's position only while it's on, to play its tone.
 - **Keyboard.** The app watches for its own shortcuts (the right-hand Option key with a command key). Other keystrokes are passed on untouched and never stored. While you use VoiceOver practice or the typing trainer, the keys you press are checked against the lesson and then forgotten.
 - **Settings.** Your settings, presets and app volumes are stored on your Mac. If you add an Anthropic API key, it is stored in your Mac's Keychain.
@@ -53,7 +53,7 @@ These connect only when you use them, and send only what is needed:
 | Check for updates (on by default, once a day; turn it off in Settings, Updates) | GitHub | A request for the latest release's details; if you choose to install it, the download of the installer. Not used by TestFlight or App Store copies. |
 | Audio hub: news | The news feeds listed in the app (BBC and NPR by default, or ones you add) | A request for the headlines |
 
-Like any internet request, these services can see your IP address. Dictionary definitions use the Mac's built-in dictionary and don't use the internet.
+Like any internet request, these services can see your IP address. The app keeps no cookies from them and no copy of their answers on disk. Dictionary definitions use the Mac's built-in dictionary and don't use the internet.
 
 ## Permissions the app asks for
 

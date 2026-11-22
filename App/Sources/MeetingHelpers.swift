@@ -613,7 +613,15 @@ extension MeetingHelpers {
                 let confirm = windows.lazy.flatMap { controls(in: $0) }.first { item in
                     isLeaveConfirmation(item.names) && !(button.map { CFEqual($0.element, item.element) } ?? false)
                 }
-                if let confirm { _ = press(confirm.element) }
+                if confirm.map({ press($0.element) }) != true {
+                    // Zoom's question wasn't answered. If the meeting is still there, say
+                    // so, rather than "Left the meeting" while everyone can still hear you.
+                    Thread.sleep(forTimeInterval: 0.7)
+                    meeting.refresh()
+                    if meeting.find(.leave) != nil {
+                        return say(String(localized: "Zoom is asking whether to leave, and I couldn't press its answer. You're still in the meeting: press Return to leave."))
+                    }
+                }
             }
             say(String(localized: "Left the meeting"))
         }
@@ -904,26 +912,31 @@ extension MeetingHelpers {
 
     /// The texts of the last rows of a chat list, one array per message.
     private static func chatRows(_ list: AXUIElement, last: Int = 30) -> [[String]] {
-        rows(of: list).suffix(last).map { row in
-            var parts: [String] = []
-            for element in AX.descendants(of: row, limit: 40, seconds: 0.5)
-            where AX.string(element, kAXRoleAttribute) == kAXStaticTextRole {
-                let text = AX.string(element, kAXValueAttribute).isEmpty ? AX.string(element, kAXTitleAttribute)
-                                                                         : AX.string(element, kAXValueAttribute)
-                if !text.isEmpty { parts.append(text) }
-            }
-            if parts.isEmpty {
-                let own = AX.text(row)
-                if !own.isEmpty { parts.append(own) }
-            }
-            return parts
+        rows(of: list).suffix(last).map(chatParts(of:))
+    }
+
+    /// The texts in one row of a chat list.
+    private static func chatParts(of row: AXUIElement) -> [String] {
+        var parts: [String] = []
+        for element in AX.descendants(of: row, limit: 40, seconds: 0.5)
+        where AX.string(element, kAXRoleAttribute) == kAXStaticTextRole {
+            let text = AX.string(element, kAXValueAttribute).isEmpty ? AX.string(element, kAXTitleAttribute)
+                                                                     : AX.string(element, kAXValueAttribute)
+            if !text.isEmpty { parts.append(text) }
         }
+        if parts.isEmpty {
+            let own = AX.text(row)
+            if !own.isEmpty { parts.append(own) }
+        }
+        return parts
     }
 
     // Chat watching state, on the meetings queue.
     nonisolated(unsafe) private static var chatTimer: DispatchSourceTimer?
     nonisolated(unsafe) private static var watched: (pid: pid_t, list: AXUIElement)?
     nonisolated(unsafe) private static var seen: [String] = []
+    /// How many rows the chat had at the last look.
+    nonisolated(unsafe) private static var seenCount = 0
     nonisolated(unsafe) private static var lastSearch = Date.distantPast
     /// The order to look for meeting apps in, refreshed from the main thread.
     nonisolated(unsafe) private static var watchRanking: [MeetingCandidate] = []
@@ -952,7 +965,13 @@ extension MeetingHelpers {
     private static func checkChat() {
         if let current = watched, NSRunningApplication(processIdentifier: current.pid)?.isTerminated == false,
            !AX.string(current.list, kAXRoleAttribute).isEmpty {
-            let rows = chatRows(current.list)
+            // Every two seconds, and usually nothing has been said since: the same number of
+            // rows, ending in the same message. Only when that changes is every recent row
+            // read, which asks the meeting app hundreds of questions.
+            let all = rows(of: current.list)
+            if all.count == seenCount, let last = all.last, chatParts(of: last).joined(separator: " | ") == seen.last { return }
+            seenCount = all.count
+            let rows = all.suffix(30).map(chatParts(of:))
             let keys = rows.map { $0.joined(separator: " | ") }
             let fresh = Set(newMessages(previous: seen, current: keys))
             seen = keys
@@ -970,6 +989,7 @@ extension MeetingHelpers {
         lastSearch = Date()
         guard let meeting = locate(watchRanking), let list = chatList(for: meeting) else { return }
         watched = (meeting.pid, list)
+        seenCount = rows(of: list).count
         seen = chatRows(list).map { $0.joined(separator: " | ") }
     }
 }

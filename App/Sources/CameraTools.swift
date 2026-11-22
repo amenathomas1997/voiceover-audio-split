@@ -265,11 +265,10 @@ enum ColorIdentifier {
 
 enum LightDetector {
     private static let feed = CameraFeed()
-    private static let engine = AVAudioEngine()
+    private static let player = LiveTone("light-detector")
     nonisolated(unsafe) private static var frequency: Double = 220
     nonisolated(unsafe) private static var phase: Double = 0
     private static var stopWork: DispatchWorkItem?
-    private static var configurationObserver: NSObjectProtocol?
     /// Counts runs, so a delayed start from an earlier one is ignored.
     private static var run = 0
 
@@ -279,29 +278,19 @@ enum LightDetector {
         isRunning ? stop(announce: true) : start()
     }
 
+    private static let render: AVAudioSourceNodeRenderBlock = { _, _, frameCount, bufferList in
+        let buffers = UnsafeMutableAudioBufferListPointer(bufferList)
+        let step = 2 * Double.pi * frequency / 44100
+        for frame in 0..<Int(frameCount) {
+            let sample = Float(sin(phase)) * 0.12
+            phase += step
+            if phase > 2 * Double.pi { phase -= 2 * Double.pi }
+            for buffer in buffers { buffer.mData?.assumingMemoryBound(to: Float.self)[frame] = sample }
+        }
+        return noErr
+    }
+
     private static func start() {
-        let source = AVAudioSourceNode { _, _, frameCount, bufferList in
-            let buffers = UnsafeMutableAudioBufferListPointer(bufferList)
-            let step = 2 * Double.pi * frequency / 44100
-            for frame in 0..<Int(frameCount) {
-                let sample = Float(sin(phase)) * 0.12
-                phase += step
-                if phase > 2 * Double.pi { phase -= 2 * Double.pi }
-                for buffer in buffers { buffer.mData?.assumingMemoryBound(to: Float.self)[frame] = sample }
-            }
-            return noErr
-        }
-        let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1)!
-        // Connecting can throw an Objective-C exception while the output is changing.
-        _ = Tones.caught {
-            engine.attach(source)
-            engine.connect(source, to: engine.mainMixerNode, format: format)
-        }
-        // Headphones connected while it runs stop the tone: start it again on the new output.
-        configurationObserver = configurationObserver ?? NotificationCenter.default.addObserver(
-            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { _ in
-            if isRunning && !engine.isRunning { _ = Tones.caught { try? engine.start() } }
-        }
         Announcer.say(String(localized: "Light detector on. The tone rises with more light."))
         feed.start({ pixels in
             let color = CameraFeed.averageColor(pixels, centerFraction: 0.8)
@@ -311,8 +300,8 @@ enum LightDetector {
             // and after the announcement, so it doesn't talk over it.
             let thisRun = run
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                guard run == thisRun, isRunning, !engine.isRunning else { return }
-                _ = Tones.caught { try? engine.start() }
+                guard run == thisRun, isRunning else { return }
+                player.start(channels: 1, render: render)
             }
         }, failed: { message in
             stop(announce: false)
@@ -328,8 +317,7 @@ enum LightDetector {
         run += 1
         stopWork?.cancel()
         feed.stop()
-        engine.stop()
-        for node in engine.attachedNodes where node is AVAudioSourceNode { engine.detach(node) }
+        player.stop()
         if announce { Announcer.say(String(localized: "Light detector off")) }
     }
 

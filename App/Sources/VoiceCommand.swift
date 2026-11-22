@@ -53,6 +53,16 @@ final class VoiceCommand {
     private var answerTimer: Timer?
     /// Tries the microphone again after it couldn't be started.
     private var retryTimer: Timer?
+    /// The microphone is opened and closed here, never on the main thread.
+    private static let audio = DispatchQueue(label: "VoiceOverAudioSplit.voice-command", qos: .userInitiated)
+    /// The microphone is being opened.
+    private var starting = false
+    /// Counts stops, so a microphone that finishes opening after a stop is put away again.
+    private var stops = 0
+    /// Asked to listen again while the microphone was still opening for a start since stopped.
+    private var startAgain = false
+    /// Waiting to hear how the start in progress went.
+    private var afterStart: [() -> Void] = []
 
     /// Starts or stops listening to match the setting.
     func update(enabled: Bool) {
@@ -121,28 +131,77 @@ final class VoiceCommand {
                 AVCaptureDevice.requestAccess(for: .audio) { granted in
                     DispatchQueue.main.async {
                         guard self.wanted || oneShot else { return }
-                        granted ? self.start() : Announcer.say(String(localized: "Voice command needs the microphone. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Microphone."))
+                        guard granted else {
+                            return Announcer.say(String(localized: "Voice command needs the microphone. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Microphone."))
+                        }
                         // At login the microphone may not be there yet: it said it waits, so it does.
-                        if granted, self.wanted, !self.isListening { self.retryLater() }
+                        self.start { if self.wanted, !self.isListening { self.retryLater() } }
                     }
                 }
             }
         }
     }
 
-    /// `quiet` is for another try after a failure that has already been announced.
-    private func start(quiet: Bool = false) {
-        guard !isListening else { return }
+    /// `quiet` is for another try after a failure that has already been announced. The
+    /// microphone is opened off the main thread (setting up sound can block for a long time
+    /// while a device is asleep, and the main thread carries the keys), so this returns
+    /// before listening has begun: `done` is called, on the main thread, once it's known
+    /// whether it did.
+    private func start(quiet: Bool = false, then done: (() -> Void)? = nil) {
+        if let done { afterStart.append(done) }
+        guard !isListening else { return started() }
+        // The microphone is already being opened: that answers for this start too, unless
+        // it was stopped in between, in which case it's opened again afterwards.
+        guard !starting else {
+            startAgain = true
+            return
+        }
         func say(_ text: String) { if !quiet { Announcer.say(text) } }
         // On-device only: the language of the Mac if it can, otherwise English.
         let candidates = [SFSpeechRecognizer(locale: Locale.current), SFSpeechRecognizer(locale: Locale(identifier: "en-US"))]
         guard let recognizer = candidates.compactMap({ $0 }).first(where: \.supportsOnDeviceRecognition) else {
-            return say(String(localized: "Voice command isn't available: this Mac can't recognize speech on the device."))
+            say(String(localized: "Voice command isn't available: this Mac can't recognize speech on the device."))
+            return started()
         }
         guard let microphone = Self.builtInMicrophone() else {
             if !quiet { log("Voice command: no built-in microphone; not listening, to keep Bluetooth headsets at full quality.") }
-            return say(String(localized: "Voice command waits for a built-in or wired microphone, so your Bluetooth headphones keep their full sound quality."))
+            say(String(localized: "Voice command waits for a built-in or wired microphone, so your Bluetooth headphones keep their full sound quality."))
+            return started()
         }
+        starting = true
+        startAgain = false
+        let mine = stops
+        let current = currentRequest
+        Self.audio.async {
+            let opened = Self.openMicrophone(microphone, appendingTo: current)
+            DispatchQueue.main.async {
+                self.starting = false
+                guard mine == self.stops else {
+                    // Stopped while the microphone was opening: put it away. If listening
+                    // has been asked for again since, open it afresh.
+                    if case .success(let engine) = opened { Self.closeMicrophone(engine) }
+                    return self.startAgain ? self.start(quiet: quiet) : self.started()
+                }
+                self.startAgain = false
+                self.finishStart(opened, recognizer: recognizer, quiet: quiet)
+                self.started()
+            }
+        }
+    }
+
+    /// Tells whoever asked for a start that it's over, whether or not listening began.
+    private func started() {
+        let waiting = afterStart
+        afterStart = []
+        waiting.forEach { $0() }
+    }
+
+    private enum MicrophoneFailure: Error { case device, format, start }
+
+    /// Opens the built-in microphone, feeding whatever the current request is. On the audio queue.
+    private static func openMicrophone(_ microphone: AudioDeviceID,
+                                       appendingTo current: OSAllocatedUnfairLock<SFSpeechAudioBufferRecognitionRequest?>)
+        -> Result<AVAudioEngine, MicrophoneFailure> {
         let engine = AVAudioEngine()
         var device = microphone
         // If the built-in microphone can't be chosen, don't fall back to a Bluetooth headset's.
@@ -152,23 +211,47 @@ final class VoiceCommand {
         guard let unit,
               AudioUnitSetProperty(unit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0,
                                    &device, UInt32(MemoryLayout<AudioDeviceID>.size)) == noErr else {
-            if !quiet { log("Voice command: couldn't choose the built-in microphone.") }
-            return say(String(localized: "Voice command couldn't use the built-in microphone."))
+            return .failure(.device)
         }
-        guard Self.installTap(on: engine, appendingTo: currentRequest) else {
-            if !quiet { log("Voice command: the microphone's format wasn't accepted.") }
-            return failedToListen(quiet: quiet)
-        }
-        var startError: NSError?
+        guard installTap(on: engine, appendingTo: current) else { return .failure(.format) }
         var started = false
         // Starting can also throw an Objective-C exception; that mustn't close the app.
         let caught = VOACatchException({
             do { try engine.start(); started = true } catch { started = false }
-        }, &startError)
+        }, nil)
         guard caught, started else {
             _ = VOACatchException({ engine.inputNode.removeTap(onBus: 0) }, nil)
+            return .failure(.start)
+        }
+        return .success(engine)
+    }
+
+    /// Removing a tap can throw an Objective-C exception when the microphone has just
+    /// changed, which is exactly when this runs.
+    private static func closeMicrophone(_ engine: AVAudioEngine) {
+        audio.async {
+            _ = VOACatchException({ engine.inputNode.removeTap(onBus: 0) }, nil)
+            _ = VOACatchException({ engine.stop() }, nil)
+        }
+    }
+
+    private func finishStart(_ opened: Result<AVAudioEngine, MicrophoneFailure>, recognizer: SFSpeechRecognizer, quiet: Bool) {
+        let engine: AVAudioEngine
+        switch opened {
+        case .failure(.device):
+            if !quiet {
+                log("Voice command: couldn't choose the built-in microphone.")
+                Announcer.say(String(localized: "Voice command couldn't use the built-in microphone."))
+            }
+            return
+        case .failure(.format):
+            if !quiet { log("Voice command: the microphone's format wasn't accepted.") }
+            return failedToListen(quiet: quiet)
+        case .failure(.start):
             if !quiet { log("Voice command: microphone couldn't start.") }
             return failedToListen(quiet: quiet)
+        case .success(let opened):
+            engine = opened
         }
         self.engine = engine
         self.recognizer = recognizer
@@ -180,14 +263,21 @@ final class VoiceCommand {
             let keep = (self.wanted, self.oneShotUntil, self.awaitingAnswer)
             self.stop()
             (self.oneShotUntil, self.awaitingAnswer) = (keep.1, keep.2)
-            if keep.0 || keep.1 != nil || keep.2 != nil { self.start() }
-            // A question still waiting is answered on the new request.
-            if self.awaitingAnswer?.request != nil { self.awaitingAnswer?.request = self.request }
-            // Always-on listening that couldn't restart (no microphone yet) tries again.
-            if self.wanted, !self.isListening { self.retryLater() }
+            guard keep.0 || keep.1 != nil || keep.2 != nil else { return }
+            self.start {
+                // A question still waiting is answered on the new request.
+                if self.awaitingAnswer?.request != nil { self.awaitingAnswer?.request = self.request }
+                // Always-on listening that couldn't restart (no microphone yet) tries again.
+                if self.wanted, !self.isListening { self.retryLater() }
+            }
         }
         log("Voice command: listening on the device.")
         listen()
+        // A question asked while the microphone was still opening is answered on this
+        // request, as long as the question has finished being spoken.
+        if awaitingAnswer != nil, awaitingAnswer?.request == nil, Date() >= Announcer.speakingUntil {
+            awaitingAnswer?.request = request
+        }
     }
 
     /// Listens to the input with a format it accepts. Some Macs (and newer macOS versions)
@@ -312,7 +402,12 @@ final class VoiceCommand {
             return
         }
         awaitingAnswer = nil
-        if yes {
+        if yes, VoiceGuard.isAtRisk() {
+            // Someone in the call could have said it.
+            waiting.otherwise?()
+            Tones.play(.quieter)
+            Announcer.say(String(localized: "A call is playing through the speakers, so I can't take a spoken yes: someone in the call could have said it. Nothing was done."))
+        } else if yes {
             Tones.play(.louder)
             waiting.perform()
         } else {
@@ -326,10 +421,14 @@ final class VoiceCommand {
     private func perform(_ command: String) {
         pauseTimer?.invalidate()
         pendingCommand = ""
+        // The voice command key was pressed for this one, so it comes from the person at the Mac.
+        let byKey = oneShotUntil != nil
         oneShotUntil = nil
         // One phrase is heard several times as it's recognized; act once.
         guard Date().timeIntervalSince(lastHeard) > 2 else { return }
         lastHeard = Date()
+        // With a call on the loudspeakers, the microphone hears the other people too.
+        let callCouldSayIt = !byKey && VoiceGuard.isAtRisk()
         defer {
             listen() // Start afresh, so the same words aren't heard again.
             stopIfNotWanted()
@@ -353,6 +452,7 @@ final class VoiceCommand {
             return ObjectFinder.start(target: target)
         }
         if let request = VoiceCommands.findRequest(in: command), !request.isEmpty {
+            guard !callCouldSayIt else { return refuseOnSpeakers() }
             log("Voice command: find")
             Tones.play(.status)
             let model = DoItModel.shared
@@ -367,9 +467,16 @@ final class VoiceCommand {
         }
         // Only which command ran is logged, never what was said.
         log("Voice command: \(action.name)")
+        guard !(callCouldSayIt && action.guarded) else { return refuseOnSpeakers() }
         if let question = action.confirm { return askYesNo(question, perform: action.perform) }
         Tones.play(.status)
         action.perform()
+    }
+
+    private func refuseOnSpeakers() {
+        log("Voice command: not taken while a call plays through the speakers.")
+        Tones.play(.quieter)
+        Announcer.say(String(localized: "A call is playing through the speakers, so I didn't do that: someone in the call could have said it. Press the Listen for a Voice Command key first, or use headphones."))
     }
 
     private func launchLessons() {
@@ -400,12 +507,12 @@ final class VoiceCommand {
         request = nil
         if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
         configurationObserver = nil
-        // Removing a tap can throw an Objective-C exception when the microphone has just
-        // changed, which is exactly when this runs.
-        if let engine { _ = VOACatchException({ engine.inputNode.removeTap(onBus: 0) }, nil) }
-        engine?.stop()
+        if let engine { Self.closeMicrophone(engine) }
         engine = nil
         isListening = false
+        // A microphone still being opened is put away when it arrives.
+        stops += 1
+        startAgain = false
     }
 
     /// The microphone couldn't be started (none built in yet after waking, the lid closed):
@@ -415,11 +522,13 @@ final class VoiceCommand {
         retryTimer?.invalidate()
         retryTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { [weak self] _ in
             guard let self, self.wanted, !self.isListening else { return }
-            self.start(quiet: true)
-            if self.isListening {
-                log("Voice command: listening again.")
-            } else {
-                self.retryLater(after: min(seconds * 2, 120))
+            self.start(quiet: true) {
+                guard self.wanted else { return }
+                if self.isListening {
+                    log("Voice command: listening again.")
+                } else {
+                    self.retryLater(after: min(seconds * 2, 120))
+                }
             }
         }
     }
@@ -451,5 +560,60 @@ final class VoiceCommand {
         func transport(_ device: AudioDeviceID) -> UInt32 { readValue(device, kAudioDevicePropertyTransportType, default: UInt32(0)) }
         return inputs.first { transport($0) == kAudioDeviceTransportTypeBuiltIn }
             ?? inputs.first { transport($0) == kAudioDeviceTransportTypeUSB }
+    }
+}
+
+// MARK: - Calls on loudspeakers
+
+/// With a call on the loudspeakers, the microphone hears the other people too, so one of
+/// them could say "Audio Split, unmute me" or "camera on". While that can happen, commands
+/// that reveal you or act for you aren't taken by voice alone: the voice command key (which
+/// only the person at the Mac can press) still works, and so do headphones.
+enum VoiceGuard {
+    static func isAtRisk() -> Bool {
+        Preferences.shared.voiceCommandGuard && !outputIsHeadphones() && callIsOn()
+    }
+
+    static func outputIsHeadphones() -> Bool {
+        let device = defaultOutputDevice()
+        var addr = address(kAudioDevicePropertyDataSource, scope: kAudioObjectPropertyScopeOutput)
+        var source: UInt32 = 0
+        var size = UInt32(MemoryLayout<UInt32>.size)
+        if AudioObjectGetPropertyData(device, &addr, 0, nil, &size, &source) != noErr { source = 0 }
+        return isHeadphones(name: readString(device, kAudioObjectPropertyName) ?? "",
+                            transport: readValue(device, kAudioDevicePropertyTransportType, default: UInt32(0)),
+                            dataSource: source)
+    }
+
+    /// Whether sound from this output stays in your ears. Anything that isn't clearly
+    /// headphones counts as loudspeakers, which is the careful way to be wrong.
+    static func isHeadphones(name: String, transport: UInt32, dataSource: UInt32) -> Bool {
+        let name = name.lowercased()
+        if ["speak", "lautsprecher", "altavo", "haut-parleur", "soundbar", "homepod"].contains(where: name.contains) { return false }
+        if ["headphone", "headset", "airpods", "earbud", "earpods", "earphone", "buds",
+            "kopfhörer", "auricular", "casque", "écouteur"].contains(where: name.contains) { return true }
+        switch transport {
+        // The Mac's own socket says what's plugged in: 'hdpn' is headphones.
+        case kAudioDeviceTransportTypeBuiltIn: return dataSource == 0x6864_706E
+        // Mostly headsets; a Bluetooth speaker usually says so in its name.
+        case kAudioDeviceTransportTypeBluetooth, kAudioDeviceTransportTypeBluetoothLE: return true
+        default: return false
+        }
+    }
+
+    private static let browsers = ["com.apple.Safari", "com.apple.WebKit", "com.google.Chrome", "org.mozilla.firefox",
+                                   "com.microsoft.edgemac", "company.thebrowser.Browser", "com.brave.Browser"]
+
+    /// Whether a call is going: a call app with sound running, or a web browser using the
+    /// microphone (a meeting in a web page).
+    static func callIsOn() -> Bool {
+        func running(_ object: AudioObjectID, _ selector: AudioObjectPropertySelector) -> Bool {
+            readValue(object, selector, default: UInt32(0)) != 0
+        }
+        let calls = CallCaptions.callProcesses(prefixes: Preferences.shared.callApps.map(\.bundleID))
+        if calls.contains(where: { running($0, kAudioProcessPropertyIsRunning) }) { return true }
+        return audioProcesses().contains { process in
+            browsers.contains(where: process.bundleID.hasPrefix) && running(process.object, kAudioProcessPropertyIsRunningInput)
+        }
     }
 }

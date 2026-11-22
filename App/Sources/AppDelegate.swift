@@ -6,6 +6,7 @@ import AppKit
 import CoreAudio
 import Speech
 import SwiftUI
+import UserNotifications
 import WebKit
 
 @main
@@ -90,6 +91,46 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        // Posts a notification filed quietly, then an ordinary one, and logs whether each put
+        // a banner on the screen (a banner is what VoiceOver reads aloud).
+        if CommandLine.arguments.contains("--check-quiet-notification") {
+            Task { @MainActor in
+                func banners() -> [String] {
+                    let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
+                    return windows.filter { ($0[kCGWindowOwnerName as String] as? String)?.contains("Notification") == true }
+                        .map { window in
+                            let bounds = window[kCGWindowBounds as String] as? [String: Any] ?? [:]
+                            return "\(bounds["Width"] ?? 0)x\(bounds["Height"] ?? 0)"
+                        }
+                }
+                let center = UNUserNotificationCenter.current()
+                let settings = await center.notificationSettings()
+                log("Check: notifications authorized = \(settings.authorizationStatus.rawValue), alert style = \(settings.alertStyle.rawValue)")
+                var posted: [String] = []
+                for (name, level) in [("quiet", UNNotificationInterruptionLevel.passive), ("ordinary", .active)] {
+                    let before = banners()
+                    let content = UNMutableNotificationContent()
+                    content.title = "Check"
+                    content.body = "\(name) notification"
+                    content.interruptionLevel = level
+                    let id = UUID().uuidString
+                    posted.append(id)
+                    try? await center.add(UNNotificationRequest(identifier: id, content: content, trigger: nil))
+                    var seen = Set<String>()
+                    for _ in 0..<16 {
+                        try? await Task.sleep(for: .milliseconds(250))
+                        seen.formUnion(banners())
+                    }
+                    log("Check: \(name) notification: windows before \(before), seen after \(seen.sorted())")
+                    try? await Task.sleep(for: .seconds(6))
+                }
+                let delivered = await center.deliveredNotifications().filter { posted.contains($0.request.identifier) }.count
+                log("Check: \(delivered) of 2 are in Notification Center")
+                center.removeDeliveredNotifications(withIdentifiers: posted)
+                NSApp.terminate(nil)
+            }
+            return
+        }
         // The AI on this Mac: a question, a picture, and Do It for Me's control choice.
         if CommandLine.arguments.contains("--check-ai") {
             Task { @MainActor in
@@ -147,7 +188,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Records the screen for a few seconds: logs where it was saved.
         if CommandLine.arguments.contains("--check-recording") {
             Task { @MainActor in
-                Preferences.shared.recordMicrophone = false // No microphone prompt during the check.
                 ScreenRecorder.shared.start()
                 try? await Task.sleep(for: .seconds(5))
                 log("Check: recording = \(ScreenRecorder.shared.isRecording)")
@@ -180,7 +220,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             preferences.oneEar = before == .left ? .right : .left
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 let window = NSApp.windows.contains { $0.title == String(localized: "Keep This Sound Setting?") && $0.isVisible }
-                log("Check: sound safety asking = \(SoundSafety.shared.isWaiting), window shown = \(window)")
+                let key = NSApp.keyWindow?.title == String(localized: "Keep This Sound Setting?")
+                log("Check: sound safety asking = \(SoundSafety.shared.isWaiting), window shown = \(window), app active = \(NSApp.isActive), window has the keyboard = \(key), shortcut answers = \(Hotkeys.answer != nil)")
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
                 log("Check: sound safety went back = \(preferences.oneEar == before), still waiting = \(SoundSafety.shared.isWaiting)")
@@ -301,7 +342,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             log("Check: permissions = \(Permission.allCases.map { "\($0.rawValue) \($0.status())" }.joined(separator: ", "))")
             log("Check: camera in use = \(SensorWatch.cameraInUse()), microphone apps = \(SensorWatch.appsUsingMicrophone().count)")
             if let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/3017620422003.json?fields=product_name,brands,quantity"),
-               let data = try? await URLSession.shared.data(from: url).0,
+               let data = try? await Net.data(from: url),
                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 log("Check: product lookup = \(CodeReader.productDescription(json["product"] as? [String: Any]) ?? "not found")")
             }
@@ -312,7 +353,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 let found = (try? await hub.find(query, in: source)) ?? []
                 log("Check: \(source.title) = \(found.count) results, first: \(found.first?.title ?? "none")")
                 if source == .audiobooks, case .feed(let url)? = found.first?.kind,
-                   let data = try? await URLSession.shared.data(from: url).0 {
+                   let data = try? await Net.data(from: url, limit: Net.feedLimit) {
                     log("Check: first audiobook chapters = \(RSSFeed.parse(data).filter { $0.audio != nil }.count)")
                 }
             }
@@ -529,7 +570,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @MainActor
     func confirmLeaveMeeting() {
         let question = MeetingHelpers.leaveNeedsConfirmation
-        if VoiceCommand.shared.isListening {
+        // (Not by voice with the call on loudspeakers: someone in it could say yes.)
+        if VoiceCommand.shared.isListening, !VoiceGuard.isAtRisk() {
             return VoiceCommand.shared.askYesNo(question) { MeetingHelpers.leave(confirmed: true) }
         }
         NSApp.activate()

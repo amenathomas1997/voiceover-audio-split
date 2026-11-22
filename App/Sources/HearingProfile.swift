@@ -57,14 +57,13 @@ final class HearingTest: ObservableObject {
     @Published private(set) var progress = 0
     var total: Int { HearingProfile.frequencies.count * 2 }
 
-    private var engine: AVAudioEngine?
+    private let player = LiveTone("listening-test")
     private var queue: [(ear: Int, frequency: Double)] = []
     private var current: (ear: Int, frequency: Double)?
     private var level = -80.0
     private var results: [Int: [Double: Double]] = [:]
     private var timer: Timer?
     private var run = 0
-    private var outputObserver: Any?
     /// Read on the audio thread: what to play now.
     nonisolated(unsafe) private static var tone: (frequency: Double, amplitude: Float, ear: Int) = (1000, 0, 0)
 
@@ -74,19 +73,34 @@ final class HearingTest: ObservableObject {
         results = [:]
         progress = 0
         running = true
-        guard startEngine() else {
-            running = false
-            return Announcer.say(String(localized: "The listening test couldn't play sound."))
-        }
-        Announcer.say(String(localized: "Listening test. Put on headphones and turn the volume to a comfortable level. You'll hear tones in one ear at a time, getting louder. Press Return as soon as you hear each one. Press Escape to stop."))
         // Only this run's first tone: a test stopped and started again within 9 seconds
         // would otherwise get two, and skip a frequency.
         run += 1
         let run = run
-        DispatchQueue.main.asyncAfter(deadline: .now() + 9) { [weak self] in
-            guard let self, self.running, self.run == run, self.current == nil else { return }
-            self.next()
-        }
+        // The output's rate, asked of the device itself. (Asking the engine's output node
+        // before anything is connected can deadlock inside the audio framework.)
+        let rate = readValue(defaultOutputDevice(), kAudioDevicePropertyNominalSampleRate, default: Float64(0))
+        Self.tone.amplitude = 0
+        // The sound starts off the main thread; the test begins once it's known to be playing.
+        player.start(sampleRate: rate, channels: 2, render: Self.render(rate: rate), outputChanged: { [weak self] in
+            // Headphones connected or changed mid-test stop the tones. Carrying on in silence,
+            // every tone counted as not heard, and the test then saved a profile that boosted
+            // everything: stop instead, saving nothing.
+            MainActor.assumeIsolated {
+                guard let self, self.running, self.run == run else { return }
+                self.stop(saying: String(localized: "The sound output changed, so the listening test stopped and nothing was saved. Start it again when your headphones are connected."))
+            }
+        }, done: { [weak self] playing in
+            MainActor.assumeIsolated {
+                guard let self, self.running, self.run == run else { return }
+                guard playing else { return self.stop(saying: String(localized: "The listening test couldn't play sound.")) }
+                Announcer.say(String(localized: "Listening test. Put on headphones and turn the volume to a comfortable level. You'll hear tones in one ear at a time, getting louder. Press Return as soon as you hear each one. Press Escape to stop."))
+                DispatchQueue.main.asyncAfter(deadline: .now() + 9) { [weak self] in
+                    guard let self, self.running, self.run == run, self.current == nil else { return }
+                    self.next()
+                }
+            }
+        })
     }
 
     func heard() {
@@ -103,10 +117,7 @@ final class HearingTest: ObservableObject {
         timer?.invalidate()
         timer = nil
         Self.tone.amplitude = 0
-        if let outputObserver { NotificationCenter.default.removeObserver(outputObserver) }
-        outputObserver = nil
-        engine?.stop()
-        engine = nil
+        player.stop()
         running = false
         current = nil
         step = ""
@@ -156,14 +167,10 @@ final class HearingTest: ObservableObject {
         stop(saying: String(localized: "Listening test done. Your hearing profile is on. \(HearingProfile.summary(left: left, right: right))"))
     }
 
-    private func startEngine() -> Bool {
-        let engine = AVAudioEngine()
-        // The output's rate, asked of the device itself. (Asking the engine's output node
-        // before anything is connected can deadlock inside the audio framework.)
-        let rate = readValue(defaultOutputDevice(), kAudioDevicePropertyNominalSampleRate, default: Float64(0))
-        guard rate > 0, let format = AVAudioFormat(standardFormatWithSampleRate: rate, channels: 2) else { return false }
+    /// The tone itself: whatever `tone` asks for, in one ear.
+    private nonisolated static func render(rate: Double) -> AVAudioSourceNodeRenderBlock {
         nonisolated(unsafe) var phase = 0.0
-        let source = AVAudioSourceNode(format: format) { _, _, frameCount, bufferList in
+        return { _, _, frameCount, bufferList in
             let buffers = UnsafeMutableAudioBufferListPointer(bufferList)
             let tone = HearingTest.tone
             let step = 2 * Double.pi * tone.frequency / rate
@@ -177,25 +184,6 @@ final class HearingTest: ObservableObject {
             }
             return noErr
         }
-        var started = false
-        // Connecting and starting can throw an Objective-C exception while the output is changing.
-        _ = Tones.caught {
-            engine.attach(source)
-            engine.connect(source, to: engine.mainMixerNode, format: format)
-            started = (try? engine.start()) != nil
-        }
-        guard started else { return false }
-        self.engine = engine
-        // Headphones connected or changed mid-test stop the tones. Carrying on in silence,
-        // every tone counted as not heard, and the test then saved a profile that boosted
-        // everything: stop instead, saving nothing.
-        outputObserver = NotificationCenter.default.addObserver(forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated {
-                guard let self, self.running else { return }
-                self.stop(saying: String(localized: "The sound output changed, so the listening test stopped and nothing was saved. Start it again when your headphones are connected."))
-            }
-        }
-        return true
     }
 }
 

@@ -187,6 +187,9 @@ struct SettingsView: View {
                     .font(.caption).foregroundStyle(.secondary)
                 Text(String(localized: "Prefer not to keep the microphone on? Leave this off and give Listen for a Voice Command a key in Command keys: press it, then say the command without Audio Split."))
                     .font(.caption).foregroundStyle(.secondary)
+                Toggle(String(localized: "Don't take risky voice commands while a call plays through speakers"), isOn: $preferences.voiceCommandGuard)
+                Text(String(localized: "With a call on loudspeakers, the microphone hears the other people too. While that's so, unmuting, turning on the camera, recording, leaving, switching the output and Find aren't done by voice alone. Pressing the Listen for a Voice Command key first still works, and so do headphones."))
+                    .font(.caption).foregroundStyle(.secondary)
                 Button(String(localized: "Hear the Voice Commands")) { Announcer.say(VoiceCommands.whatCanISay()) }
             }
 
@@ -269,12 +272,14 @@ struct SettingsView: View {
                     get: { ClipboardHistory.shared.isEnabled }, set: { ClipboardHistory.shared.isEnabled = $0 }))
                 Text(String(localized: "Keeps the last 20 things you copy, in memory only, so you can hear and copy them again. Passwords copied from password managers are left out."))
                     .font(.caption).foregroundStyle(.secondary)
-                Toggle(String(localized: "Show a notification for timers and reminders"), isOn: Binding(
+                Toggle(String(localized: "Keep timers and reminders in Notification Center"), isOn: Binding(
                     get: { UserDefaults.standard.object(forKey: Reminders.notificationsKey) as? Bool ?? true },
                     set: { UserDefaults.standard.set($0, forKey: Reminders.notificationsKey) }))
-                Text(String(localized: "Timers and reminders are always spoken. A notification also stays on screen until you dismiss it."))
+                Text(String(localized: "Timers and reminders are always spoken. A notification is also kept in Notification Center, to find later. While VoiceOver is on it's filed there quietly, so the words aren't spoken twice; with VoiceOver off it shows on screen too."))
                     .font(.caption).foregroundStyle(.secondary)
                 Toggle(String(localized: "Include my microphone in screen recordings"), isOn: $preferences.recordMicrophone)
+                Text(String(localized: "Off unless you turn it on. Each recording says, as it starts, whether your microphone is included."))
+                    .font(.caption).foregroundStyle(.secondary)
                 Text(String(localized: "Record the Screen, in Everyday Tools, starts and stops with one command; give it a key in Command keys. Recordings, with the Mac's sound and VoiceOver, are saved in Movies, VoiceOver Audio Split Recordings, and never sent anywhere."))
                     .font(.caption).foregroundStyle(.secondary)
             }

@@ -58,9 +58,9 @@ enum ClipboardWatcher {
                 // main thread, which also carries the keyboard shortcuts, typing froze meanwhile.
                 reader.async {
                     // Password managers mark what they copy as concealed: never read that aloud.
-                    let types = NSPasteboard.general.types ?? []
-                    let concealed = ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType", "com.agilebits.onepassword"]
-                    if types.contains(where: { concealed.contains($0.rawValue) }) { return }
+                    // (Nor what's marked as passing through, such as a text expander's snippet.)
+                    let types = (NSPasteboard.general.types ?? []).map(\.rawValue)
+                    if Clipboard.isSecret(types: types) || types.contains("org.nspasteboard.TransientType") { return }
                     let text = NSPasteboard.general.string(forType: .string)
                     let description = Clipboard.describe()
                     DispatchQueue.main.async {
@@ -86,8 +86,11 @@ enum ClipboardWatcher {
 // MARK: - Audio mouse
 
 enum AudioMouse {
-    private static let engine = AVAudioEngine()
+    private static let player = LiveTone("audio-mouse")
     private static var monitors: [Any] = []
+    private static var on = false
+    /// Counts switches on, so the answer from an earlier one is ignored.
+    private static var run = 0
     // Read by the audio thread.
     nonisolated(unsafe) private static var frequency: Double = 440
     nonisolated(unsafe) private static var pan: Double = 0
@@ -95,49 +98,48 @@ enum AudioMouse {
     nonisolated(unsafe) private static var level: Double = 0
     nonisolated(unsafe) private static var phase: Double = 0
     private static var fadeWork: DispatchWorkItem?
-    private static var configurationObserver: Any?
 
-    static var isOn: Bool { !monitors.isEmpty }
+    static var isOn: Bool { on }
 
     static func toggle() {
         isOn ? stop() : start()
     }
 
-    private static func start() {
-        let source = AVAudioSourceNode { _, _, frameCount, bufferList in
-            let buffers = UnsafeMutableAudioBufferListPointer(bufferList)
-            let step = 2 * Double.pi * frequency / 44100
-            for frame in 0..<Int(frameCount) {
-                // Glide the volume, so the tone fades in and out without clicks.
-                level += (targetLevel - level) * 0.002
-                let sample = sin(phase) * level
-                phase += step
-                if phase > 2 * Double.pi { phase -= 2 * Double.pi }
-                let left = Float(sample * min(1, 1 - pan)), right = Float(sample * min(1, 1 + pan))
-                if buffers.count >= 2 {
-                    buffers[0].mData?.assumingMemoryBound(to: Float.self)[frame] = left
-                    buffers[1].mData?.assumingMemoryBound(to: Float.self)[frame] = right
-                }
+    private static let render: AVAudioSourceNodeRenderBlock = { _, _, frameCount, bufferList in
+        let buffers = UnsafeMutableAudioBufferListPointer(bufferList)
+        let step = 2 * Double.pi * frequency / 44100
+        for frame in 0..<Int(frameCount) {
+            // Glide the volume, so the tone fades in and out without clicks.
+            level += (targetLevel - level) * 0.002
+            let sample = sin(phase) * level
+            phase += step
+            if phase > 2 * Double.pi { phase -= 2 * Double.pi }
+            let left = Float(sample * min(1, 1 - pan)), right = Float(sample * min(1, 1 + pan))
+            if buffers.count >= 2 {
+                buffers[0].mData?.assumingMemoryBound(to: Float.self)[frame] = left
+                buffers[1].mData?.assumingMemoryBound(to: Float.self)[frame] = right
             }
-            return noErr
         }
-        let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 2)!
-        var started = false
-        // Connecting and starting can throw an Objective-C exception while the output is changing.
-        _ = Tones.caught {
-            engine.attach(source)
-            engine.connect(source, to: engine.mainMixerNode, format: format)
-            started = (try? engine.start()) != nil
-        }
-        guard started else {
-            _ = Tones.caught { engine.detach(source) } // Otherwise the next try adds a second tone.
-            return Announcer.say(String(localized: "Audio mouse couldn't start"))
-        }
-        // Switching the output device stops the engine; start it again so the tone carries on.
-        configurationObserver = NotificationCenter.default.addObserver(
-            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { _ in
-            if isOn && !engine.isRunning { _ = Tones.caught { try? engine.start() } }
-        }
+        return noErr
+    }
+
+    private static func start() {
+        on = true
+        run += 1
+        let thisRun = run
+        // The tone starts off the main thread; the rest waits to hear that it's playing.
+        player.start(channels: 2, render: render, done: { playing in
+            guard on, run == thisRun else { return }
+            guard playing else {
+                on = false
+                player.stop()
+                return Announcer.say(String(localized: "Audio mouse couldn't start"))
+            }
+            follow()
+        })
+    }
+
+    private static func follow() {
         let handler: (NSEvent) -> Void = { _ in moved() }
         if let global = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged], handler: handler) {
             monitors.append(global)
@@ -152,12 +154,10 @@ enum AudioMouse {
     }
 
     private static func stop() {
+        on = false
         monitors.forEach(NSEvent.removeMonitor)
         monitors.removeAll()
-        if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
-        configurationObserver = nil
-        engine.stop()
-        for node in engine.attachedNodes where node is AVAudioSourceNode { engine.detach(node) }
+        player.stop()
         Announcer.say(String(localized: "Audio mouse off"))
     }
 
@@ -205,8 +205,10 @@ final class TranslateModel: ObservableObject {
     @Published var request = 0
 
     func loadClipboard() {
-        source = NSPasteboard.general.string(forType: .string) ?? ""
-        if source.isEmpty { Announcer.say(String(localized: "The clipboard has no text")) }
+        source = Clipboard.textForTool() ?? ""
+        if source.isEmpty {
+            Announcer.say(Clipboard.holdsSecret ? Clipboard.secretNotice : String(localized: "The clipboard has no text"))
+        }
     }
 
     func loadVoiceOverItem() {

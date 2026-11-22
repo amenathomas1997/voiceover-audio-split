@@ -149,6 +149,7 @@ enum SettingsTransfer {
         "practiceLearnMode", "typingSayEachKey", "checkForUpdates",
         "hearingProfileOn", "hearingLeft", "hearingRight", "confirmSoundChanges", "aiProvider", "autoDescribeImages", "recordMicrophone",
         "meetingChatAnnounce", "clipboardHistory", "reminderNotifications", "brailleGrade", "objectFinderCameraFacesYou",
+        "voiceCommandGuard",
     ]
 
     /// Settings about the user rather than the app: their hearing, the sites and apps they use,
@@ -174,6 +175,7 @@ enum SettingsTransfer {
     static let notByFile: [String: Bool] = [
         "autoDescribeImages": true, "recordMicrophone": true, "clipboardHistory": true, "announceClipboard": true,
         "meetingChatAnnounce": true, "checkForUpdates": false, "confirmSoundChanges": false, "volumeLimit": false,
+        "voiceCommandGuard": false,
     ]
 
     /// Whether a file's value for `key` is one only the user may choose.

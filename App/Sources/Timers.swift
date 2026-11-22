@@ -786,6 +786,10 @@ final class Reminders: ObservableObject {
         let content = UNMutableNotificationContent()
         content.title = timer ? String(localized: "Timer done") : String(localized: "Reminder")
         content.body = text
+        // With VoiceOver on, filed in Notification Center without a banner or a sound: the
+        // app has already chimed and is about to say the words, and a banner would have
+        // VoiceOver say them a second time. With VoiceOver off, it shows on screen as before.
+        if NSWorkspace.shared.isVoiceOverEnabled { content.interruptionLevel = .passive }
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
             if let error { log("Could not post reminder notification: \(error.localizedDescription)") }

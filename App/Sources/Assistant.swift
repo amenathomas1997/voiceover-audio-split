@@ -94,7 +94,7 @@ enum Claude {
         let data: Data
         let response: URLResponse
         do {
-            (data, response) = try await URLSession.shared.data(for: request)
+            (data, response) = try await Net.data(for: request)
         } catch {
             throw Failure(message: String(localized: "Couldn't reach Anthropic. Check your internet connection."))
         }

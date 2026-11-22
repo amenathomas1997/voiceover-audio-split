@@ -46,14 +46,17 @@ final class ScreenRecorder: ObservableObject {
             do {
                 try FileManager.default.createDirectory(at: Self.folder, withIntermediateDirectories: true)
                 let url = Self.folder.appendingPathComponent(Self.fileName(at: Date()))
-                let recording = try await RecordingSession.start(to: url, microphone: Preferences.shared.recordMicrophone) { saved in
+                let microphone = Preferences.shared.recordMicrophone
+                let recording = try await RecordingSession.start(to: url, microphone: microphone) { saved in
                     Task { @MainActor in ScreenRecorder.shared.finished(saved) }
                 }
                 session = recording
                 isRecording = true
                 log("Screen recording started.")
                 Tones.play(.status)
-                Announcer.say(String(localized: "Recording. Use the same command again to stop."))
+                // Said each time, so a recording never includes your voice (or leaves it out) by surprise.
+                Announcer.say(microphone ? String(localized: "Recording, with your microphone. Use the same command again to stop.")
+                                         : String(localized: "Recording, without your microphone. Use the same command again to stop."))
             } catch let failure as RecordingFailure {
                 log("Screen recording couldn't start: \(failure.message)")
                 Announcer.say(failure.message)

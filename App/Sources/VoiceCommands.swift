@@ -16,6 +16,9 @@ struct VoiceAction {
     /// Whether it's named in "What can I say?" (the other half of a pair, such as "unmute
     /// me" beside "mute me", isn't named twice).
     var listed = true
+    /// Reveals you or acts for you (unmuting, the camera, recording, leaving, pressing
+    /// things): not taken by voice alone while a call plays through the speakers.
+    var guarded = false
     let perform: () -> Void
 }
 
@@ -222,13 +225,14 @@ enum VoiceCommands {
             },
             VoiceAction(name: String(localized: "Unmute"),
                         phrases: phrases("unmute|unmute my microphone|unmute microphone|mic on",
-                                         String(localized: "unmute|unmute my microphone", comment: "Voice command phrases, separated by |"))) {
+                                         String(localized: "unmute|unmute my microphone", comment: "Voice command phrases, separated by |")),
+                        guarded: true) {
                 if AudioSystem.isMicMuted { controller.toggleMicrophone() } else { Announcer.say(String(localized: "Your microphone is already on.")) }
             },
             VoiceAction(name: String(localized: "Next output device"),
                         phrases: phrases("next output device|next output|switch output|change output|next device",
                                          String(localized: "next output device|switch output", comment: "Voice command phrases, separated by |")),
-                        confirm: String(localized: "Switch to the next output device?")) {
+                        confirm: String(localized: "Switch to the next output device?"), guarded: true) {
                 controller.nextOutputDevice()
             },
             // Keeping or undoing a sound change
@@ -260,15 +264,17 @@ enum VoiceCommands {
             },
             VoiceAction(name: String(localized: "Mute me in the meeting"),
                         phrases: phrases("unmute me|unmute the meeting|unmute my microphone",
-                                         String(localized: "unmute me", comment: "Voice command phrases, separated by |")), listed: false) {
+                                         String(localized: "unmute me", comment: "Voice command phrases, separated by |")),
+                        listed: false, guarded: true) {
                 MeetingHelpers.setMute(false)
             },
-            VoiceAction(name: String(localized: "Mute me in the meeting"), phrases: phrases("toggle mute", ""), listed: false) {
+            VoiceAction(name: String(localized: "Mute me in the meeting"), phrases: phrases("toggle mute", ""), listed: false, guarded: true) {
                 MeetingHelpers.toggleMute()
             },
             VoiceAction(name: String(localized: "Camera on or off"),
                         phrases: phrases("camera on|turn my camera on|video on",
-                                         String(localized: "camera on", comment: "Voice command phrases, separated by |"))) {
+                                         String(localized: "camera on", comment: "Voice command phrases, separated by |")),
+                        guarded: true) {
                 MeetingHelpers.setVideo(true)
             },
             VoiceAction(name: String(localized: "Camera on or off"),
@@ -276,7 +282,7 @@ enum VoiceCommands {
                                          String(localized: "camera off", comment: "Voice command phrases, separated by |")), listed: false) {
                 MeetingHelpers.setVideo(false)
             },
-            VoiceAction(name: String(localized: "Camera on or off"), phrases: phrases("toggle video|toggle camera", ""), listed: false) {
+            VoiceAction(name: String(localized: "Camera on or off"), phrases: phrases("toggle video|toggle camera", ""), listed: false, guarded: true) {
                 MeetingHelpers.toggleVideo()
             },
             VoiceAction(name: String(localized: "Raise my hand"),
@@ -305,7 +311,7 @@ enum VoiceCommands {
             VoiceAction(name: String(localized: "Leave the meeting"),
                         phrases: phrases("leave the meeting|leave meeting|hang up|end the call",
                                          String(localized: "leave the meeting|hang up", comment: "Voice command phrases, separated by |")),
-                        confirm: MeetingHelpers.leaveNeedsConfirmation) {
+                        confirm: MeetingHelpers.leaveNeedsConfirmation, guarded: true) {
                 MeetingHelpers.leave(confirmed: true)
             },
             VoiceAction(name: String(localized: "Call captions"),
@@ -332,7 +338,8 @@ enum VoiceCommands {
             // "Stop recording" stops and never starts one, and the other way round.
             VoiceAction(name: String(localized: "Record the screen"),
                         phrases: phrases("record the screen|start recording",
-                                         String(localized: "record the screen", comment: "Voice command phrases, separated by |"))) {
+                                         String(localized: "record the screen", comment: "Voice command phrases, separated by |")),
+                        guarded: true) {
                 MainActor.assumeIsolated {
                     ScreenRecorder.shared.isRecording ? Announcer.say(String(localized: "Recording. Use the same command again to stop."))
                                                       : ScreenRecorder.shared.start()
@@ -346,7 +353,7 @@ enum VoiceCommands {
                                                       : Announcer.say(String(localized: "The screen isn't being recorded."))
                 }
             },
-            VoiceAction(name: String(localized: "Record the screen"), phrases: phrases("screen recording", ""), listed: false) {
+            VoiceAction(name: String(localized: "Record the screen"), phrases: phrases("screen recording", ""), listed: false, guarded: true) {
                 MainActor.assumeIsolated { ScreenRecorder.shared.toggle() }
             },
             VoiceAction(name: String(localized: "Describe images automatically"),
@@ -367,7 +374,8 @@ enum VoiceCommands {
             },
             VoiceAction(name: String(localized: "Previous clipboard item"),
                         phrases: phrases("previous clipboard|last clipboard item|clipboard history",
-                                         String(localized: "previous clipboard|clipboard history", comment: "Voice command phrases, separated by |"))) {
+                                         String(localized: "previous clipboard|clipboard history", comment: "Voice command phrases, separated by |")),
+                        guarded: true) {
                 ClipboardHistory.shared.speak(2)
             },
             VoiceAction(name: String(localized: "Switch window"),

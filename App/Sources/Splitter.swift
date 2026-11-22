@@ -182,6 +182,22 @@ func deviceName(uid: String) -> String? {
     outputDevices().first { $0.uid == uid }?.name
 }
 
+/// The two channels a device plays stereo on, counted from 0. Usually its first two; an
+/// audio interface with more outputs can be set to another pair in Audio MIDI Setup.
+func stereoChannels(_ device: AudioDeviceID) -> (left: Int, right: Int) {
+    var addr = address(kAudioDevicePropertyPreferredChannelsForStereo, scope: kAudioObjectPropertyScopeOutput)
+    var pair: [UInt32] = [1, 2]
+    var size = UInt32(MemoryLayout<UInt32>.size * 2)
+    guard AudioObjectGetPropertyData(device, &addr, 0, nil, &size, &pair) == noErr else { return (0, 1) }
+    return validStereo(left: Int(pair[0]), right: Int(pair[1]), channels: outputChannelCount(device))
+}
+
+/// Core Audio counts channels from 1; anything odd falls back to the first two.
+func validStereo(left: Int, right: Int, channels: Int) -> (left: Int, right: Int) {
+    guard left >= 1, right >= 1, left != right, left <= channels, right <= channels else { return (0, 1) }
+    return (left - 1, right - 1)
+}
+
 // MARK: - Splitter
 
 struct SplitConfiguration: Equatable {
@@ -221,12 +237,21 @@ private func parentPID(of pid: pid_t) -> pid_t {
     return info.kp_eproc.e_ppid
 }
 
-final class Splitter {
+final class Splitter: @unchecked Sendable {
     /// Posted on the main thread when capture can't start, so the user is told.
     static let failed = Notification.Name("VoiceOverAudioSplit.splitFailed")
 
+    /// Everything that builds or takes apart the audio runs here, one job at a time, for
+    /// every Splitter: a new one starts only once the old one has finished stopping.
+    /// It isn't the main thread, because building can block for most of a minute while the
+    /// output device is asleep (a wireless headset with the Mac locked), and the main thread
+    /// carries the keyboard shortcuts.
+    private static let control = DispatchQueue(label: "VOAudioSplit.control", qos: .userInitiated)
+
     private let configuration: SplitConfiguration
     private let queue = DispatchQueue(label: "VOAudioSplit.io", qos: .userInteractive)
+
+    // Everything from here on is used on the control queue only.
 
     private var taps: [AudioObjectID] = []
     private var aggregate = AudioObjectID(kAudioObjectUnknown)
@@ -247,7 +272,12 @@ final class Splitter {
 
     init(configuration: SplitConfiguration) { self.configuration = configuration }
 
+    /// Starts capturing. Returns at once; the audio is built in turn, off the main thread.
     func start() {
+        Splitter.control.async { self.begin() }
+    }
+
+    private func begin() {
         failedPlan = nil
         running = true
         rebuildIfNeeded()
@@ -255,11 +285,11 @@ final class Splitter {
         // prompt a rebuild. A few seconds after waking, see whether sound is still passing
         // through; only if it has stopped, build afresh.
         wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: nil) { [weak self] _ in
+            Splitter.control.asyncAfter(deadline: .now() + 3) { [weak self] in
                 guard let self, self.running, self.aggregate != kAudioObjectUnknown else { return }
                 let before = Splitter.renders
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                Splitter.control.asyncAfter(deadline: .now() + 1.5) { [weak self] in
                     guard let self, self.running, self.aggregate != kAudioObjectUnknown, Splitter.renders == before else { return }
                     log("No sound passed through after waking; building the audio again.")
                     self.scheduleRebuild(force: true)
@@ -269,7 +299,9 @@ final class Splitter {
         let system = AudioObjectID(kAudioObjectSystemObject)
         for selector in [kAudioHardwarePropertyProcessObjectList, kAudioHardwarePropertyDefaultOutputDevice,
                          kAudioHardwarePropertyDevices] {
-            if let token = AudioListeners.add(system, address(selector), handler: { [weak self] in self?.scheduleRebuild() }) {
+            if let token = AudioListeners.add(system, address(selector), handler: { [weak self] in
+                Splitter.control.async { self?.scheduleRebuild() }
+            }) {
                 listeners.append(token)
             }
         }
@@ -287,17 +319,18 @@ final class Splitter {
     /// Process and device lists change in bursts (connecting AirPods fires several
     /// changes in a second): wait for them to settle, then rebuild once.
     private func scheduleRebuild(force: Bool = false) {
+        guard running else { return }
         pendingRebuild?.cancel()
         // A forced rebuild (the device changed shape) isn't lost to an ordinary one right after it.
         pendingForce = pendingForce || force
         let work = DispatchWorkItem { [weak self] in
-            guard let self else { return }
+            guard let self, self.running else { return }
             if self.pendingForce { self.built = nil; self.failedPlan = nil }
             self.pendingForce = false
             self.rebuildIfNeeded()
         }
         pendingRebuild = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: work)
+        Splitter.control.asyncAfter(deadline: .now() + 0.4, execute: work)
     }
 
     /// Listeners on the output device itself: its channel count or sample rate can change
@@ -307,15 +340,20 @@ final class Splitter {
     /// Rebuilds only on a real change: building can itself make the device report a
     /// change, which mustn't start a loop.
     private func watchDevice(_ device: AudioObjectID) {
-        func shape() -> (Int, Float64) {
-            (outputChannelCount(device), readValue(device, kAudioDevicePropertyNominalSampleRate, default: Float64(0)))
+        func shape() -> (Int, Float64, Int, Int) {
+            let stereo = stereoChannels(device)
+            return (outputChannelCount(device), readValue(device, kAudioDevicePropertyNominalSampleRate, default: Float64(0)),
+                    stereo.left, stereo.right)
         }
         let builtShape = shape()
-        for selector in [kAudioDevicePropertyStreamConfiguration, kAudioDevicePropertyNominalSampleRate] {
+        for selector in [kAudioDevicePropertyStreamConfiguration, kAudioDevicePropertyNominalSampleRate,
+                         kAudioDevicePropertyPreferredChannelsForStereo] {
             let addr = AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeWildcard,
                                                   mElement: kAudioObjectPropertyElementMain)
             if let token = AudioListeners.add(device, addr, handler: { [weak self] in
-                if shape() != builtShape { self?.scheduleRebuild(force: true) }
+                Splitter.control.async {
+                    if shape() != builtShape { self?.scheduleRebuild(force: true) }
+                }
             }) {
                 deviceListeners.append(token)
             }
@@ -327,8 +365,24 @@ final class Splitter {
         deviceListeners.removeAll()
     }
 
-    /// Stops capturing and returns audio to normal.
-    func stop() {
+    /// Stops capturing and returns audio to normal. Returns at once; the work is done in
+    /// turn, and `done` is called (on the control queue) when sound is back to normal.
+    func stop(then done: (() -> Void)? = nil) {
+        Splitter.control.async {
+            self.end()
+            done?()
+        }
+    }
+
+    /// For quitting: gives the taps a moment to go, so sound is back to normal before the
+    /// app leaves. (If it takes longer, they go with the app anyway.)
+    func stopAndWait(seconds: Double) {
+        let finished = DispatchSemaphore(value: 0)
+        stop { finished.signal() }
+        _ = finished.wait(timeout: .now() + seconds)
+    }
+
+    private func end() {
         pendingRebuild?.cancel()
         pendingRebuild = nil
         running = false
@@ -337,8 +391,6 @@ final class Splitter {
         listeners.forEach(AudioListeners.remove)
         listeners.removeAll()
         teardown()
-        Mixer.sources = []
-        Mixer.speechDeviceChannel = nil
     }
 
     private func plan() -> Plan {
@@ -379,7 +431,8 @@ final class Splitter {
                     speechDevice: speechDevice)
     }
 
-    func rebuildIfNeeded() {
+    private func rebuildIfNeeded() {
+        guard running else { return }
         let plan = plan()
         if plan == built && aggregate != kAudioObjectUnknown { return }
         // The same setup just failed: wait for something to change rather than retry in a loop.
@@ -394,21 +447,23 @@ final class Splitter {
             return
         }
         do {
+            let began = Date()
             try build(plan)
             failedPlan = nil
             retries = 0
-            log("Audio active: \(plan.apps.count) app(s) with their own settings\(plan.speechDevice != nil ? ", two devices" : "").")
+            let took = Date().timeIntervalSince(began)
+            log("Audio active: \(plan.apps.count) app(s) with their own settings\(plan.speechDevice != nil ? ", two devices" : "")\(took > 2 ? String(format: ", after %.0f seconds", took) : "").")
         } catch {
             log("Could not start audio: \(error)")
             teardown()
             failedPlan = plan
-            NotificationCenter.default.post(name: Splitter.failed, object: nil)
+            DispatchQueue.main.async { NotificationCenter.default.post(name: Splitter.failed, object: nil) }
             // The same setup often works a moment later (a device still reconnecting after
             // waking). Left alone, it wasn't tried again until something else changed, which
             // could be never: two more tries, 3 and 15 seconds on.
             guard retries < 2 else { return }
             retries += 1
-            DispatchQueue.main.asyncAfter(deadline: .now() + (retries == 1 ? 3 : 15)) { [weak self] in
+            Splitter.control.asyncAfter(deadline: .now() + (retries == 1 ? 3 : 15)) { [weak self] in
                 guard let self, self.running, self.failedPlan == plan else { return }
                 self.failedPlan = nil
                 self.rebuildIfNeeded()
@@ -424,6 +479,13 @@ final class Splitter {
         try check(AudioHardwareCreateProcessTap(description, &tap), "create \(name) tap")
         taps.append(tap)
         return description.uuid.uuidString
+    }
+
+    /// The Mixer's settings belong to the main thread. Building waits for them to be in
+    /// place before sound starts; taking apart doesn't wait, so quitting can't be held up.
+    private static func onMain(wait: Bool, _ work: @escaping () -> Void) {
+        if Thread.isMainThread { return work() }
+        wait ? DispatchQueue.main.sync(execute: work) : DispatchQueue.main.async(execute: work)
     }
 
     private func build(_ plan: Plan) throws {
@@ -469,10 +531,19 @@ final class Splitter {
         // A device mid-switch can report a rate of 0, which would turn every filter's output
         // into something that isn't a number.
         let rate = readValue(aggregate, kAudioDevicePropertyNominalSampleRate, default: Float64(48000))
-        Mixer.sampleRate = rate > 0 ? rate : 48000
-        Mixer.mainChannels = outputChannelCount(plan.output)
-        Mixer.speechDeviceChannel = subDevices.count > 1 ? outputChannelCount(plan.output) : nil
-        Mixer.sources = sources
+        let mainChannels = outputChannelCount(plan.output)
+        // Stereo usually plays on a device's first two channels, but an audio interface can
+        // be set to another pair (in Audio MIDI Setup): the ears go where the Mac sends them.
+        let mainStereo = stereoChannels(plan.output)
+        let speechStereo = subDevices.count > 1 ? plan.speechDevice.map(stereoChannels) : nil
+        Splitter.onMain(wait: true) {
+            Mixer.sampleRate = rate > 0 ? rate : 48000
+            Mixer.mainChannels = mainChannels
+            Mixer.mainStereo = mainStereo
+            Mixer.speechStereo = speechStereo ?? (0, 1)
+            Mixer.speechDeviceChannel = speechStereo != nil ? mainChannels : nil
+            Mixer.sources = sources
+        }
         watchDevice(plan.output)
         if let speechDevice = plan.speechDevice { watchDevice(speechDevice) }
 
@@ -508,9 +579,6 @@ final class Splitter {
 
     private func teardown() {
         unwatchDevices()
-        // Nothing is captured until the next build sets these again.
-        Mixer.sources = []
-        Mixer.speechDeviceChannel = nil
         if aggregate != kAudioObjectUnknown {
             if let ioProc {
                 AudioDeviceStop(aggregate, ioProc)
@@ -522,6 +590,12 @@ final class Splitter {
         taps.removeAll()
         ioProc = nil
         aggregate = AudioObjectID(kAudioObjectUnknown)
+        // Nothing is captured until the next build sets these again. (In order with that
+        // build's own settings, which also go through the main thread.)
+        Splitter.onMain(wait: false) {
+            Mixer.sources = []
+            Mixer.speechDeviceChannel = nil
+        }
     }
 }
 

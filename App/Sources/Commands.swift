@@ -196,6 +196,7 @@ struct Key: Identifiable, Hashable {
     static let presetDigits: [Int64: Int] = [18: 1, 19: 2, 20: 3, 21: 4, 23: 5, 22: 6, 26: 7, 28: 8, 25: 9]
     static let slash: Int64 = 44
     static let escape: Int64 = 53
+    static let returnKey: Int64 = 36
     /// Stored as a chosen key to mean "no key".
     static let none: Int64 = -1
 

@@ -52,6 +52,10 @@ enum Hotkeys {
             NotificationCenter.default.post(name: observerChanged, object: nil)
         }
     }
+    /// While set (a sound change waiting to be kept or undone), the shortcut modifier with
+    /// Return answers yes and with Escape answers no, wherever the keyboard is. That way
+    /// the question doesn't have to take the keyboard away from the app being used.
+    nonisolated(unsafe) static var answer: ((Bool) -> Void)?
     /// Posted whenever the observer is set or cleared.
     static let observerChanged = Notification.Name("VoiceOverAudioSplit.keyObserverChanged")
     /// Set, after taking the keys, by an observer that only waits a few seconds for one key
@@ -149,6 +153,16 @@ enum Hotkeys {
         let flags = event.flags
         let (flag, rightBit, leftBit) = bits(for: modifier)
         let otherModifiers = CGEventFlags([.maskCommand, .maskControl, .maskShift, .maskAlternate]).subtracting(flag)
+        if answer != nil, keyCode == Key.returnKey || keyCode == Key.escape,
+           flags.contains(flag), flags.rawValue & rightBit != 0, flags.rawValue & leftBit == 0,
+           flags.intersection(otherModifiers).isEmpty {
+            swallowedKeys.insert(keyCode)
+            if !isRepeat {
+                log("Shortcut: answer \(keyCode == Key.returnKey ? "yes" : "no")")
+                DispatchQueue.main.async { answer?(keyCode == Key.returnKey) }
+            }
+            return nil
+        }
         guard let action = action(for: keyCode),
               flags.contains(flag),
               flags.rawValue & rightBit != 0,

@@ -147,6 +147,26 @@ enum VoiceOverText {
 }
 
 enum Clipboard {
+    /// The marks apps put on what they copy to say it's secret (password managers do).
+    static let secretMarks = ["org.nspasteboard.ConcealedType", "com.agilebits.onepassword"]
+
+    static func isSecret(types: [String]) -> Bool { types.contains(where: secretMarks.contains) }
+
+    /// Whether what's on the clipboard now was marked as secret by the app that copied it.
+    static var holdsSecret: Bool { isSecret(types: (NSPasteboard.general.types ?? []).map(\.rawValue)) }
+
+    static var secretNotice: String {
+        String(localized: "The clipboard holds a password or other hidden text, so it wasn't used.")
+    }
+
+    /// The clipboard's text for a tool you started (the reader, translation, the text
+    /// checks), or nil when there is none or it's marked as secret: a password is never
+    /// read out, shown or translated by them.
+    static func textForTool() -> String? {
+        guard !holdsSecret, let text = NSPasteboard.general.string(forType: .string), !text.isEmpty else { return nil }
+        return text
+    }
+
     /// A spoken description of the clipboard: its text (shortened if long), or what kind of thing it holds.
     static func describe() -> String {
         let board = NSPasteboard.general

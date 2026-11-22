@@ -271,3 +271,85 @@ enum Tones {
         return buffer
     }
 }
+
+// MARK: - Tones made as they play
+
+/// A tone made as it plays: the light detector, the audio mouse, the object finder and the
+/// listening test. All of the sound engine's work is done on a queue of its own, never the
+/// main thread: setting up sound can block for most of a minute while the output device is
+/// asleep (a wireless headset with the Mac locked), and the main thread carries the
+/// keyboard shortcuts.
+final class LiveTone: @unchecked Sendable {
+    private let queue: DispatchQueue
+    /// Counts starts and stops, so a start that was overtaken while it waited is dropped.
+    private let generation = OSAllocatedUnfairLock(initialState: 0)
+    // Used on the queue only.
+    private var engine: AVAudioEngine?
+    private var observer: NSObjectProtocol?
+
+    init(_ name: String) {
+        queue = DispatchQueue(label: "VoiceOverAudioSplit.tone.\(name)", qos: .userInitiated)
+    }
+
+    /// Starts the tone, replacing any already playing. `done` hears on the main thread
+    /// whether it's playing. `outputChanged`, when given, is called on the main thread if the
+    /// output device changes while it plays; without it, the tone carries on on the new output.
+    func start(sampleRate: Double = 44100, channels: AVAudioChannelCount,
+               render: @escaping AVAudioSourceNodeRenderBlock,
+               outputChanged: (() -> Void)? = nil, done: ((Bool) -> Void)? = nil) {
+        let mine = generation.withLock { count -> Int in
+            count += 1
+            return count
+        }
+        queue.async {
+            self.close()
+            let playing = self.isCurrent(mine)
+                && self.open(sampleRate: sampleRate, channels: channels, render: render, outputChanged: outputChanged, mine: mine)
+            if let done { DispatchQueue.main.async { done(playing) } }
+        }
+    }
+
+    func stop() {
+        generation.withLock { $0 += 1 }
+        queue.async { self.close() }
+    }
+
+    private func isCurrent(_ mine: Int) -> Bool { generation.withLock { $0 } == mine }
+
+    private func open(sampleRate: Double, channels: AVAudioChannelCount, render: @escaping AVAudioSourceNodeRenderBlock,
+                      outputChanged: (() -> Void)?, mine: Int) -> Bool {
+        guard sampleRate > 0, let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: channels) else { return false }
+        let engine = AVAudioEngine()
+        let source = AVAudioSourceNode(format: format, renderBlock: render)
+        var started = false
+        // Connecting and starting can throw an Objective-C exception while the output is changing.
+        _ = Tones.caught {
+            engine.attach(source)
+            engine.connect(source, to: engine.mainMixerNode, format: format)
+            started = (try? engine.start()) != nil
+        }
+        guard started else { return false }
+        self.engine = engine
+        observer = NotificationCenter.default.addObserver(forName: .AVAudioEngineConfigurationChange, object: engine,
+                                                          queue: nil) { [weak self] _ in
+            guard let self else { return }
+            if let outputChanged {
+                DispatchQueue.main.async { if self.isCurrent(mine) { outputChanged() } }
+            } else {
+                // Headphones connected while it plays stop the engine: start it again on the new output.
+                self.queue.async {
+                    guard self.isCurrent(mine), let engine = self.engine, !engine.isRunning else { return }
+                    _ = Tones.caught { try? engine.start() }
+                }
+            }
+        }
+        return true
+    }
+
+    private func close() {
+        if let observer { NotificationCenter.default.removeObserver(observer) }
+        observer = nil
+        if let engine { _ = Tones.caught { engine.stop() } }
+        engine = nil
+    }
+}

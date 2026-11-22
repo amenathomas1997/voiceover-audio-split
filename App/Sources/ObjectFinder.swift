@@ -423,8 +423,8 @@ enum ObjectFinder {
 /// A beeping tone that rises in pitch and speed with confidence. Like the light
 /// detector's tone, it's made as it plays, so it changes smoothly.
 private enum FinderTone {
-    private static let engine = AVAudioEngine()
-    private static var configurationObserver: NSObjectProtocol?
+    private static let player = LiveTone("object-finder")
+    private static let sampleRate = 44100.0
     nonisolated(unsafe) private static var frequency: Double = 330
     nonisolated(unsafe) private static var rate: Double = 1
     nonisolated(unsafe) private static var level: Float = 0.04
@@ -446,46 +446,33 @@ private enum FinderTone {
         pan = switch Preferences.shared.oneEar { case .off: newPan; case .left: -1; case .right: 1 }
     }
 
-    static func start() {
-        guard !engine.isRunning else { return }
-        let sampleRate = 44100.0
-        let source = AVAudioSourceNode { _, _, frameCount, bufferList in
-            let buffers = UnsafeMutableAudioBufferListPointer(bufferList)
-            let step = 2 * Double.pi * frequency / sampleRate
-            let side = pan
-            for frame in 0..<Int(frameCount) {
-                beat += rate / sampleRate
-                if beat >= 1 { beat -= 1 }
-                // Each beep is the first third of a beat, faded in and out so it doesn't click.
-                let envelope = beat < 0.33 ? sin(Double.pi * beat / 0.33) : 0
-                let sample = Float(sin(phase) * envelope) * level
-                phase += step
-                if phase > 2 * Double.pi { phase -= 2 * Double.pi }
-                for (index, buffer) in buffers.enumerated() {
-                    let gain = index == 0 ? min(1, 1 - side) : min(1, 1 + side)
-                    buffer.mData?.assumingMemoryBound(to: Float.self)[frame] = sample * gain
-                }
+    private static let render: AVAudioSourceNodeRenderBlock = { _, _, frameCount, bufferList in
+        let buffers = UnsafeMutableAudioBufferListPointer(bufferList)
+        let step = 2 * Double.pi * frequency / sampleRate
+        let side = pan
+        for frame in 0..<Int(frameCount) {
+            beat += rate / sampleRate
+            if beat >= 1 { beat -= 1 }
+            // Each beep is the first third of a beat, faded in and out so it doesn't click.
+            let envelope = beat < 0.33 ? sin(Double.pi * beat / 0.33) : 0
+            let sample = Float(sin(phase) * envelope) * level
+            phase += step
+            if phase > 2 * Double.pi { phase -= 2 * Double.pi }
+            for (index, buffer) in buffers.enumerated() {
+                let gain = index == 0 ? min(1, 1 - side) : min(1, 1 + side)
+                buffer.mData?.assumingMemoryBound(to: Float.self)[frame] = sample * gain
             }
-            return noErr
         }
-        let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 2)!
-        // Connecting and starting can throw an Objective-C exception while the output is changing.
-        _ = Tones.caught {
-            engine.attach(source)
-            engine.connect(source, to: engine.mainMixerNode, format: format)
-            try? engine.start()
-        }
-        // Headphones connected while it runs stop the beeps: start them again on the new output.
-        configurationObserver = configurationObserver ?? NotificationCenter.default.addObserver(
-            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { _ in
-            let hasSource = engine.attachedNodes.contains { $0 is AVAudioSourceNode }
-            if hasSource && !engine.isRunning { _ = Tones.caught { try? engine.start() } }
-        }
+        return noErr
+    }
+
+    /// Off the main thread (see LiveTone); a tone already playing is replaced.
+    static func start() {
+        player.start(sampleRate: sampleRate, channels: 2, render: render)
     }
 
     static func stop() {
-        engine.stop()
-        for node in engine.attachedNodes where node is AVAudioSourceNode { engine.detach(node) }
+        player.stop()
     }
 }
 

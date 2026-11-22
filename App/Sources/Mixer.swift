@@ -58,8 +58,9 @@ enum Mixer {
     nonisolated(unsafe) private static let routes = allocate(Route(), maxSources * maxChannels)
     nonisolated(unsafe) private static let isSpeech = allocate(false, maxSources)
     nonisolated(unsafe) private static var routedSources = 0
-    /// First channel of each left/right output pair.
+    /// The left and the right channel of each output pair.
     nonisolated(unsafe) private static let pairs = allocate(0, 2)
+    nonisolated(unsafe) private static let pairsRight = allocate(1, 2)
     /// Whether each pair is really one channel (a mono main device), even with another device after it.
     nonisolated(unsafe) private static let pairIsMono = allocate(false, 2)
     nonisolated(unsafe) private static var pairCount = 1
@@ -119,6 +120,11 @@ enum Mixer {
     /// Set by the Splitter: output channels of the main device. A mono device (AirPods in
     /// a call, a USB speaker) gets everything on its one channel instead of losing an ear.
     static var mainChannels = 2 { didSet { recompute() } }
+    /// Set by the Splitter: the channels the main device plays stereo on, counted from 0.
+    /// Usually the first two; an audio interface can be set to another pair.
+    static var mainStereo: (left: Int, right: Int) = (0, 1) { didSet { recompute() } }
+    /// Set by the Splitter: the same for the speech device, counted from its own first channel.
+    static var speechStereo: (left: Int, right: Int) = (0, 1) { didSet { recompute() } }
     /// Set by the Splitter: one entry per tap, in tap order.
     static var sources: [Source] = [] { didSet { recompute() } }
     /// Set by the Splitter: the first output channel of the speech device when
@@ -270,16 +276,27 @@ enum Mixer {
                 }
                 placement[1] = nil
             }
-            for (channel, route) in placement where channel < maxChannels {
-                table[index * maxChannels + channel] = Route(fromLeft: route.fromLeft * gain,
-                                                             fromRight: route.fromRight * gain)
+            for (channel, route) in placement {
+                // A placement is in ears: the left one is the device's first channel, the
+                // right one the next. The device may play stereo on another pair.
+                let target: Int
+                if onSpeechDevice, let base = speechDeviceChannel {
+                    target = base + (channel == base ? speechStereo.left : speechStereo.right)
+                } else {
+                    target = channel == 0 ? mainStereo.left : mainStereo.right
+                }
+                guard target < maxChannels else { continue }
+                table[index * maxChannels + target] = Route(fromLeft: route.fromLeft * gain,
+                                                            fromRight: route.fromRight * gain)
             }
         }
 
         for i in 0..<table.count { routes[i] = table[i] }
         for i in 0..<maxSources { isSpeech[i] = speechFlags[i]; toneEnabled[i] = toneFlags[i] }
-        pairs[0] = 0
-        pairs[1] = speechDeviceChannel ?? 0
+        pairs[0] = mainStereo.left
+        pairsRight[0] = mainStereo.right
+        pairs[1] = (speechDeviceChannel ?? 0) + speechStereo.left
+        pairsRight[1] = (speechDeviceChannel ?? 0) + speechStereo.right
         pairIsMono[0] = mainChannels == 1
         pairIsMono[1] = false
         pairCount = speechDeviceChannel == nil ? 1 : 2
@@ -422,7 +439,7 @@ enum Mixer {
         let release = 1 - expf(-1 / Float(renderRate * 0.15))
         let hearingOn = hearingEnabled, bank = hearingBank
         for p in 0..<pairCount {
-            let l = pairs[p], r = pairs[p] + 1
+            let l = pairs[p], r = pairsRight[p]
             if pairIsMono[p] || r >= totalChannels, l < totalChannels, let mono = channelBase[l] {
                 // A one-channel device: still apply the volume limit and the safety clamp.
                 let stride = channelStride[l]

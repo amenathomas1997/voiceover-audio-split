@@ -88,8 +88,8 @@ final class DocReaderModel: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     }
 
     func loadClipboard() {
-        guard let string = NSPasteboard.general.string(forType: .string), !string.isEmpty else {
-            return Announcer.say(String(localized: "The clipboard has no text"))
+        guard let string = Clipboard.textForTool() else {
+            return Announcer.say(Clipboard.holdsSecret ? Clipboard.secretNotice : String(localized: "The clipboard has no text"))
         }
         load(string)
         Announcer.say(String(localized: "Clipboard loaded. \(layout.paragraphs.count) paragraphs."))

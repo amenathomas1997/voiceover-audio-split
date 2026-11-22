@@ -121,23 +121,11 @@ enum UpdateCheck {
         return isNewer(release, thanVersion: version, build: build)
     }
 
-    /// The version inside a downloaded package, or nil if it can't be read.
+    /// The version inside a downloaded package, or nil if it can't be read. Read straight
+    /// from the package file: only the small text file that describes it, not its payload.
     static func packageVersion(of package: URL) -> String? {
-        let folder = package.deletingLastPathComponent().appendingPathComponent("Contents-\(UUID().uuidString)", isDirectory: true)
-        defer { try? FileManager.default.removeItem(at: folder) }
-        guard (try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)) != nil else { return nil }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/xar")
-        // Only the small text file that describes the package is taken out, not its payload.
-        process.arguments = ["-x", "-f", package.path, "-C", folder.path, "Distribution"]
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        do { try process.run() } catch { return nil }
-        process.waitUntilExit()
-        let file = folder.appendingPathComponent("Distribution")
-        guard process.terminationStatus == 0,
-              let size = try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize, size < 1 << 20,
-              let xml = try? String(contentsOf: file, encoding: .utf8) else { return nil }
+        guard let data = Xar.file(named: "Distribution", in: package),
+              let xml = String(data: data, encoding: .utf8) else { return nil }
         return packageVersion(inDistribution: xml)
     }
 
@@ -224,7 +212,7 @@ final class Updater {
         var request = URLRequest(url: UpdateCheck.latestURL, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("VoiceOverAudioSplit/\(UpdateCheck.version)", forHTTPHeaderField: "User-Agent")
-        guard let (data, response) = try? await URLSession.shared.data(for: request) else {
+        guard let (data, response) = try? await Net.data(for: request) else {
             log("Update check failed: no response.")
             if userInitiated { Announcer.say(String(localized: "Couldn't check for updates. Check your internet connection, and try again later.")) }
             return nil
@@ -281,8 +269,13 @@ final class Updater {
         Task {
             defer { busy = false }
             do {
-                let (download, response) = try await URLSession.shared.download(from: release.installer)
+                let (download, response) = try await Net.session.download(from: release.installer)
                 guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
+                let arrived = (try? download.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+                guard arrived <= Net.installerLimit else {
+                    try? FileManager.default.removeItem(at: download)
+                    throw URLError(.dataLengthExceedsMaximum)
+                }
                 // In the app's own temporary folder; the Installer can read it from there.
                 let folder = FileManager.default.temporaryDirectory.appendingPathComponent("Update", isDirectory: true)
                 try? FileManager.default.removeItem(at: folder)
@@ -304,15 +297,22 @@ final class Updater {
                     log("Update isn't signed by our Developer ID or isn't notarized; not opened.")
                     return Announcer.say(String(localized: "The update isn't signed by Full Circle AT and notarized by Apple, so it wasn't installed."))
                 }
-                // And it must be newer than this copy. If the version can't be read the
-                // signature still stands, so that alone doesn't stop a real update.
-                let inside = await Task.detached { UpdateCheck.packageVersion(of: installer) }.value
-                if let inside, !UpdateCheck.isNewer(packageVersion: inside, thanVersion: UpdateCheck.version, build: UpdateCheck.buildNumber) {
+                // And it must be newer than this copy: a signature proves who made an
+                // installer, not which one it is. A version that can't be read isn't taken on
+                // trust; the download page is opened instead, to install it by hand.
+                guard let inside = await Task.detached(operation: { UpdateCheck.packageVersion(of: installer) }).value else {
+                    try? FileManager.default.removeItem(at: folder)
+                    log("Update's installer version couldn't be read; not opened.")
+                    Announcer.say(String(localized: "The update's version couldn't be checked, so it wasn't installed. Opening the download page instead."))
+                    NSWorkspace.shared.open(UpdateCheck.releasesPage)
+                    return
+                }
+                guard UpdateCheck.isNewer(packageVersion: inside, thanVersion: UpdateCheck.version, build: UpdateCheck.buildNumber) else {
                     try? FileManager.default.removeItem(at: folder)
                     log("Update's installer is version \(inside), not newer than this copy; not opened.")
                     return Announcer.say(String(localized: "The download isn't newer than the version you have, so it wasn't installed."))
                 }
-                log("Update downloaded and verified (installer version \(inside ?? "unreadable")); opening the installer.")
+                log("Update downloaded and verified (installer version \(inside)); opening the installer.")
                 Tones.play(.device)
                 Announcer.say(String(localized: "Opening the installer. Follow its steps; VoiceOver Audio Split closes while it installs and opens again afterwards."))
                 let installerApp = URL(fileURLWithPath: "/System/Library/CoreServices/Installer.app")

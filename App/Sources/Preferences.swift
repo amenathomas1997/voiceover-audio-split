@@ -374,6 +374,8 @@ final class Preferences: ObservableObject {
     @Published var typingSayEachKey: Bool { didSet { save(typingSayEachKey, "typingSayEachKey") } }
     /// Listen for "Launch VoiceOver training" anywhere on the Mac.
     @Published var voiceCommand: Bool { didSet { save(voiceCommand, "voiceCommand") } }
+    /// While a call plays through loudspeakers, don't take risky commands by voice alone.
+    @Published var voiceCommandGuard: Bool { didSet { save(voiceCommandGuard, "voiceCommandGuard") } }
     /// Look for a new version on GitHub once a day (not for TestFlight or App Store copies).
     @Published var checkForUpdates: Bool { didSet { save(checkForUpdates, "checkForUpdates") } }
     /// Ask "Keep this sound setting?" after a risky sound change, and go back after a minute.
@@ -472,11 +474,13 @@ final class Preferences: ObservableObject {
         practiceLearnMode = store.object(forKey: "practiceLearnMode") as? Bool ?? true
         typingSayEachKey = store.bool(forKey: "typingSayEachKey")
         voiceCommand = store.bool(forKey: "voiceCommand")
+        voiceCommandGuard = store.object(forKey: "voiceCommandGuard") as? Bool ?? true
         checkForUpdates = store.object(forKey: "checkForUpdates") as? Bool ?? true
         confirmSoundChanges = store.object(forKey: "confirmSoundChanges") as? Bool ?? true
         aiProvider = store.string(forKey: "aiProvider") ?? AIProvider.onDevice.rawValue
         autoDescribeImages = store.bool(forKey: "autoDescribeImages")
-        recordMicrophone = store.object(forKey: "recordMicrophone") as? Bool ?? true
+        // Off until chosen: a recording that includes your voice is something to ask for.
+        recordMicrophone = store.object(forKey: "recordMicrophone") as? Bool ?? false
         hearingProfileOn = store.bool(forKey: "hearingProfileOn")
         hearingLeft = HearingProfile.valid(store.array(forKey: "hearingLeft") as? [Double])
         hearingRight = HearingProfile.valid(store.array(forKey: "hearingRight") as? [Double])

@@ -14,9 +14,10 @@ enum MicCheck {
         let clipped: Bool
     }
 
-    /// A new engine for each check, so a microphone change since the last one is picked up.
-    private static var engine = AVAudioEngine()
     private static var running = false
+    /// The microphone is opened and closed here, not on the main thread: setting up sound can
+    /// block for a long time while a device is asleep, and the main thread carries the keys.
+    private static let audio = DispatchQueue(label: "VoiceOverAudioSplit.mic-check", qos: .userInitiated)
 
     static func run() {
         guard !running else { return }
@@ -36,16 +37,29 @@ enum MicCheck {
         running = true
         Announcer.say(String(localized: "Microphone check. After the tone, say a sentence in your normal voice."))
         // Give the announcement time to finish before listening.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) { listen() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) { audio.async { listen() } }
     }
 
-    private static func listen() {
-        engine = AVAudioEngine()
-        let input = engine.inputNode
-        let format = input.outputFormat(forBus: 0)
-        guard format.sampleRate > 0, format.channelCount > 0 else {
+    /// Says why it couldn't listen, on the main thread.
+    private static func fail(_ message: String) {
+        DispatchQueue.main.async {
             running = false
-            return Announcer.say(String(localized: "No microphone found"))
+            Announcer.say(message)
+        }
+    }
+
+    /// On the audio queue. A new engine for each check, so a microphone change since the
+    /// last one is picked up.
+    private static func listen() {
+        let engine = AVAudioEngine()
+        // Reaching for the input can itself throw an Objective-C exception while devices change.
+        var found: (input: AVAudioInputNode, format: AVAudioFormat)?
+        _ = VOACatchException({
+            let input = engine.inputNode
+            found = (input, input.outputFormat(forBus: 0))
+        }, nil)
+        guard let (input, format) = found, format.sampleRate > 0, format.channelCount > 0 else {
+            return fail(String(localized: "No microphone found"))
         }
         var levels: [Float] = []
         var peak: Float = 0
@@ -67,31 +81,30 @@ enum MicCheck {
         // close the app: catch it, and try the input's own format if the first one is refused.
         let installed = VOACatchException({ input.installTap(onBus: 0, bufferSize: 2048, format: format, block: block) }, nil)
             || VOACatchException({ input.installTap(onBus: 0, bufferSize: 2048, format: nil, block: block) }, nil)
-        guard installed else {
-            running = false
-            return Announcer.say(String(localized: "The microphone couldn't start"))
-        }
-        Tones.play(.status)
+        guard installed else { return fail(String(localized: "The microphone couldn't start")) }
         var started = false
         let caught = VOACatchException({ started = (try? engine.start()) != nil }, nil)
         guard caught, started else {
             _ = VOACatchException({ input.removeTap(onBus: 0) }, nil)
-            running = false
-            return Announcer.say(String(localized: "The microphone couldn't start"))
+            return fail(String(localized: "The microphone couldn't start"))
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        // The tone is the cue to speak: only once the microphone is really listening.
+        DispatchQueue.main.async { Tones.play(.status) }
+        audio.asyncAfter(deadline: .now() + 5) {
             // The microphone may have changed in those five seconds; removing the tap then
             // can throw an Objective-C exception.
             _ = VOACatchException({ input.removeTap(onBus: 0) }, nil)
-            engine.stop()
-            running = false
+            _ = VOACatchException({ engine.stop() }, nil)
             lock.lock()
             let measured = levels
             let maximum = peak
             lock.unlock()
             let result = measure(levels: measured, peak: maximum)
-            log("Mic check: speech \(result.speechLevel) dB, noise \(result.noiseLevel) dB, clipped \(result.clipped).")
-            Announcer.say(advice(for: result) + " " + String(localized: "Using \(AudioSystem.inputDeviceName)."))
+            DispatchQueue.main.async {
+                running = false
+                log("Mic check: speech \(result.speechLevel) dB, noise \(result.noiseLevel) dB, clipped \(result.clipped).")
+                Announcer.say(advice(for: result) + " " + String(localized: "Using \(AudioSystem.inputDeviceName)."))
+            }
         }
     }
 

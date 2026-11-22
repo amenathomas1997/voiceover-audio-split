@@ -27,16 +27,13 @@ final class CallCaptions: ObservableObject {
     private var task: SFSpeechRecognitionTask?
     private var restartTimer: Timer?
     private var watchTimer: Timer?
-    private var tap = AudioObjectID(kAudioObjectUnknown)
-    private var aggregate = AudioObjectID(kAudioObjectUnknown)
-    private var ioProc: AudioDeviceIOProcID?
+    private lazy var sound = CallSound(request: currentRequest)
     private var tapped: Set<AudioObjectID> = []
     /// The output device and its rate when the capture was built: either changing (AirPods
     /// dropping to call mode, another device chosen mid-call) means building it again.
     private var builtOutput = AudioObjectID(kAudioObjectUnknown)
     private var builtRate: Float64 = 0
     private var panel: NSPanel?
-    private let queue = DispatchQueue(label: "VoiceOverAudioSplit.call-captions", qos: .userInteractive)
     private static let maxLines = 200
 
     private var starting = false
@@ -87,7 +84,8 @@ final class CallCaptions: ObservableObject {
         task?.cancel()
         task = nil
         currentRequest.withLock { $0 = nil }
-        teardown()
+        sound.stop()
+        tapped = []
         panel?.orderOut(nil)
         panel = nil
         isRunning = false
@@ -140,85 +138,23 @@ final class CallCaptions: ObservableObject {
         // processes, captions went garbled or stopped when either changed mid-call, and a
         // capture that had failed was never tried again.
         guard processes != tapped || (!processes.isEmpty && (output != builtOutput || rate != builtRate)) else { return }
-        teardown()
+        // Remembered whether or not it works, so the same set isn't retried every few seconds.
         tapped = processes
         builtOutput = output
         builtRate = rate
-        guard !processes.isEmpty else { return }
-        do {
-            try build(processes)
-            log("Call captions: listening to \(processes.count) call process(es).")
-        } catch {
-            log("Call captions: couldn't capture call sound: \(error)")
-            teardown()
-            tapped = processes // Don't retry the same set every few seconds.
-            Announcer.say(String(localized: "Call captions couldn't hear the call. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording."))
-        }
-    }
-
-    private func build(_ processes: Set<AudioObjectID>) throws {
-        let description = CATapDescription(stereoMixdownOfProcesses: Array(processes))
-        description.name = "VOAudioSplit call captions"
-        description.isPrivate = true
-        // Only listening: what you hear doesn't change.
-        description.muteBehavior = .unmuted
-        try check(AudioHardwareCreateProcessTap(description, &tap), "create captions tap")
-        guard let outputUID = readString(defaultOutputDevice(), kAudioDevicePropertyDeviceUID) else {
-            throw SplitError("no output device")
-        }
-        let aggregateDescription: [String: Any] = [
-            kAudioAggregateDeviceNameKey: "VOAudioSplit captions",
-            kAudioAggregateDeviceUIDKey: "VOAudioSplit-captions-\(UUID().uuidString)",
-            kAudioAggregateDeviceMainSubDeviceKey: outputUID,
-            kAudioAggregateDeviceIsPrivateKey: true,
-            kAudioAggregateDeviceIsStackedKey: false,
-            kAudioAggregateDeviceTapAutoStartKey: true,
-            kAudioAggregateDeviceSubDeviceListKey: [[kAudioSubDeviceUIDKey: outputUID]],
-            kAudioAggregateDeviceTapListKey: [[kAudioSubTapUIDKey: description.uuid.uuidString, kAudioSubTapDriftCompensationKey: true]],
-        ]
-        try check(AudioHardwareCreateAggregateDevice(aggregateDescription as CFDictionary, &aggregate), "create captions device")
-        let rate = readValue(aggregate, kAudioDevicePropertyNominalSampleRate, default: Float64(48000))
-        guard let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: rate, channels: 1, interleaved: false) else {
-            throw SplitError("no audio format")
-        }
-        let current = currentRequest
-        try check(AudioDeviceCreateIOProcIDWithBlock(&ioProc, aggregate, queue) { _, input, _, output, _ in
-            // Leave the speakers alone: this device only listens.
-            for buffer in UnsafeMutableAudioBufferListPointer(output) {
-                if let data = buffer.mData { memset(data, 0, Int(buffer.mDataByteSize)) }
+        guard !processes.isEmpty else { return sound.stop() }
+        let count = processes.count
+        // Built off the main thread; the answer comes back here.
+        sound.capture(processes) { [weak self] worked in
+            MainActor.assumeIsolated {
+                guard let self, self.isRunning, self.tapped == processes else { return }
+                if worked {
+                    log("Call captions: listening to \(count) call process(es).")
+                } else {
+                    Announcer.say(String(localized: "Call captions couldn't hear the call. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Screen and System Audio Recording."))
+                }
             }
-            let inputs = UnsafeMutableAudioBufferListPointer(UnsafeMutablePointer(mutating: input))
-            guard let tapBuffer = inputs.last, let data = tapBuffer.mData,
-                  let request = current.withLock({ $0 }) else { return }
-            let channels = max(Int(tapBuffer.mNumberChannels), 1)
-            let frames = Int(tapBuffer.mDataByteSize) / MemoryLayout<Float>.size / channels
-            guard frames > 0, let pcm = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(frames)),
-                  let mono = pcm.floatChannelData?[0] else { return }
-            let samples = data.assumingMemoryBound(to: Float.self)
-            for frame in 0..<frames {
-                var sum: Float = 0
-                for channel in 0..<channels { sum += samples[frame * channels + channel] }
-                mono[frame] = sum / Float(channels)
-            }
-            pcm.frameLength = AVAudioFrameCount(frames)
-            request.append(pcm)
-        }, "create captions IO proc")
-        try check(AudioDeviceStart(aggregate, ioProc), "start captions")
-    }
-
-    private func teardown() {
-        if aggregate != kAudioObjectUnknown {
-            if let ioProc {
-                AudioDeviceStop(aggregate, ioProc)
-                AudioDeviceDestroyIOProcID(aggregate, ioProc)
-            }
-            AudioHardwareDestroyAggregateDevice(aggregate)
         }
-        if tap != kAudioObjectUnknown { AudioHardwareDestroyProcessTap(tap) }
-        ioProc = nil
-        aggregate = AudioObjectID(kAudioObjectUnknown)
-        tap = AudioObjectID(kAudioObjectUnknown)
-        tapped = []
     }
 
     // MARK: Recognizing
@@ -294,5 +230,108 @@ private struct CallCaptionView: View {
                 .accessibilityLabel(String(localized: "Call captions"))
                 .accessibilityValue(captions.lines.last ?? "")
         }
+    }
+}
+
+// MARK: - Capturing the call's sound
+
+/// The Core Audio side of call captions: a tap on the call apps, read through a private
+/// device, feeding the current recognition request. Built and taken apart on a queue of its
+/// own, never the main thread: setting up sound can block for a long time while the output
+/// device is asleep, and the main thread carries the keyboard shortcuts.
+private final class CallSound: @unchecked Sendable {
+    private let control = DispatchQueue(label: "VoiceOverAudioSplit.call-captions.control", qos: .userInitiated)
+    private let io = DispatchQueue(label: "VoiceOverAudioSplit.call-captions", qos: .userInteractive)
+    private let request: OSAllocatedUnfairLock<SFSpeechAudioBufferRecognitionRequest?>
+    // Used on the control queue only.
+    private var tap = AudioObjectID(kAudioObjectUnknown)
+    private var aggregate = AudioObjectID(kAudioObjectUnknown)
+    private var ioProc: AudioDeviceIOProcID?
+
+    init(request: OSAllocatedUnfairLock<SFSpeechAudioBufferRecognitionRequest?>) { self.request = request }
+
+    /// Listens to these processes instead of whatever it listened to before. `done` hears on
+    /// the main thread whether that worked.
+    func capture(_ processes: Set<AudioObjectID>, done: @escaping (Bool) -> Void) {
+        control.async {
+            self.teardown()
+            var worked = true
+            do {
+                try self.build(processes)
+            } catch {
+                log("Call captions: couldn't capture call sound: \(error)")
+                self.teardown()
+                worked = false
+            }
+            DispatchQueue.main.async { done(worked) }
+        }
+    }
+
+    func stop() {
+        control.async { self.teardown() }
+    }
+
+    private func build(_ processes: Set<AudioObjectID>) throws {
+        let description = CATapDescription(stereoMixdownOfProcesses: Array(processes))
+        description.name = "VOAudioSplit call captions"
+        description.isPrivate = true
+        // Only listening: what you hear doesn't change.
+        description.muteBehavior = .unmuted
+        try check(AudioHardwareCreateProcessTap(description, &tap), "create captions tap")
+        guard let outputUID = readString(defaultOutputDevice(), kAudioDevicePropertyDeviceUID) else {
+            throw SplitError("no output device")
+        }
+        let aggregateDescription: [String: Any] = [
+            kAudioAggregateDeviceNameKey: "VOAudioSplit captions",
+            kAudioAggregateDeviceUIDKey: "VOAudioSplit-captions-\(UUID().uuidString)",
+            kAudioAggregateDeviceMainSubDeviceKey: outputUID,
+            kAudioAggregateDeviceIsPrivateKey: true,
+            kAudioAggregateDeviceIsStackedKey: false,
+            kAudioAggregateDeviceTapAutoStartKey: true,
+            kAudioAggregateDeviceSubDeviceListKey: [[kAudioSubDeviceUIDKey: outputUID]],
+            kAudioAggregateDeviceTapListKey: [[kAudioSubTapUIDKey: description.uuid.uuidString, kAudioSubTapDriftCompensationKey: true]],
+        ]
+        try check(AudioHardwareCreateAggregateDevice(aggregateDescription as CFDictionary, &aggregate), "create captions device")
+        let rate = readValue(aggregate, kAudioDevicePropertyNominalSampleRate, default: Float64(48000))
+        guard let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: rate, channels: 1, interleaved: false) else {
+            throw SplitError("no audio format")
+        }
+        let current = request
+        try check(AudioDeviceCreateIOProcIDWithBlock(&ioProc, aggregate, io) { _, input, _, output, _ in
+            // Leave the speakers alone: this device only listens.
+            for buffer in UnsafeMutableAudioBufferListPointer(output) {
+                if let data = buffer.mData { memset(data, 0, Int(buffer.mDataByteSize)) }
+            }
+            let inputs = UnsafeMutableAudioBufferListPointer(UnsafeMutablePointer(mutating: input))
+            guard let tapBuffer = inputs.last, let data = tapBuffer.mData,
+                  let request = current.withLock({ $0 }) else { return }
+            let channels = max(Int(tapBuffer.mNumberChannels), 1)
+            let frames = Int(tapBuffer.mDataByteSize) / MemoryLayout<Float>.size / channels
+            guard frames > 0, let pcm = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(frames)),
+                  let mono = pcm.floatChannelData?[0] else { return }
+            let samples = data.assumingMemoryBound(to: Float.self)
+            for frame in 0..<frames {
+                var sum: Float = 0
+                for channel in 0..<channels { sum += samples[frame * channels + channel] }
+                mono[frame] = sum / Float(channels)
+            }
+            pcm.frameLength = AVAudioFrameCount(frames)
+            request.append(pcm)
+        }, "create captions IO proc")
+        try check(AudioDeviceStart(aggregate, ioProc), "start captions")
+    }
+
+    private func teardown() {
+        if aggregate != kAudioObjectUnknown {
+            if let ioProc {
+                AudioDeviceStop(aggregate, ioProc)
+                AudioDeviceDestroyIOProcID(aggregate, ioProc)
+            }
+            AudioHardwareDestroyAggregateDevice(aggregate)
+        }
+        if tap != kAudioObjectUnknown { AudioHardwareDestroyProcessTap(tap) }
+        ioProc = nil
+        aggregate = AudioObjectID(kAudioObjectUnknown)
+        tap = AudioObjectID(kAudioObjectUnknown)
     }
 }

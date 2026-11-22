@@ -239,10 +239,7 @@ struct BrailleView: View {
 
     /// What's on the clipboard, unless it was marked as not to be shown (a password manager's copy).
     static func clipboardText() -> String {
-        let board = NSPasteboard.general
-        let concealed = ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType"].map { NSPasteboard.PasteboardType($0) }
-        if board.types?.contains(where: concealed.contains) == true { return "" }
-        return board.string(forType: .string) ?? ""
+        Clipboard.textForTool() ?? ""
     }
 
     var body: some View {

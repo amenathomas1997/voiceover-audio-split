@@ -302,7 +302,7 @@ final class AudioHub: ObservableObject {
         func fetch(_ url: URL) async throws -> Data {
             var request = URLRequest(url: url)
             request.setValue("VoiceOverAudioSplit/1.0 (accessibility app)", forHTTPHeaderField: "User-Agent")
-            return try await URLSession.shared.data(for: request).0
+            return try await Net.data(for: request, limit: Net.feedLimit).0
         }
         if url.scheme?.lowercased() == "http", var secure = URLComponents(url: url, resolvingAgainstBaseURL: false) {
             secure.scheme = "https"

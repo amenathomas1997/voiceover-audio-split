@@ -150,6 +150,29 @@ final class SoundSafetyTests: XCTestCase {
         XCTAssertFalse(SoundSafety.shared.isWaiting, "automatic presets don't ask")
     }
 
+    func testTheShortcutKeyAnswersOnceAsked() {
+        let preferences = Preferences.shared
+        let saved = (preferences.confirmSoundChanges, preferences.earBalance)
+        defer {
+            preferences.confirmSoundChanges = saved.0
+            SoundSafety.shared.withoutAsking { preferences.earBalance = saved.1 }
+        }
+        preferences.confirmSoundChanges = true
+        SoundSafety.shared.withoutAsking { preferences.earBalance = 0 }
+        XCTAssertNil(Hotkeys.answer)
+        preferences.earBalance = 4
+        XCTAssertNil(Hotkeys.answer, "not until the question has been asked")
+        // The question comes once the changes have settled.
+        let asked = expectation(description: "asked")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { asked.fulfill() }
+        wait(for: [asked], timeout: 10)
+        XCTAssertNotNil(Hotkeys.answer)
+        Hotkeys.answer?(false) // The shortcut key with Escape: go back.
+        XCTAssertEqual(preferences.earBalance, 0)
+        XCTAssertFalse(SoundSafety.shared.isWaiting)
+        XCTAssertNil(Hotkeys.answer, "nothing left to answer")
+    }
+
     func testTurnedOffNeverAsks() {
         let preferences = Preferences.shared
         let saved = (preferences.confirmSoundChanges, preferences.layout)

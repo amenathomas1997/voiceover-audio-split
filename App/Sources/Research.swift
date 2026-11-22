@@ -55,7 +55,7 @@ enum Research {
     private static func json(_ url: URL) async throws -> Any {
         var request = URLRequest(url: url)
         request.setValue("VoiceOverAudioSplit/1.0 (accessibility app)", forHTTPHeaderField: "User-Agent")
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await Net.data(for: request)
         return try JSONSerialization.jsonObject(with: data)
     }
 

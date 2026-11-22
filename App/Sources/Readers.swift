@@ -118,7 +118,8 @@ enum CodeReader {
         var request = URLRequest(url: url)
         request.timeoutInterval = 15
         request.setValue("VoiceOverAudioSplit/1.0 (https://github.com/amenathomas1997/voiceover-audio-split)", forHTTPHeaderField: "User-Agent")
-        URLSession.shared.dataTask(with: request) { data, _, _ in
+        Task {
+            let data = try? await Net.data(for: request).0
             let json = data.flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: Any] }
             let product = json?["product"] as? [String: Any]
             let text = productDescription(product)
@@ -126,7 +127,7 @@ enum CodeReader {
                 copy(code)
                 Announcer.say(text ?? String(localized: "The product isn't in the database. The barcode number is copied to the clipboard."))
             }
-        }.resume()
+        }
     }
 
     /// "Wholegrain oats by Quaker, 500 g", from Open Food Facts.

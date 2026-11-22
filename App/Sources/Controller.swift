@@ -144,7 +144,7 @@ final class Controller {
     }
 
     func stopForQuit() {
-        splitter?.stop()
+        splitter?.stopAndWait(seconds: 1.5)
     }
 
     // MARK: - Split
@@ -383,8 +383,17 @@ final class Controller {
         }
     }
 
+    private var secretAsked = Date.distantPast
+
     func sayClipboard() {
         Tones.play(.status)
+        // A password manager's copy is said only when asked for twice, so a slip of the
+        // finger doesn't speak a password aloud.
+        if Clipboard.holdsSecret, Date().timeIntervalSince(secretAsked) > 10 {
+            secretAsked = Date()
+            return Announcer.say(String(localized: "The clipboard holds a password or other hidden text. Ask again within 10 seconds to hear it."))
+        }
+        secretAsked = .distantPast
         Announcer.say(Clipboard.describe())
     }
 

@@ -50,6 +50,7 @@ enum TextCompare {
             }
         }
 
+        let sentences = sentenceNumbers(ofWordsIn: new)
         var changes: [TextChange] = []
         var i = 0, j = 0
         while i < a.count || j < b.count {
@@ -59,7 +60,7 @@ enum TextCompare {
                 continue
             }
             var gone: [String] = [], added: [String] = []
-            let sentence = sentenceNumber(of: j, in: b)
+            let sentence = j < sentences.count ? sentences[j] : (sentences.last ?? 1)
             while i < a.count && removed.contains(i) { gone.append(a[i]); i += 1 }
             while j < b.count && inserted.contains(j) { added.append(b[j]); j += 1 }
             let kind: TextChange.Kind? = switch (gone.isEmpty, added.isEmpty) {
@@ -74,9 +75,33 @@ enum TextCompare {
         return changes
     }
 
-    /// The sentence a word starts, counting sentence-ending punctuation before it.
-    private static func sentenceNumber(of index: Int, in words: [String]) -> Int {
-        1 + words.prefix(index).filter { word in [".", "!", "?"].contains { word.hasSuffix($0) } }.count
+    /// For each word of a text (as split at spaces), the number of the sentence it's in,
+    /// from 1. Sentences are found the way the text checker finds them. Counting full
+    /// stops instead, "Dr. Lee" and "e.g." each began a new sentence, so every change after
+    /// one was reported a sentence or two too far on.
+    static func sentenceNumbers(ofWordsIn text: String) -> [Int] {
+        let tokenizer = NLTokenizer(unit: .sentence)
+        tokenizer.string = text
+        let starts = tokenizer.tokens(for: text.startIndex..<text.endIndex).map(\.lowerBound)
+        var numbers: [Int] = []
+        var sentence = 0
+        // Only sentences with words in them are counted: a blank line is none.
+        var counted = 0, lastCounted = -1
+        var index = text.startIndex
+        while index < text.endIndex {
+            if text[index].isWhitespace {
+                index = text.index(after: index)
+                continue
+            }
+            while sentence + 1 < starts.count, index >= starts[sentence + 1] { sentence += 1 }
+            if sentence != lastCounted {
+                counted += 1
+                lastCounted = sentence
+            }
+            numbers.append(counted)
+            while index < text.endIndex, !text[index].isWhitespace { index = text.index(after: index) }
+        }
+        return numbers
     }
 
     static func summary(_ changes: [TextChange]) -> String {
@@ -133,8 +158,8 @@ final class CompareModel: ObservableObject {
     }
 
     private func clipboardText() -> String? {
-        guard let text = NSPasteboard.general.string(forType: .string), !text.isEmpty else {
-            report(String(localized: "Copy some text first."))
+        guard let text = Clipboard.textForTool() else {
+            report(Clipboard.holdsSecret ? Clipboard.secretNotice : String(localized: "Copy some text first."))
             return nil
         }
         return text
@@ -198,7 +223,9 @@ extension TextAnalyzer {
         ]
         let tokenizer = NLTokenizer(unit: .sentence)
         tokenizer.string = text
-        for (index, range) in tokenizer.tokens(for: text.startIndex..<text.endIndex).enumerated() {
+        // (A blank line comes back as a sentence of its own; it isn't counted as one.)
+        let sentences = tokenizer.tokens(for: text.startIndex..<text.endIndex).filter { text[$0].contains { !$0.isWhitespace } }
+        for (index, range) in sentences.enumerated() {
             let sentence = String(text[range])
             for (pattern, problem) in checks where sentence.range(of: pattern, options: .regularExpression) != nil {
                 issues.append(TextIssue(problem: problem, sentence: sentence.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -219,8 +246,8 @@ final class TextCheckerModel: ObservableObject {
     @Published private(set) var summary = ""
 
     func checkClipboard() {
-        guard let text = NSPasteboard.general.string(forType: .string), !text.isEmpty else {
-            summary = String(localized: "Copy some text first, then check it.")
+        guard let text = Clipboard.textForTool() else {
+            summary = Clipboard.holdsSecret ? Clipboard.secretNotice : String(localized: "Copy some text first, then check it.")
             return Announcer.say(summary)
         }
         issues = TextAnalyzer.issues(in: text)

@@ -4,7 +4,9 @@
 // the speech device, or a preset chosen by hand), a small window asks whether to keep
 // it. Return keeps it; Escape, or doing nothing for 60 seconds, puts everything back the
 // way it was. Going back doesn't depend on hearing anything, so a change that took your
-// sound away undoes itself. Everyday keys (speech louder, speech left) and presets that
+// sound away undoes itself. Asked while you're in another app (the change was made with a
+// key or by voice), the window doesn't take the keyboard: the shortcut modifier with Return
+// or Escape answers it from wherever you are. Everyday keys (speech louder, speech left) and presets that
 // switch automatically with the app in front don't ask.
 
 import AppKit
@@ -83,6 +85,7 @@ final class SoundSafety: ObservableObject {
         timer = nil
         restores = []
         changes = []
+        Hotkeys.answer = nil
         if let closeObserver { NotificationCenter.default.removeObserver(closeObserver) }
         closeObserver = nil
         let panel = panel
@@ -96,7 +99,14 @@ final class SoundSafety: ObservableObject {
         if panel == nil { show() }
         let list = ListFormatter.localizedString(byJoining: changes)
         Tones.play(.status)
-        Announcer.say(String(localized: "You changed \(list). Keep this sound setting? Press Return to keep it, or Escape to go back. If you do nothing, it goes back in \(Self.seconds) seconds."))
+        Hotkeys.answer = { [weak self] keep in keep ? self?.keep() : self?.undo() }
+        if panel?.isKeyWindow == true {
+            Announcer.say(String(localized: "You changed \(list). Keep this sound setting? Press Return to keep it, or Escape to go back. If you do nothing, it goes back in \(Self.seconds) seconds."))
+        } else {
+            // The keyboard is still in the app being used: the answer goes through the shortcut key.
+            let key = Preferences.shared.modifier.title
+            Announcer.say(String(localized: "You changed \(list). Keep this sound setting? Press \(key) Return to keep it, or \(key) Escape to go back. If you do nothing, it goes back in \(Self.seconds) seconds."))
+        }
         timer?.invalidate()
         // In every run loop mode: while a dialog or the app's menu was open the countdown
         // stood still, and a change that took the sound away didn't undo itself.
@@ -107,20 +117,31 @@ final class SoundSafety: ObservableObject {
 
     private func tick() {
         secondsLeft -= 1
-        if secondsLeft == 15 { Announcer.say(String(localized: "Going back in 15 seconds, unless you press Return to keep it.")) }
+        if secondsLeft == 15 {
+            Announcer.say(panel?.isKeyWindow == true
+                ? String(localized: "Going back in 15 seconds, unless you press Return to keep it.")
+                : String(localized: "Going back in 15 seconds, unless you press \(Preferences.shared.modifier.title) Return to keep it."))
+        }
         if secondsLeft <= 0 { undo() }
     }
 
     private func show() {
         let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 440, height: 190),
-                            styleMask: [.titled, .closable], backing: .buffered, defer: false)
+                            styleMask: [.titled, .closable, .nonactivatingPanel], backing: .buffered, defer: false)
         panel.title = String(localized: "Keep This Sound Setting?")
         panel.level = .floating
         panel.isReleasedWhenClosed = false
         panel.contentView = NSHostingView(rootView: SoundSafetyView())
         panel.center()
-        NSApp.activate()
-        panel.makeKeyAndOrderFront(nil)
+        // Made from this app's own windows or menu, the question takes the keyboard as any
+        // dialog would. Made with a key or by voice from another app, it only shows itself:
+        // taking the keyboard there sent whatever was being typed, Return included, to this
+        // window, which could keep or undo the change by accident.
+        if NSApp.isActive {
+            panel.makeKeyAndOrderFront(nil)
+        } else {
+            panel.orderFrontRegardless()
+        }
         self.panel = panel
         // Closing the window counts as going back, the safe choice. (finish() closes it
         // itself after removing this observer, so keep and undo don't come back here.)

@@ -250,13 +250,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let preferences = Preferences.shared
             preferences.confirmSoundChanges = true
             let before = preferences.oneEar
-            preferences.oneEar = before == .left ? .right : .left
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            // With --in-background, as when the change is made with a key from another app:
+            // this app steps back first, and the question mustn't take the keyboard.
+            let wait = CommandLine.arguments.contains("--in-background") ? 2.0 : 0
+            if wait > 0 { NSApp.deactivate() }
+            DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
+                log("Check: app active before the change = \(NSApp.isActive)")
+                preferences.oneEar = before == .left ? .right : .left
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + wait + 2.5) {
                 let window = NSApp.windows.contains { $0.title == String(localized: "Keep This Sound Setting?") && $0.isVisible }
                 let key = NSApp.keyWindow?.title == String(localized: "Keep This Sound Setting?")
-                log("Check: sound safety asking = \(SoundSafety.shared.isWaiting), window shown = \(window), app active = \(NSApp.isActive), window has the keyboard = \(key), shortcut answers = \(Hotkeys.answer != nil)")
+                let front = NSWorkspace.shared.frontmostApplication?.localizedName ?? "none"
+                log("Check: sound safety asking = \(SoundSafety.shared.isWaiting), window shown = \(window), app active = \(NSApp.isActive), window has the keyboard = \(key), shortcut answers = \(Hotkeys.answer != nil), app in front = \(front == "VoiceOver Audio Split" ? "this one" : "another")")
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + wait + 9) {
                 log("Check: sound safety went back = \(preferences.oneEar == before), still waiting = \(SoundSafety.shared.isWaiting)")
                 NSApp.terminate(nil)
             }

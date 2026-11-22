@@ -127,7 +127,7 @@ final class SoundSafety: ObservableObject {
 
     private func show() {
         let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 440, height: 190),
-                            styleMask: [.titled, .closable, .nonactivatingPanel], backing: .buffered, defer: false)
+                            styleMask: [.titled, .closable], backing: .buffered, defer: false)
         panel.title = String(localized: "Keep This Sound Setting?")
         panel.level = .floating
         panel.isReleasedWhenClosed = false
@@ -142,6 +142,7 @@ final class SoundSafety: ObservableObject {
         } else {
             panel.orderFrontRegardless()
         }
+        log("Sound safety: asking \(NSApp.isActive ? "with" : "without") the keyboard.")
         self.panel = panel
         // Closing the window counts as going back, the safe choice. (finish() closes it
         // itself after removing this observer, so keep and undo don't come back here.)

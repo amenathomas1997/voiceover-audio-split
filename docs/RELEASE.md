@@ -196,7 +196,17 @@ An external group can have up to 10,000 testers. Internal testing is only for pe
 
 ## 10. App Store release
 
-When the beta is stable, go to App Store Connect > the app > the version (its number must match the build's, for example 1.2), then:
+Version 1.2 (build 202611221820) was submitted for App Review on 23 November 2026. What was entered, so the next version can match it:
+
+- **App Information:** the subtitle, categories and custom license agreement from section 2. Content rights: yes, the app accesses third-party content (radio, podcasts, audiobooks, news, Wikipedia) and has the necessary rights. Age rating: "no" or "none" to every question, which gives 4+.
+- **Pricing and Availability:** free. Every country and region except China mainland, which needs a security assessment and an AI services filing first (App Compliance lists both).
+- **App Privacy:** the privacy policy URL from section 2, and Data Not Collected, published.
+- **Version page:** five screenshots at 2880 by 1800, made with the app's `--screenshots` self-check (Debug build) and a caption added above each; the short review notes from section 6; under App Sandbox Information, the entitlement `com.apple.security.temporary-exception.apple-events` with the reason for VoiceOver, Safari and Chrome; release automatically once approved.
+- Keywords must not name other products (such as other screen readers): Apple's rules don't allow it.
+
+The steps, for a later version:
+
+Go to App Store Connect > the app > the version (its number must match the build's, for example 1.2), then:
 1. Add screenshots (16:10, for example 2880 by 1800). For a menu bar app, use screenshots of the Settings, Doc Reader and Audio Hub windows.
 2. Add the promotional text, description, keywords, support URL and copyright from section 2, and the review notes from section 6, with your contact name, phone and email for the reviewer.
 3. Under App Information: the subtitle, the categories, the privacy policy URL, the license agreement and the age rating questions (no restricted content; the app has no web browser, no user-generated content and no purchases).

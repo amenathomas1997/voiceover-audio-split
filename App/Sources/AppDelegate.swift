@@ -91,6 +91,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        // Starts a made-as-it-plays tone that is silent (the light detector, audio mouse,
+        // object finder and listening test all play through the same player): logs whether
+        // the sound engine started, how long that took, and that sound was being made.
+        if CommandLine.arguments.contains("--check-tone") {
+            let tone = LiveTone("check")
+            let began = Date()
+            nonisolated(unsafe) var frames = 0
+            tone.start(channels: 2, render: { _, _, count, buffers in
+                frames += Int(count)
+                for buffer in UnsafeMutableAudioBufferListPointer(buffers) {
+                    if let data = buffer.mData { memset(data, 0, Int(buffer.mDataByteSize)) }
+                }
+                return noErr
+            }, done: { playing in
+                log("Check: tone playing = \(playing), after \(Int(Date().timeIntervalSince(began) * 1000)) ms")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    log("Check: tone frames made in two seconds = \(frames)")
+                    tone.stop()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { NSApp.terminate(nil) }
+                }
+            })
+            log("Check: tone start returned after \(Int(Date().timeIntervalSince(began) * 1000)) ms")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 40) {
+                log("Check: tone still not started after 40 seconds")
+                NSApp.terminate(nil)
+            }
+            return
+        }
         // Builds the split for a few seconds with everything turned down to nothing: logs
         // that starting didn't hold up the main thread, that sound passed through, and that
         // stopping put things back. Run with: open -g -n <app> --args --check-split

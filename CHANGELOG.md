@@ -2,6 +2,10 @@
 
 ## Next
 
+## 1.2, build 202611212125, 22 November 2026
+
+**New in this build of 1.2:** Screen OCR, for reading and clicking text in apps built without accessibility. Fixed: the app ending on its own a day after starting at login, and sound setup freezing the keyboard shortcuts while a wireless headset is asleep. The app now says so when the menu bar has no room for its icon. Plus the fixes from three code audits, listed below.
+
 - **Fixed, the rest of the third audit's list** (what was noted then and left for later):
   - **The split can no longer freeze the keyboard shortcuts.** Building the split's audio can block for most of a minute while the output device is asleep (measured: a wireless headset with the Mac locked), and it was built on the main thread, which also carries the shortcuts. It is now built, rebuilt and taken apart on its own thread, one job at a time; quitting waits a moment for sound to return to normal and no longer. The same goes for the tones made as they play (light detector, audio mouse, object finder, listening test), the microphone check, the voice command microphone and call captions. The microphone check's tone now sounds once the microphone is really listening.
   - **Stereo goes where the device plays it.** The ears were always sent to an output's first two channels. An audio interface set to another pair in Audio MIDI Setup (outputs 3 and 4, say) now gets the split on that pair, for the main output and the speech device.

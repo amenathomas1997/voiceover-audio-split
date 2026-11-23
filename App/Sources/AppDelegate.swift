@@ -91,6 +91,51 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
         #if DEBUG
         if CommandLine.arguments.contains("--check-online") { return checkOnline() }
+        // Draws some of the app's own windows to picture files, for the App Store page.
+        // Each window draws itself, so nothing else on the screen is captured.
+        // Run with: open -n <app> --args --screenshots
+        if CommandLine.arguments.contains("--screenshots") {
+            Task { @MainActor in
+                // Beside the screen recordings, in Movies: a folder the app may write to and other tools may read.
+                let folder = ScreenRecorder.folder.appendingPathComponent("App Store Screenshots", isDirectory: true)
+                try? FileManager.default.removeItem(at: folder)
+                try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+                DocReaderModel.shared.load("""
+                Welcome to Doc Reader
+
+                Doc Reader shows any document in large print, in the colors you find easiest to read, and highlights each word as it is spoken.
+
+                Open a text, Word or PDF file, a web page you saved, or whatever is on the clipboard. Space starts and stops reading. The arrow keys move by paragraph.
+                """)
+                let shots: [(String, () -> NSWindow?)] = [
+                    ("settings", { self.showSettings(); return self.settingsWindow }),
+                    ("doc-reader", { self.showDocReader(); return self.docReaderWindow }),
+                    ("audio-hub", { self.showAudioHub(); return self.audioHubWindow }),
+                    ("palette", { self.showPalette(); return self.paletteWindow }),
+                    ("commands", { self.showVoiceOverCommands(); return self.commandsWindow }),
+                    ("hearing", { self.showHearingProfile(); return self.hearingWindow }),
+                ]
+                for (name, open) in shots {
+                    guard let window = open() else {
+                        log("Check: screenshot \(name): no window")
+                        continue
+                    }
+                    window.appearance = NSAppearance(named: .aqua)
+                    // Wide enough for the Doc Reader's buttons to show their names in full.
+                    if window.styleMask.contains(.resizable) { window.setContentSize(NSSize(width: 1100, height: 640)) }
+                    try? await Task.sleep(for: .seconds(2))
+                    guard let frame = window.contentView?.superview ?? window.contentView,
+                          let image = frame.bitmapImageRepForCachingDisplay(in: frame.bounds) else { continue }
+                    frame.cacheDisplay(in: frame.bounds, to: image)
+                    try? image.representation(using: .png, properties: [:])?.write(to: folder.appendingPathComponent("\(name).png"))
+                    log("Check: screenshot \(name) = \(image.pixelsWide) by \(image.pixelsHigh)")
+                    window.close()
+                }
+                log("Check: screenshots in \(folder.path)")
+                NSApp.terminate(nil)
+            }
+            return
+        }
         // Starts a made-as-it-plays tone that is silent (the light detector, audio mouse,
         // object finder and listening test all play through the same player): logs whether
         // the sound engine started, how long that took, and that sound was being made.

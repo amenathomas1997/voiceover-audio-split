@@ -40,18 +40,26 @@ Text to paste into App Store Connect, and the steps for the TestFlight beta (by 
 >
 > HEARING AND CLARITY
 > • A speech clarity boost, a leveler for loud media, a volume limit, one-ear mode and ear balance.
+> • A hearing profile, from an audiogram or a two-minute listening test, boosts the frequencies you hear less well in each ear.
+>
+> CALLS AND MEETINGS
+> • In Zoom, Teams and FaceTime: hear whether you're muted, mute, switch the camera, raise your hand, read the chat and leave, without leaving where you are.
+> • Call captions show what the other people say in large print, recognized on your Mac.
 >
 > SPEECH AND READING
 > • Speech history, captions of what VoiceOver says, and system status on demand.
 > • Doc Reader: large-print reading with the spoken word highlighted, in high-contrast colors.
 > • Scan and Read: read printed text with the camera.
+> • Screen OCR: read and click text in apps built without accessibility, in shared screens and in videos.
 > • An audio hub for radio, podcasts, audiobooks and news.
 >
 > EVERYDAY TOOLS
-> • Read barcodes, QR codes and medicine labels with the camera.
+> • Read barcodes, QR codes and medicine labels with the camera, and find an object or a word on a sign.
 > • Identify colors, and detect light.
-> • Check Word documents and PDFs for accessibility problems.
+> • Timers and reminders, a clipboard history, a window switcher and a resource monitor.
+> • Check Word documents and PDFs for accessibility problems, and make accessible PDFs from scans.
 > • Save text as a braille file (.brf) for embossers and notetakers.
+> • Record the screen with the Mac's sound and VoiceOver.
 > • Hear when an app turns on the camera or microphone, when downloads finish and when devices connect.
 >
 > WORKING WITH APPS
@@ -68,7 +76,7 @@ Text to paste into App Store Connect, and the steps for the TestFlight beta (by 
 > • Say "Audio Split" and a command, such as "quiet everything" or "what time is it?". Speech is recognized on your Mac.
 >
 > OPTIONAL AI
-> • Describe images and videos, ask questions about what's on screen, identify money, or ask for a control by name, using Claude with your own Anthropic API key. Everything else works without it.
+> • Describe images and videos, ask questions about what's on screen, identify money, or ask for a control by name, with Apple Intelligence on your Mac, or with Claude and your own Anthropic API key. Everything else works without it.
 >
 > BUILT FOR THE KEYBOARD
 > • Every command is Right Option and a key, and you can change any key. A command palette finds every command by typing, and a setup guide walks you through each permission.
@@ -102,7 +110,30 @@ Answer **Data Not Collected**. The app has no accounts, analytics or tracking, a
 
 ## 6. Beta App Review and App Review: notes
 
-Paste this into **Review Notes**. Reviewers often ask about these permissions:
+The **Review Notes** box holds 4,000 characters. Paste the short version into it, and attach the full version below it as a text file (App Review Information > Attachment). Reviewers often ask about these permissions.
+
+### Short version, for the Review Notes box
+
+> VoiceOver Audio Split is an accessibility tool for blind and low-vision people who use the VoiceOver screen reader. It runs in the menu bar: open its menu with Right Option + M. A setup guide opens on first launch. There is no account or sign-in, and nothing to buy.
+>
+> To test: open the menu (Right Option + M), choose Speech Left, and play any audio. With VoiceOver on (Command + F5), VoiceOver's voice moves to the left ear and other audio to the right. Also try menu > Learning > VoiceOver Lessons, and the command palette (Right Option + Return, type "battery", press Return). AI features that use the user's own Anthropic API key can be skipped; everything else works without one.
+>
+> Why each permission is needed:
+> - Accessibility: global shortcuts with the right Option key (only the app's own shortcuts are acted on; other keys pass through and are never stored); speaking the user's own labels for unlabeled controls; and, only on the user's command, pressing a meeting app's mute, camera or leave button, a control the user asked for by name, or the text chosen in Screen OCR.
+> - System audio recording (Core Audio process taps): VoiceOver's speech and other apps' sound are captured separately and played straight back into different ears; call captions recognize call audio on the Mac. Nothing is recorded or stored.
+> - Apple Events to VoiceOver (temporary exception for com.apple.VoiceOver): VoiceOver ignores announcements from background apps, so the app asks VoiceOver to speak its status messages in the user's own voice, and reads VoiceOver's last phrase and cursor position for speech history, captions and the focus frame, with VoiceOver's documented AppleScript commands.
+> - Apple Events to Safari and Chrome (temporary exception): only if the user sets presets for websites; the app asks for the current tab's address to switch the audio preset. Addresses are not stored or sent.
+> - Screen recording: only when the user asks to describe an image, read the front window's text (recognized on the Mac), use Screen OCR, or record the screen (saved in the user's Movies folder; the microphone is left out unless the user turns it on).
+> - Microphone and Speech Recognition: a five-second microphone check; optional voice commands (off by default, recognized on the Mac only); the user's voice in a screen recording if turned on. Audio is never stored or sent.
+> - Camera: reading text, barcodes, colors, light and finding objects, all on the Mac. Pictures are never saved; one picture goes to Anthropic only for the optional money identifier, with the user's own key and consent.
+> - Downloads folder (read-only): announcing finished downloads. Movies folder: saving the user's own screen recordings. User-selected files: opening documents and saving text where the user chooses.
+> - Network: optional lookups (Wikipedia, weather, Open Food Facts), internet radio, podcasts, audiobooks and news, and optional AI requests with the user's own Anthropic API key. With Apple Intelligence, the AI features run on the Mac.
+> - Notifications: timers and reminders the user sets.
+> - This build doesn't download or install code; updates come only through the App Store.
+>
+> The attached file explains each item in more detail.
+
+### Full version, to attach as a file
 
 > VoiceOver Audio Split is an accessibility tool for blind and low-vision people who use the VoiceOver screen reader. It runs as a menu bar app. Open its menu with Right Option + M; a setup guide opens on first launch.
 >
@@ -110,7 +141,10 @@ Paste this into **Review Notes**. Reviewers often ask about these permissions:
 > - Accessibility: global keyboard shortcuts with the right Option key, so users can control the app from anywhere without a mouse. Only the app's own shortcut keys are acted on; all other keystrokes pass through untouched and are never stored. The accessibility interface is also used, like VoiceOver uses it, to speak the user's own names for unlabeled controls (custom labels), to return to saved spots on web pages (place markers), and for "Do It for Me", which moves the VoiceOver cursor to a control the user asks for and only presses it after the user confirms. During VoiceOver Lessons, VoiceOver practice and the typing trainer, which the user starts, key presses are caught only while that window is in front, so the user can practice them; nothing typed is stored.
 > - System audio recording (Core Audio process taps): VoiceOver's speech and other apps' sound are captured separately and played back immediately into different ears. Nothing is recorded or stored.
 > - Apple Events to VoiceOver (com.apple.security.temporary-exception.apple-events for com.apple.VoiceOver): VoiceOver ignores accessibility announcements from background apps, so the app asks VoiceOver to speak its status messages ("Speech left, other sounds right") in the user's own VoiceOver voice. It also reads VoiceOver's last phrase and cursor position for speech history, captions and the focus frame. These are VoiceOver's own documented AppleScript commands. No other app is controlled.
-> - Screen recording: only when the user asks to describe the image under the VoiceOver cursor, read the text in the front window (on-device text recognition, for shared screens in meetings and apps without accessibility), or describe a video frame.
+> - Screen recording: only when the user asks to describe the image under the VoiceOver cursor, read the text in the front window (on-device text recognition, for shared screens in meetings and apps without accessibility), describe a video frame, or record the screen. Screen OCR, which the user starts, takes one picture of the front window or the screen and recognizes its text on the Mac; the arrow keys then move through the lines and Return clicks the text in the app (a click made with the Accessibility permission, after checking that the window is still there and nothing covers it). The keys are held only while that mode is on, and it ends by itself after a click, after two minutes without a key, and on sleep or lock. Record the Screen, which the user starts and stops with one command, saves a movie in the user's Movies folder; the microphone is left out unless the user turns it on in Settings, and each recording says as it starts whether it is included.
+> - Calls and meetings: when the user asks ("Am I muted?", "Mute", "Leave the meeting"), the accessibility interface is used to read and press the meeting app's own buttons in Zoom, Teams or FaceTime; leaving always asks first. Call captions, which the user turns on, listen to the call apps' sound with a Core Audio process tap and recognize speech on the Mac (SFSpeechRecognizer, on-device only); nothing is recorded, stored or sent.
+> - Notifications: timers and reminders the user sets are spoken, and also posted as notifications.
+> - Clipboard: "say what you copy" and the clipboard history (the last 20 items, in memory only) are off until the user turns them on, and skip what password managers mark as concealed.
 > - Apple Events to Safari and Chrome (temporary exception): only if the user sets presets for websites; the app asks the browser for the current tab's address to switch the user's audio preset. Addresses are not stored or sent.
 > - Microphone: a five-second microphone check before calls that reports the voice and background noise levels. Nothing is recorded.
 > - Speech Recognition and Microphone (optional, off by default): if the user turns on voice commands in Settings, the app listens for the wake word "Audio Split" followed by a command (such as "quiet everything" or "turn on VoiceOver"), and for "Launch VoiceOver training" to open its lessons, using SFSpeechRecognizer with requiresOnDeviceRecognition, through the built-in microphone. Audio is never recorded, stored or sent. The one exception is the user's own request "Audio Split, find…", which goes to Do It for Me (below) as text, with the user's API key. Commands that change something important ask for a spoken yes first.
@@ -162,7 +196,10 @@ An external group can have up to 10,000 testers. Internal testing is only for pe
 
 ## 10. App Store release
 
-When the beta is stable, go to App Store Connect > the app > the version, then:
-1. Add screenshots. For a menu bar app, use screenshots of the Settings, Doc Reader and Audio Hub windows.
-2. Add the description and the review notes above.
-3. Choose the build, and submit for review.
+When the beta is stable, go to App Store Connect > the app > the version (its number must match the build's, for example 1.2), then:
+1. Add screenshots (16:10, for example 2880 by 1800). For a menu bar app, use screenshots of the Settings, Doc Reader and Audio Hub windows.
+2. Add the promotional text, description, keywords, support URL and copyright from section 2, and the review notes from section 6, with your contact name, phone and email for the reviewer.
+3. Under App Information: the subtitle, the categories, the privacy policy URL, the license agreement and the age rating questions (no restricted content; the app has no web browser, no user-generated content and no purchases).
+4. Under App Privacy: Data Not Collected (section 3).
+5. Under Pricing and Availability: Free, in every country or region.
+6. Choose the build, choose whether to release it yourself or automatically once approved, and submit for review.

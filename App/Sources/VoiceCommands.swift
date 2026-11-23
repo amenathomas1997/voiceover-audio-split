@@ -414,6 +414,35 @@ enum VoiceCommands {
                                          String(localized: "ocr the whole screen", comment: "Voice command phrases, separated by |"))) {
                 MainActor.assumeIsolated { ScreenOCR.shared.capture(wholeScreen: true, thenNavigate: true) }
             },
+            VoiceAction(name: String(localized: "Watch this window"),
+                        phrases: phrases("watch this window|watch the window|watch the front window|stop watching|stop watching the window",
+                                         String(localized: "watch this window|stop watching", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { ScreenWatch.shared.toggle() }
+            },
+            VoiceAction(name: String(localized: "What's next?"),
+                        phrases: phrases("what's next|whats next|what is next|next meeting|my next meeting|what's on my calendar|next event",
+                                         String(localized: "what's next|next meeting", comment: "Voice command phrases, separated by |"))) {
+                MainActor.assumeIsolated { Agenda.whatsNext() }
+            },
+            VoiceAction(name: String(localized: "Join my meeting"),
+                        phrases: phrases("join my meeting|join the meeting|open the meeting link|open my meeting",
+                                         String(localized: "join my meeting|join the meeting", comment: "Voice command phrases, separated by |")),
+                        guarded: true) {
+                MainActor.assumeIsolated { Agenda.join() }
+            },
+            VoiceAction(name: String(localized: "Progress bar tones"),
+                        phrases: phrases("progress bar tones|progress tones|progress beeps", String(localized: "progress bar tones", comment: "Voice command phrases, separated by |"))) {
+                controller.toggleProgressTones()
+            },
+            VoiceAction(name: String(localized: "Indentation tones"),
+                        phrases: phrases("indentation tones|indent tones", String(localized: "indentation tones", comment: "Voice command phrases, separated by |"))) {
+                controller.toggleIndentTones()
+            },
+            VoiceAction(name: String(localized: "How far is this indented?"),
+                        phrases: phrases("how far is this indented|say the indentation|say indentation|indentation",
+                                         String(localized: "say the indentation|indentation", comment: "Voice command phrases, separated by |"))) {
+                IndentTones.sayCurrent()
+            },
             VoiceAction(name: String(localized: "Resource monitor"),
                         phrases: phrases("resource monitor|resources|system resources|how busy is my mac|how busy is the mac",
                                          String(localized: "resource monitor|resources", comment: "Voice command phrases, separated by |"))) {

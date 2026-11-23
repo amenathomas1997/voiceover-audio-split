@@ -86,6 +86,36 @@
         }
       }
     },
+    "NSCalendarsFullAccessUsageDescription" : {
+      "comment" : "Privacy - Calendars Full Access Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split liest deinen Kalender nur, wenn du fragst, was als Nächstes kommt, um deinen nächsten Termin anzusagen und dessen Meeting-Link zu öffnen. Nichts wird gespeichert oder gesendet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VoiceOver Audio Split reads your calendar only when you ask what's next, to say your next event and open its meeting link. Nothing is stored or sent."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split lee tu calendario solo cuando preguntas qué sigue, para decir tu próximo evento y abrir el enlace de su reunión. No se guarda ni se envía nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceOver Audio Split lit votre calendrier uniquement quand vous demandez la suite, pour annoncer votre prochain événement et ouvrir le lien de sa réunion. Rien n'est conservé ni envoyé."
+          }
+        }
+      }
+    },
     "NSCameraUsageDescription" : {
       "comment" : "Privacy - Camera Usage Description",
       "extractionState" : "extracted_with_value",

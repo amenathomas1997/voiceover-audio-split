@@ -41,6 +41,8 @@
 	<true/>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>VoiceOver Audio Split recognizes voice commands, such as “Audio Split, quiet everything” or “Launch VoiceOver training”, on your Mac, only if you turn them on in Settings. What you say is never recorded or saved. Only if you ask it to find a control is that request sent to Anthropic, through Do It for Me.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>VoiceOver Audio Split reads your calendar only when you ask what's next, to say your next event and open its meeting link. Nothing is stored or sent.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>VoiceOver Audio Split uses the camera to read text, labels and codes you hold up, identify colors and light, and check your framing before a video call. Pictures are analyzed on this Mac and never saved; only the money identifier sends a picture, and only when you ask.</string>
 	<key>NSAudioCaptureUsageDescription</key>

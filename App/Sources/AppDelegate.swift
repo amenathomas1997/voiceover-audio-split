@@ -4,6 +4,7 @@
 
 import AppKit
 import CoreAudio
+import os
 import Speech
 import SwiftUI
 import UserNotifications
@@ -132,6 +133,87 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     window.close()
                 }
                 log("Check: screenshots in \(folder.path)")
+                NSApp.terminate(nil)
+            }
+            return
+        }
+        // Progress bar tones and indentation tones, tried on a window of this app's own: a
+        // progress bar that fills and a text view whose cursor moves down indented lines.
+        // Logs what was heard through the accessibility interface. No tones are played.
+        if CommandLine.arguments.contains("--check-awareness") {
+            let window = NSWindow(contentRect: NSRect(x: 200, y: 200, width: 420, height: 260),
+                                  styleMask: [.titled], backing: .buffered, defer: false)
+            window.title = "Awareness check"
+            let bar = NSProgressIndicator(frame: NSRect(x: 20, y: 220, width: 380, height: 20))
+            bar.isIndeterminate = false
+            bar.minValue = 0
+            bar.maxValue = 100
+            let scroll = NSTextView.scrollableTextView()
+            scroll.frame = NSRect(x: 20, y: 20, width: 380, height: 180)
+            let text = scroll.documentView as! NSTextView
+            let lines = ["func a() {", "    let x = 1", "        if x > 0 {", "\t\t\treturn", "", "    }", "}"]
+            text.string = lines.joined(separator: "\n")
+            window.contentView?.addSubview(bar)
+            window.contentView?.addSubview(scroll)
+            window.makeKeyAndOrderFront(nil)
+            window.makeFirstResponder(text)
+            let heard = OSAllocatedUnfairLock(initialState: [String]())
+            FrontAppEvents.onCheck = { event in heard.withLock { $0.append(event) } }
+            FrontAppEvents.checkPID = getpid()
+            let saved = (preferences.progressTones, preferences.indentTones)
+            preferences.progressTones = true
+            preferences.indentTones = true
+            FrontAppEvents.update()
+            // Listening is set up; with the settings off again, nothing is played.
+            preferences.progressTones = false
+            preferences.indentTones = false
+            log("Check: awareness listening, accessibility allowed = \(Hotkeys.isTrusted)")
+            for step in 1...10 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5 + Double(step) * 0.2) { bar.doubleValue = Double(step * 10) }
+            }
+            var offset = 0
+            for (index, line) in lines.enumerated() {
+                let location = offset
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3 + Double(index) * 0.3) {
+                    text.setSelectedRange(NSRange(location: location, length: 0))
+                }
+                offset += (line as NSString).length + 1
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 6.5) { [preferences] in
+                let events = heard.withLock { $0 }
+                log("Check: awareness heard \(events.count) events: \(events.joined(separator: "; "))")
+                (preferences.progressTones, preferences.indentTones) = saved
+                NSApp.terminate(nil)
+            }
+            return
+        }
+        // Watching a window, tried quietly on whatever window is in front: takes its picture,
+        // then the same window again by its ID, and logs line counts and timings. No text
+        // is logged and nothing is said.
+        if CommandLine.arguments.contains("--check-screen-watch") {
+            Task { @MainActor in
+                do {
+                    let began = Date()
+                    let first = try await ScreenPicture.frontWindowCapture()
+                    let pictured = Date()
+                    let before = await Task.detached { ScreenOCRLayout.recognize(first.image).map(\.text) }.value
+                    log("Check: screen watch first look: \(before.count) lines, window ID known = \(first.windowID != nil), picture \(Int(pictured.timeIntervalSince(began) * 1000)) ms, reading \(Int(Date().timeIntervalSince(pictured) * 1000)) ms")
+                    try await Task.sleep(for: .seconds(2))
+                    let again = Date()
+                    let second = try await first.windowID.asyncMap { try await ScreenPicture.windowCapture($0) } ?? nil
+                    let after = await Task.detached { second.map { ScreenOCRLayout.recognize($0.image).map(\.text) } ?? [] }.value
+                    log("Check: screen watch second look by ID: found = \(second != nil), \(after.count) lines, \(ScreenWatchLogic.newLines(before: before, now: after).count) new, \(Int(Date().timeIntervalSince(again) * 1000)) ms")
+                    // Straight away again: an unchanged window should give no new lines.
+                    let third = try await first.windowID.asyncMap { try await ScreenPicture.windowCapture($0) } ?? nil
+                    let last = await Task.detached { third.map { ScreenOCRLayout.recognize($0.image).map(\.text) } ?? [] }.value
+                    log("Check: screen watch third look, at once: \(last.count) lines, \(ScreenWatchLogic.newLines(before: after, now: last).count) new")
+                    let gone = try await ScreenPicture.windowCapture(4_000_000_000)
+                    log("Check: screen watch, a window that isn't there: found = \(gone != nil)")
+                } catch let failure as ScreenPicture.Failure {
+                    log("Check: screen watch failed: \(failure.message)")
+                } catch {
+                    log("Check: screen watch failed: \(error)")
+                }
                 NSApp.terminate(nil)
             }
             return
@@ -978,6 +1060,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             MainActor.assumeIsolated { ScreenOCR.shared.capture(wholeScreen: true, thenNavigate: true) }
         }
         add(to: tools, String(localized: "Screen OCR Window…")) { [weak self] _ in self?.showScreenOCR() }
+        add(to: tools, String(localized: "Watch the Front Window for Changes"), command: .watchWindow,
+            checked: MainActor.assumeIsolated { ScreenWatch.shared.isWatching }) { $0.run(.watchWindow) }
+        tools.addItem(.separator())
+        add(to: tools, String(localized: "What's Next on My Calendar"), command: .whatsNext) { $0.run(.whatsNext) }
+        add(to: tools, String(localized: "Open My Meeting's Link")) { _ in MainActor.assumeIsolated { Agenda.join() } }
+        tools.addItem(.separator())
+        add(to: tools, String(localized: "Progress Bar Tones"), command: .progressTones, checked: preferences.progressTones) { $0.run(.progressTones) }
+        add(to: tools, String(localized: "Indentation Tones"), command: .indentTones, checked: preferences.indentTones) { $0.run(.indentTones) }
+        add(to: tools, String(localized: "Say This Line's Indentation"), command: .sayIndentation) { $0.run(.sayIndentation) }
 
         if !preferences.userCommands.isEmpty {
             let yours = submenu(in: menu, String(localized: "Your Commands"))
@@ -1059,3 +1150,13 @@ final class ClosureMenuItem: NSMenuItem {
 
     @objc private func run() { handler() }
 }
+
+#if DEBUG
+private extension Optional {
+    /// `map` for a closure that waits.
+    func asyncMap<T>(_ transform: (Wrapped) async throws -> T) async rethrows -> T? {
+        guard let self else { return nil }
+        return try await transform(self)
+    }
+}
+#endif

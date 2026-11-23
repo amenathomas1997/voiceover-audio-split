@@ -124,6 +124,7 @@ final class Controller {
         VoiceCommand.shared.update(enabled: preferences.voiceCommand)
         BeepMode.update(active: speechSilenced && preferences.beepsWhenSilenced)
         ClipboardWatcher.update(enabled: preferences.announceClipboard)
+        FrontAppEvents.update()
         updateSiteWatching()
 
         if !engineNeeded {
@@ -280,6 +281,11 @@ final class Controller {
         case .systemStatus: announceSystemStatus()
         case .resourceMonitor: MainActor.assumeIsolated { ResourceMonitor.announce() }
         case .screenOCR: MainActor.assumeIsolated { ScreenOCR.shared.capture(thenNavigate: true) }
+        case .watchWindow: MainActor.assumeIsolated { ScreenWatch.shared.toggle() }
+        case .whatsNext: MainActor.assumeIsolated { Agenda.whatsNext() }
+        case .progressTones: toggleProgressTones()
+        case .indentTones: toggleIndentTones()
+        case .sayIndentation: IndentTones.sayCurrent()
         case .docReader: app?.showDocReader()
         case .scanAndRead: app?.showScan()
         case .captions: toggleCaptions()
@@ -406,6 +412,32 @@ final class Controller {
                       : String(localized: "Automatic image descriptions off."))
     }
 
+    /// Both tones listen to the app in front through the accessibility interface, which
+    /// needs the same permission as the keyboard shortcuts.
+    private func canListenToFrontApp() -> Bool {
+        if Hotkeys.isTrusted { return true }
+        Announcer.say(String(localized: "Allow keyboard shortcuts in Settings first; this uses the same permission."))
+        return false
+    }
+
+    func toggleProgressTones() {
+        guard preferences.progressTones || canListenToFrontApp() else { return }
+        preferences.progressTones.toggle()
+        Tones.play(.status)
+        Announcer.say(preferences.progressTones
+            ? String(localized: "Progress bar tones on. A tone rises as a progress bar in the front app fills.")
+            : String(localized: "Progress bar tones off"))
+    }
+
+    func toggleIndentTones() {
+        guard preferences.indentTones || canListenToFrontApp() else { return }
+        preferences.indentTones.toggle()
+        Tones.play(.status)
+        Announcer.say(preferences.indentTones
+            ? String(localized: "Indentation tones on. Moving to a line that is indented differently plays a tone: higher means further in.")
+            : String(localized: "Indentation tones off"))
+    }
+
     func toggleCaptions() {
         if Captions.isShowing { Captions.hide() } else { Captions.show() }
         preferences.captionsOn = Captions.isShowing
@@ -452,6 +484,7 @@ final class Controller {
             if !isMe(app) {
                 self?.frontApp = app
                 self?.applyAutomaticPreset(for: app)
+                FrontAppEvents.update()
             }
         }
     }

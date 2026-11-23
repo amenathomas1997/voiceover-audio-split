@@ -27,6 +27,10 @@ VoiceOver Audio Split does not collect, store or share any personal information.
 - **Clipboard history.** If you turn it on, the last 20 things you copy are kept in memory only, never on disk, and are cleared when the app quits or you turn it off. Items a password manager marks as concealed are left out.
 - **Timers and reminders.** What you ask to be reminded about is saved in your settings on your Mac until it's due, so reminders survive a restart. If you allow notifications, they're also kept in Notification Center: filed there quietly while VoiceOver is on (the app speaks them itself), shown on screen otherwise.
 - **Object finder and accessible PDFs.** The object finder analyzes camera pictures on your Mac with Apple's Vision framework and never saves them. Scanning to an accessible PDF recognizes text on your Mac and saves the PDF only where you choose.
+- **Your calendar.** What's Next reads the events of the coming week from your calendar, on your Mac, only when you ask, to say what's on now and next. Nothing is stored or sent. A meeting link is opened only when you ask again, and only if it's an https link to Zoom, Teams, Google Meet, Webex or FaceTime.
+- **Progress bar and indentation tones.** If you turn them on, the app hears, through the accessibility interface, when a progress bar in the front app moves and when the text cursor changes line. It reads only the bar's value, or the first characters of that one line to count its white space. Nothing is stored or sent.
+- **Watching a window.** While you have it watch a window, the app takes a picture of that one window every few seconds and recognizes its text on your Mac to say what's new. Pictures and text aren't kept or sent.
+- **Siri and Shortcuts.** The app offers its commands as actions. When you use one, Siri or Shortcuts tells the app which command to run; the app sends nothing back but whether it ran.
 - **Window switcher.** The window list is read through the accessibility interface when you open it, and isn't kept.
 - **The AI on this Mac.** With "Use AI" set to On this Mac (the default where Apple Intelligence is available), image and video descriptions, the assistant, Do It for Me, "Audio Split, find…" and the money identifier use Apple's on-device model. Pictures, questions and control names stay on your Mac and aren't sent anywhere.
 - **Describing images automatically.** If you turn it on, when the VoiceOver cursor rests on a picture for a second, the app takes a picture of just that spot of the screen and has the AI on this Mac describe it. Only the on-device model is ever used for this, so nothing is sent anywhere. Recent descriptions are kept in memory, and nothing is saved.
@@ -59,9 +63,10 @@ Like any internet request, these services can see your IP address. The app keeps
 
 | Permission | Used for |
 | --- | --- |
-| Accessibility | The keyboard shortcuts, custom labels, place markers and Do It for Me |
+| Accessibility | The keyboard shortcuts, custom labels, place markers, Do It for Me, and progress bar and indentation tones if you turn them on |
 | System audio recording | Splitting and adjusting sound |
-| Screen recording | Describe image (the item under the VoiceOver cursor), reading the front window's text, Screen OCR, and describing a video |
+| Screen recording | Describe image (the item under the VoiceOver cursor), reading the front window's text, Screen OCR, watching a window, and describing a video |
+| Calendars | What's Next: your next event and its meeting link, only when you ask |
 | Microphone | The microphone check, the voice command if you turn it on, and your voice in a screen recording if you choose that |
 | Speech Recognition | Voice commands ("Audio Split" and a command, and "Launch VoiceOver training"), if you turn them on; recognized on your Mac only |
 | Downloads folder (read only) | Saying when a download finishes, and opening the latest download |

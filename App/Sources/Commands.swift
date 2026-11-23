@@ -26,6 +26,7 @@ enum Command: String, CaseIterable, Identifiable, Codable {
     case importLesson, exportStudentReport
     case autoDescribeImages, screenRecording
     case resourceMonitor, screenOCR
+    case progressTones, indentTones, sayIndentation, watchWindow, whatsNext
 
     var id: String { rawValue }
 
@@ -109,6 +110,11 @@ enum Command: String, CaseIterable, Identifiable, Codable {
         case .screenRecording: String(localized: "Start or stop recording the screen")
         case .resourceMonitor: String(localized: "Resource monitor: processor, memory, disks, battery, uptime")
         case .screenOCR: String(localized: "Screen OCR: read and click text in apps without accessibility")
+        case .progressTones: String(localized: "Progress bar tones: a rising tone as a progress bar fills")
+        case .indentTones: String(localized: "Indentation tones: hear how far each line of code is indented")
+        case .sayIndentation: String(localized: "Say how far this line is indented")
+        case .watchWindow: String(localized: "Watch the front window and say when its text changes")
+        case .whatsNext: String(localized: "What's next on my calendar (again: open its meeting link)")
         case .sensorStatus: String(localized: "What's using the camera and microphone")
         case .customLabel: String(localized: "Label the item under the VoiceOver cursor")
         case .placeMarker: String(localized: "Add a place marker on this web page")
@@ -181,7 +187,8 @@ enum Command: String, CaseIterable, Identifiable, Codable {
              .meetingReadChat, .meetingWhoIsTalking, .meetingLeave, .meetingChatAnnounce,
              .reminders, .listReminders, .cancelLastReminder, .clipboardHistory, .windowSwitcher,
              .objectFinder, .scanToPDF, .fileToPDF, .importLesson, .exportStudentReport,
-             .autoDescribeImages, .screenRecording, .resourceMonitor, .screenOCR: nil
+             .autoDescribeImages, .screenRecording, .resourceMonitor, .screenOCR,
+             .progressTones, .indentTones, .sayIndentation, .watchWindow, .whatsNext: nil
         }
     }
 }

@@ -13,6 +13,8 @@ LANGUAGES = ("es", "fr", "de")
 PLACEHOLDER = re.compile(r"%(?:(\d+)\$)?(@|lld|ld|d|f|\.\d+f)")
 POSITIONAL = re.compile(r"%\d+\$")
 SUBSTITUTION = re.compile(r"%#@(\w+)@")
+# In Siri phrases (AppShortcuts): ${applicationName}, ${command}.
+TOKEN = re.compile(r"\$\{\w+\}")
 
 
 def kinds(text):
@@ -22,6 +24,8 @@ def kinds(text):
 def placeholders_match(source, translation):
     """Same placeholders, in the same order, unless the translation numbers every one
     (%1$@, %2$lld), which is the only safe way to reorder them."""
+    if sorted(TOKEN.findall(source)) != sorted(TOKEN.findall(translation)):
+        return False
     ours, theirs = kinds(source), kinds(translation)
     if sorted(ours) != sorted(theirs):
         return False
@@ -113,7 +117,7 @@ def problems_in(key, localization, source):
 
 problems = []
 
-for name in ("Localizable", "InfoPlist"):
+for name in ("Localizable", "InfoPlist", "AppShortcuts"):
     path = f"App/Resources/{name}.xcstrings"
     with open(path, encoding="utf-8") as file:
         catalog = json.load(file)

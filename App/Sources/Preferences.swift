@@ -374,6 +374,10 @@ final class Preferences: ObservableObject {
     @Published var typingSayEachKey: Bool { didSet { save(typingSayEachKey, "typingSayEachKey") } }
     /// Listen for "Launch VoiceOver training" anywhere on the Mac.
     @Published var voiceCommand: Bool { didSet { save(voiceCommand, "voiceCommand") } }
+    /// A rising tone as a progress bar in the front app fills.
+    @Published var progressTones: Bool { didSet { save(progressTones, "progressTones") } }
+    /// A tone when the text cursor moves to a line that is indented differently.
+    @Published var indentTones: Bool { didSet { save(indentTones, "indentTones") } }
     /// While a call plays through loudspeakers, don't take risky commands by voice alone.
     @Published var voiceCommandGuard: Bool { didSet { save(voiceCommandGuard, "voiceCommandGuard") } }
     /// Look for a new version on GitHub once a day (not for TestFlight or App Store copies).
@@ -475,6 +479,8 @@ final class Preferences: ObservableObject {
         typingSayEachKey = store.bool(forKey: "typingSayEachKey")
         voiceCommand = store.bool(forKey: "voiceCommand")
         voiceCommandGuard = store.object(forKey: "voiceCommandGuard") as? Bool ?? true
+        progressTones = store.bool(forKey: "progressTones")
+        indentTones = store.bool(forKey: "indentTones")
         checkForUpdates = store.object(forKey: "checkForUpdates") as? Bool ?? true
         confirmSoundChanges = store.object(forKey: "confirmSoundChanges") as? Bool ?? true
         aiProvider = store.string(forKey: "aiProvider") ?? AIProvider.onDevice.rawValue

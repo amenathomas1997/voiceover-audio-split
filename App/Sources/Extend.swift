@@ -149,7 +149,7 @@ enum SettingsTransfer {
         "practiceLearnMode", "typingSayEachKey", "checkForUpdates",
         "hearingProfileOn", "hearingLeft", "hearingRight", "confirmSoundChanges", "aiProvider", "autoDescribeImages", "recordMicrophone",
         "meetingChatAnnounce", "clipboardHistory", "reminderNotifications", "brailleGrade", "objectFinderCameraFacesYou",
-        "voiceCommandGuard",
+        "voiceCommandGuard", "progressTones", "indentTones",
     ]
 
     /// Settings about the user rather than the app: their hearing, the sites and apps they use,

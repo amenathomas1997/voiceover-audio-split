@@ -2,6 +2,13 @@
 
 ## Next
 
+- **Progress bar tones, like NVDA's.** A short tone rises from low to high as a progress bar in the front app fills. Off until you turn it on in Settings, under Everyday tools, or in the Everyday Tools menu.
+- **Indentation tones, for reading code.** When the text cursor moves to a line that is indented differently, a tone plays, a quarter tone higher for each space. "Say This Line's Indentation" says it in words. Works best in Xcode and other native editors.
+- **Watch a window.** For a window VoiceOver can't read (an installer, a game, a remote desktop): the app looks at it every four seconds, recognizes its text on your Mac and says the lines that are new. Stops with the same command, when the window goes away, or after fifteen minutes.
+- **What's next.** Says the event that's on now and the next one on your calendar; using the command again opens its Zoom, Teams, Google Meet, Webex or FaceTime link. Only https links to those services are opened. Needs calendar access, asked the first time.
+- **Siri and Shortcuts.** Fourteen commands are actions for Siri, the Shortcuts app and Spotlight: "Hey Siri, speech left with VoiceOver Audio Split" works without the app listening to the microphone.
+- Each has voice commands in all four languages: "watch this window", "what's next", "join my meeting", "progress bar tones", "indentation tones", "say the indentation".
+
 ## 1.2, build 202611212125, 22 November 2026
 
 **New in this build of 1.2:** Screen OCR, for reading and clicking text in apps built without accessibility. Fixed: the app ending on its own a day after starting at login, and sound setup freezing the keyboard shortcuts while a wireless headset is asleep. The app now says so when the menu bar has no room for its icon. Plus the fixes from three code audits, listed below.

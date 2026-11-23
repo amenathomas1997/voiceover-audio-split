@@ -4822,6 +4822,82 @@
         }
       }
     },
+    "%lld spaces" : {
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Leerzeichen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Leerzeichen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld space"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld spaces"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld espacio"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld espacios"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld espace"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld espaces"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld spaces before punctuation" : {
       "localizations" : {
         "de" : {
@@ -5043,6 +5119,82 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld tableaux n'ont pas de ligne d'en-tête."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld tabs" : {
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tabulator"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tabulatoren"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tab"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tabs"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tabulador"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tabuladores"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tabulation"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tabulations"
                 }
               }
             }
@@ -7440,6 +7592,28 @@
         }
       }
     },
+    "A short tone that rises as a progress bar in the front app fills, so you can hear a download or an installer move along without checking it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein kurzer Ton, der ansteigt, während sich ein Fortschrittsbalken in der vorderen App füllt. So hörst du einen Download oder eine Installation vorankommen, ohne nachzusehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un tono corto que sube a medida que se llena una barra de progreso en la app frontal, para que oigas avanzar una descarga o un instalador sin tener que comprobarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un son bref qui monte à mesure qu'une barre de progression se remplit dans l'app de premier plan : vous entendez avancer un téléchargement ou une installation sans avoir à vérifier."
+          }
+        }
+      }
+    },
     "API key" : {
       "localizations" : {
         "de" : {
@@ -8470,6 +8644,82 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Et %lld de plus dans la fenêtre."
+          }
+        }
+      }
+    },
+    "And %lld more lines." : {
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Und %lld weitere Zeile."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Und %lld weitere Zeilen."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "And %lld more line."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "And %lld more lines."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Y %lld línea más."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Y %lld líneas más."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Et %lld ligne de plus."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Et %lld lignes de plus."
+                }
+              }
+            }
           }
         }
       }
@@ -10680,6 +10930,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "C : écouter le presse-papiers. F : vérifier le cadrage de la caméra pour les appels vidéo."
+          }
+        }
+      }
+    },
+    "Calendar access is off. Allow VoiceOver Audio Split in System Settings, Privacy and Security, Calendars: it needs full access to read your events." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Kalenderzugriff ist aus. Erlaube VoiceOver Audio Split in den Systemeinstellungen unter Datenschutz & Sicherheit, Kalender: Es braucht vollen Zugriff, um deine Termine zu lesen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El acceso al calendario está desactivado. Permite VoiceOver Audio Split en Ajustes del Sistema, Privacidad y seguridad, Calendarios: necesita acceso total para leer tus eventos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'accès au calendrier est désactivé. Autorisez VoiceOver Audio Split dans Réglages Système, Confidentialité et sécurité, Calendriers : il lui faut l'accès complet pour lire vos événements."
+          }
+        }
+      }
+    },
+    "Calendar access wasn't allowed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Kalenderzugriff wurde nicht erlaubt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se permitió el acceso al calendario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'accès au calendrier n'a pas été autorisé."
           }
         }
       }
@@ -19984,6 +20278,28 @@
         }
       }
     },
+    "For reading code: when the text cursor moves to a line that is indented differently, a tone plays, higher the further in the line starts. Say This Line's Indentation, in Everyday Tools, says it in words. Works best in Xcode and other native editors." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum Lesen von Code: Wechselt der Textcursor in eine anders eingerückte Zeile, erklingt ein Ton, umso höher, je weiter die Zeile eingerückt ist. „Einrückung dieser Zeile ansagen“ unter „Alltagswerkzeuge“ sagt es in Worten. Funktioniert am besten in Xcode und anderen nativen Editoren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para leer código: cuando el cursor de texto pasa a una línea con otra sangría, suena un tono, más agudo cuanto más adentro empieza la línea. Decir la sangría de esta línea, en Herramientas cotidianas, lo dice con palabras. Funciona mejor en Xcode y otros editores nativos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour lire du code : quand le curseur de texte passe à une ligne indentée différemment, un son est joué, d'autant plus aigu que la ligne commence loin. Annoncer l'indentation de cette ligne, dans Outils du quotidien, le dit avec des mots. Fonctionne le mieux dans Xcode et les autres éditeurs natifs."
+          }
+        }
+      }
+    },
     "For smaller pieces: VO L reads the line, VO S the sentence, VO P the paragraph, VO W the word and VO C the character. Press VO W twice to hear the word spelled, and VO C twice to hear the letter phonetically, like alpha or bravo." : {
       "localizations" : {
         "de" : {
@@ -21926,6 +22242,28 @@
         }
       }
     },
+    "How far is this indented?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie weit ist das eingerückt?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cuánta sangría tiene esto?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quel est le retrait de cette ligne ?"
+          }
+        }
+      }
+    },
     "How much VoiceOver says about each item, such as its type and hints. Changed with VO V or in VoiceOver Utility." : {
       "localizations" : {
         "de" : {
@@ -23516,6 +23854,160 @@
         }
       }
     },
+    "Indentation Tones" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrückungstöne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de sangría"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons d'indentation"
+          }
+        }
+      }
+    },
+    "Indentation tones" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrückungstöne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de sangría"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons d'indentation"
+          }
+        }
+      }
+    },
+    "Indentation tones off" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrückungstöne aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de sangría desactivados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons d'indentation désactivés"
+          }
+        }
+      }
+    },
+    "Indentation tones on. Moving to a line that is indented differently plays a tone: higher means further in." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrückungstöne ein. Beim Wechsel in eine anders eingerückte Zeile erklingt ein Ton: höher bedeutet weiter eingerückt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de sangría activados. Al pasar a una línea con otra sangría suena un tono: más agudo significa más sangría."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons d'indentation activés. Passer à une ligne indentée différemment joue un son : plus il est aigu, plus le retrait est grand."
+          }
+        }
+      }
+    },
+    "Indentation tones: hear how far each line of code is indented" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrückungstöne: hören, wie weit jede Codezeile eingerückt ist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de sangría: oye cuánta sangría tiene cada línea de código"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons d'indentation : entendez le retrait de chaque ligne de code"
+          }
+        }
+      }
+    },
+    "Indented %@ and %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um %@ und %@ eingerückt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sangría de %@ y %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indentation de %@ et %@."
+          }
+        }
+      }
+    },
+    "Indented %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um %@ eingerückt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sangría de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indentation de %@."
+          }
+        }
+      }
+    },
     "Indonesian" : {
       "localizations" : {
         "de" : {
@@ -23812,6 +24304,28 @@
         }
       }
     },
+    "It has a %@ link: use the command again to open it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Er hat einen %@-Link: Nutze den Befehl noch einmal, um ihn zu öffnen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiene un enlace de %@: usa el comando otra vez para abrirlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il comporte un lien %@ : utilisez de nouveau la commande pour l'ouvrir."
+          }
+        }
+      }
+    },
     "It has a bump." : {
       "localizations" : {
         "de" : {
@@ -24050,6 +24564,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rejoindre une réunion Zoom"
+          }
+        }
+      }
+    },
+    "Join my meeting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meinem Meeting beitreten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unirme a mi reunión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rejoindre ma réunion"
           }
         }
       }
@@ -28576,6 +29112,28 @@
         }
       }
     },
+    "Moves VoiceOver's speech to one ear, quiets everything else, or runs another VoiceOver Audio Split command. The app says the result." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legt die VoiceOver-Sprache auf ein Ohr, stellt alles andere stumm oder führt einen anderen Befehl von VoiceOver Audio Split aus. Die App sagt das Ergebnis an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pasa la voz de VoiceOver a un oído, silencia todo lo demás o ejecuta otro comando de VoiceOver Audio Split. La app dice el resultado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place la voix de VoiceOver dans une oreille, coupe tout le reste ou exécute une autre commande de VoiceOver Audio Split. L'app annonce le résultat."
+          }
+        }
+      }
+    },
     "Moving around" : {
       "localizations" : {
         "de" : {
@@ -28924,6 +29482,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couper ou réactiver le micro dans Zoom"
+          }
+        }
+      }
+    },
+    "Mute or unmute the microphone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofon stumm- oder einschalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silenciar o activar el micrófono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couper ou réactiver le micro"
           }
         }
       }
@@ -29550,6 +30130,94 @@
         }
       }
     },
+    "Next: %@, at %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als Nächstes: %@, um %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente: %@, a las %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensuite : %@, à %@."
+          }
+        }
+      }
+    },
+    "Next: %@, in %@, at %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als Nächstes: %@, in %@, um %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente: %@, en %@, a las %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensuite : %@, dans %@, à %@."
+          }
+        }
+      }
+    },
+    "Next: %@, on %@ at %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als Nächstes: %@, am %@ um %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente: %@, el %@ a las %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensuite : %@, le %@ à %@."
+          }
+        }
+      }
+    },
+    "Next: %@, tomorrow at %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als Nächstes: %@, morgen um %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente: %@, mañana a las %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensuite : %@, demain à %@."
+          }
+        }
+      }
+    },
     "Next: %@." : {
       "localizations" : {
         "de" : {
@@ -30128,6 +30796,28 @@
         }
       }
     },
+    "No meeting with a link is on now or starts in the next half hour." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es läuft kein Meeting mit Link, und in der nächsten halben Stunde beginnt auch keines."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ninguna reunión con enlace ahora ni que empiece en la próxima media hora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune réunion avec un lien n'est en cours ni ne commence dans la prochaine demi-heure."
+          }
+        }
+      }
+    },
     "No microphone found" : {
       "localizations" : {
         "de" : {
@@ -30678,6 +31368,28 @@
         }
       }
     },
+    "Not indented." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht eingerückt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin sangría."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas d'indentation."
+          }
+        }
+      }
+    },
     "Not quite. %@" : {
       "localizations" : {
         "de" : {
@@ -30832,6 +31544,28 @@
         }
       }
     },
+    "Nothing after that in the next week." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Danach nichts mehr in der nächsten Woche."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada más después en la próxima semana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien d'autre ensuite dans la semaine qui vient."
+          }
+        }
+      }
+    },
     "Nothing else is playing" : {
       "localizations" : {
         "de" : {
@@ -30916,6 +31650,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rien n'est en cours de lecture. Ouvrez le centre audio pour choisir quelque chose."
+          }
+        }
+      }
+    },
+    "Nothing on your calendar in the next week." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der nächsten Woche steht nichts in deinem Kalender."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay nada en tu calendario en la próxima semana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien dans votre calendrier pour la semaine qui vient."
           }
         }
       }
@@ -31768,6 +32524,28 @@
         }
       }
     },
+    "Now: %@, until %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt: %@, bis %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora: %@, hasta las %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En ce moment : %@, jusqu'à %@."
+          }
+        }
+      }
+    },
     "Numbers" : {
       "localizations" : {
         "de" : {
@@ -32584,6 +33362,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrez Messages, pour de vrai."
+          }
+        }
+      }
+    },
+    "Open My Meeting's Link" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link meines Meetings öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir el enlace de mi reunión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir le lien de ma réunion"
           }
         }
       }
@@ -33508,6 +34308,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Horaires d'ouverture"
+          }
+        }
+      }
+    },
+    "Opening the %@ link for %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der %@-Link für %@ wird geöffnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abriendo el enlace de %@ para %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouverture du lien %@ pour %@."
           }
         }
       }
@@ -36324,6 +37146,116 @@
         }
       }
     },
+    "Progress Bar Tones" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortschrittsbalken-Töne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de la barra de progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons de la barre de progression"
+          }
+        }
+      }
+    },
+    "Progress bar tones" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortschrittsbalken-Töne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de la barra de progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons de la barre de progression"
+          }
+        }
+      }
+    },
+    "Progress bar tones off" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortschrittsbalken-Töne aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de la barra de progreso desactivados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons de la barre de progression désactivés"
+          }
+        }
+      }
+    },
+    "Progress bar tones on. A tone rises as a progress bar in the front app fills." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortschrittsbalken-Töne ein. Ein Ton steigt an, während sich ein Fortschrittsbalken in der vorderen App füllt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de la barra de progreso activados. Un tono sube a medida que se llena una barra de progreso en la app frontal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons de la barre de progression activés. Un son monte à mesure qu'une barre de progression se remplit dans l'app de premier plan."
+          }
+        }
+      }
+    },
+    "Progress bar tones: a rising tone as a progress bar fills" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortschrittsbalken-Töne: ein ansteigender Ton, während sich der Balken füllt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonos de la barra de progreso: un tono que sube mientras la barra se llena"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sons de la barre de progression : un son qui monte à mesure que la barre se remplit"
+          }
+        }
+      }
+    },
     "Punctuation: apostrophe, hyphen, question mark and more" : {
       "localizations" : {
         "de" : {
@@ -36342,6 +37274,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ponctuation : apostrophe, trait d'union, point d'interrogation et plus"
+          }
+        }
+      }
+    },
+    "Put the text cursor in some text first, such as a code editor." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setze zuerst den Textcursor in einen Text, zum Beispiel in einem Code-Editor."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero pon el cursor de texto en algún texto, por ejemplo en un editor de código."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Placez d'abord le curseur de texte dans un texte, par exemple dans un éditeur de code."
           }
         }
       }
@@ -39590,6 +40544,50 @@
         }
       }
     },
+    "Run a Command" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehl ausführen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejecutar un comando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exécuter une commande"
+          }
+        }
+      }
+    },
+    "Run a VoiceOver Audio Split Command" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehl von VoiceOver Audio Split ausführen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejecutar un comando de VoiceOver Audio Split"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exécuter une commande de VoiceOver Audio Split"
+          }
+        }
+      }
+    },
     "Run your own AppleScripts or Shortcuts from a key, the menu or the command palette. A script that returns text has it spoken." : {
       "localizations" : {
         "de" : {
@@ -40470,6 +41468,28 @@
         }
       }
     },
+    "Say This Line's Indentation" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrückung dieser Zeile ansagen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decir la sangría de esta línea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annoncer l'indentation de cette ligne"
+          }
+        }
+      }
+    },
     "Say clipboard" : {
       "localizations" : {
         "de" : {
@@ -40510,6 +41530,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Énoncer chaque touche tapée correctement"
+          }
+        }
+      }
+    },
+    "Say how far this line is indented" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ansagen, wie weit diese Zeile eingerückt ist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decir cuánta sangría tiene esta línea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annoncer le retrait de cette ligne"
           }
         }
       }
@@ -45157,6 +46199,50 @@
         }
       }
     },
+    "Stopped watching the window after 15 minutes. Use the command again to carry on." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich habe das Fenster nach 15 Minuten nicht mehr beobachtet. Nutze den Befehl noch einmal, um weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dejé de vigilar la ventana después de 15 minutos. Usa el comando otra vez para continuar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J'ai arrêté de surveiller la fenêtre après 15 minutes. Utilisez de nouveau la commande pour continuer."
+          }
+        }
+      }
+    },
+    "Stopped watching the window." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Fenster wird nicht mehr beobachtet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dejé de vigilar la ventana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J'ai arrêté de surveiller la fenêtre."
+          }
+        }
+      }
+    },
     "Stopping the recording." : {
       "localizations" : {
         "de" : {
@@ -49121,6 +50207,28 @@
         }
       }
     },
+    "The window has gone or can't be seen, so I stopped watching it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Fenster ist weg oder nicht mehr zu sehen, deshalb beobachte ich es nicht mehr."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ventana ya no está o no se puede ver, así que dejé de vigilarla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fenêtre a disparu ou n'est plus visible, j'ai donc arrêté de la surveiller."
+          }
+        }
+      }
+    },
     "The window is %@." : {
       "localizations" : {
         "de" : {
@@ -49965,6 +51073,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cette leçon est au format %@ ; cette version de l'app lit le format %lld."
+          }
+        }
+      }
+    },
+    "This line is blank." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Zeile ist leer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta línea está en blanco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette ligne est vide."
           }
         }
       }
@@ -55933,6 +57063,138 @@
         }
       }
     },
+    "Watch the Front Window for Changes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorderes Fenster auf Änderungen beobachten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vigilar los cambios en la ventana frontal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surveiller les changements de la fenêtre de premier plan"
+          }
+        }
+      }
+    },
+    "Watch the front window" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorderes Fenster beobachten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vigilar la ventana frontal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surveiller la fenêtre de premier plan"
+          }
+        }
+      }
+    },
+    "Watch the front window and say when its text changes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorderes Fenster beobachten und ansagen, wenn sich sein Text ändert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vigilar la ventana frontal y avisar cuando cambie su texto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surveiller la fenêtre de premier plan et annoncer quand son texte change"
+          }
+        }
+      }
+    },
+    "Watch this window" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Fenster beobachten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vigilar esta ventana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surveiller cette fenêtre"
+          }
+        }
+      }
+    },
+    "Watching the %@ window. I'll say when its text changes. Use the same command to stop." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich beobachte das Fenster von %@. Ich sage Bescheid, wenn sich sein Text ändert. Nutze denselben Befehl zum Stoppen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vigilando la ventana de %@. Avisaré cuando cambie su texto. Usa el mismo comando para parar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surveillance de la fenêtre de %@. Je dirai quand son texte change. Utilisez la même commande pour arrêter."
+          }
+        }
+      }
+    },
+    "Watching the front window. I'll say when its text changes. Use the same command to stop." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich beobachte das vordere Fenster. Ich sage Bescheid, wenn sich sein Text ändert. Nutze denselben Befehl zum Stoppen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vigilando la ventana frontal. Avisaré cuando cambie su texto. Usa el mismo comando para parar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surveillance de la fenêtre de premier plan. Je dirai quand son texte change. Utilisez la même commande pour arrêter."
+          }
+        }
+      }
+    },
     "Weather" : {
       "localizations" : {
         "de" : {
@@ -56373,6 +57635,28 @@
         }
       }
     },
+    "What's Next on My Calendar" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was als Nächstes in meinem Kalender steht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué sigue en mi calendario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La suite dans mon calendrier"
+          }
+        }
+      }
+    },
     "What's On" : {
       "localizations" : {
         "de" : {
@@ -56435,6 +57719,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Que se passe-t-il dans la vidéo ?"
+          }
+        }
+      }
+    },
+    "What's next on my calendar" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was als Nächstes in meinem Kalender steht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué sigue en mi calendario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La suite dans mon calendrier"
+          }
+        }
+      }
+    },
+    "What's next on my calendar (again: open its meeting link)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was als Nächstes im Kalender steht (noch einmal: Meeting-Link öffnen)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué sigue en mi calendario (otra vez: abrir el enlace de la reunión)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La suite dans mon calendrier (encore : ouvrir le lien de la réunion)"
+          }
+        }
+      }
+    },
+    "What's next?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was kommt als Nächstes?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué sigue?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu'y a-t-il ensuite ?"
           }
         }
       }
@@ -59230,6 +60580,28 @@
         }
       }
     },
+    "an event with no title" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ein Termin ohne Titel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un evento sin título"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un événement sans titre"
+          }
+        }
+      }
+    },
     "an odd number of straight quotes" : {
       "localizations" : {
         "de" : {
@@ -60637,6 +62009,29 @@
         }
       }
     },
+    "indentation tones" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "einrückungstöne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tonos de sangría"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sons d'indentation"
+          }
+        }
+      }
+    },
     "indents use both tabs and spaces" : {
       "localizations" : {
         "de" : {
@@ -60677,6 +62072,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Index"
+          }
+        }
+      }
+    },
+    "join my meeting|join the meeting" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "meinem meeting beitreten|dem meeting beitreten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "unirme a mi reunión|unirme a la reunión|únete a la reunión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rejoindre ma réunion|rejoindre la réunion"
           }
         }
       }
@@ -62340,6 +63758,29 @@
         }
       }
     },
+    "progress bar tones" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fortschrittsbalken töne|fortschrittstöne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tonos de la barra de progreso|tonos de progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sons de la barre de progression|sons de progression"
+          }
+        }
+      }
+    },
     "purple" : {
       "localizations" : {
         "de" : {
@@ -62815,6 +64256,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annulaire"
+          }
+        }
+      }
+    },
+    "say the indentation|indentation" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sag die einrückung|einrückung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "di la sangría|sangría"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "annonce l'indentation|indentation"
           }
         }
       }
@@ -63980,6 +65444,29 @@
         }
       }
     },
+    "watch this window|stop watching" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "beobachte dieses fenster|dieses fenster beobachten|nicht mehr beobachten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vigila esta ventana|vigilar esta ventana|deja de vigilar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "surveille cette fenêtre|surveiller cette fenêtre|arrête de surveiller"
+          }
+        }
+      }
+    },
     "what VoiceOver's descriptions mean, so you can tell what an item is and what state it's in." : {
       "localizations" : {
         "de" : {
@@ -64136,6 +65623,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "quelle heure est il|il est quelle heure|l heure"
+          }
+        }
+      }
+    },
+    "what's next|next meeting" : {
+      "comment" : "Voice command phrases, separated by |",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "was kommt als nächstes|nächstes meeting|nächster termin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "qué sigue|próxima reunión|siguiente reunión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "quelle est la suite|prochaine réunion"
           }
         }
       }

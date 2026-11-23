@@ -237,8 +237,20 @@ enum ScreenPicture {
         guard let window = candidates.first(where: { $0.owningApplication?.processID == front }) ?? candidates.first else {
             throw Failure(message: String(localized: "No window to read."))
         }
+        return try await capture(window, displays: content.displays)
+    }
+
+    /// One window by its ID, as it looks now: nil when it's no longer on screen (closed,
+    /// minimized, or on another desktop).
+    static func windowCapture(_ windowID: CGWindowID) async throws -> Capture? {
+        let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
+        guard let window = content.windows.first(where: { $0.windowID == windowID }) else { return nil }
+        return try await capture(window, displays: content.displays)
+    }
+
+    private static func capture(_ window: SCWindow, displays: [SCDisplay]) async throws -> Capture {
         let configuration = SCStreamConfiguration()
-        let displayID = content.displays.first { $0.frame.intersects(window.frame) }?.displayID ?? CGMainDisplayID()
+        let displayID = displays.first { $0.frame.intersects(window.frame) }?.displayID ?? CGMainDisplayID()
         let scale = await MainActor.run { backingScale(of: displayID) }
         configuration.width = Int(window.frame.width * scale)
         configuration.height = Int(window.frame.height * scale)

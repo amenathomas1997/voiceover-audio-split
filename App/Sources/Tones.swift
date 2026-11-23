@@ -82,6 +82,33 @@ enum Tones {
         }
     }
 
+    /// A short tone of any pitch, for sounds that carry a value: how full a progress bar is,
+    /// how far a line is indented. Call on the main thread (it reads the one-ear setting).
+    static func beep(frequency: Double, pan: Float = 0, seconds: Double = 0.06) {
+        let frames = Int(format.sampleRate * seconds)
+        guard frames > 0, frequency > 0, let sound = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(frames)) else { return }
+        sound.frameLength = sound.frameCapacity
+        let side: Float = switch Preferences.shared.oneEar { case .off: pan; case .left: -1; case .right: 1 }
+        let fade = format.sampleRate * 0.008
+        for frame in 0..<frames {
+            // Short fade in and out so it doesn't click.
+            let envelope = Float(min(1, min(Double(frame), Double(frames - frame)) / fade))
+            let sample = Float(sin(2 * .pi * frequency * Double(frame) / format.sampleRate)) * 0.16 * envelope
+            sound.floatChannelData![0][frame] = sample * min(1, 1 - side)
+            sound.floatChannelData![1][frame] = sample * min(1, 1 + side)
+        }
+        enqueue {
+            guard start(player, sound) else { return }
+            stopWork?.cancel()
+            let work = DispatchWorkItem {
+                _ = caught { player.stop() }
+                engine.stop()
+            }
+            stopWork = work
+            queue.asyncAfter(deadline: .now() + 2, execute: work)
+        }
+    }
+
     // MARK: Starting a sound safely
 
     /// Gets the engine ready for `node`: attached, connected (again, after an output
